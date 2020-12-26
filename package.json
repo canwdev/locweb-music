@@ -1,0 +1,30 @@
+{
+  "name": "locweb-music",
+  "version": "0.1.0",
+  "description": "A web music player for playing local music",
+  "main": "index.js",
+  "repository": "https://github.com/canwdev/locweb-music.git",
+  "author": "canwdev <c2097@live.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "NODE_ENV=production PORT=12021 node index.js",
+    "dev": "nodemon index.js --trace-sync-io"
+  },
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "sequelize": "^6.3.4",
+    "sqlite3": "^5.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "db/*.db",
+      "db/*.db-journal",
+      "public/*",
+      "crawler/*"
+    ]
+  }
+}
