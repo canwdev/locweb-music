@@ -2,10 +2,10 @@
   <div class="home-list">
     <div
         class="list-item"
-        v-for="item in 500"
-        :key="item"
+        v-for="(item, index) in list"
+        :key="index"
     >
-      {{ item }}
+      <span class="text-overflow">{{ item }}</span>
     </div>
   </div>
 </template>
@@ -15,6 +15,11 @@ import {defineComponent} from 'vue';
 
 export default defineComponent({
   name: 'HomeList',
+  props: {
+    list: {
+      type: Array
+    }
+  }
 })
 </script>
 
@@ -28,16 +33,17 @@ export default defineComponent({
   .list-item {
     display: flex;
     align-items: center;
-    & + .list-item {
-      //border-top: $layout-border;
-    }
+    width: 100%;
+    box-sizing: border-box;
+
+    //& + .list-item {
+    //  border-top: $layout-border;
+    //}
     &:nth-child(2n) {
-      background: $blue-3;
-      color: white;
+      background: rgba(0,0,0,0.1);
     }
 
     padding: 0 10px;
-    font-size: 30px;
     height: 40px;
   }
 }

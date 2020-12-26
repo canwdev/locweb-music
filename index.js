@@ -20,19 +20,6 @@ app.use('/images', express.static(path.join(DATA_BASE_PATH, IMAGE_DIR)));
 // Create Router
 app.use('/', require('./routes/index'));
 
-// 全局错误处理
-app.use(function(err, req, res) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  console.log(res.locals)
-
-  // render the error page
-  res.status(err.status || 500);
-  res.send(err.message);
-});
-
 const port = normalizePort(process.env.PORT || '12021')
 app.listen(port, () => {
   console.log(`API running on http://localhost:${port}/api`);
