@@ -1,4 +1,4 @@
 /frontend-dist/
 node_modules
 .idea
-./data/
+/data/*
