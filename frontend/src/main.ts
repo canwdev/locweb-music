@@ -6,6 +6,6 @@ import store from './store'
 
 import 'normalize.css'
 import './style/tools.sass'
-import './style/theme.sass'
+import './style/theme.scss'
 
 createApp(App).use(store).use(router).mount('#app')
