@@ -2,7 +2,7 @@
   <div class="home">
     <Navbar/>
     <HomeList
-        v-show="!isPlaylistTab"
+        v-show="navbarTab === NavbarTabsEnum.MAIN"
         :is-loading="isLoading"
         :list="fileList"
         :show-up="directories.length > 0"
@@ -10,7 +10,7 @@
         @goUpDir="goUpDir"
     />
     <HomeList
-        v-show="isPlaylistTab"
+        v-show="navbarTab === NavbarTabsEnum.PLAYING"
         :is-loading="isLoading"
         :list="playlist"
         @onItemClick="handleItemClick"
@@ -27,7 +27,7 @@ import Navbar from '@/components/Navbar.vue';
 import HomeList from '@/components/HomeList/index.vue';
 import Actionbar from '@/components/Actionbar.vue';
 import {getList} from "@/api/music.ts";
-import {MusicItem} from "@/enum";
+import {MusicItem, NavbarTabsEnum} from "@/enum";
 import bus, {
   ACTION_TOGGLE_PLAY,
 } from "@/utils/bus";
@@ -44,6 +44,7 @@ export default defineComponent({
     const directories: Array<any> = [];
     const fileList: Array<MusicItem> = [];
     return {
+      NavbarTabsEnum: Object.freeze(NavbarTabsEnum),
       fileList,
       isLoading: false,
       directories
@@ -59,7 +60,7 @@ export default defineComponent({
     }
   },
   computed: {
-    ...mapGetters(['isPlaylistTab', 'playlist']),
+    ...mapGetters(['navbarTab', 'playlist']),
   },
   mounted() {
     this.getFileList()
@@ -120,7 +121,7 @@ export default defineComponent({
         this.$store.commit('setMusicItem', this.musicItemBuilder(item))
 
         this.$nextTick(() => {
-          this.$store.commit('setIsPlaylistTab', true)
+          this.$store.commit('setNavbarTab', NavbarTabsEnum.PLAYING)
 
           bus.emit(ACTION_TOGGLE_PLAY)
         })

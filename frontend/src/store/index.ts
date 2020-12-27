@@ -1,19 +1,20 @@
 import { createStore } from 'vuex'
 import { MusicItem } from "@/enum";
+import {NavbarTabsEnum} from "@/enum";
 
 const playlist: Array<MusicItem> = [];
 
 export default createStore({
   state: {
     musicItem: new MusicItem(),
-    isPlaylistTab: false,
+    navbarTab: NavbarTabsEnum.MAIN,
     playlist,
     playingIndex: 0,
     paused: true
   },
   getters: {
     musicItem: state => state.musicItem,
-    isPlaylistTab: state => state.isPlaylistTab,
+    navbarTab: state => state.navbarTab,
     playlist: state => state.playlist,
     playingIndex: state => state.playingIndex,
     paused: state => state.paused,
@@ -22,8 +23,8 @@ export default createStore({
     setMusicItem: (state, payload: MusicItem) => {
       state.musicItem = payload
     },
-    setIsPlaylistTab: (state, payload: boolean) => {
-      state.isPlaylistTab = payload
+    setNavbarTab: (state, payload: number) => {
+      state.navbarTab = payload
     },
     setPlaylist: (state, payload: Array<MusicItem>) => {
       state.playlist = payload

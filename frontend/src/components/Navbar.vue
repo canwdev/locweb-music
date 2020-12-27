@@ -8,8 +8,8 @@
     <button
         v-for="item in tabs"
         :key="item.value"
-        @click="tab = item.value"
-        :class="{active: item.value === tab}"
+        @click="navbarTab = item.value"
+        :class="{active: item.value === navbarTab}"
         class="btn-no-style btn-tab">{{ item.name }}</button>
   </div>
 </template>
@@ -17,6 +17,7 @@
 <script lang="ts">
 import {defineComponent} from 'vue';
 import DrawerMenu from "@/components/DrawerMenu.vue";
+import {NavbarTabsEnum} from "@/enum";
 
 export default defineComponent({
   name: 'NavBar',
@@ -27,32 +28,19 @@ export default defineComponent({
     return {
       isShowMenu: false,
       tabs: [
-        {name: 'Files', value: 0},
-        {name: 'Playing', value: 1},
+        {name: 'Files', value: NavbarTabsEnum.MAIN},
+        {name: 'Playing', value: NavbarTabsEnum.PLAYING},
       ]
     }
   },
   computed: {
-    tab: {
+    navbarTab: {
       get() {
-        return Number(this.$route.query.tab) || 0
+        return this.$store.getters.navbarTab
       },
-      set(nv) {
-        this.$router.replace({
-          path: this.$route.path, query: {
-            ...this.$route.query,
-            tab: nv
-          }
-        })
+      set(val) {
+        this.$store.commit('setNavbarTab', val)
       }
-    }
-  },
-  watch: {
-    tab: {
-      handler(val) {
-        this.$store.commit('setIsPlaylistTab', val === 1)
-      },
-      immediate: true
     }
   }
 });

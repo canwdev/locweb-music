@@ -1,5 +1,10 @@
 export const HOST_URL = process.env.VUE_APP_API_HOST || ''
 
+export const NavbarTabsEnum = {
+  MAIN: 0,
+  PLAYING: 1,
+}
+
 export class MusicItem {
   title: string;
   artist: string;
