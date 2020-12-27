@@ -46,6 +46,14 @@ export default defineComponent({
         })
       }
     }
+  },
+  watch: {
+    tab: {
+      handler(val) {
+        this.$store.commit('setIsPlaylistTab', val === 1)
+      },
+      immediate: true
+    }
   }
 });
 </script>

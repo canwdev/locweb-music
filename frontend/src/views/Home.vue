@@ -3,8 +3,8 @@
     <Navbar/>
     <HomeList
         :is-loading="isLoading"
-        :list="musicList"
-        :show-up="directories.length > 0"
+        :list="unitedList"
+        :show-up="directories.length > 0 && !isPlaylistTab"
         @onItemClick="handleItemClick"
         @goUpDir="goUpDir"
     />
@@ -14,6 +14,7 @@
 
 <script lang="ts">
 import {defineComponent} from 'vue';
+import {mapGetters} from 'vuex';
 import Navbar from '@/components/Navbar.vue';
 import HomeList from '@/components/HomeList/index.vue';
 import Actionbar from '@/components/Actionbar.vue';
@@ -34,7 +35,7 @@ export default defineComponent({
   data() {
     const directories: Array<any> = [];
     return {
-      musicList: [],
+      fileList: [],
       isLoading: false,
       directories
     }
@@ -46,6 +47,15 @@ export default defineComponent({
         this.getFileList()
       },
       deep: true
+    }
+  },
+  computed: {
+    ...mapGetters(['isPlaylistTab', 'playlist']),
+    unitedList(): any {
+      if (this.isPlaylistTab) {
+        return this.playlist
+      }
+      return this.fileList
     }
   },
   mounted() {
@@ -66,7 +76,7 @@ export default defineComponent({
         const res = await getList({
           path
         })
-        this.musicList = res
+        this.fileList = res
       } catch (e) {
         window.$swal.fire({
           toast: true,
@@ -83,6 +93,12 @@ export default defineComponent({
     goUpDir() {
       this.directories.pop()
     },
+    musicItemBuilder(item) {
+      return new MusicItem({
+        title: item.name,
+        filepath: item.path + item.name,
+      })
+    },
     handleItemClick(item: any) {
       if (item.isDirectory) {
         this.directories.push(item)
@@ -90,10 +106,13 @@ export default defineComponent({
       }
 
       if (isSupportedMusicFormat(item.name)) {
-        this.$store.commit('setCurrentMusic', new MusicItem({
-          title: item.name,
-          filepath: item.path + item.name,
+        this.$store.commit('setPlaylist', this.fileList.filter((item: any) => {
+          return isSupportedMusicFormat(item.name)
+        }).map((item: any) => {
+          return this.musicItemBuilder(item)
         }))
+
+        this.$store.commit('setMusicItem', this.musicItemBuilder(item))
 
         this.$nextTick(() => {
           bus.emit(ACTION_TOGGLE_PLAY)

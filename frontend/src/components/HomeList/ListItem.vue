@@ -3,13 +3,14 @@
       class="btn-no-style list-item"
   >
     <i class="iconfont" :class="iconClass"></i>
-    <span class="text-overflow">{{ item.name }}</span>
+    <span class="text-overflow">{{ item.name || item.title }}</span>
   </button>
 </template>
 
 <script lang="ts">
 import {defineComponent, toRefs, computed} from 'vue';
 import {isSupportedMusicFormat} from "@/utils/is";
+import {MusicItem} from "@/enum";
 
 export default defineComponent({
   name: "ListItem",
@@ -21,25 +22,22 @@ export default defineComponent({
   },
   setup(props) {
     const { item } = toRefs(props)
-    const isMusic = computed((): boolean => {
-      if (item.value.isDirectory) {
-        return false
-      }
-      return isSupportedMusicFormat(item.value.name)
-    })
 
     const iconClass = computed(() => {
+      if (item.value instanceof MusicItem) {
+        return 'icon-audiotrack'
+      }
+
       if (item.value.isDirectory) {
         return 'icon-folder'
       }
-      if (isMusic.value) {
+      if (isSupportedMusicFormat(item.value.name)) {
         return 'icon-audiotrack'
       }
       return 'icon-insert-drive-file'
     })
 
     return {
-      isMusic,
       iconClass
     }
   }

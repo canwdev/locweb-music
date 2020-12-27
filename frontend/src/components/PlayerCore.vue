@@ -105,7 +105,7 @@ export default defineComponent({
 .player-core {
   position: fixed;
   z-index: 90;
-  right: 0;
+  right: 10px;
   bottom: 60px;
 }
 </style>
