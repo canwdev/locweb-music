@@ -21,8 +21,8 @@ export default defineComponent({
       return store.getters.musicItem
     })
 
-    const source = computed((): string => {
-      return musicItem.value.getSource()
+    const source = computed((): string | null => {
+      return musicItem.value.getSource() || null
     })
 
     const paused = computed({
@@ -41,13 +41,6 @@ export default defineComponent({
       if (!audio) {
         return
       }
-      audio.addEventListener('play', () => {
-        paused.value = false
-      })
-
-      audio.addEventListener('pause', () => {
-        paused.value = true
-      })
     }
 
 
@@ -71,13 +64,27 @@ export default defineComponent({
     onMounted(() => {
       console.log('ACTION_TOGGLE_PLAY')
       bus.on(ACTION_TOGGLE_PLAY, togglePlay)
+      audio.addEventListener('play', () => {
+        paused.value = false
+      })
+
+      audio.addEventListener('pause', () => {
+        paused.value = true
+      })
+
+      audio.addEventListener('error', (error) => {
+        window.$swal.fire({
+          toast: true,
+          timer: 1500,
+          icon: 'error',
+          title: 'Load fail or no supported source',
+          showConfirmButton: false,
+        })
+        console.error(error)
+      })
     })
     onBeforeUnmount(() => {
       bus.off(ACTION_TOGGLE_PLAY, togglePlay)
-      if (audio) {
-        audio.removeEventListener('play')
-        audio.removeEventListener('pause')
-      }
     })
 
     return {

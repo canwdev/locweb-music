@@ -15,13 +15,14 @@
 <script lang="ts">
 import {defineComponent} from 'vue';
 import Navbar from '@/components/Navbar.vue';
-import HomeList from '@/components/HomeList.vue';
+import HomeList from '@/components/HomeList/index.vue';
 import Actionbar from '@/components/Actionbar.vue';
 import {getList} from "@/api/music.ts";
 import {MusicItem} from "@/enum";
 import bus, {
   ACTION_TOGGLE_PLAY,
 } from "@/utils/bus";
+import {isSupportedMusicFormat} from "@/utils/is";
 
 export default defineComponent({
   name: 'Home',
@@ -67,6 +68,12 @@ export default defineComponent({
         })
         this.musicList = res
       } catch (e) {
+        window.$swal.fire({
+          toast: true,
+          icon: 'error',
+          title: e.message,
+          showConfirmButton: false,
+        })
         console.error(e)
       } finally {
         this.isLoading = false
@@ -82,14 +89,25 @@ export default defineComponent({
         return
       }
 
-      this.$store.commit('setCurrentMusic', new MusicItem({
-        title: item.name,
-        filepath: item.path + item.name,
-      }))
+      if (isSupportedMusicFormat(item.name)) {
+        this.$store.commit('setCurrentMusic', new MusicItem({
+          title: item.name,
+          filepath: item.path + item.name,
+        }))
 
-      this.$nextTick(() => {
-        bus.emit(ACTION_TOGGLE_PLAY)
-      })
+        this.$nextTick(() => {
+          bus.emit(ACTION_TOGGLE_PLAY)
+        })
+      } else {
+        window.$swal.fire({
+          toast: true,
+          timer: 1500,
+          icon: 'info',
+          title: 'Format not support (yet)',
+          showConfirmButton: false,
+        })
+      }
+
     }
   }
 });
