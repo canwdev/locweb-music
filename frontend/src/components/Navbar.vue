@@ -59,6 +59,7 @@ export default defineComponent({
   height: 45px;
   box-shadow: $shadow-1;
   user-select: none;
+  z-index: 2;
 
   .btn-menu {
     width: 44px;

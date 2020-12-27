@@ -32,20 +32,20 @@ html, body {
 }
 
 
-.fade-enter-active {
-  animation: fade-in 0.5s;
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .3s;
 }
 
-.fade-leave-active {
-  animation: fade-in 0.5s reverse;
+.fade-enter, .fade-leave-to {
+  opacity: 0;
 }
 
-@keyframes fade-in {
-  0% {
-    opacity: 0;
+@keyframes rotating {
+  from {
+    transform: rotate(0deg);
   }
-  100% {
-    opacity: 1;
+  to {
+    transform: rotate(180deg);
   }
 }
 

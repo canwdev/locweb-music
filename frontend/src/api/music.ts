@@ -5,6 +5,6 @@ const service = new Service({
   baseURL: HOST_URL + '/api'
 })
 
-export function getList() {
-  return service.get('/music/list')
+export function getList(params) {
+  return service.get('/music/list', {params})
 }

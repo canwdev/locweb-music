@@ -2,15 +2,18 @@
   <div class="home">
     <Navbar/>
     <HomeList
-      :list="musicList"
-      @onItemClick="handleItemClick"
+        :is-loading="isLoading"
+        :list="musicList"
+        :show-up="directories.length > 0"
+        @onItemClick="handleItemClick"
+        @goUpDir="goUpDir"
     />
     <Actionbar/>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import {defineComponent} from 'vue';
 import Navbar from '@/components/Navbar.vue';
 import HomeList from '@/components/HomeList.vue';
 import Actionbar from '@/components/Actionbar.vue';
@@ -28,20 +31,60 @@ export default defineComponent({
     Actionbar,
   },
   data() {
+    const directories: Array<any> = [];
     return {
-      musicList: []
+      musicList: [],
+      isLoading: false,
+      directories
+    }
+  },
+  watch: {
+    directories: {
+      handler(val) {
+        console.log(val)
+        this.getFileList()
+      },
+      deep: true
     }
   },
   mounted() {
-    getList().then(res => {
-      this.musicList = res
-    })
+    this.getFileList()
   },
   methods: {
-    handleItemClick(item) {
+    async getFileList() {
+      if (this.isLoading) {
+        return
+      }
+      try {
+        this.isLoading = true
+        let path = ''
+        this.directories.forEach((item: any) => {
+          path += (item.name + '/')
+        })
+
+        const res = await getList({
+          path
+        })
+        this.musicList = res
+      } catch (e) {
+        console.error(e)
+      } finally {
+        this.isLoading = false
+      }
+
+    },
+    goUpDir() {
+      this.directories.pop()
+    },
+    handleItemClick(item: any) {
+      if (item.isDirectory) {
+        this.directories.push(item)
+        return
+      }
+
       this.$store.commit('setCurrentMusic', new MusicItem({
-        title: item,
-        filepath: item
+        title: item.name,
+        filepath: item.path + item.name,
       }))
 
       this.$nextTick(() => {

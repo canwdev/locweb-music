@@ -99,6 +99,6 @@ export default defineComponent({
   position: fixed;
   z-index: 90;
   right: 0;
-  top: 50px;
+  bottom: 60px;
 }
 </style>
