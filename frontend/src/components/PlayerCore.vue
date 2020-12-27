@@ -43,7 +43,6 @@ export default defineComponent({
       }
     }
 
-
     const play = () => {
       audio.play()
     }
@@ -62,7 +61,6 @@ export default defineComponent({
     }
 
     onMounted(() => {
-      console.log('ACTION_TOGGLE_PLAY')
       bus.on(ACTION_TOGGLE_PLAY, togglePlay)
       audio.addEventListener('play', () => {
         paused.value = false

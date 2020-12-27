@@ -25,7 +25,7 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const { item, active } = toRefs(props)
+    const {item, active} = toRefs(props)
 
     const isSupport = computed(() => {
       return isSupportedMusicFormat(item.value.filename)
@@ -67,11 +67,11 @@ export default defineComponent({
   align-items: center;
   width: 100%;
   box-sizing: border-box;
+
   &.active {
-    .iconfont {
-      color: $pink;
-    }
+    color: $pink;
   }
+
   .iconfont {
     margin-right: 5px;
   }

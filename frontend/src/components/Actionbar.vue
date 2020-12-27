@@ -8,18 +8,25 @@
       <span v-show="musicItem.artist" class="artist text-overflow">{{ musicItem.artist }}</span>
     </button>
     <div class="buttons-scroll flex items-center ">
-      <button class="btn-no-style btn-action">
+      <button
+          @click="previous"
+          class="btn-no-style btn-action">
         <i class="iconfont icon-skip-previous" title="Previous"></i>
       </button>
+
       <button
           @click="togglePlay"
           class="btn-no-style btn-action">
         <i v-show="paused" class="iconfont icon-play-arrow" title="Play"></i>
         <i v-show="!paused" class="iconfont icon-pause" title="Pause"></i>
       </button>
-      <button class="btn-no-style btn-action">
+
+      <button
+          @click="next"
+          class="btn-no-style btn-action">
         <i class="iconfont icon-skip-next" title="Next"></i>
       </button>
+
       <button class="btn-no-style btn-action">
         <i class="iconfont icon-volume-up" title="Volume"></i>
       </button>

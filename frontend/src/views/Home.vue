@@ -2,7 +2,6 @@
   <div class="home">
     <Navbar/>
 
-    <button style="position:fixed; z-index: 999">{{ playingIndex }}</button>
     <HomeList
         v-show="!isPlaylist"
         :is-loading="isLoading"
@@ -32,6 +31,8 @@ import {getList} from "@/api/music.ts";
 import {MusicItem, NavbarTabsEnum} from "@/enum";
 import bus, {
   ACTION_TOGGLE_PLAY,
+  ACTION_PREV,
+  ACTION_NEXT
 } from "@/utils/bus";
 import {isSupportedMusicFormat} from "@/utils/is";
 
@@ -83,6 +84,12 @@ export default defineComponent({
   },
   mounted() {
     this.getFileList()
+    bus.on(ACTION_PREV, this.playPrev)
+    bus.on(ACTION_NEXT, this.playNext)
+  },
+  beforeUnmount() {
+    bus.off(ACTION_PREV, this.playPrev)
+    bus.off(ACTION_NEXT, this.playNext)
   },
   methods: {
     async getFileList() {
@@ -163,7 +170,17 @@ export default defineComponent({
         this.$store.commit('setNavbarTab', NavbarTabsEnum.PLAYING)
         bus.emit(ACTION_TOGGLE_PLAY)
       })
-    }
+    },
+    playPrev() {
+      this.playingIndex = Math.max(0, this.playingIndex - 1)
+      const item = this.playlist[this.playingIndex]
+      this.playMusic(this.playlist, item)
+    },
+    playNext() {
+      this.playingIndex = Math.min(this.playlist.length - 1, this.playingIndex + 1)
+      const item = this.playlist[this.playingIndex]
+      this.playMusic(this.playlist, item)
+    },
   }
 });
 </script>
