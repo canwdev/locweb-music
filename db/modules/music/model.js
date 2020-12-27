@@ -11,7 +11,7 @@ const Model = sequelize.define('music', {
   hash: Sequelize.STRING,
   coverImage: Sequelize.STRING,
   filepath: Sequelize.STRING,
-  rating: Sequelize.STRING,
+  rating: Sequelize.NUMBER,
 }, { timestamps: false })
 
 sequelize.sync()

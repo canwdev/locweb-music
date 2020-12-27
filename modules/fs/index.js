@@ -9,10 +9,7 @@ module.exports = {
   async list(req, res, next) {
     try {
       const files = await fs.readdir(MUSIC_LIBRARY_PATH)
-      console.log(files)
-      return res.sendData({
-        files
-      })
+      return res.sendData(files)
     } catch (error) {
       next(error)
     }

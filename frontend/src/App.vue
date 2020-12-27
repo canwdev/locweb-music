@@ -1,6 +1,19 @@
 <template>
+  <PlayerCore/>
   <router-view/>
 </template>
+
+<script lang="ts">
+import {defineComponent} from 'vue';
+import PlayerCore from '@/components/PlayerCore.vue';
+
+export default defineComponent({
+  name: 'App',
+  components: {
+    PlayerCore
+  }
+})
+</script>
 
 <style lang="scss">
 #app {

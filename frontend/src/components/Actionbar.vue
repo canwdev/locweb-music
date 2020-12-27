@@ -2,12 +2,14 @@
   <div class="actionbar bg-glass-black flex items-center">
     <button class="btn-no-style btn-cover">Cover</button>
     <button class="btn-no-style btn-song">
-      <span class="title text-overflow">皇悠麗洞 ～Repeat of the World～</span>
-      <span class="artist text-overflow">茶太</span>
+      <span class="title text-overflow">{{ musicItem.title   }}</span>
+      <span class="artist text-overflow">{{ musicItem.artist }}</span>
     </button>
     <div class="buttons-scroll flex items-center ">
       <button class="btn-no-style btn-action">Prev.</button>
-      <button class="btn-no-style btn-action">Play</button>
+      <button
+          @click="togglePlay"
+          class="btn-no-style btn-action">{{ paused ? 'Play' : 'Pause'}}</button>
       <button class="btn-no-style btn-action">Next.</button>
       <button class="btn-no-style btn-action">Vol.</button>
       <button class="btn-no-style btn-action">Shuffle</button>
@@ -18,9 +20,34 @@
 
 <script lang="ts">
 import {defineComponent} from 'vue';
+import {MusicItem} from "@/enum";
+import bus, {
+  ACTION_TOGGLE_PLAY,
+  ACTION_PREV,
+  ACTION_NEXT
+} from "@/utils/bus";
 
 export default defineComponent({
-  name: 'Actionbar'
+  name: 'Actionbar',
+  computed: {
+    musicItem(): MusicItem {
+      return this.$store.getters.musicItem
+    },
+    paused(): boolean {
+      return this.$store.getters.paused
+    },
+  },
+  methods: {
+    previous() {
+      bus.emit(ACTION_PREV)
+    },
+    next() {
+      bus.emit(ACTION_NEXT)
+    },
+    togglePlay() {
+      bus.emit(ACTION_TOGGLE_PLAY)
+    }
+  }
 });
 </script>
 
@@ -53,12 +80,12 @@ export default defineComponent({
 
     .title {
       font-size: 14px;
-      margin-bottom: 5px;
     }
 
     &>span {
       display: block;
       width: 100%;
+      margin-top: 5px;
     }
   }
 

@@ -1,5 +1,4 @@
 import axios from 'axios'
-import {isExternal} from "@/utils/is"
 
 function Service(config = {}) {
   const {

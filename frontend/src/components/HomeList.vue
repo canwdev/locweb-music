@@ -1,12 +1,13 @@
 <template>
   <div class="home-list">
-    <div
-        class="list-item"
+    <button
+        class="btn-no-style list-item"
         v-for="(item, index) in list"
         :key="index"
+        @click="$emit('onItemClick', item)"
     >
       <span class="text-overflow">{{ item }}</span>
-    </div>
+    </button>
   </div>
 </template>
 

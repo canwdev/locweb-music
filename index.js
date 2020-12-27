@@ -2,7 +2,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const app = express()
 const path = require('path');
-const {DATA_BASE_PATH} = require('./config')
+const {DATA_BASE_PATH, MUSIC_LIBRARY_PATH} = require('./config')
 const {IMAGE_DIR} = require('./config/enum')
 const {normalizePort} = require('./utils')
 
@@ -16,6 +16,7 @@ app.use(bodyParser.json())
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', express.static(path.join(__dirname, 'frontend-dist')));
 app.use('/images', express.static(path.join(DATA_BASE_PATH, IMAGE_DIR)));
+app.use('/mfs', express.static(MUSIC_LIBRARY_PATH));
 
 // Create Router
 app.use('/', require('./routes/index'));
