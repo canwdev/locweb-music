@@ -38,11 +38,14 @@ export default defineComponent({
     const setAudioRef = (el) => {
       audio = el
 
-      el.addEventListener('play', () => {
+      if (!audio) {
+        return
+      }
+      audio.addEventListener('play', () => {
         paused.value = false
       })
 
-      el.addEventListener('pause', () => {
+      audio.addEventListener('pause', () => {
         paused.value = true
       })
     }
@@ -66,10 +69,15 @@ export default defineComponent({
     }
 
     onMounted(() => {
+      console.log('ACTION_TOGGLE_PLAY')
       bus.on(ACTION_TOGGLE_PLAY, togglePlay)
     })
     onBeforeUnmount(() => {
       bus.off(ACTION_TOGGLE_PLAY, togglePlay)
+      if (audio) {
+        audio.removeEventListener('play')
+        audio.removeEventListener('pause')
+      }
     })
 
     return {
@@ -89,7 +97,7 @@ export default defineComponent({
 <style lang="scss" scoped>
 .player-core {
   position: fixed;
-  z-index: 100;
+  z-index: 90;
   right: 0;
   top: 50px;
 }

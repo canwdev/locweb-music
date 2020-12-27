@@ -4,7 +4,7 @@
   />
 
   <div class="navbar bg-glass-black flex">
-    <button class="btn-no-style btn-menu" @click="isShowMenu = true">Menu</button>
+    <button class="btn-no-style btn-menu" @click="isShowMenu = true"><i class="iconfont icon-menu"></i></button>
     <button
         v-for="item in tabs"
         :key="item.value"
@@ -62,7 +62,7 @@ export default defineComponent({
 
   .btn-menu {
     width: 44px;
-    font-size: 12px;
+    font-size: 22px;
   }
 
   .btn-tab {

@@ -6,8 +6,10 @@
     <transition name="menuSlide">
       <div class="menu bg-glass-black" v-show="mVisible">
         <div class="menu-title flex items-center justify-between">
-          <span>Menu</span>
-          <button class="btn-no-style" @click="mVisible=false">X</button>
+          <span><i class="iconfont icon-menu"></i> Menu</span>
+          <button class="btn-no-style" @click="mVisible=false">
+            <i class="iconfont icon-clear"></i>
+          </button>
         </div>
 
         <template
@@ -17,7 +19,8 @@
           <div v-if="item.subtitle" class="subtitle">{{ item.name }}</div>
           <button
               v-else
-              class="btn-no-style menu-item">{{ item.name }}
+              class="btn-no-style menu-item flex items-center">
+            <i v-if="item.icon" class="iconfont" :class="item.icon"></i> {{ item.name }}
           </button>
         </template>
 
@@ -42,17 +45,17 @@ export default defineComponent({
     return {
       menuList: [
         {name: 'Music', subtitle: true},
-        {name: 'File System'},
-        {name: 'Playlists'},
-        {name: 'Albums'},
-        {name: 'Artists'},
-        {name: 'Recent'},
-        {name: 'Rated'},
-        {name: 'Search'},
+        {name: 'File System', icon: 'icon-storage'},
+        {name: 'Playlists', icon: 'icon-queue-muspx'},
+        {name: 'Albums', icon: 'icon-album'},
+        {name: 'Artists', icon: 'icon-mpx'},
+        {name: 'Recent', icon: 'icon-history'},
+        {name: 'Rated', icon: 'icon-stars'},
+        {name: 'Search', icon: 'icon-search'},
         {name: 'System', subtitle: true},
-        {name: 'Settings'},
-        {name: 'User Management'},
-        {name: 'Rescan Media'},
+        {name: 'Settings', icon: 'icon-settings'},
+        {name: 'User Management', icon: 'icon-account-circle'},
+        {name: 'Rescan Media', icon: 'icon-loop'},
       ]
     }
   },
@@ -100,6 +103,11 @@ export default defineComponent({
       line-height: 45px;
       padding: 0 10px;
       font-weight: bold;
+      background: rgba(0, 0, 0, 0.9);
+
+      .iconfont {
+        margin-right: 2px;
+      }
     }
 
     .subtitle {
@@ -110,7 +118,7 @@ export default defineComponent({
       border-right: 0;
       font-size: 12px;
       font-weight: bold;
-      background: black;
+      background: rgba(0, 0, 0, 0.8);
     }
 
     .menu-item {
@@ -118,12 +126,15 @@ export default defineComponent({
         border-top: 1px solid $grey-9;
       }
 
-      font-size: 14px;
+      .iconfont {
+        margin-right: 5px;
+      }
+
+      font-size: 16px;
       display: block;
       width: 100%;
       line-height: 40px;
       text-align: left;
-      margin: 0 10px;
       padding: 0 10px;
     }
   }

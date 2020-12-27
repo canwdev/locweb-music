@@ -4,6 +4,8 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 
+import './assets/iconfont/iconfont.css'
+import './assets/iconfont/iconfont'
 import 'normalize.css'
 import './style/tools.sass'
 import './style/theme.scss'

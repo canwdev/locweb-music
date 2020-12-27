@@ -43,7 +43,10 @@ export default defineComponent({
         title: item,
         filepath: item
       }))
-      bus.emit(ACTION_TOGGLE_PLAY)
+
+      this.$nextTick(() => {
+        bus.emit(ACTION_TOGGLE_PLAY)
+      })
     }
   }
 });

@@ -1,19 +1,34 @@
 <template>
   <div class="actionbar bg-glass-black flex items-center">
-    <button class="btn-no-style btn-cover">Cover</button>
+    <button class="btn-no-style btn-cover">
+      <i class="iconfont icon-ios-musical-notes"></i>
+    </button>
     <button class="btn-no-style btn-song">
-      <span class="title text-overflow">{{ musicItem.title   }}</span>
-      <span class="artist text-overflow">{{ musicItem.artist }}</span>
+      <span class="title text-overflow">{{ musicItem.title }}</span>
+      <span v-show="musicItem.artist" class="artist text-overflow">{{ musicItem.artist }}</span>
     </button>
     <div class="buttons-scroll flex items-center ">
-      <button class="btn-no-style btn-action">Prev.</button>
+      <button class="btn-no-style btn-action">
+        <i class="iconfont icon-skip-previous" title="Previous"></i>
+      </button>
       <button
           @click="togglePlay"
-          class="btn-no-style btn-action">{{ paused ? 'Play' : 'Pause'}}</button>
-      <button class="btn-no-style btn-action">Next.</button>
-      <button class="btn-no-style btn-action">Vol.</button>
-      <button class="btn-no-style btn-action">Shuffle</button>
-      <button class="btn-no-style btn-action">Loop</button>
+          class="btn-no-style btn-action">
+        <i v-show="paused" class="iconfont icon-play-arrow" title="Play"></i>
+        <i v-show="!paused" class="iconfont icon-pause" title="Pause"></i>
+      </button>
+      <button class="btn-no-style btn-action">
+        <i class="iconfont icon-skip-next" title="Next"></i>
+      </button>
+      <button class="btn-no-style btn-action">
+        <i class="iconfont icon-volume-up" title="Volume"></i>
+      </button>
+      <button class="btn-no-style btn-action">
+        <i class="iconfont icon-shuffle" title="Shuffle"></i>
+      </button>
+      <button class="btn-no-style btn-action">
+        <i class="iconfont icon-repeat" title="Loop"></i>
+      </button>
     </div>
   </div>
 </template>
@@ -66,7 +81,7 @@ export default defineComponent({
     width: 50px;
     height: 50px;
     background: $pink;
-    font-size: 12px;
+    font-size: 28px;
     border-radius: 2px;
   }
 
@@ -82,10 +97,13 @@ export default defineComponent({
       font-size: 14px;
     }
 
+    .artist {
+      margin-top: 5px;
+    }
+
     &>span {
       display: block;
       width: 100%;
-      margin-top: 5px;
     }
   }
 
@@ -97,8 +115,11 @@ export default defineComponent({
     &>button {
       height: 100%;
       width: 55px;
-      font-size: 12px;
+      font-size: 28px;
       flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       &+button {
         border-left: 1px solid $grey-8;
       }
