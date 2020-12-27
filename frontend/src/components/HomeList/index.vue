@@ -19,6 +19,7 @@
         v-for="(item, index) in list"
         :key="index"
         :item="item"
+        :active="activeIndex === index"
         @click="$emit('onItemClick', item)"
     />
 
@@ -47,6 +48,10 @@ export default defineComponent({
     showUp: {
       type: Boolean,
       default: false
+    },
+    activeIndex: {
+      type: Number,
+      default: null
     },
     list: {
       type: Array

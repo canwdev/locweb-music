@@ -1,10 +1,13 @@
-export const HOST_URL = process.env.VUE_APP_API_HOST || ''
+// server api url
+export const HOST_URL = process.env.VUE_APP_API_HOST || '';
 
+// navbar tab index
 export const NavbarTabsEnum = {
   MAIN: 0,
   PLAYING: 1,
 }
 
+// single song data
 export class MusicItem {
   title: string;
   artist: string;
@@ -14,7 +17,7 @@ export class MusicItem {
   hash: string;
   coverImage: string;
   rating: number;
-  // fs directory
+  // below are data for filesystem or directories
   filename: string;
   isDirectory: boolean;
   path: string;

@@ -1,9 +1,9 @@
 <template>
   <button
       class="btn-no-style list-item"
-      :class="{grey: !isSupport && !item.isDirectory}"
+      :class="{grey: !isSupport && !item.isDirectory, active}"
   >
-    <i class="iconfont" :class="iconClass"></i>
+    <i class="iconfont" :class="[iconClass]"></i>
     <span class="text-overflow">{{ title }}</span>
   </button>
 </template>
@@ -11,7 +11,6 @@
 <script lang="ts">
 import {defineComponent, toRefs, computed} from 'vue';
 import {isSupportedMusicFormat} from "@/utils/is";
-import {MusicItem} from "@/enum";
 
 export default defineComponent({
   name: "ListItem",
@@ -19,16 +18,23 @@ export default defineComponent({
     item: {
       type: Object,
       required: true
-    }
+    },
+    active: {
+      type: Boolean,
+      default: false
+    },
   },
   setup(props) {
-    const { item } = toRefs(props)
+    const { item, active } = toRefs(props)
 
     const isSupport = computed(() => {
       return isSupportedMusicFormat(item.value.filename)
     })
 
     const iconClass = computed(() => {
+      if (active.value) {
+        return 'icon-play-arrow'
+      }
       if (item.value.isDirectory) {
         return 'icon-folder'
       }
@@ -61,7 +67,11 @@ export default defineComponent({
   align-items: center;
   width: 100%;
   box-sizing: border-box;
-
+  &.active {
+    .iconfont {
+      color: $pink;
+    }
+  }
   .iconfont {
     margin-right: 5px;
   }

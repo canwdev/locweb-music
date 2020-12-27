@@ -6,11 +6,11 @@ const playlist: Array<MusicItem> = [];
 
 export default createStore({
   state: {
-    musicItem: new MusicItem(),
-    navbarTab: NavbarTabsEnum.MAIN,
-    playlist,
-    playingIndex: 0,
-    paused: true
+    musicItem: new MusicItem(), // current playing music
+    navbarTab: NavbarTabsEnum.MAIN, // navbar index
+    playlist, // current playing list
+    playingIndex: 0, // playing music index in playlist
+    paused: true // is current playing paused
   },
   getters: {
     musicItem: state => state.musicItem,

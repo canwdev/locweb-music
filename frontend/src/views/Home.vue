@@ -1,8 +1,10 @@
 <template>
   <div class="home">
     <Navbar/>
+
+    <button style="position:fixed; z-index: 999">{{ playingIndex }}</button>
     <HomeList
-        v-show="navbarTab === NavbarTabsEnum.MAIN"
+        v-show="!isPlaylist"
         :is-loading="isLoading"
         :list="fileList"
         :show-up="directories.length > 0"
@@ -10,9 +12,10 @@
         @goUpDir="goUpDir"
     />
     <HomeList
-        v-show="navbarTab === NavbarTabsEnum.PLAYING"
+        v-show="isPlaylist"
         :is-loading="isLoading"
         :list="playlist"
+        :active-index="playingIndex"
         @onItemClick="handleItemClick"
         @goUpDir="goUpDir"
     />
@@ -22,7 +25,6 @@
 
 <script lang="ts">
 import {defineComponent} from 'vue';
-import {mapGetters} from 'vuex';
 import Navbar from '@/components/Navbar.vue';
 import HomeList from '@/components/HomeList/index.vue';
 import Actionbar from '@/components/Actionbar.vue';
@@ -60,7 +62,24 @@ export default defineComponent({
     }
   },
   computed: {
-    ...mapGetters(['navbarTab', 'playlist']),
+    playlist() {
+      return this.$store.getters.playlist
+    },
+    navbarTab() {
+      return this.$store.getters.navbarTab
+    },
+    playingIndex: {
+      get() {
+        return this.$store.getters.playingIndex
+      },
+      set(val) {
+        this.$store.commit('setPlayingIndex', val)
+      }
+    },
+    isPlaylist() {
+      // TODO this.navbarTab
+      return this.$store.getters.navbarTab === NavbarTabsEnum.PLAYING
+    }
   },
   mounted() {
     this.getFileList()
@@ -81,7 +100,9 @@ export default defineComponent({
           path
         })
         this.fileList = list.map(file => {
-          return this.musicItemBuilder(file)
+          return new MusicItem({
+            ...file
+          })
         })
 
       } catch (e) {
@@ -100,41 +121,48 @@ export default defineComponent({
     goUpDir() {
       this.directories.pop()
     },
-    musicItemBuilder(item) {
-      return new MusicItem({
-        ...item
-      })
-    },
-    handleItemClick(item: any) {
+    handleItemClick(item: MusicItem) {
+      // jump folder
       if (item.isDirectory) {
         this.directories.push(item)
         return
       }
 
-      if (isSupportedMusicFormat(item.filename)) {
-        this.$store.commit('setPlaylist', this.fileList.filter((val: any) => {
-          return isSupportedMusicFormat(val.filename)
-        }).map((item: any) => {
-          return this.musicItemBuilder(item)
-        }))
-
-        this.$store.commit('setMusicItem', this.musicItemBuilder(item))
-
-        this.$nextTick(() => {
-          this.$store.commit('setNavbarTab', NavbarTabsEnum.PLAYING)
-
-          bus.emit(ACTION_TOGGLE_PLAY)
-        })
+      // play a song
+      if (this.isPlaylist) {
+        this.playMusic(this.playlist, item)
       } else {
-        window.$swal.fire({
-          toast: true,
-          timer: 1500,
-          icon: 'info',
-          title: 'Format not support (yet)',
-          showConfirmButton: false,
-        })
-      }
+        if (isSupportedMusicFormat(item.filename)) {
 
+          // format data
+          const list = this.fileList.filter((val: any) => {
+            return isSupportedMusicFormat(val.filename)
+          })
+          this.$store.commit('setPlaylist', list)
+          // set current playing
+          this.playMusic(list, item)
+        } else {
+          window.$swal.fire({
+            toast: true,
+            timer: 1500,
+            icon: 'info',
+            title: 'Format not support (yet)',
+            showConfirmButton: false,
+          })
+        }
+      }
+    },
+    playMusic(list, item) {
+      this.$store.commit('setMusicItem', item)
+      this.playingIndex = list.findIndex((val: any) => {
+        return val.filename === item.filename
+      })
+
+      this.$nextTick(() => {
+        // jump to playing list
+        this.$store.commit('setNavbarTab', NavbarTabsEnum.PLAYING)
+        bus.emit(ACTION_TOGGLE_PLAY)
+      })
     }
   }
 });
