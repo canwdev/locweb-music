@@ -4,7 +4,7 @@
       <i class="iconfont icon-ios-musical-notes"></i>
     </button>
     <button class="btn-no-style btn-song">
-      <span class="title text-overflow">{{ musicItem.title }}</span>
+      <span class="title text-overflow">{{ musicItem.title || musicItem.filename }}</span>
       <span v-show="musicItem.artist" class="artist text-overflow">{{ musicItem.artist }}</span>
     </button>
     <div class="buttons-scroll flex items-center ">

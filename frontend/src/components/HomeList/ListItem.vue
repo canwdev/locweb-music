@@ -3,7 +3,7 @@
       class="btn-no-style list-item"
   >
     <i class="iconfont" :class="iconClass"></i>
-    <span class="text-overflow">{{ item.name || item.title }}</span>
+    <span class="text-overflow">{{ title }}</span>
   </button>
 </template>
 
@@ -31,14 +31,23 @@ export default defineComponent({
       if (item.value.isDirectory) {
         return 'icon-folder'
       }
-      if (isSupportedMusicFormat(item.value.name)) {
+      if (isSupportedMusicFormat(item.value.filename)) {
         return 'icon-audiotrack'
       }
       return 'icon-insert-drive-file'
     })
 
+    const title = computed(() => {
+      if (item.value.title) {
+        return `${item.value.title} - ${item.value.author}`
+      } else {
+        return item.value.filename
+      }
+    })
+
     return {
-      iconClass
+      iconClass,
+      title
     }
   }
 })

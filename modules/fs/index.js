@@ -15,7 +15,7 @@ module.exports = {
       const result = files.map(file => {
         const stat = fs.statSync(path.join(dir, file))
         return {
-          name: file,
+          filename: file,
           isDirectory: stat.isDirectory(),
           path: _path,
           size: stat.size

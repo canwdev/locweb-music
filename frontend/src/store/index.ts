@@ -20,15 +20,12 @@ export default createStore({
   },
   mutations: {
     setMusicItem: (state, payload: MusicItem) => {
-      console.log('setCurrent', payload)
       state.musicItem = payload
     },
     setIsPlaylistTab: (state, payload: boolean) => {
-      console.log('setIsPlaylist', payload)
       state.isPlaylistTab = payload
     },
     setPlaylist: (state, payload: Array<MusicItem>) => {
-      console.log('setPlaylist', payload)
       state.playlist = payload
     },
     updatePlaylist: (state, payload: MusicItem) => {

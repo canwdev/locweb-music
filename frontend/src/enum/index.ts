@@ -8,8 +8,12 @@ export class MusicItem {
   year: string;
   hash: string;
   coverImage: string;
-  filepath: string;
   rating: number;
+  // fs directory
+  filename: string;
+  isDirectory: boolean;
+  path: string;
+  size: number;
 
   constructor(item: any = {}) {
     this.title = item.title
@@ -19,8 +23,15 @@ export class MusicItem {
     this.year = item.year
     this.hash = item.hash
     this.coverImage = item.coverImage
-    this.filepath = item.filepath
     this.rating = item.rating
+    this.filename = item.filename
+    this.isDirectory = item.isDirectory
+    this.path = item.path
+    this.size = item.size
+  }
+
+  get filepath() {
+    return this.path + this.filename
   }
 
   getSource(): string {

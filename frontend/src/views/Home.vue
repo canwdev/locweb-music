@@ -34,8 +34,9 @@ export default defineComponent({
   },
   data() {
     const directories: Array<any> = [];
+    const fileList: Array<MusicItem> = [];
     return {
-      fileList: [],
+      fileList,
       isLoading: false,
       directories
     }
@@ -70,13 +71,15 @@ export default defineComponent({
         this.isLoading = true
         let path = ''
         this.directories.forEach((item: any) => {
-          path += (item.name + '/')
+          path += (item.filename + '/')
         })
 
-        const res = await getList({
+        const list = await getList({
           path
         })
-        this.fileList = res
+        this.fileList = list.map(file => {
+          return this.musicItemBuilder(file)
+        })
       } catch (e) {
         window.$swal.fire({
           toast: true,
@@ -95,8 +98,7 @@ export default defineComponent({
     },
     musicItemBuilder(item) {
       return new MusicItem({
-        title: item.name,
-        filepath: item.path + item.name,
+        ...item
       })
     },
     handleItemClick(item: any) {
@@ -105,9 +107,9 @@ export default defineComponent({
         return
       }
 
-      if (isSupportedMusicFormat(item.name)) {
-        this.$store.commit('setPlaylist', this.fileList.filter((item: any) => {
-          return isSupportedMusicFormat(item.name)
+      if (isSupportedMusicFormat(item.filename)) {
+        this.$store.commit('setPlaylist', this.fileList.filter((val: any) => {
+          return isSupportedMusicFormat(val.filename)
         }).map((item: any) => {
           return this.musicItemBuilder(item)
         }))

@@ -1,11 +1,14 @@
 <template>
   <div class="home-list">
     <Loading :visible="isLoading"/>
+    <NoData
+        :visible="!isLoading && list.length === 0"
+        text="List is empty"/>
 
     <ListItem
         :item="{
           isDirectory: true,
-          name: '..'
+          filename: '..'
         }"
         v-show="showUp"
         @click="$emit('goUpDir')"
@@ -17,6 +20,8 @@
         :item="item"
         @click="$emit('onItemClick', item)"
     />
+
+
   </div>
 </template>
 
@@ -24,12 +29,14 @@
 import {defineComponent} from 'vue';
 import Loading from '@/components/Loading.vue'
 import ListItem from './ListItem.vue'
+import NoData from '@/components/NoData.vue'
 
 export default defineComponent({
   name: 'HomeList',
   components: {
     Loading,
-    ListItem
+    ListItem,
+    NoData
   },
   props: {
     isLoading: {
