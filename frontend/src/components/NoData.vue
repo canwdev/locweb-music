@@ -1,5 +1,5 @@
 <template>
-  <div v-show="visible" class="no-data">
+  <div class="no-data">
     <img src="@/assets/images/no-data.png" alt="No data!">
     <div v-if="text" class="text">{{ text }}</div>
   </div>
@@ -11,10 +11,6 @@ import {defineComponent} from 'vue';
 export default defineComponent({
   name: "NoData",
   props: {
-    visible: {
-      type: Boolean,
-      default: false
-    },
     text: {
       type: String,
       default: null

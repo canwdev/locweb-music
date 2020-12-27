@@ -2,9 +2,17 @@
   <div class="home">
     <Navbar/>
     <HomeList
+        v-show="!isPlaylistTab"
         :is-loading="isLoading"
-        :list="unitedList"
-        :show-up="directories.length > 0 && !isPlaylistTab"
+        :list="fileList"
+        :show-up="directories.length > 0"
+        @onItemClick="handleItemClick"
+        @goUpDir="goUpDir"
+    />
+    <HomeList
+        v-show="isPlaylistTab"
+        :is-loading="isLoading"
+        :list="playlist"
         @onItemClick="handleItemClick"
         @goUpDir="goUpDir"
     />
@@ -52,12 +60,6 @@ export default defineComponent({
   },
   computed: {
     ...mapGetters(['isPlaylistTab', 'playlist']),
-    unitedList(): any {
-      if (this.isPlaylistTab) {
-        return this.playlist
-      }
-      return this.fileList
-    }
   },
   mounted() {
     this.getFileList()
@@ -80,6 +82,7 @@ export default defineComponent({
         this.fileList = list.map(file => {
           return this.musicItemBuilder(file)
         })
+
       } catch (e) {
         window.$swal.fire({
           toast: true,
@@ -117,6 +120,8 @@ export default defineComponent({
         this.$store.commit('setMusicItem', this.musicItemBuilder(item))
 
         this.$nextTick(() => {
+          this.$store.commit('setIsPlaylistTab', true)
+
           bus.emit(ACTION_TOGGLE_PLAY)
         })
       } else {

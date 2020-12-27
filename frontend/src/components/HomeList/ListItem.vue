@@ -1,6 +1,7 @@
 <template>
   <button
       class="btn-no-style list-item"
+      :class="{grey: !isSupport && !item.isDirectory}"
   >
     <i class="iconfont" :class="iconClass"></i>
     <span class="text-overflow">{{ title }}</span>
@@ -23,15 +24,15 @@ export default defineComponent({
   setup(props) {
     const { item } = toRefs(props)
 
-    const iconClass = computed(() => {
-      if (item.value instanceof MusicItem) {
-        return 'icon-audiotrack'
-      }
+    const isSupport = computed(() => {
+      return isSupportedMusicFormat(item.value.filename)
+    })
 
+    const iconClass = computed(() => {
       if (item.value.isDirectory) {
         return 'icon-folder'
       }
-      if (isSupportedMusicFormat(item.value.filename)) {
+      if (isSupport.value) {
         return 'icon-audiotrack'
       }
       return 'icon-insert-drive-file'
@@ -46,6 +47,7 @@ export default defineComponent({
     })
 
     return {
+      isSupport,
       iconClass,
       title
     }
@@ -64,11 +66,15 @@ export default defineComponent({
     margin-right: 5px;
   }
 
+  &.grey {
+    color: $grey;
+  }
+
   //& + .list-item {
   //  border-top: $layout-border;
   //}
-  &:nth-child(2n) {
-    background: rgba(0, 0, 0, 0.1);
+  &:nth-child(odd) {
+    background: rgba(0, 0, 0, 0.08);
   }
 
   padding: 0 10px;

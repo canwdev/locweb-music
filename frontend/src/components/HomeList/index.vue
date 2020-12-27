@@ -1,9 +1,6 @@
 <template>
   <div class="home-list">
     <Loading :visible="isLoading"/>
-    <NoData
-        :visible="!isLoading && list.length === 0"
-        text="List is empty"/>
 
     <ListItem
         :item="{
@@ -13,6 +10,10 @@
         v-show="showUp"
         @click="$emit('goUpDir')"
     />
+
+    <NoData
+        v-if="!isLoading && list.length === 0"
+        text="List is empty"/>
 
     <ListItem
         v-for="(item, index) in list"
