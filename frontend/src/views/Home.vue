@@ -150,6 +150,7 @@ export default defineComponent({
       } else {
         if (isSupportedMusicFormat(item.filename)) {
 
+          this.$store.commit('clearShuffle')
           // format data
           const list = this.fileList.filter((val: any) => {
             return isSupportedMusicFormat(val.filename)

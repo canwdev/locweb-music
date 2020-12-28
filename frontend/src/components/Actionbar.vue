@@ -49,7 +49,7 @@
         <button class="btn-no-style btn-action">
           <i class="iconfont icon-volume-up" title="Volume"></i>
         </button>
-        <button class="btn-no-style btn-action" :class="{active: isRandom}" @click="isRandom = !isRandom">
+        <button class="btn-no-style btn-action" :class="{active: isRandom}" @click="toggleRandom">
           <i class="iconfont icon-shuffle" title="Shuffle"></i>
         </button>
         <button class="btn-no-style btn-action" @click="switchLoopMode">
@@ -79,6 +79,10 @@ export default defineComponent({
     })
     const paused = computed((): boolean => {
       return store.getters.paused
+    })
+
+    const playlist = computed((): Array<MusicItem> => {
+      return store.getters.playlist
     })
     const isRandom = computed({
       get() {
@@ -111,6 +115,21 @@ export default defineComponent({
       }
     })
 
+    const loopText = {
+      1: 'Play in order',
+      2: 'Sequential loop',
+      3: 'Reverse playback',
+      4: 'Single cycle',
+    }
+    const showTip = (text) => {
+      window.$swal.fire({
+        toast: true,
+        timer: 1000,
+        title: text,
+        showConfirmButton: false,
+      })
+    }
+
     return {
       // data
       LoopModeEnum,
@@ -130,6 +149,18 @@ export default defineComponent({
       togglePlay() {
         bus.emit(ACTION_TOGGLE_PLAY)
       },
+      toggleRandom() {
+        if (playlist.value.length === 0) {
+          return
+        }
+        const flag = !isRandom.value
+        if (flag) {
+          store.commit('setShuffle')
+        } else {
+          store.commit('setShuffleRestore')
+        }
+        showTip('Shuffle: ' + (flag ? 'ON' : 'OFF'))
+      },
       switchLoopMode() {
         let index = loopMode.value
         ++index
@@ -137,6 +168,7 @@ export default defineComponent({
           index = LoopModeEnum.NONE
         }
         loopMode.value = index
+        showTip(loopText[index])
       },
       formatTimeMS,
       seekbarProgressSeeking() {
