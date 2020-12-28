@@ -12,7 +12,7 @@ export default createStore({
     playingIndex: 0, // playing music index in playlist
     paused: true, // is current playing paused
     isRandom: false, // is random choose next song to play
-    loopMode: LoopModeEnum.SEQUENCE // music playing loop mode
+    loopMode: LoopModeEnum.LOOP_SEQUENCE // music playing loop mode
   },
   getters: {
     musicItem: state => state.musicItem,

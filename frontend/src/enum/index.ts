@@ -9,9 +9,9 @@ export const NavbarTabsEnum = {
 
 export const LoopModeEnum = {
   NONE: 1, // play stops after last track
-  SEQUENCE: 2, // Sequence play
-  REVERSE: 3,  // Reverse play
-  SINGLE: 4, // Single cycle
+  LOOP_SEQUENCE: 2, // Sequence play
+  LOOP_REVERSE: 3,  // Reverse play
+  LOOP_SINGLE: 4, // Single cycle
 }
 
 // single song data

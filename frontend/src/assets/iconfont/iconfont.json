@@ -6,6 +6,41 @@
   "description": "Material Design 音乐播放器",
   "glyphs": [
     {
+      "icon_id": "6988347",
+      "name": "arrow-downward",
+      "font_class": "arrow-downward",
+      "unicode": "eca5",
+      "unicode_decimal": 60581
+    },
+    {
+      "icon_id": "6988349",
+      "name": "arrow-forward",
+      "font_class": "arrow-forward",
+      "unicode": "eca7",
+      "unicode_decimal": 60583
+    },
+    {
+      "icon_id": "6988350",
+      "name": "arrow-upward",
+      "font_class": "arrow-upward",
+      "unicode": "eca8",
+      "unicode_decimal": 60584
+    },
+    {
+      "icon_id": "6986788",
+      "name": "help",
+      "font_class": "help",
+      "unicode": "e8c6",
+      "unicode_decimal": 59590
+    },
+    {
+      "icon_id": "6986991",
+      "name": "replay",
+      "font_class": "replay",
+      "unicode": "e983",
+      "unicode_decimal": 59779
+    },
+    {
       "icon_id": "13428904",
       "name": "ios-musical-notes",
       "font_class": "ios-musical-notes",

@@ -33,8 +33,8 @@
       <button class="btn-no-style btn-action" :class="{active: isRandom}" @click="isRandom = !isRandom">
         <i class="iconfont icon-shuffle" title="Shuffle"></i>
       </button>
-      <button class="btn-no-style btn-action">
-        <i class="iconfont icon-repeat" title="Loop"></i>
+      <button class="btn-no-style btn-action" @click="switchLoopMode">
+        <i class="iconfont" :class="btnLoopCls" title="Loop"></i>
       </button>
     </div>
   </div>
@@ -68,20 +68,41 @@ export default defineComponent({
       }
     })
     const loopMode = computed({
-      get() {
-        store.getters.loopMode
+      get(): number {
+        return store.getters.loopMode
       },
-      set(val) {
+      set(val: number) {
         store.commit('setLoopMode', val)
       }
     })
+    const btnLoopCls = computed((): string => {
+      switch (loopMode.value) {
+        case LoopModeEnum.NONE:
+          return 'icon-arrow-forward'
+        case LoopModeEnum.LOOP_SEQUENCE:
+          return 'icon-repeat'
+        case LoopModeEnum.LOOP_REVERSE:
+          return 'icon-arrow-back'
+        case LoopModeEnum.LOOP_SINGLE:
+          return 'icon-repeat-one'
+        default:
+          return 'icon-help'
+      }
+    })
+
+    const loopModeStart = LoopModeEnum.NONE
+    const loopModeEnd = LoopModeEnum.LOOP_SINGLE
 
     return {
+      // data
       LoopModeEnum,
+      // computed
       musicItem,
       paused,
       isRandom,
       loopMode,
+      btnLoopCls,
+      // methods
       previous() {
         bus.emit(ACTION_PREV)
       },
@@ -90,6 +111,14 @@ export default defineComponent({
       },
       togglePlay() {
         bus.emit(ACTION_TOGGLE_PLAY)
+      },
+      switchLoopMode() {
+        let index = loopMode.value
+        ++index
+        if (index > loopModeEnd) {
+          index = loopModeStart
+        }
+        loopMode.value = index
       }
     }
   }
