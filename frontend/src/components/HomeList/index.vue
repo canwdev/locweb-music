@@ -64,7 +64,7 @@ export default defineComponent({
 .home-list {
   height: 100%;
   overflow: auto;
-  padding: 45px 0 55px;
+  padding: 45px 0 80px;
   box-sizing: border-box;
   position: relative;
 

@@ -9,7 +9,7 @@
 <script lang="ts">
 import {defineComponent, onMounted, onBeforeUnmount, computed } from 'vue'
 import {MusicItem} from "@/enum";
-import bus, {ACTION_TOGGLE_PLAY} from "@/utils/bus";
+import bus, {ACTION_TOGGLE_PLAY, ACTION_PLAY_ENDED} from "@/utils/bus";
 import store from '@/store'
 
 export default defineComponent({
@@ -26,7 +26,6 @@ export default defineComponent({
     })
 
     const paused = computed({
-
       get(): boolean {
         return store.getters.paused
       },
@@ -70,6 +69,10 @@ export default defineComponent({
         paused.value = true
       })
 
+      audio.addEventListener('ended', () => {
+        bus.emit(ACTION_PLAY_ENDED)
+      })
+
       audio.addEventListener('error', (error) => {
         window.$swal.fire({
           toast: true,
@@ -104,6 +107,6 @@ export default defineComponent({
   position: fixed;
   z-index: 90;
   right: 10px;
-  bottom: 60px;
+  bottom: 80px;
 }
 </style>

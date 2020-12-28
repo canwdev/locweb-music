@@ -1,41 +1,61 @@
 <template>
-  <div class="actionbar bg-glass-black flex items-center">
-    <button class="btn-no-style btn-cover">
-      <i class="iconfont icon-ios-musical-notes"></i>
-    </button>
-    <button class="btn-no-style btn-song">
-      <span class="title text-overflow">{{ musicItem.title || musicItem.filename }}</span>
-      <span v-show="musicItem.artist" class="artist text-overflow">{{ musicItem.artist }}</span>
-    </button>
-    <div class="buttons-scroll flex items-center ">
-      <button
-          @click="previous"
-          class="btn-no-style btn-action">
-        <i class="iconfont icon-skip-previous" title="Previous"></i>
-      </button>
+  <div class="actionbar-wrapper">
+    <div class="progressbar bg-glass-black flex items-center justify-between">
+      <span class="time">{{ formatTimeMS(0) }}</span>
+      <div class="common-seekbar-box">
+<!--        <input-->
+<!--            ref="seekBar"-->
+<!--            type="range"-->
+<!--            min="0"-->
+<!--            :max="duration"-->
+<!--            :value="currentTime"-->
+<!--            @input="seekbarProgressSeeking"-->
+<!--            @change="seekbarProgressChange"-->
+<!--            class="common-seekbar seekbar-input"-->
+<!--        >-->
+      </div>
 
-      <button
-          @click="togglePlay"
-          class="btn-no-style btn-action">
-        <i v-show="paused" class="iconfont icon-play-arrow" title="Play"></i>
-        <i v-show="!paused" class="iconfont icon-pause" title="Pause"></i>
-      </button>
 
-      <button
-          @click="next"
-          class="btn-no-style btn-action">
-        <i class="iconfont icon-skip-next" title="Next"></i>
+      <span class="time">{{ formatTimeMS(0) }}</span>
+    </div>
+    <div class="actionbar bg-glass-black flex items-center">
+      <button class="btn-no-style btn-cover">
+        <i class="iconfont icon-ios-musical-notes"></i>
       </button>
+      <button class="btn-no-style btn-song">
+        <span class="title text-overflow">{{ musicItem.title || musicItem.filename }}</span>
+        <span v-show="musicItem.artist" class="artist text-overflow">{{ musicItem.artist }}</span>
+      </button>
+      <div class="buttons-scroll flex items-center ">
+        <button
+            @click="previous"
+            class="btn-no-style btn-action">
+          <i class="iconfont icon-skip-previous" title="Previous"></i>
+        </button>
 
-      <button class="btn-no-style btn-action">
-        <i class="iconfont icon-volume-up" title="Volume"></i>
-      </button>
-      <button class="btn-no-style btn-action" :class="{active: isRandom}" @click="isRandom = !isRandom">
-        <i class="iconfont icon-shuffle" title="Shuffle"></i>
-      </button>
-      <button class="btn-no-style btn-action" @click="switchLoopMode">
-        <i class="iconfont" :class="btnLoopCls" title="Loop"></i>
-      </button>
+        <button
+            @click="togglePlay"
+            class="btn-no-style btn-action">
+          <i v-show="paused" class="iconfont icon-play-arrow" title="Play"></i>
+          <i v-show="!paused" class="iconfont icon-pause" title="Pause"></i>
+        </button>
+
+        <button
+            @click="next"
+            class="btn-no-style btn-action">
+          <i class="iconfont icon-skip-next" title="Next"></i>
+        </button>
+
+        <button class="btn-no-style btn-action">
+          <i class="iconfont icon-volume-up" title="Volume"></i>
+        </button>
+        <button class="btn-no-style btn-action" :class="{active: isRandom}" @click="isRandom = !isRandom">
+          <i class="iconfont icon-shuffle" title="Shuffle"></i>
+        </button>
+        <button class="btn-no-style btn-action" @click="switchLoopMode">
+          <i class="iconfont" :class="btnLoopClass" title="Loop"></i>
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -49,6 +69,7 @@ import bus, {
   ACTION_PREV,
   ACTION_NEXT
 } from "@/utils/bus";
+import {formatTimeMS} from "@/utils";
 
 export default defineComponent({
   name: 'Actionbar',
@@ -75,7 +96,7 @@ export default defineComponent({
         store.commit('setLoopMode', val)
       }
     })
-    const btnLoopCls = computed((): string => {
+    const btnLoopClass = computed((): string => {
       switch (loopMode.value) {
         case LoopModeEnum.NONE:
           return 'icon-arrow-forward'
@@ -90,9 +111,6 @@ export default defineComponent({
       }
     })
 
-    const loopModeStart = LoopModeEnum.NONE
-    const loopModeEnd = LoopModeEnum.LOOP_SINGLE
-
     return {
       // data
       LoopModeEnum,
@@ -101,7 +119,7 @@ export default defineComponent({
       paused,
       isRandom,
       loopMode,
-      btnLoopCls,
+      btnLoopClass,
       // methods
       previous() {
         bus.emit(ACTION_PREV)
@@ -115,22 +133,45 @@ export default defineComponent({
       switchLoopMode() {
         let index = loopMode.value
         ++index
-        if (index > loopModeEnd) {
-          index = loopModeStart
+        if (index > LoopModeEnum.LOOP_SINGLE) {
+          index = LoopModeEnum.NONE
         }
         loopMode.value = index
-      }
+      },
+      formatTimeMS,
+      seekbarProgressSeeking() {
+        console.log('seekbarProgressSeeking')
+      },
+      seekbarProgressChange() {
+        console.log('seekbarProgressChange')
+      },
     }
   }
 });
 </script>
 
 <style lang="scss" scoped>
-.actionbar {
+.actionbar-wrapper {
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
+}
+
+.progressbar {
+  height: 25px;
+  width: 100%;
+  box-sizing: border-box;
+  border-top: 1px solid $grey-8;
+  border-bottom: 1px solid $grey-8;
+
+  .time {
+    width: 50px;
+    text-align: center;
+  }
+}
+
+.actionbar {
   height: 55px;
   box-shadow: $shadow-1;
   user-select: none;

@@ -28,11 +28,12 @@ import Navbar from '@/components/Navbar.vue';
 import HomeList from '@/components/HomeList/index.vue';
 import Actionbar from '@/components/Actionbar.vue';
 import {getList} from "@/api/music.ts";
-import {MusicItem, NavbarTabsEnum} from "@/enum";
+import {LoopModeEnum, MusicItem, NavbarTabsEnum} from "@/enum";
 import bus, {
   ACTION_TOGGLE_PLAY,
   ACTION_PREV,
-  ACTION_NEXT
+  ACTION_NEXT,
+  ACTION_PLAY_ENDED
 } from "@/utils/bus";
 import {isSupportedMusicFormat} from "@/utils/is";
 
@@ -69,6 +70,12 @@ export default defineComponent({
     navbarTab() {
       return this.$store.getters.navbarTab
     },
+    isRandom() {
+      return this.$store.getters.isRandom
+    },
+    loopMode() {
+      return this.$store.getters.loopMode
+    },
     playingIndex: {
       get() {
         return this.$store.getters.playingIndex
@@ -86,10 +93,12 @@ export default defineComponent({
     this.getFileList()
     bus.on(ACTION_PREV, this.playPrev)
     bus.on(ACTION_NEXT, this.playNext)
+    bus.on(ACTION_PLAY_ENDED, this.handlePlayEnded)
   },
   beforeUnmount() {
     bus.off(ACTION_PREV, this.playPrev)
     bus.off(ACTION_NEXT, this.playNext)
+    bus.off(ACTION_PLAY_ENDED, this.handlePlayEnded)
   },
   methods: {
     async getFileList() {
@@ -137,7 +146,7 @@ export default defineComponent({
 
       // play a song
       if (this.isPlaylist) {
-        this.playMusic(this.playlist, item)
+        this.playMusicFromList(this.playlist, item)
       } else {
         if (isSupportedMusicFormat(item.filename)) {
 
@@ -147,7 +156,7 @@ export default defineComponent({
           })
           this.$store.commit('setPlaylist', list)
           // set current playing
-          this.playMusic(list, item)
+          this.playMusicFromList(list, item)
         } else {
           window.$swal.fire({
             toast: true,
@@ -159,7 +168,7 @@ export default defineComponent({
         }
       }
     },
-    playMusic(list, item) {
+    playMusicFromList(list, item: MusicItem) {
       this.$store.commit('setMusicItem', item)
       this.playingIndex = list.findIndex((val: any) => {
         return val.filename === item.filename
@@ -171,16 +180,48 @@ export default defineComponent({
         bus.emit(ACTION_TOGGLE_PLAY)
       })
     },
+    playMusicIndexed(index: number) {
+      // console.log('playMusicIndexed', index)
+      this.$store.commit('setMusicItem', this.playlist[index])
+      this.playingIndex = index
+      this.$nextTick(() => {
+        bus.emit(ACTION_TOGGLE_PLAY)
+      })
+    },
     playPrev() {
-      this.playingIndex = Math.max(0, this.playingIndex - 1)
-      const item = this.playlist[this.playingIndex]
-      this.playMusic(this.playlist, item)
+      const index = this.playingIndex - 1
+      if (index < 0) {
+        return
+      }
+      this.playMusicIndexed(index)
     },
     playNext() {
-      this.playingIndex = Math.min(this.playlist.length - 1, this.playingIndex + 1)
-      const item = this.playlist[this.playingIndex]
-      this.playMusic(this.playlist, item)
+      let index = this.playingIndex + 1
+      if (index > this.playlist.length - 1) {
+        if (this.loopMode === LoopModeEnum.LOOP_SEQUENCE) {
+          // loop list from first
+          index = 0
+        } else {
+          // stop at last
+          return
+        }
+      }
+      this.playMusicIndexed(index)
     },
+    handlePlayEnded() {
+      // console.log('handlePlayEnded', this.loopMode)
+      if (this.loopMode === LoopModeEnum.LOOP_SINGLE) {
+        // single loop
+        bus.emit(ACTION_TOGGLE_PLAY)
+        return
+      }
+      if (this.loopMode === LoopModeEnum.LOOP_REVERSE) {
+        // reverse play
+        this.playPrev()
+        return
+      }
+      this.playNext()
+    }
   }
 });
 </script>
