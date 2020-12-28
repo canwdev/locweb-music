@@ -30,7 +30,7 @@
       <button class="btn-no-style btn-action">
         <i class="iconfont icon-volume-up" title="Volume"></i>
       </button>
-      <button class="btn-no-style btn-action">
+      <button class="btn-no-style btn-action" :class="{active: isRandom}" @click="isRandom = !isRandom">
         <i class="iconfont icon-shuffle" title="Shuffle"></i>
       </button>
       <button class="btn-no-style btn-action">
@@ -41,8 +41,9 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from 'vue';
-import {MusicItem} from "@/enum";
+import {defineComponent, computed} from 'vue';
+import store from '@/store'
+import {MusicItem, LoopModeEnum} from "@/enum";
 import bus, {
   ACTION_TOGGLE_PLAY,
   ACTION_PREV,
@@ -51,23 +52,45 @@ import bus, {
 
 export default defineComponent({
   name: 'Actionbar',
-  computed: {
-    musicItem(): MusicItem {
-      return this.$store.getters.musicItem
-    },
-    paused(): boolean {
-      return this.$store.getters.paused
-    },
-  },
-  methods: {
-    previous() {
-      bus.emit(ACTION_PREV)
-    },
-    next() {
-      bus.emit(ACTION_NEXT)
-    },
-    togglePlay() {
-      bus.emit(ACTION_TOGGLE_PLAY)
+  setup() {
+    const musicItem = computed((): MusicItem => {
+      return store.getters.musicItem
+    })
+    const paused = computed((): boolean => {
+      return store.getters.paused
+    })
+    const isRandom = computed({
+      get() {
+        return store.getters.isRandom
+      },
+      set(val) {
+        store.commit('setIsRandom', val)
+      }
+    })
+    const loopMode = computed({
+      get() {
+        store.getters.loopMode
+      },
+      set(val) {
+        store.commit('setLoopMode', val)
+      }
+    })
+
+    return {
+      LoopModeEnum,
+      musicItem,
+      paused,
+      isRandom,
+      loopMode,
+      previous() {
+        bus.emit(ACTION_PREV)
+      },
+      next() {
+        bus.emit(ACTION_NEXT)
+      },
+      togglePlay() {
+        bus.emit(ACTION_TOGGLE_PLAY)
+      }
     }
   }
 });
@@ -108,7 +131,7 @@ export default defineComponent({
       margin-top: 5px;
     }
 
-    &>span {
+    & > span {
       display: block;
       width: 100%;
     }
@@ -119,7 +142,8 @@ export default defineComponent({
     height: 100%;
     flex: 1;
     flex-wrap: nowrap;
-    &>button {
+
+    & > button {
       height: 100%;
       width: 55px;
       font-size: 28px;
@@ -127,7 +151,12 @@ export default defineComponent({
       display: flex;
       align-items: center;
       justify-content: center;
-      &+button {
+
+      &.active {
+        color: $pink;
+      }
+
+      & + button {
         border-left: 1px solid $grey-8;
       }
     }

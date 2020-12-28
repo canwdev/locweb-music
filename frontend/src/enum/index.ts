@@ -3,8 +3,15 @@ export const HOST_URL = process.env.VUE_APP_API_HOST || '';
 
 // navbar tab index
 export const NavbarTabsEnum = {
-  MAIN: 0,
-  PLAYING: 1,
+  MAIN: 1, // showing main list
+  PLAYING: 2, // showing playing list
+}
+
+export const LoopModeEnum = {
+  NONE: 1, // play stops after last track
+  SEQUENCE: 2, // Sequence play
+  REVERSE: 3,  // Reverse play
+  SINGLE: 4, // Single cycle
 }
 
 // single song data
@@ -14,7 +21,7 @@ export class MusicItem {
   album: string;
   track: string;
   year: string;
-  hash: string;
+  hash: string; // song unique hash from backend
   coverImage: string;
   rating: number;
   // below are data for filesystem or directories

@@ -1,6 +1,6 @@
 import { createStore } from 'vuex'
 import { MusicItem } from "@/enum";
-import {NavbarTabsEnum} from "@/enum";
+import {NavbarTabsEnum, LoopModeEnum} from "@/enum";
 
 const playlist: Array<MusicItem> = [];
 
@@ -10,7 +10,9 @@ export default createStore({
     navbarTab: NavbarTabsEnum.MAIN, // navbar index
     playlist, // current playing list
     playingIndex: 0, // playing music index in playlist
-    paused: true // is current playing paused
+    paused: true, // is current playing paused
+    isRandom: false, // is random choose next song to play
+    loopMode: LoopModeEnum.SEQUENCE // music playing loop mode
   },
   getters: {
     musicItem: state => state.musicItem,
@@ -18,6 +20,8 @@ export default createStore({
     playlist: state => state.playlist,
     playingIndex: state => state.playingIndex,
     paused: state => state.paused,
+    isRandom: state => state.isRandom,
+    loopMode: state => state.loopMode,
   },
   mutations: {
     setMusicItem: (state, payload: MusicItem) => {
@@ -37,6 +41,12 @@ export default createStore({
     },
     setPaused: (state, payload: boolean) => {
       state.paused = payload
+    },
+    setIsRandom: (state, payload: boolean) => {
+      state.isRandom = payload
+    },
+    setLoopMode: (state, payload: number) => {
+      state.loopMode = payload
     }
   },
   actions: {
