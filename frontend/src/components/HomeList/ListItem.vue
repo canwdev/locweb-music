@@ -66,11 +66,10 @@ export default defineComponent({
     })
 
     const title = computed(() => {
-      if (item.value.title) {
-        return `${item.value.title} - ${item.value.author}`
-      } else {
-        return item.value.filename
+      if (!item.value) {
+        return
       }
+      return item.value.getDisplayTitle()
     })
 
     return {

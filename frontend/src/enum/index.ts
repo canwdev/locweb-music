@@ -1,3 +1,5 @@
+import {IAudioMetadata, ICommonTagsResult}  from 'music-metadata/lib/type'
+
 // server api url
 export const HOST_URL = process.env.VUE_APP_API_HOST || '';
 
@@ -16,11 +18,12 @@ export const LoopModeEnum = {
 
 // single song data
 export class MusicItem {
-  title: string;
-  artist: string;
-  album: string;
-  track: string;
-  year: string;
+  id: number;
+  title: string|undefined;
+  artist: string|undefined;
+  album: string|undefined;
+  track: object|undefined;
+  year: number|undefined;
   hash: string; // song unique hash from backend
   coverImage: string;
   rating: number;
@@ -29,8 +32,10 @@ export class MusicItem {
   isDirectory: boolean;
   path: string;
   size: number;
+  metadata: IAudioMetadata;
 
   constructor(item: any = {}) {
+    this.id = item.id
     this.title = item.title
     this.artist = item.artist
     this.album = item.album
@@ -43,13 +48,14 @@ export class MusicItem {
     this.isDirectory = item.isDirectory
     this.path = item.path
     this.size = item.size
+    this.metadata = item.metadata
   }
 
   get filepath() {
     return this.path + this.filename
   }
 
-  getWebTitle(): string {
+  getDisplayTitle(): string {
     if (this.title) {
       return [this.title, this.artist].join(' - ')
     }
@@ -61,5 +67,22 @@ export class MusicItem {
       return ''
     }
     return HOST_URL + '/mfs/' + this.filepath
+  }
+
+  setMetadata(metadata: IAudioMetadata) {
+    const {common: {
+      title,
+      artist,
+      album,
+      track,
+      year,
+    }}: {common: ICommonTagsResult} = metadata
+
+    this.title = title
+    this.artist = artist
+    this.album = album
+    this.track = track
+    this.year = year
+    this.metadata = metadata
   }
 }

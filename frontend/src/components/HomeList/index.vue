@@ -3,10 +3,7 @@
     <Loading :visible="isLoading"/>
 
     <ListItem
-        :item="{
-          isDirectory: true,
-          filename: '..'
-        }"
+        :item="rootItem"
         v-show="showUp"
         @click="$emit('goUpDir')"
     />
@@ -32,6 +29,7 @@ import {defineComponent} from 'vue';
 import Loading from '@/components/Loading.vue'
 import ListItem from './ListItem.vue'
 import NoData from '@/components/NoData.vue'
+import {MusicItem} from "@/enum";
 
 export default defineComponent({
   name: 'HomeList',
@@ -55,6 +53,14 @@ export default defineComponent({
     },
     list: {
       type: Array
+    }
+  },
+  setup() {
+    return {
+      rootItem: new MusicItem({
+        isDirectory: true,
+        filename: '..'
+      })
     }
   }
 })

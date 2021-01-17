@@ -12,6 +12,7 @@ import {computed, defineComponent, onBeforeUnmount, onMounted, watch} from 'vue'
 import {MusicItem} from "@/enum";
 import bus, {ACTION_CHANGE_CURRENT_TIME, ACTION_PLAY_ENDED, ACTION_TOGGLE_PLAY} from "@/utils/bus";
 import store from '@/store'
+import {getDetail} from "@/api/music.ts";
 
 export default defineComponent({
   name: "PlayerCore",
@@ -24,9 +25,16 @@ export default defineComponent({
     const musicItem = computed((): MusicItem => {
       return store.getters.musicItem
     })
-    watch(musicItem, (val) => {
+    watch(musicItem, async (val) => {
       // console.log('musicItem changed', val)
-      document.title = val.getWebTitle()
+      document.title = val.getDisplayTitle()
+      const {metadata} = await getDetail({
+        path: val.path,
+        filename: val.filename
+      })
+      console.log('detail', metadata)
+      val.setMetadata(metadata)
+      document.title = val.getDisplayTitle()
     })
     const source = computed((): string | null => {
       return musicItem.value.getSource() || null

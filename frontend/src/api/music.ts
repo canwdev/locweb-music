@@ -6,5 +6,25 @@ const service = new Service({
 })
 
 export function getList(params) {
-  return service.get('/music/list', {params})
+  const {
+    path
+  } = params
+  return service.get('/music/list', {
+    params: {
+      path
+    }
+  })
+}
+
+export function getDetail(params) {
+  const {
+    path,
+    filename
+  } = params
+  return service.get('/music/detail', {
+    params: {
+      path,
+      filename
+    }
+  })
 }
