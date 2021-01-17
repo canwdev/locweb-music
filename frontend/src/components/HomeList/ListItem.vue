@@ -3,7 +3,7 @@
       class="btn-no-style list-item"
       :class="{grey: !isSupport && !item.isDirectory, active}"
   >
-    <i class="iconfont" :class="[iconClass]"></i>
+    <i class="material-icons">{{ iconName }}</i>
     <span class="text-overflow">{{ title }}</span>
   </button>
 </template>
@@ -31,17 +31,17 @@ export default defineComponent({
       return isSupportedMusicFormat(item.value.filename)
     })
 
-    const iconClass = computed(() => {
+    const iconName = computed(() => {
       if (active.value) {
-        return 'icon-play-arrow'
+        return 'play_arrow'
       }
       if (item.value.isDirectory) {
-        return 'icon-folder'
+        return 'folder'
       }
       if (isSupport.value) {
-        return 'icon-audiotrack'
+        return 'audiotrack'
       }
-      return 'icon-insert-drive-file'
+      return 'insert_drive_file'
     })
 
     const title = computed(() => {
@@ -54,7 +54,7 @@ export default defineComponent({
 
     return {
       isSupport,
-      iconClass,
+      iconName,
       title
     }
   }
@@ -72,7 +72,7 @@ export default defineComponent({
     color: $pink;
   }
 
-  .iconfont {
+  .material-icons {
     margin-right: 5px;
   }
 

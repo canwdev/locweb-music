@@ -6,9 +6,11 @@
     <transition name="menuSlide">
       <div class="menu bg-glass-black" v-show="mVisible">
         <div class="menu-title flex items-center justify-between">
-          <span><i class="iconfont icon-menu"></i> Menu</span>
+          <span class="flex items-center">
+            <i class="material-icons menu-icon">menu</i> Menu
+          </span>
           <button class="btn-no-style" @click="mVisible=false">
-            <i class="iconfont icon-clear"></i>
+            <i class="material-icons">clear</i>
           </button>
         </div>
 
@@ -20,7 +22,7 @@
           <button
               v-else
               class="btn-no-style menu-item flex items-center">
-            <i v-if="item.icon" class="iconfont" :class="item.icon"></i> {{ item.name }}
+            <span v-if="item.icon" class="material-icons">{{ item.icon }}</span> <span>{{ item.name }}</span>
           </button>
         </template>
 
@@ -35,17 +37,17 @@ import {defineComponent, toRefs, computed} from 'vue';
 
 const menuList = [
   {name: 'Music', subtitle: true},
-  {name: 'File System', icon: 'icon-storage'},
-  {name: 'Playlists', icon: 'icon-queue-muspx'},
-  {name: 'Albums', icon: 'icon-album'},
-  {name: 'Artists', icon: 'icon-mpx'},
-  {name: 'Recent', icon: 'icon-history'},
-  {name: 'Rated', icon: 'icon-stars'},
-  {name: 'Search', icon: 'icon-search'},
+  {name: 'File System', icon: 'storage'},
+  {name: 'Playlists', icon: 'queue_music'},
+  {name: 'Albums', icon: 'album'},
+  {name: 'Artists', icon: 'mic'},
+  {name: 'Recent', icon: 'history'},
+  {name: 'Rated', icon: 'stars'},
+  {name: 'Search', icon: 'search'},
   {name: 'System', subtitle: true},
-  {name: 'Settings', icon: 'icon-settings'},
-  {name: 'User Management', icon: 'icon-account-circle'},
-  {name: 'Rescan Media', icon: 'icon-loop'},
+  {name: 'Settings', icon: 'settings'},
+  {name: 'User Management', icon: 'account_circle'},
+  {name: 'Rescan Media', icon: 'loop'},
 ]
 
 export default defineComponent({
@@ -109,8 +111,9 @@ export default defineComponent({
       font-weight: bold;
       background: rgba(0, 0, 0, 0.9);
 
-      .iconfont {
-        margin-right: 2px;
+      .menu-icon {
+        margin-right: 4px;
+        transform: translateY(-2px);
       }
     }
 
@@ -129,17 +132,18 @@ export default defineComponent({
       & + .menu-item {
         border-top: 1px solid $grey-9;
       }
-
-      .iconfont {
-        margin-right: 5px;
-      }
-
       font-size: 16px;
       display: block;
       width: 100%;
       line-height: 40px;
       text-align: left;
       padding: 0 10px;
+
+      .material-icons {
+        margin-right: 5px;
+        font-size: 20px;
+        transform: translateY(4px);
+      }
     }
   }
 }

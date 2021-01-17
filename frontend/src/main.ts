@@ -7,8 +7,7 @@ import Swal from 'sweetalert2'
 
 window.$swal = Swal
 
-import './assets/iconfont/iconfont.css'
-import './assets/iconfont/iconfont'
+import 'material-design-icons-iconfont/dist/material-design-icons.css';
 import 'normalize.css'
 import './style/tools.sass'
 import './style/theme.scss'

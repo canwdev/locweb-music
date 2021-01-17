@@ -2,7 +2,7 @@
   <transition name="fade">
     <div v-show="visible" class="loading-shade flex items-center justify-center">
       <div class="loading bg-glass-white">
-        <i class="iconfont icon-hourglass-empty"></i>
+        <i class="material-icons icon-hourglass-empty"></i>
         <span v-if="text" class="text">{{text}}</span>
       </div>
     </div>
@@ -39,7 +39,7 @@ export default defineComponent({
     position: absolute;
     border-radius: 10px;
     flex-direction: column;
-    .iconfont {
+    .material-icons {
       font-size: 32px;
       animation: rotating 1.5s infinite;
     }

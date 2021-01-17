@@ -20,7 +20,7 @@
     </div>
     <div class="actionbar bg-glass-black flex items-center">
       <button class="btn-no-style btn-cover">
-        <i class="iconfont icon-ios-musical-notes"></i>
+        <i class="material-icons">graphic_eq</i>
       </button>
       <button class="btn-no-style btn-song">
         <span class="title text-overflow">{{ musicItem.title || musicItem.filename }}</span>
@@ -30,30 +30,30 @@
         <button
             @click="previous"
             class="btn-no-style btn-action">
-          <i class="iconfont icon-skip-previous" title="Previous"></i>
+          <i class="material-icons" title="Previous">skip_previous</i>
         </button>
 
         <button
             @click="togglePlay"
             class="btn-no-style btn-action">
-          <i v-show="paused" class="iconfont icon-play-arrow" title="Play"></i>
-          <i v-show="!paused" class="iconfont icon-pause" title="Pause"></i>
+          <i v-show="paused" class="material-icons" title="Play">play_arrow</i>
+          <i v-show="!paused" class="material-icons" title="Pause">pause</i>
         </button>
 
         <button
             @click="next"
             class="btn-no-style btn-action">
-          <i class="iconfont icon-skip-next" title="Next"></i>
+          <i class="material-icons" title="Next">skip_next</i>
         </button>
 
         <button class="btn-no-style btn-action">
-          <i class="iconfont icon-volume-up" title="Volume"></i>
+          <i class="material-icons" title="Volume">volume_up</i>
         </button>
         <button class="btn-no-style btn-action" :class="{active: isRandom}" @click="toggleRandom">
-          <i class="iconfont icon-shuffle" title="Shuffle"></i>
+          <i class="material-icons" title="Shuffle">shuffle</i>
         </button>
         <button class="btn-no-style btn-action" @click="switchLoopMode">
-          <i class="iconfont" :class="btnLoopClass" title="Loop"></i>
+          <i class="material-icons" title="Loop">{{ loopIconName }}</i>
         </button>
       </div>
     </div>
@@ -100,18 +100,18 @@ export default defineComponent({
         store.commit('setLoopMode', val)
       }
     })
-    const btnLoopClass = computed((): string => {
+    const loopIconName = computed((): string => {
       switch (loopMode.value) {
         case LoopModeEnum.NONE:
-          return 'icon-arrow-forward'
+          return 'arrow_forward'
         case LoopModeEnum.LOOP_SEQUENCE:
-          return 'icon-repeat'
+          return 'repeat'
         case LoopModeEnum.LOOP_REVERSE:
-          return 'icon-arrow-back'
+          return 'arrow_back'
         case LoopModeEnum.LOOP_SINGLE:
-          return 'icon-repeat-one'
+          return 'repeat_one'
         default:
-          return 'icon-help'
+          return 'help'
       }
     })
 
@@ -138,7 +138,7 @@ export default defineComponent({
       paused,
       isRandom,
       loopMode,
-      btnLoopClass,
+      loopIconName,
       // methods
       previous() {
         bus.emit(ACTION_PREV)
