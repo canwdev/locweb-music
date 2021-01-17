@@ -3,6 +3,7 @@ html, body {
 }
 body {
   touch-action: manipulation; // disable ios double tap zoom
+  user-select: none;
 }
 
 .bg-glass-black {
@@ -24,6 +25,7 @@ body {
   cursor: pointer;
   color: inherit;
   padding: 0;
+  text-decoration: none;
   &:active {
     opacity: .8;
   }

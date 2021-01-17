@@ -15,6 +15,8 @@
         :is-loading="isLoading"
         :list="playlist"
         :active-index="playingIndex"
+        is-big-item
+        :is-paused="paused"
         @onItemClick="handleItemClick"
         @goUpDir="goUpDir"
     />
@@ -55,6 +57,7 @@ export default defineComponent({
     const navbarTab = computed(() => store.getters.navbarTab)
     const isRandom = computed(() => store.getters.isRandom)
     const loopMode = computed(() => store.getters.loopMode)
+    const paused = computed(() => store.getters.paused)
     const playingIndex = computed<number>({
       get() {
         return store.getters.playingIndex
@@ -209,6 +212,7 @@ export default defineComponent({
       loopMode,
       playingIndex,
       isPlaylist,
+      paused,
       // methods
       getFileList,
       goUpDir,

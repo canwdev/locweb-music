@@ -1,26 +1,56 @@
 <template>
-  <button
+  <a
       :ref="setItemRef"
-      class="btn-no-style list-item"
+      class="btn-no-style list-item-wrap"
       :class="{grey: !isSupport && !item.isDirectory, active}"
   >
-    <i class="material-icons">{{ iconName }}</i>
-    <span class="text-overflow">{{ title }}</span>
-  </button>
+    <div
+        v-if="!isBigItem"
+        class="list-item"
+    >
+      <i class="material-icons">{{ iconName }}</i>
+      <span class="text-overflow">{{ item.filename }}</span>
+    </div>
+    <div
+        v-else
+        class="list-item-big flex"
+    >
+      <ButtonCover
+          :icon-name="iconName"
+      />
+      <div class="right">
+        <div class="text-overflow filename">{{ item.filename }}</div>
+        <div class="text-overflow display-title">{{ displayTitle }}</div>
+      </div>
+    </div>
+
+  </a>
 </template>
 
 <script lang="ts">
 import {defineComponent, toRefs, computed, watch} from 'vue';
 import {isSupportedMusicFormat} from "@/utils/is";
+import ButtonCover from "@/components/ButtonCover.vue"
 
 export default defineComponent({
   name: "ListItem",
+  components: {
+    ButtonCover
+  },
   props: {
     item: {
       type: Object,
       required: true
     },
     active: {
+      type: Boolean,
+      default: false
+    },
+    isBigItem: {
+      type: Boolean,
+      default: false
+    },
+    isPaused: {
       type: Boolean,
       default: false
     },
@@ -31,7 +61,7 @@ export default defineComponent({
       itemEl = el
     }
 
-    const {item, active} = toRefs(props)
+    const {item, active, isBigItem, isPaused} = toRefs(props)
     watch(active, (val) => {
       if (val) {
         // console.log('active', item.value, itemEl)
@@ -54,7 +84,7 @@ export default defineComponent({
 
     const iconName = computed(() => {
       if (active.value) {
-        return 'play_arrow'
+        return isPaused.value ? 'pause' : 'play_arrow'
       }
       if (item.value.isDirectory) {
         return 'folder'
@@ -65,17 +95,23 @@ export default defineComponent({
       return 'insert_drive_file'
     })
 
-    const title = computed(() => {
-      if (!item.value) {
-        return
+    const displayTitle = computed(() => {
+      const musicItem = item.value
+      if (!isBigItem.value || !musicItem) {
+        return ''
       }
-      return item.value.getDisplayTitle()
+      const {
+        title,
+        artist,
+        album
+      } = musicItem
+      return [title,artist,album].join(' - ')
     })
 
     return {
       isSupport,
       iconName,
-      title,
+      displayTitle,
       setItemRef
     }
   }
@@ -83,32 +119,77 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.list-item {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  box-sizing: border-box;
+.list-item-wrap {
+  display: block;
+
+  //&:hover {
+  //  background: rgba(0, 0, 0, 0.08);
+  //}
+
+  &:active {
+    background: rgba(0, 0, 0, 0.18);
+  }
 
   &.active {
-    color: $accent;
+    .list-item {
+      color: $accent;
+    }
+
+    .list-item-big {
+      .btn-cover {
+        background-color: $primary;
+
+      }
+    }
   }
 
-  .material-icons {
-    margin-right: 5px;
+  & + .list-item-wrap {
+    border-top: $layout-border;
   }
+
+  //&:nth-child(odd) {
+  //  background: rgba(0, 0, 0, 0.08);
+  //}
+
 
   &.grey {
     color: $grey;
   }
 
-  //& + .list-item {
-  //  border-top: $layout-border;
-  //}
-  &:nth-child(odd) {
-    background: rgba(0, 0, 0, 0.08);
+  .list-item {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+
+    .material-icons {
+      margin-right: 5px;
+    }
+
+    padding: 0 10px;
+    height: 40px;
   }
 
-  padding: 0 10px;
-  height: 40px;
+  .list-item-big {
+    height: 55px;
+    display: flex;
+    align-items: center;
+
+    .right {
+      overflow: hidden;
+      flex: 1;
+      margin-left: 10px;
+
+      .filename {
+        margin-bottom: 5px;
+      }
+
+      .display-title {
+        opacity: .5;
+      }
+    }
+  }
 }
+
+
 </style>

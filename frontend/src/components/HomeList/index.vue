@@ -17,6 +17,8 @@
         :key="index"
         :item="item"
         :active="activeIndex === index"
+        :is-big-item="isBigItem"
+        :is-paused="isPaused"
         @click="$emit('onItemClick', item)"
     />
 
@@ -44,6 +46,14 @@ export default defineComponent({
       default: false
     },
     showUp: {
+      type: Boolean,
+      default: false
+    },
+    isBigItem: {
+      type: Boolean,
+      default: false
+    },
+    isPaused: {
       type: Boolean,
       default: false
     },

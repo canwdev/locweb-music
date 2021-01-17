@@ -21,11 +21,9 @@
       <span class="time text-overflow">{{ formatTimeMS(duration) }}</span>
     </div>
     <div class="actionbar bg-glass-white flex items-center">
-      <button
+      <ButtonCover
           @click="logMusic"
-          class="btn-no-style btn-cover flex items-center justify-center">
-        <i class="material-icons">headset</i>
-      </button>
+      />
       <button class="btn-no-style btn-song">
         <span class="title text-overflow">{{ musicItem.title || musicItem.filename || 'N/A' }}</span>
         <span v-show="musicItem.artist" class="artist text-overflow">{{ musicItem.artist }}</span>
@@ -50,9 +48,9 @@
           <i class="material-icons" title="Next">skip_next</i>
         </button>
 
-        <button class="btn-no-style btn-action">
-          <i class="material-icons" title="Volume">volume_up</i>
-        </button>
+<!--        <button class="btn-no-style btn-action">-->
+<!--          <i class="material-icons" title="Volume">volume_up</i>-->
+<!--        </button>-->
         <button class="btn-no-style btn-action" :class="{active: isRandom}" @click="toggleRandom">
           <i class="material-icons" title="Shuffle">shuffle</i>
         </button>
@@ -75,9 +73,13 @@ import bus, {
   ACTION_CHANGE_CURRENT_TIME
 } from "@/utils/bus";
 import {formatTimeMS} from "@/utils";
+import ButtonCover from "@/components/ButtonCover.vue"
 
 export default defineComponent({
   name: 'Actionbar',
+  components: {
+    ButtonCover
+  },
   setup() {
     const mCurrentTime = ref(0)
     const isSeeking = ref(false)
@@ -271,6 +273,7 @@ export default defineComponent({
         border-radius: 50%;
         background: $primary;
         z-index: 1;
+        border: 1px solid rgba(0,0,0,0.2);
       }
     }
   }
@@ -280,18 +283,11 @@ export default defineComponent({
   height: 55px;
   box-shadow: $shadow-1;
   user-select: none;
-
   .btn-cover {
-    margin-left: 2px;
-    width: 50px;
-    height: 50px;
-    background: $primary;
-    font-size: 28px;
-    border-radius: 2px;
+    background-color: $primary;
   }
-
   .btn-song {
-    width: 50%;
+    width: 45%;
     height: 100%;
     border-right: 1px solid $border-color;
     text-align: left;
