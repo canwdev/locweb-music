@@ -19,7 +19,9 @@ export default createStore({
     playingIndexBackup: 0, // backup original index from random mode
     paused: true, // is current playing paused
     isRandom: false, // is random choose next song to play
-    loopMode: LoopModeEnum.LOOP_SEQUENCE // music playing loop mode
+    loopMode: LoopModeEnum.LOOP_SEQUENCE, // music playing loop mode
+    currentTime: 0,
+    duration: 0,
   },
   getters: {
     musicItem: state => state.musicItem,
@@ -29,6 +31,8 @@ export default createStore({
     paused: state => state.paused,
     isRandom: state => state.isRandom,
     loopMode: state => state.loopMode,
+    currentTime: state => state.currentTime,
+    duration: state => state.duration,
   },
   mutations: {
     setMusicItem: (state, payload: MusicItem) => {
@@ -85,7 +89,13 @@ export default createStore({
     },
     setLoopMode: (state, payload: number) => {
       state.loopMode = payload
-    }
+    },
+    setCurrentTime: (state, payload: number) => {
+      state.currentTime = payload
+    },
+    setDuration: (state, payload: number) => {
+      state.duration = payload
+    },
   },
   actions: {},
   modules: {}

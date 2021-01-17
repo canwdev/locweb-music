@@ -3,7 +3,7 @@
     v-model:visible="isShowMenu"
   />
 
-  <div class="navbar bg-glass-black flex">
+  <div class="navbar bg-glass-white flex">
     <button class="btn-no-style btn-menu" @click="isShowMenu = true"><i class="material-icons">menu</i></button>
     <button
         v-for="item in tabs"
@@ -74,7 +74,7 @@ export default defineComponent({
     position: relative;
 
     & + button {
-      border-left: 1px solid $grey-8;
+      border-left: 1px solid $border-color;
     }
 
     &:after {

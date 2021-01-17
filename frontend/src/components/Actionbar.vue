@@ -1,25 +1,29 @@
 <template>
   <div class="actionbar-wrapper">
-    <div class="progressbar bg-glass-black flex items-center justify-between">
-      <span class="time">{{ formatTimeMS(0) }}</span>
-      <div class="common-seekbar-box">
-<!--        <input-->
-<!--            ref="seekBar"-->
-<!--            type="range"-->
-<!--            min="0"-->
-<!--            :max="duration"-->
-<!--            :value="currentTime"-->
-<!--            @input="seekbarProgressSeeking"-->
-<!--            @change="seekbarProgressChange"-->
-<!--            class="common-seekbar seekbar-input"-->
-<!--        >-->
+    <div class="progressbar bg-glass-white flex items-center justify-between">
+      <span class="time text-overflow">{{ formatTimeMS(mCurrentTime) }}</span>
+      <div class="seekbar-wrap">
+        <div class="seekbar-fill"
+             :style="'width:'+progress+'%'"></div>
+        <input
+            ref="seekBar"
+            type="range"
+            min="0"
+            :max="duration"
+            :value="mCurrentTime"
+            @input="seekbarProgressSeeking"
+            @change="seekbarProgressChange"
+            class="common-seekbar seekbar-input"
+        >
       </div>
 
 
-      <span class="time">{{ formatTimeMS(0) }}</span>
+      <span class="time text-overflow">{{ formatTimeMS(duration) }}</span>
     </div>
-    <div class="actionbar bg-glass-black flex items-center">
-      <button class="btn-no-style btn-cover flex items-center justify-center">
+    <div class="actionbar bg-glass-white flex items-center">
+      <button
+          @click="logMusic"
+          class="btn-no-style btn-cover flex items-center justify-center">
         <i class="material-icons">headset</i>
       </button>
       <button class="btn-no-style btn-song">
@@ -61,26 +65,43 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, computed} from 'vue';
+import {defineComponent, ref, computed, watch} from 'vue';
 import store from '@/store'
 import {MusicItem, LoopModeEnum} from "@/enum";
 import bus, {
   ACTION_TOGGLE_PLAY,
   ACTION_PREV,
-  ACTION_NEXT
+  ACTION_NEXT,
+  ACTION_CHANGE_CURRENT_TIME
 } from "@/utils/bus";
 import {formatTimeMS} from "@/utils";
 
 export default defineComponent({
   name: 'Actionbar',
   setup() {
+    const mCurrentTime = ref(0)
+    const isSeeking = ref(false)
+
+    const currentTime = computed(() => {
+      return store.getters.currentTime
+    })
+    watch(currentTime, (val) => {
+      if (!isSeeking.value) {
+        mCurrentTime.value = val
+      }
+    })
+    const duration = computed(() => {
+      return store.getters.duration
+    })
+    const progress = computed(() => {
+      return mCurrentTime.value / duration.value * 100
+    })
     const musicItem = computed((): MusicItem => {
       return store.getters.musicItem
     })
     const paused = computed((): boolean => {
       return store.getters.paused
     })
-
     const playlist = computed((): Array<MusicItem> => {
       return store.getters.playlist
     })
@@ -133,7 +154,12 @@ export default defineComponent({
     return {
       // data
       LoopModeEnum,
+      mCurrentTime,
+      isSeeking,
       // computed
+      currentTime,
+      duration,
+      progress,
       musicItem,
       paused,
       isRandom,
@@ -171,12 +197,20 @@ export default defineComponent({
         showTip(loopText[index])
       },
       formatTimeMS,
-      seekbarProgressSeeking() {
-        console.log('seekbarProgressSeeking')
+      seekbarProgressSeeking(evt) {
+        // console.log('seekbarProgressSeeking', evt.target.value)
+        isSeeking.value = true
+        mCurrentTime.value = evt.target.value
       },
-      seekbarProgressChange() {
-        console.log('seekbarProgressChange')
+      seekbarProgressChange(evt) {
+        console.log('seekbarProgressChange', evt.target.value)
+
+        bus.emit(ACTION_CHANGE_CURRENT_TIME, evt.target.value)
+        isSeeking.value = false
       },
+      logMusic() {
+        console.log(musicItem.value)
+      }
     }
   }
 });
@@ -194,12 +228,51 @@ export default defineComponent({
   height: 25px;
   width: 100%;
   box-sizing: border-box;
-  border-top: 1px solid $grey-8;
-  border-bottom: 1px solid $grey-8;
+  border-top: 1px solid $border-color;
+  border-bottom: 1px solid $border-color;
 
   .time {
     width: 50px;
     text-align: center;
+  }
+
+  .seekbar-wrap {
+    height: 100%;
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+
+    .seekbar-fill {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 5px;
+      width: 0;
+      background: $primary;
+      user-select: none;
+      pointer-events: none;
+      z-index: 0;
+      border-radius: 2px;
+    }
+
+    input {
+      width: 100%;
+      appearance: none;
+      height: 5px;
+      background: $border-color;
+      outline: none;
+      border-radius: 2px;
+
+      &::-webkit-slider-thumb {
+        position: relative;
+        appearance: none;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: $primary;
+        z-index: 1;
+      }
+    }
   }
 }
 
@@ -220,7 +293,7 @@ export default defineComponent({
   .btn-song {
     width: 50%;
     height: 100%;
-    border-right: 1px solid $grey-8;
+    border-right: 1px solid $border-color;
     text-align: left;
     font-size: 12px;
     padding-left: 5px;
@@ -259,7 +332,7 @@ export default defineComponent({
       }
 
       & + button {
-        border-left: 1px solid $grey-8;
+        border-left: 1px solid $border-color;
       }
     }
   }

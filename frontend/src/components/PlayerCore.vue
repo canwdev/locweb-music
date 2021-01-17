@@ -1,6 +1,7 @@
 <template>
   <div class="player-core">
     <audio
+        v-show="false"
         :ref="setAudioRef"
         :src="source" controls></audio>
   </div>
@@ -9,7 +10,11 @@
 <script lang="ts">
 import {defineComponent, onMounted, onBeforeUnmount, computed } from 'vue'
 import {MusicItem} from "@/enum";
-import bus, {ACTION_TOGGLE_PLAY, ACTION_PLAY_ENDED} from "@/utils/bus";
+import bus, {
+  ACTION_TOGGLE_PLAY,
+  ACTION_PLAY_ENDED,
+  ACTION_CHANGE_CURRENT_TIME
+} from "@/utils/bus";
 import store from '@/store'
 
 export default defineComponent({
@@ -36,12 +41,7 @@ export default defineComponent({
 
     const setAudioRef = (el) => {
       audio = el
-
-      if (!audio) {
-        return
-      }
     }
-
     const play = () => {
       audio.play()
     }
@@ -58,9 +58,7 @@ export default defineComponent({
         pause()
       }
     }
-
-    onMounted(() => {
-      bus.on(ACTION_TOGGLE_PLAY, togglePlay)
+    const registerAudioEvents = (audio) => {
       audio.addEventListener('play', () => {
         paused.value = false
       })
@@ -73,6 +71,16 @@ export default defineComponent({
         bus.emit(ACTION_PLAY_ENDED)
       })
 
+      audio.addEventListener('canplay', (evt) => {
+        // console.log('canplay', audio)
+        store.commit('setDuration', evt.target.duration)
+      })
+
+      audio.addEventListener('timeupdate', (evt) => {
+        // console.log('timeupdate', evt.target.currentTime)
+        store.commit('setCurrentTime', evt.target.currentTime)
+      })
+
       audio.addEventListener('error', (error) => {
         window.$swal.fire({
           toast: true,
@@ -83,9 +91,20 @@ export default defineComponent({
         })
         console.error(error)
       })
+    }
+    const changeCurrentTime = (newTime) => {
+      audio && (audio.currentTime = newTime)
+    }
+
+    onMounted(() => {
+      bus.on(ACTION_TOGGLE_PLAY, togglePlay)
+      bus.on(ACTION_CHANGE_CURRENT_TIME, changeCurrentTime)
+
+      registerAudioEvents(audio)
     })
     onBeforeUnmount(() => {
       bus.off(ACTION_TOGGLE_PLAY, togglePlay)
+      bus.off(ACTION_CHANGE_CURRENT_TIME, changeCurrentTime)
     })
 
     return {
