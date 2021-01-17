@@ -71,6 +71,7 @@ export default createStore({
       state.musicItem = state.playlist[state.playingIndex]
       setTimeout(() => {
         bus.emit(ACTION_TOGGLE_PLAY)
+
       }, 0)
       state.isRandom = false
     },

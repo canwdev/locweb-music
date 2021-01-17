@@ -23,7 +23,9 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from 'vue';
+import {defineComponent, ref, computed, watch, nextTick} from 'vue';
+import store from '@/store'
+
 import Navbar from '@/components/Navbar.vue';
 import HomeList from '@/components/HomeList/index.vue';
 import Actionbar from '@/components/Actionbar.vue';
@@ -44,78 +46,40 @@ export default defineComponent({
     HomeList,
     Actionbar,
   },
-  data() {
-    const directories: Array<any> = [];
-    const fileList: Array<MusicItem> = [];
-    return {
-      NavbarTabsEnum: Object.freeze(NavbarTabsEnum),
-      fileList,
-      isLoading: false,
-      directories
-    }
-  },
-  watch: {
-    directories: {
-      handler(val) {
-        console.log(val)
-        this.getFileList()
-      },
-      deep: true
-    }
-  },
-  computed: {
-    playlist() {
-      return this.$store.getters.playlist
-    },
-    navbarTab() {
-      return this.$store.getters.navbarTab
-    },
-    isRandom() {
-      return this.$store.getters.isRandom
-    },
-    loopMode() {
-      return this.$store.getters.loopMode
-    },
-    playingIndex: {
+  setup() {
+    const isLoading = ref<boolean>(false)
+    const fileList = ref<Array<MusicItem>>([])
+    const directories = ref<Array<any>>([])
+
+    const playlist = computed(() => store.getters.playlist)
+    const navbarTab = computed(() => store.getters.navbarTab)
+    const isRandom = computed(() => store.getters.isRandom)
+    const loopMode = computed(() => store.getters.loopMode)
+    const playingIndex = computed<number>({
       get() {
-        return this.$store.getters.playingIndex
+        return store.getters.playingIndex
       },
       set(val) {
-        this.$store.commit('setPlayingIndex', val)
+        store.commit('setPlayingIndex', val)
       }
-    },
-    isPlaylist() {
-      // TODO this.navbarTab
-      return this.$store.getters.navbarTab === NavbarTabsEnum.PLAYING
-    }
-  },
-  mounted() {
-    this.getFileList()
-    bus.on(ACTION_PREV, this.playPrev)
-    bus.on(ACTION_NEXT, this.playNext)
-    bus.on(ACTION_PLAY_ENDED, this.handlePlayEnded)
-  },
-  beforeUnmount() {
-    bus.off(ACTION_PREV, this.playPrev)
-    bus.off(ACTION_NEXT, this.playNext)
-    bus.off(ACTION_PLAY_ENDED, this.handlePlayEnded)
-  },
-  methods: {
-    async getFileList() {
-      if (this.isLoading) {
+    })
+    const isPlaylist = computed(() => store.getters.navbarTab === NavbarTabsEnum.PLAYING)
+
+    const getFileList = async () => {
+      if (isLoading.value) {
         return
       }
       try {
-        this.isLoading = true
+        isLoading.value = true
         let path = ''
-        this.directories.forEach((item: any) => {
+        directories.value.forEach((item: any) => {
           path += (item.filename + '/')
         })
 
         const list = await getList({
           path
         })
-        this.fileList = list.map(file => {
+        fileList.value = list.map(file => {
           return new MusicItem({
             ...file
           })
@@ -130,34 +94,46 @@ export default defineComponent({
         })
         console.error(e)
       } finally {
-        this.isLoading = false
+        isLoading.value = false
       }
 
-    },
-    goUpDir() {
-      this.directories.pop()
-    },
-    handleItemClick(item: MusicItem) {
+    }
+    const goUpDir = () => {
+      directories.value.pop()
+    }
+    const playMusicFromList = (list, item: MusicItem) => {
+      store.commit('setMusicItem', item)
+      playingIndex.value = list.findIndex((val: any) => {
+        return val.filename === item.filename
+      })
+
+      nextTick(() => {
+        // jump to playing list
+        store.commit('setNavbarTab', NavbarTabsEnum.PLAYING)
+        bus.emit(ACTION_TOGGLE_PLAY)
+      })
+    }
+    const handleItemClick = (item: MusicItem) => {
       // jump folder
       if (item.isDirectory) {
-        this.directories.push(item)
+        directories.value.push(item)
         return
       }
 
       // play a song
-      if (this.isPlaylist) {
-        this.playMusicFromList(this.playlist, item)
+      if (isPlaylist.value) {
+        playMusicFromList(playlist.value, item)
       } else {
         if (isSupportedMusicFormat(item.filename)) {
 
-          this.$store.commit('clearShuffle')
+          store.commit('clearShuffle')
           // format data
-          const list = this.fileList.filter((val: any) => {
+          const list = fileList.value.filter((val: any) => {
             return isSupportedMusicFormat(val.filename)
           })
-          this.$store.commit('setPlaylist', list)
+          store.commit('setPlaylist', list)
           // set current playing
-          this.playMusicFromList(list, item)
+          playMusicFromList(list, item)
         } else {
           window.$swal.fire({
             toast: true,
@@ -168,38 +144,26 @@ export default defineComponent({
           })
         }
       }
-    },
-    playMusicFromList(list, item: MusicItem) {
-      this.$store.commit('setMusicItem', item)
-      this.playingIndex = list.findIndex((val: any) => {
-        return val.filename === item.filename
-      })
-
-      this.$nextTick(() => {
-        // jump to playing list
-        this.$store.commit('setNavbarTab', NavbarTabsEnum.PLAYING)
-        bus.emit(ACTION_TOGGLE_PLAY)
-      })
-    },
-    playMusicIndexed(index: number) {
+    }
+    const playMusicIndexed = (index: number) => {
       // console.log('playMusicIndexed', index)
-      this.$store.commit('setMusicItem', this.playlist[index])
-      this.playingIndex = index
-      this.$nextTick(() => {
+      store.commit('setMusicItem', playlist.value[index])
+      playingIndex.value = index
+      nextTick(() => {
         bus.emit(ACTION_TOGGLE_PLAY)
       })
-    },
-    playPrev() {
-      const index = this.playingIndex - 1
+    }
+    const playPrev = () => {
+      const index = playingIndex.value - 1
       if (index < 0) {
         return
       }
-      this.playMusicIndexed(index)
-    },
-    playNext() {
-      let index = this.playingIndex + 1
-      if (index > this.playlist.length - 1) {
-        if (this.loopMode === LoopModeEnum.LOOP_SEQUENCE) {
+      playMusicIndexed(index)
+    }
+    const playNext = () => {
+      let index = playingIndex.value + 1
+      if (index > playlist.value.length - 1) {
+        if (loopMode.value === LoopModeEnum.LOOP_SEQUENCE) {
           // loop list from first
           index = 0
         } else {
@@ -207,22 +171,65 @@ export default defineComponent({
           return
         }
       }
-      this.playMusicIndexed(index)
-    },
-    handlePlayEnded() {
-      // console.log('handlePlayEnded', this.loopMode)
-      if (this.loopMode === LoopModeEnum.LOOP_SINGLE) {
+      playMusicIndexed(index)
+    }
+    const handlePlayEnded = () => {
+      // console.log('handlePlayEnded', loopMode.value)
+      if (loopMode.value === LoopModeEnum.LOOP_SINGLE) {
         // single loop
         bus.emit(ACTION_TOGGLE_PLAY)
         return
       }
-      if (this.loopMode === LoopModeEnum.LOOP_REVERSE) {
+      if (loopMode.value === LoopModeEnum.LOOP_REVERSE) {
         // reverse play
-        this.playPrev()
+        playPrev()
         return
       }
-      this.playNext()
+      playNext()
     }
+
+
+
+    watch(directories, (val) => {
+      console.log('directories changed', val)
+      getFileList()
+    }, {
+      deep: true
+    })
+
+    return {
+      // data
+      isLoading,
+      fileList,
+      directories,
+      // computed
+      playlist,
+      navbarTab,
+      isRandom,
+      loopMode,
+      playingIndex,
+      isPlaylist,
+      // methods
+      getFileList,
+      goUpDir,
+      playMusicFromList,
+      handleItemClick,
+      playMusicIndexed,
+      playPrev,
+      playNext,
+      handlePlayEnded
+    }
+  },
+  mounted() {
+    this.getFileList()
+    bus.on(ACTION_PREV, this.playPrev)
+    bus.on(ACTION_NEXT, this.playNext)
+    bus.on(ACTION_PLAY_ENDED, this.handlePlayEnded)
+  },
+  beforeUnmount() {
+    bus.off(ACTION_PREV, this.playPrev)
+    bus.off(ACTION_NEXT, this.playNext)
+    bus.off(ACTION_PLAY_ENDED, this.handlePlayEnded)
   }
 });
 </script>

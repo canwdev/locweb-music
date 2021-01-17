@@ -31,7 +31,22 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from 'vue';
+import {defineComponent, toRefs, computed} from 'vue';
+
+const menuList = [
+  {name: 'Music', subtitle: true},
+  {name: 'File System', icon: 'icon-storage'},
+  {name: 'Playlists', icon: 'icon-queue-muspx'},
+  {name: 'Albums', icon: 'icon-album'},
+  {name: 'Artists', icon: 'icon-mpx'},
+  {name: 'Recent', icon: 'icon-history'},
+  {name: 'Rated', icon: 'icon-stars'},
+  {name: 'Search', icon: 'icon-search'},
+  {name: 'System', subtitle: true},
+  {name: 'Settings', icon: 'icon-settings'},
+  {name: 'User Management', icon: 'icon-account-circle'},
+  {name: 'Rescan Media', icon: 'icon-loop'},
+]
 
 export default defineComponent({
   name: 'DrawerMenu',
@@ -41,33 +56,22 @@ export default defineComponent({
       default: false
     },
   },
-  data() {
-    return {
-      menuList: [
-        {name: 'Music', subtitle: true},
-        {name: 'File System', icon: 'icon-storage'},
-        {name: 'Playlists', icon: 'icon-queue-muspx'},
-        {name: 'Albums', icon: 'icon-album'},
-        {name: 'Artists', icon: 'icon-mpx'},
-        {name: 'Recent', icon: 'icon-history'},
-        {name: 'Rated', icon: 'icon-stars'},
-        {name: 'Search', icon: 'icon-search'},
-        {name: 'System', subtitle: true},
-        {name: 'Settings', icon: 'icon-settings'},
-        {name: 'User Management', icon: 'icon-account-circle'},
-        {name: 'Rescan Media', icon: 'icon-loop'},
-      ]
-    }
-  },
-  computed: {
-    mVisible: {
+  setup(props, context) {
+    const {visible} = toRefs(props)
+
+    const mVisible = computed({
       get(): boolean {
-        return this.visible
+        return visible.value
       },
       set(nv: boolean) {
-        return this.$emit('update:visible', nv)
+        return context.emit('update:visible', nv)
       }
-    },
+    })
+
+    return {
+      menuList,
+      mVisible
+    }
   }
 })
 </script>

@@ -15,7 +15,9 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from 'vue';
+import {defineComponent, ref, computed} from 'vue';
+import store from '@/store'
+
 import DrawerMenu from "@/components/DrawerMenu.vue";
 import {NavbarTabsEnum} from "@/enum";
 
@@ -24,23 +26,25 @@ export default defineComponent({
   components: {
     DrawerMenu
   },
-  data() {
+  setup() {
+    const isShowMenu = ref(false)
+
+    const navbarTab = computed({
+      get() {
+        return store.getters.navbarTab
+      },
+      set(val) {
+        store.commit('setNavbarTab', val)
+      }
+    })
+
     return {
-      isShowMenu: false,
+      isShowMenu,
       tabs: [
         {name: 'Files', value: NavbarTabsEnum.MAIN},
         {name: 'Playing', value: NavbarTabsEnum.PLAYING},
-      ]
-    }
-  },
-  computed: {
-    navbarTab: {
-      get() {
-        return this.$store.getters.navbarTab
-      },
-      set(val) {
-        this.$store.commit('setNavbarTab', val)
-      }
+      ],
+      navbarTab
     }
   }
 });
