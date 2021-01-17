@@ -84,7 +84,7 @@ export default defineComponent({
       content: " ";
       width: 100%;
       height: 10%;
-      background: $pink;
+      background: $primary;
       opacity: 0;
       transition: $generic-hover-transition;
     }

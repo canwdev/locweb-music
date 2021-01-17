@@ -69,7 +69,7 @@ export default defineComponent({
   box-sizing: border-box;
 
   &.active {
-    color: $pink;
+    color: $accent;
   }
 
   .material-icons {

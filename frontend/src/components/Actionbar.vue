@@ -19,11 +19,11 @@
       <span class="time">{{ formatTimeMS(0) }}</span>
     </div>
     <div class="actionbar bg-glass-black flex items-center">
-      <button class="btn-no-style btn-cover">
-        <i class="material-icons">graphic_eq</i>
+      <button class="btn-no-style btn-cover flex items-center justify-center">
+        <i class="material-icons">headset</i>
       </button>
       <button class="btn-no-style btn-song">
-        <span class="title text-overflow">{{ musicItem.title || musicItem.filename }}</span>
+        <span class="title text-overflow">{{ musicItem.title || musicItem.filename || 'N/A' }}</span>
         <span v-show="musicItem.artist" class="artist text-overflow">{{ musicItem.artist }}</span>
       </button>
       <div class="buttons-scroll flex items-center ">
@@ -212,7 +212,7 @@ export default defineComponent({
     margin-left: 2px;
     width: 50px;
     height: 50px;
-    background: $pink;
+    background: $primary;
     font-size: 28px;
     border-radius: 2px;
   }
@@ -255,7 +255,7 @@ export default defineComponent({
       justify-content: center;
 
       &.active {
-        color: $pink;
+        color: $primary;
       }
 
       & + button {

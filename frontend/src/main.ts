@@ -10,6 +10,6 @@ window.$swal = Swal
 import 'material-design-icons-iconfont/dist/material-design-icons.css';
 import 'normalize.css'
 import './style/tools.sass'
-import './style/theme.scss'
+import './style/base.scss'
 
 createApp(App).use(store).use(router).mount('#app')

@@ -140,6 +140,7 @@ export default defineComponent({
       padding: 0 10px;
 
       .material-icons {
+        color: $secondary;
         margin-right: 5px;
         font-size: 20px;
         transform: translateY(4px);
