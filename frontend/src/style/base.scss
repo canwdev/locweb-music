@@ -1,6 +1,9 @@
 html, body {
   height: 100%;
 }
+body {
+  touch-action: manipulation; // disable ios double tap zoom
+}
 
 .bg-glass-black {
   color: white;

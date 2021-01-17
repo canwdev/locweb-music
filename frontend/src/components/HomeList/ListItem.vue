@@ -1,5 +1,6 @@
 <template>
   <button
+      :ref="setItemRef"
       class="btn-no-style list-item"
       :class="{grey: !isSupport && !item.isDirectory, active}"
   >
@@ -9,7 +10,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, toRefs, computed} from 'vue';
+import {defineComponent, toRefs, computed, watch} from 'vue';
 import {isSupportedMusicFormat} from "@/utils/is";
 
 export default defineComponent({
@@ -25,7 +26,27 @@ export default defineComponent({
     },
   },
   setup(props) {
+    let itemEl
+    const setItemRef = (el) => {
+      itemEl = el
+    }
+
     const {item, active} = toRefs(props)
+    watch(active, (val) => {
+      if (val) {
+        // console.log('active', item.value, itemEl)
+        setTimeout(() => {
+          if (itemEl) {
+            itemEl.scrollIntoView({
+              behavior: 'smooth'
+            })
+          }
+        }, 200)
+
+      }
+    }, {
+      immediate: true
+    })
 
     const isSupport = computed(() => {
       return isSupportedMusicFormat(item.value.filename)
@@ -55,7 +76,8 @@ export default defineComponent({
     return {
       isSupport,
       iconName,
-      title
+      title,
+      setItemRef
     }
   }
 })

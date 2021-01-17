@@ -8,24 +8,26 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, onMounted, onBeforeUnmount, computed } from 'vue'
+import {computed, defineComponent, onBeforeUnmount, onMounted, watch} from 'vue'
 import {MusicItem} from "@/enum";
-import bus, {
-  ACTION_TOGGLE_PLAY,
-  ACTION_PLAY_ENDED,
-  ACTION_CHANGE_CURRENT_TIME
-} from "@/utils/bus";
+import bus, {ACTION_CHANGE_CURRENT_TIME, ACTION_PLAY_ENDED, ACTION_TOGGLE_PLAY} from "@/utils/bus";
 import store from '@/store'
 
 export default defineComponent({
   name: "PlayerCore",
   setup() {
     let audio
+    const setAudioRef = (el) => {
+      audio = el
+    }
 
     const musicItem = computed((): MusicItem => {
       return store.getters.musicItem
     })
-
+    watch(musicItem, (val) => {
+      // console.log('musicItem changed', val)
+      document.title = val.getWebTitle()
+    })
     const source = computed((): string | null => {
       return musicItem.value.getSource() || null
     })
@@ -39,9 +41,6 @@ export default defineComponent({
       }
     })
 
-    const setAudioRef = (el) => {
-      audio = el
-    }
     const play = () => {
       audio.play()
     }

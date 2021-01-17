@@ -49,6 +49,13 @@ export class MusicItem {
     return this.path + this.filename
   }
 
+  getWebTitle(): string {
+    if (this.title) {
+      return [this.title, this.artist].join(' - ')
+    }
+    return this.filename
+  }
+
   getSource(): string {
     if (!this.filepath) {
       return ''

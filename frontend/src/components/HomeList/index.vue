@@ -62,11 +62,15 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .home-list {
-  height: 100%;
+  position: absolute;
   overflow: auto;
-  padding: 45px 0 80px;
-  box-sizing: border-box;
-  position: relative;
+  top: 45px;
+  left: 0;
+  width: 100%;
+  bottom: 80px;
+  //padding: 45px 0 80px;
+  //box-sizing: border-box;
+  //scroll-behavior: smooth;
 
   .loading-shade {
     position: fixed;
