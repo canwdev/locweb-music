@@ -1,4 +1,5 @@
 import {IAudioMetadata, ICommonTagsResult}  from 'music-metadata/lib/type'
+import {blobToDataURL} from "@/utils";
 
 // server api url
 export const HOST_URL = process.env.VUE_APP_API_HOST || '';
@@ -33,6 +34,7 @@ export class MusicItem {
   path: string;
   size: number;
   metadata: IAudioMetadata;
+  cover: string|undefined|null;
 
   constructor(item: any = {}) {
     this.id = item.id
@@ -49,6 +51,7 @@ export class MusicItem {
     this.path = item.path
     this.size = item.size
     this.metadata = item.metadata
+    this.cover = item.cover
   }
 
   get filepath() {
@@ -84,5 +87,24 @@ export class MusicItem {
     this.track = track
     this.year = year
     this.metadata = metadata
+  }
+
+  async getCover() {
+    if (this.cover) {
+      return this.cover
+    }
+    if (!this.metadata) {
+      return null
+    }
+    const pictures = this.metadata.common.picture
+    if (!pictures) {
+      return null
+    }
+    // @ts-ignore
+    const {data} = pictures[0].data
+
+    this.cover = await blobToDataURL(new Blob([new Uint8Array(data)]))
+
+    return this.cover
   }
 }

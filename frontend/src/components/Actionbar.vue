@@ -23,6 +23,7 @@
     <div class="actionbar bg-glass-white flex items-center">
       <ButtonCover
           @click="logMusic"
+          :src="coverImage"
       />
       <button class="btn-no-style btn-song">
         <span class="title text-overflow">{{ musicItem.title || musicItem.filename || 'N/A' }}</span>
@@ -63,17 +64,13 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, ref, computed, watch} from 'vue';
+import {computed, defineComponent, ref, watch} from 'vue';
 import store from '@/store'
-import {MusicItem, LoopModeEnum} from "@/enum";
-import bus, {
-  ACTION_TOGGLE_PLAY,
-  ACTION_PREV,
-  ACTION_NEXT,
-  ACTION_CHANGE_CURRENT_TIME
-} from "@/utils/bus";
+import {LoopModeEnum, MusicItem} from "@/enum";
+import bus, {ACTION_CHANGE_CURRENT_TIME, ACTION_NEXT, ACTION_PREV, ACTION_TOGGLE_PLAY} from "@/utils/bus";
 import {formatTimeMS} from "@/utils";
 import ButtonCover from "@/components/ButtonCover.vue"
+import useCoverImage from "@/composables/useCoverImage";
 
 export default defineComponent({
   name: 'Actionbar',
@@ -101,6 +98,7 @@ export default defineComponent({
     const musicItem = computed((): MusicItem => {
       return store.getters.musicItem
     })
+    const {coverImage} = useCoverImage(musicItem)
     const paused = computed((): boolean => {
       return store.getters.paused
     })
@@ -158,6 +156,7 @@ export default defineComponent({
       LoopModeEnum,
       mCurrentTime,
       isSeeking,
+      coverImage,
       // computed
       currentTime,
       duration,

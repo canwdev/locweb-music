@@ -29,6 +29,10 @@ body {
   &:active {
     opacity: .8;
   }
+  &:disabled {
+    cursor: not-allowed;
+    opacity: .5;
+  }
 }
 .text-overflow {
   white-space: nowrap;

@@ -17,6 +17,7 @@
     >
       <ButtonCover
           :icon-name="iconName"
+          :src="coverImage"
       />
       <div class="right">
         <div class="text-overflow filename">{{ item.filename }}</div>
@@ -31,6 +32,7 @@
 import {defineComponent, toRefs, computed, watch} from 'vue';
 import {isSupportedMusicFormat} from "@/utils/is";
 import ButtonCover from "@/components/ButtonCover.vue"
+import useCoverImage from "@/composables/useCoverImage";
 
 export default defineComponent({
   name: "ListItem",
@@ -62,6 +64,9 @@ export default defineComponent({
     }
 
     const {item, active, isBigItem, isPaused} = toRefs(props)
+
+    const {coverImage} = useCoverImage(item)
+
     watch(active, (val) => {
       if (val) {
         // console.log('active', item.value, itemEl)
@@ -109,6 +114,7 @@ export default defineComponent({
     })
 
     return {
+      coverImage,
       isSupport,
       iconName,
       displayTitle,

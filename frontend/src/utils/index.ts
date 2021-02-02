@@ -25,3 +25,13 @@ export const shuffleArray = (orgArr) => {
   }
   return arr;
 }
+
+export const blobToDataURL = (blob) => {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = reject;
+    // @ts-ignore
+    reader.onload = () => resolve(reader.result);
+    reader.readAsDataURL(blob);
+  })
+}
