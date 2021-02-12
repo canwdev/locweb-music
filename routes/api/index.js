@@ -1,7 +1,7 @@
 const router = require('express').Router()
 // const music = require('../../db/modules/music')
-const filesystem = require('../../modules/fs')
-const service = require('../../db/modules/service')
+const filesystem = require('../../modules/filesystem')
+const service = require('../../modules/service')
 
 router.get('/', service.info)
 
