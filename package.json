@@ -7,6 +7,7 @@
   "author": "canwdev <c2097@live.com>",
   "license": "MIT",
   "scripts": {
+<<<<<<< HEAD
     "start": "NODE_ENV=production PORT=12021 node index.js",
     "dev": "nodemon index.js --trace-sync-io",
     "mongo:start": "docker run --name localweb-music-mongo -p 27017:27017 mongo & sleep 5",
@@ -15,6 +16,14 @@
   "dependencies": {
     "body-parser": "^1.19.0",
     "errorhandler": "^1.5.1",
+=======
+    "start": "cross-env NODE_ENV=production PORT=12021 node index.js",
+    "dev": "nodemon index.js --trace-sync-io"
+  },
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "cross-env": "^7.0.3",
+>>>>>>> d1609b0b5fb40e0c809a4e57af5aa9808b517883
     "express": "^4.17.1",
     "fs-extra": "^9.0.1",
     "mongoose": "^5.11.14",
