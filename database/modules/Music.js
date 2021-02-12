@@ -3,9 +3,10 @@ const uniqueValidator = require('mongoose-unique-validator');
 
 const MusicSchema = new mongoose.Schema({
   filename: String,
-  hash: String,
+  title: String,
+  artist: String,
+  album: String,
   cover: String,
-  metadata: Object,
   path: String,
 }, {timestamps: false, usePushEach: true});
 

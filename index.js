@@ -3,8 +3,8 @@ const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
 const errorhandler = require('errorhandler')
-const {DATA_BASE_PATH, MUSIC_LIBRARY_PATH} = require('./config')
-const {IMAGE_DIR} = require('./config/enum')
+const {DATA_PATH, MUSIC_LIBRARY_PATH} = require('./config')
+const {IMAGE_PATH} = require('./config/enum')
 const {normalizePort} = require('./utils')
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -19,11 +19,14 @@ if (!isProduction) {
   app.use(errorhandler());
 }
 
+require('./database')
+require('./service/media-scanner')
+
 app.use(express.static(path.join(__dirname, 'public')));
 // Vue dist directory
 app.use('/', express.static(path.join(__dirname, 'frontend-dist')));
 // Cover images
-app.use('/images', express.static(path.join(DATA_BASE_PATH, IMAGE_DIR)));
+app.use('/images', express.static(IMAGE_PATH));
 // Expose library filesystem
 app.use('/mfs', express.static(MUSIC_LIBRARY_PATH));
 

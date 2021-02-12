@@ -1,3 +1,4 @@
+console.log('Database initializing...')
 const mongoose = require('mongoose');
 
 const isProduction = process.env.NODE_ENV === 'production';
@@ -10,3 +11,4 @@ if (isProduction) {
 }
 
 require('./modules/Music')
+console.log('Database initialized')

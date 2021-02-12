@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const clientSender = require('./middleware/clientSender')
+const clientSender = require('./middleware/client-sender')
 
 // CORS
 router.use("*", function (req, res, next) {

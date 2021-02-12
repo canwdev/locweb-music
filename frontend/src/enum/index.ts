@@ -24,8 +24,6 @@ export class MusicItem {
   artist: string|undefined;
   album: string|undefined;
   track: object|undefined;
-  year: number|undefined;
-  hash: string; // song unique hash from backend
   coverImage: string;
   rating: number;
   // below are data for filesystem or directories
@@ -42,8 +40,6 @@ export class MusicItem {
     this.artist = item.artist
     this.album = item.album
     this.track = item.track
-    this.year = item.year
-    this.hash = item.hash
     this.coverImage = item.coverImage
     this.rating = item.rating
     this.filename = item.filename
@@ -78,14 +74,12 @@ export class MusicItem {
       artist,
       album,
       track,
-      year,
     }}: {common: ICommonTagsResult} = metadata
 
     this.title = title
     this.artist = artist
     this.album = album
     this.track = track
-    this.year = year
     this.metadata = metadata
   }
 
