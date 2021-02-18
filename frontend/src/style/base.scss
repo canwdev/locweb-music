@@ -9,13 +9,13 @@ body {
 .bg-glass-black {
   color: white;
   background: rgba(0,0,0,0.85);
-  backdrop-filter: saturate(180%) blur(20px);
+  //backdrop-filter: saturate(180%) blur(20px);
 }
 
 .bg-glass-white {
   color: black;
   background: rgba(255,255,255,0.72);
-  backdrop-filter: saturate(180%) blur(20px);
+  //backdrop-filter: saturate(180%) blur(20px);
 }
 
 .btn-no-style {

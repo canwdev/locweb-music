@@ -1,13 +1,13 @@
 <template>
   <div class="drawer-menu">
     <transition name="fade">
-      <div class="bg-shade" v-show="mVisible"  @click="mVisible=false"></div>
+      <div class="bg-shade" v-show="mVisible" @click="mVisible=false"></div>
     </transition>
     <transition name="menuSlide">
       <div class="menu bg-glass-black" v-show="mVisible">
         <div class="menu-title flex items-center justify-between">
           <span class="flex items-center">
-            <i class="material-icons menu-icon">menu</i> Menu
+            Menu
           </span>
           <button class="btn-no-style" @click="mVisible=false">
             <i class="material-icons">clear</i>
@@ -21,7 +21,10 @@
           <div v-if="item.subtitle" class="subtitle">{{ item.name }}</div>
           <button
               v-else
-              class="btn-no-style menu-item flex items-center">
+              :disabled="item.disabled"
+              class="btn-no-style menu-item flex items-center"
+              @click="item.action && item.action()"
+          >
             <span v-if="item.icon" class="material-icons">{{ item.icon }}</span> <span>{{ item.name }}</span>
           </button>
         </template>
@@ -35,22 +38,7 @@
 <script lang="ts">
 import {defineComponent, toRefs, computed} from 'vue';
 import useMVisible from "@/composables/useMVisible";
-import useCoverImage from "@/composables/useCoverImage";
-
-const menuList = [
-  {name: 'Music', subtitle: true},
-  {name: 'File System', icon: 'storage'},
-  {name: 'Playlists', icon: 'queue_music'},
-  {name: 'Albums', icon: 'album'},
-  {name: 'Artists', icon: 'mic'},
-  {name: 'Recent', icon: 'history'},
-  {name: 'Rated', icon: 'stars'},
-  {name: 'Search', icon: 'search'},
-  {name: 'System', subtitle: true},
-  {name: 'Settings', icon: 'settings'},
-  {name: 'User Management', icon: 'account_circle'},
-  {name: 'Rescan Media', icon: 'loop'},
-]
+import router from '@/router'
 
 export default defineComponent({
   name: 'DrawerMenu',
@@ -64,6 +52,28 @@ export default defineComponent({
     const {visible} = toRefs(props)
 
     const {mVisible} = useMVisible(visible, context)
+
+    const menuList = [
+      {name: 'Music', subtitle: true},
+      {name: 'File System', icon: 'storage'},
+      {name: 'Playlists', icon: 'queue_music', disabled: true},
+      // {name: 'Albums', icon: 'album'},
+      // {name: 'Artists', icon: 'mic'},
+      // {name: 'Recent', icon: 'history'},
+      // {name: 'Rated', icon: 'stars'},
+      // {name: 'Search', icon: 'search'},
+      {name: 'System', subtitle: true},
+      // {name: 'Settings', icon: 'settings'},
+      // {name: 'User Management', icon: 'account_circle'},
+      {name: 'Rescan Media', icon: 'loop'},
+      {
+        name: 'About', icon: 'info', action: () => {
+          router.push({
+            name: 'About'
+          })
+        }
+      },
+    ]
 
     return {
       menuList,
@@ -101,6 +111,7 @@ export default defineComponent({
 
     .menu-title {
       font-size: 18px;
+      height: 45px;
       line-height: 45px;
       padding: 0 10px;
       font-weight: bold;
@@ -108,7 +119,6 @@ export default defineComponent({
 
       .menu-icon {
         margin-right: 4px;
-        transform: translateY(-2px);
       }
     }
 
@@ -127,6 +137,7 @@ export default defineComponent({
       & + .menu-item {
         border-top: 1px solid $grey-9;
       }
+
       font-size: 16px;
       display: block;
       width: 100%;
@@ -135,7 +146,7 @@ export default defineComponent({
       padding: 0 10px;
 
       .material-icons {
-        color: $secondary;
+        color: $primary;
         margin-right: 5px;
         font-size: 20px;
         transform: translateY(4px);

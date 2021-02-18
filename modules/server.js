@@ -7,6 +7,7 @@ router.get('/', async (req, res, next) => {
       title: 'Locweb Music',
       name: pkg.name,
       version: pkg.version,
+      author: pkg.author
     })
   } catch (error) {
     next(error)

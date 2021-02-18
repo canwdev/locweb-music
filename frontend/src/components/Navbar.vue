@@ -72,28 +72,35 @@ export default defineComponent({
 
   & > button {
     position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     & + button {
       border-left: 1px solid $border-color;
     }
 
-    &:after {
-      position: absolute;
-      left: 0;
-      bottom: 0;
-      content: " ";
-      width: 100%;
-      height: 10%;
-      background: $primary;
-      opacity: 0;
-      transition: $generic-hover-transition;
-    }
-
-    &.active {
+    &.btn-tab {
       &:after {
-        opacity: 1;
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        content: " ";
+        width: 100%;
+        height: 10%;
+        background: $primary;
+        opacity: 0;
+        transition: $generic-hover-transition;
+      }
+
+      &.active {
+        &:after {
+          opacity: 1;
+        }
       }
     }
+
+
   }
 }
 </style>
