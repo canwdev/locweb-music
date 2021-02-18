@@ -1,6 +1,18 @@
 const path = require('path')
+const fs = require('fs')
 
-module.exports = {
+let config = {
   DATA_PATH: path.join(__dirname, '../data'),
-  MUSIC_LIBRARY_PATH: path.join(__dirname, '../examples')
+  MUSIC_LIBRARY_PATH: path.join(__dirname, '../examples') // music library base path
 }
+
+const configPath = path.join(__dirname, 'config.json')
+if (fs.existsSync(configPath)) {
+  const userConfig = require(configPath)
+  config = {
+    ...config,
+    ...userConfig
+  }
+}
+
+module.exports = config
