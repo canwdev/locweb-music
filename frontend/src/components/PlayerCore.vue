@@ -28,12 +28,17 @@ export default defineComponent({
     watch(musicItem, async (val) => {
       // console.log('musicItem changed', val)
       document.title = val.getDisplayTitle()
-      const {metadata} = await getDetail({
+      const detail = await getDetail({
         path: val.path,
         filename: val.filename
       })
-      console.log('detail', metadata)
-      val.setMetadata(metadata)
+      console.log('detail', detail)
+
+      const {
+        metadata,
+        cover
+      } = detail
+      val.setMetadata(metadata, cover)
       document.title = val.getDisplayTitle()
     })
     const source = computed((): string | null => {

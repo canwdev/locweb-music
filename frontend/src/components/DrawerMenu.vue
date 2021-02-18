@@ -34,6 +34,8 @@
 
 <script lang="ts">
 import {defineComponent, toRefs, computed} from 'vue';
+import useMVisible from "@/composables/useMVisible";
+import useCoverImage from "@/composables/useCoverImage";
 
 const menuList = [
   {name: 'Music', subtitle: true},
@@ -61,14 +63,7 @@ export default defineComponent({
   setup(props, context) {
     const {visible} = toRefs(props)
 
-    const mVisible = computed({
-      get(): boolean {
-        return visible.value
-      },
-      set(nv: boolean) {
-        return context.emit('update:visible', nv)
-      }
-    })
+    const {mVisible} = useMVisible(visible, context)
 
     return {
       menuList,
@@ -150,11 +145,11 @@ export default defineComponent({
 }
 
 .menuSlide-enter-active {
-  animation: menuSlide-in 0.3s;
+  animation: menuSlide-in 0.2s;
 }
 
 .menuSlide-leave-active {
-  animation: menuSlide-in 0.3s reverse;
+  animation: menuSlide-in 0.2s reverse;
 }
 
 @keyframes menuSlide-in {

@@ -22,11 +22,11 @@
     </div>
     <div class="actionbar bg-glass-white flex items-center">
       <ButtonCover
-          @click="logMusic"
+          @click="showDetailDialog"
           :src="coverImage"
       />
       <button class="btn-no-style btn-song">
-        <span class="title text-overflow">{{ musicItem.title || musicItem.filename || 'N/A' }}</span>
+        <span class="title text-overflow">{{ displayTitle }}</span>
         <span v-show="musicItem.artist" class="artist text-overflow">{{ musicItem.artist }}</span>
       </button>
       <div class="buttons-scroll flex items-center ">
@@ -49,9 +49,9 @@
           <i class="material-icons" title="Next">skip_next</i>
         </button>
 
-<!--        <button class="btn-no-style btn-action">-->
-<!--          <i class="material-icons" title="Volume">volume_up</i>-->
-<!--        </button>-->
+        <!--        <button class="btn-no-style btn-action">-->
+        <!--          <i class="material-icons" title="Volume">volume_up</i>-->
+        <!--        </button>-->
         <button class="btn-no-style btn-action" :class="{active: isRandom}" @click="toggleRandom">
           <i class="material-icons" title="Shuffle">shuffle</i>
         </button>
@@ -60,6 +60,25 @@
         </button>
       </div>
     </div>
+
+    <ModalDialog
+        v-model:visible="detailDialogVisible"
+    >
+      <div class="music-detail">
+        <CoverDisplay
+            class="big-cover"
+            :src="coverImage"
+            :is-rotating="false"
+            :is-rounded="false"
+        />
+        <div class="title">{{ displayTitle }}</div>
+        <div class="subtitle">{{ musicItem.artist }}</div>
+        <div class="subtitle">{{ musicItem.album }}</div>
+
+        <textarea class="metadata" cols="30" rows="10" readonly :value="JSON.stringify(musicItem.metadata, null, 2)"></textarea>
+      </div>
+
+    </ModalDialog>
   </div>
 </template>
 
@@ -70,16 +89,21 @@ import {LoopModeEnum, MusicItem} from "@/enum";
 import bus, {ACTION_CHANGE_CURRENT_TIME, ACTION_NEXT, ACTION_PREV, ACTION_TOGGLE_PLAY} from "@/utils/bus";
 import {formatTimeMS} from "@/utils";
 import ButtonCover from "@/components/ButtonCover.vue"
+import CoverDisplay from "@/components/CoverDisplay.vue"
 import useCoverImage from "@/composables/useCoverImage";
+import ModalDialog from '@/components/ModalDialog.vue'
 
 export default defineComponent({
   name: 'Actionbar',
   components: {
-    ButtonCover
+    ButtonCover,
+    ModalDialog,
+    CoverDisplay
   },
   setup() {
     const mCurrentTime = ref(0)
     const isSeeking = ref(false)
+    const detailDialogVisible = ref(false)
 
     const currentTime = computed(() => {
       return store.getters.currentTime
@@ -135,6 +159,9 @@ export default defineComponent({
           return 'help'
       }
     })
+    const displayTitle = computed(() => {
+      return musicItem.value.title || musicItem.value.filename || 'N/A'
+    })
 
     const loopText = {
       1: 'Play in order',
@@ -157,6 +184,7 @@ export default defineComponent({
       mCurrentTime,
       isSeeking,
       coverImage,
+      detailDialogVisible,
       // computed
       currentTime,
       duration,
@@ -166,6 +194,7 @@ export default defineComponent({
       isRandom,
       loopMode,
       loopIconName,
+      displayTitle,
       // methods
       previous() {
         bus.emit(ACTION_PREV)
@@ -209,7 +238,8 @@ export default defineComponent({
         bus.emit(ACTION_CHANGE_CURRENT_TIME, evt.target.value)
         isSeeking.value = false
       },
-      logMusic() {
+      showDetailDialog() {
+        detailDialogVisible.value = true
         console.log(musicItem.value)
       }
     }
@@ -272,7 +302,7 @@ export default defineComponent({
         border-radius: 50%;
         background: $primary;
         z-index: 1;
-        border: 1px solid rgba(0,0,0,0.2);
+        border: 1px solid rgba(0, 0, 0, 0.2);
       }
     }
   }
@@ -282,9 +312,12 @@ export default defineComponent({
   height: 55px;
   box-shadow: $shadow-1;
   user-select: none;
+  padding-left: 2px;
+
   .btn-cover {
     background-color: $primary;
   }
+
   .btn-song {
     width: 45%;
     height: 100%;
@@ -330,6 +363,30 @@ export default defineComponent({
         border-left: 1px solid $border-color;
       }
     }
+  }
+}
+
+.music-detail {
+  width: 300px;
+  text-align: center;
+  .big-cover {
+    width: 300px;
+    height: 300px;
+  }
+  .title {
+    margin-top: 10px;
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  .subtitle {
+    margin-bottom: 5px;
+  }
+  .metadata {
+    width: 90%;
+    font-size: 12px;
+    font-family: monospace;
+    resize: none;
   }
 }
 </style>

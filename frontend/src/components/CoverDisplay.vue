@@ -1,6 +1,6 @@
 <template>
-  <div class="cover-display">
-    <img :src="src">
+  <div v-if="src" class="cover-display">
+    <img :src="src" :class="{rounded: isRounded, rotating: isRotating}">
   </div>
 </template>
 
@@ -11,6 +11,14 @@ name: "CoverDisplay",
     src: {
       type: String,
       default: null
+    },
+    isRounded: {
+      type: Boolean,
+      default: false
+    },
+    isRotating: {
+      type: Boolean,
+      default: false
     }
   }
 }
@@ -19,6 +27,7 @@ name: "CoverDisplay",
 <style lang="scss" scoped>
 .cover-display {
   position: relative;
+  overflow: hidden;
 
   img {
     position: relative;
@@ -27,6 +36,15 @@ name: "CoverDisplay",
     width: 100%;
     height: 100%;
     object-fit: cover;
+    animation: rotating360 60s infinite linear;
+    animation-play-state: paused;
+    &.rounded {
+      border-radius: 50%;
+      overflow: hidden;
+    }
+    &.rotating {
+      animation-play-state: running;
+    }
   }
 }
 </style>

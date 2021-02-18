@@ -1,5 +1,4 @@
 import {IAudioMetadata, ICommonTagsResult}  from 'music-metadata/lib/type'
-import {blobToDataURL} from "@/utils";
 
 // server api url
 export const HOST_URL = process.env.VUE_APP_API_HOST || '';
@@ -68,7 +67,7 @@ export class MusicItem {
     return HOST_URL + '/mfs/' + this.filepath
   }
 
-  setMetadata(metadata: IAudioMetadata) {
+  setMetadata(metadata: IAudioMetadata, cover?: string|undefined|null) {
     const {common: {
       title,
       artist,
@@ -81,24 +80,9 @@ export class MusicItem {
     this.album = album
     this.track = track
     this.metadata = metadata
-  }
 
-  async getCover() {
-    if (this.cover) {
-      return this.cover
+    if (cover) {
+      this.cover = `${HOST_URL}${cover}`
     }
-    if (!this.metadata) {
-      return null
-    }
-    const pictures = this.metadata.common.picture
-    if (!pictures) {
-      return null
-    }
-    // @ts-ignore
-    const {data} = pictures[0].data
-
-    this.cover = await blobToDataURL(new Blob([new Uint8Array(data)]))
-
-    return this.cover
   }
 }

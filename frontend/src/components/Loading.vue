@@ -41,7 +41,7 @@ export default defineComponent({
     flex-direction: column;
     .material-icons {
       font-size: 32px;
-      animation: rotating 1.5s infinite;
+      animation: rotating180 1.5s infinite;
     }
     .text {
       padding-top: 5px;

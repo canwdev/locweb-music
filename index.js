@@ -19,9 +19,6 @@ if (!isProduction) {
   app.use(errorhandler());
 }
 
-require('./database')
-require('./service/media-scanner')
-
 app.use(express.static(path.join(__dirname, 'public')));
 // Vue dist directory
 app.use('/', express.static(path.join(__dirname, 'frontend-dist')));

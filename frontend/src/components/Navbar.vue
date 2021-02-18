@@ -4,7 +4,7 @@
   />
 
   <div class="navbar bg-glass-white flex">
-    <button disabled class="btn-no-style btn-menu" @click="isShowMenu = true"><i class="material-icons">menu</i></button>
+    <button class="btn-no-style btn-menu" @click="isShowMenu = true"><i class="material-icons">menu</i></button>
     <button
         v-for="item in tabs"
         :key="item.value"

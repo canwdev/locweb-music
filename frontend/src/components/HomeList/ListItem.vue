@@ -142,9 +142,9 @@ export default defineComponent({
     }
 
     .list-item-big {
+      background: rgba(0, 0, 0, 0.1);
       .btn-cover {
         background-color: $primary;
-
       }
     }
   }
@@ -180,6 +180,7 @@ export default defineComponent({
     height: 55px;
     display: flex;
     align-items: center;
+    padding-left: 4px;
 
     .right {
       overflow: hidden;

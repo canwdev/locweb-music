@@ -30,7 +30,6 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .btn-cover {
-  margin-left: 4px;
   width: 50px;
   height: 50px;
   background: $grey-6;
