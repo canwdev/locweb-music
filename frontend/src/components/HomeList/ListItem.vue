@@ -29,7 +29,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, toRefs, computed, watch} from 'vue';
+import {defineComponent, toRefs, computed} from 'vue';
 import {isSupportedMusicFormat} from "@/utils/is";
 import ButtonCover from "@/components/ButtonCover.vue"
 import useCoverImage from "@/composables/useCoverImage";
@@ -67,22 +67,6 @@ export default defineComponent({
 
     const {coverImage} = useCoverImage(item)
 
-    watch(active, (val) => {
-      if (val) {
-        // console.log('active', item.value, itemEl)
-        setTimeout(() => {
-          if (itemEl) {
-            itemEl.scrollIntoView({
-              behavior: 'smooth'
-            })
-          }
-        }, 200)
-
-      }
-    }, {
-      immediate: true
-    })
-
     const isSupport = computed(() => {
       return isSupportedMusicFormat(item.value.filename)
     })
@@ -113,12 +97,32 @@ export default defineComponent({
       return [title,artist,album].join(' - ')
     })
 
+    const scrollIntoView = () => {
+      if (itemEl) {
+        itemEl.scrollIntoView({
+          behavior: 'smooth'
+        })
+      }
+    }
+    // watch(active, (val) => {
+    //   if (val) {
+    //     // console.log('active', item.value, itemEl)
+    //     setTimeout(() => {
+    //       scrollIntoView()
+    //     }, 200)
+    //
+    //   }
+    // }, {
+    //   immediate: true
+    // })
+
     return {
       coverImage,
       isSupport,
       iconName,
       displayTitle,
-      setItemRef
+      setItemRef,
+      scrollIntoView
     }
   }
 })

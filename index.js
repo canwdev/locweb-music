@@ -26,6 +26,7 @@ app.use('/', express.static(path.join(__dirname, 'frontend-dist')));
 app.use('/images', express.static(IMAGE_PATH));
 // Expose library filesystem
 app.use('/mfs', express.static(MUSIC_LIBRARY_PATH));
+console.log(`Serving /mfs from ${MUSIC_LIBRARY_PATH}`)
 
 // Create Router
 app.use('/', require('./routes/index'));

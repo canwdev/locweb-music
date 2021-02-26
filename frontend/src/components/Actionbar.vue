@@ -25,7 +25,10 @@
           @click="showDetailDialog"
           :src="coverImage"
       />
-      <button class="btn-no-style btn-song">
+      <button
+          @click="showDetailDialog"
+          class="btn-no-style btn-song"
+      >
         <span class="title text-overflow">{{ displayTitle }}</span>
         <span v-show="musicItem.artist" class="artist text-overflow">{{ musicItem.artist }}</span>
       </button>

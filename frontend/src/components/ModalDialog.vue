@@ -3,6 +3,9 @@
     <div v-show="mVisible" class="modal-dialog-wrap">
       <div class="dialog-shadow" @click="mVisible = false"></div>
       <div class="dialog-main">
+        <button v-if="isShowClose" class="btn-no-style btn-close" @click="mVisible = false">
+          <i class="material-icons">clear</i>
+        </button>
         <slot></slot>
       </div>
     </div>
@@ -17,6 +20,10 @@ export default defineComponent({
   name: "ModalDialog",
   props: {
     visible: {
+      type: Boolean,
+      default: true
+    },
+    isShowClose: {
       type: Boolean,
       default: true
     }
@@ -56,9 +63,24 @@ export default defineComponent({
     position: relative;
     background: white;
     padding: 10px;
-    overflow: auto;
     max-width: 95vw;
     max-height: 90vh;
+
+    .btn-close {
+      position: absolute;
+      top: -14px;
+      right: -14px;
+      z-index: 2;
+      background: white;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid;
+      @media screen and (max-width: $mobile_min_width) {
+        top: 5px;
+        right: 5px;
+      }
+    }
   }
 }
 
