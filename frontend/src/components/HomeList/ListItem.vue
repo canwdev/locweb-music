@@ -1,6 +1,5 @@
 <template>
   <a
-      :ref="setItemRef"
       class="btn-no-style list-item-wrap"
       :class="{grey: !isSupport && !item.isDirectory, active}"
   >
@@ -58,10 +57,6 @@ export default defineComponent({
     },
   },
   setup(props) {
-    let itemEl
-    const setItemRef = (el) => {
-      itemEl = el
-    }
 
     const {item, active, isBigItem, isPaused} = toRefs(props)
 
@@ -97,32 +92,11 @@ export default defineComponent({
       return [title,artist,album].join(' - ')
     })
 
-    const scrollIntoView = () => {
-      if (itemEl) {
-        itemEl.scrollIntoView({
-          behavior: 'smooth'
-        })
-      }
-    }
-    // watch(active, (val) => {
-    //   if (val) {
-    //     // console.log('active', item.value, itemEl)
-    //     setTimeout(() => {
-    //       scrollIntoView()
-    //     }, 200)
-    //
-    //   }
-    // }, {
-    //   immediate: true
-    // })
-
     return {
       coverImage,
       isSupport,
       iconName,
-      displayTitle,
-      setItemRef,
-      scrollIntoView
+      displayTitle
     }
   }
 })

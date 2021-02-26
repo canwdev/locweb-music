@@ -9,13 +9,14 @@
         :show-up="directories.length > 0"
         @onItemClick="handleItemClick"
         @goUpDir="goUpDir"
+        @refresh="getFileList"
     />
     <HomeList
         v-show="isPlaylist"
         :is-loading="isLoading"
         :list="playlist"
-        :active-index="playingIndex"
-        is-big-item
+        :active-id="playingId"
+        is-play-list
         :is-paused="paused"
         @onItemClick="handleItemClick"
         @goUpDir="goUpDir"
@@ -58,6 +59,7 @@ export default defineComponent({
     const isRandom = computed(() => store.getters.isRandom)
     const loopMode = computed(() => store.getters.loopMode)
     const paused = computed(() => store.getters.paused)
+    const playingId = computed(() => store.getters.musicItem.id)
     const playingIndex = computed<number>({
       get() {
         return store.getters.playingIndex
@@ -210,6 +212,7 @@ export default defineComponent({
       navbarTab,
       isRandom,
       loopMode,
+      playingId,
       playingIndex,
       isPlaylist,
       paused,
