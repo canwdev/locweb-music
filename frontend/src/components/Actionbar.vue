@@ -160,7 +160,7 @@ export default defineComponent({
     const mCurrentTime = ref(0)
     const isSeeking = ref(false)
     const detailDialogVisible = ref(false)
-    const isShowDetail = ref(true)
+    const isShowDetail = ref(false)
     const currentDetailTab = ref(DetailTabEnum.LYRIC)
 
     const currentTime = computed(() => {
@@ -462,6 +462,8 @@ export default defineComponent({
       width: 100%;
       height: 100%;
       cursor: pointer;
+      border-radius: inherit;
+      overflow: hidden;
     }
   }
 
@@ -474,7 +476,8 @@ export default defineComponent({
     display: flex;
     flex-direction: column;
     color: white;
-    background: rgba(0,0,0,0.6);
+    background: rgba(0,0,0,0.4);
+    border-radius: inherit;
 
     .tab-wrap {
       display: flex;
@@ -511,6 +514,7 @@ export default defineComponent({
       height: 100%;
       overflow: auto;
       box-sizing: border-box;
+      padding: 0 5px;
 
       & > p {
         font-size: 14px;

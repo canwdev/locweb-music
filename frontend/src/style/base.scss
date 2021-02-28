@@ -9,7 +9,7 @@ body {
 .bg-glass-black {
   color: white;
   background: rgba(0,0,0,0.85);
-  backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(30px);
 }
 
 .bg-transparent-black {
@@ -48,10 +48,10 @@ body {
 
 
 .fade-enter-active, .fade-leave-active {
-  transition: opacity .2s;
+  transition: opacity .23s ease;
 }
 
-.fade-enter, .fade-leave-to {
+.fade-enter-from, .fade-leave-to {
   opacity: 0;
 }
 

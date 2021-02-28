@@ -3,7 +3,7 @@
     <transition name="fade">
       <div class="bg-shade" v-show="mVisible" @click="mVisible=false"></div>
     </transition>
-    <transition name="menuSlide">
+    <transition name="slide-fade">
       <div class="menu bg-transparent-black" v-show="mVisible">
         <div class="menu-title flex items-center justify-between">
           <span class="flex items-center">
@@ -155,22 +155,17 @@ export default defineComponent({
   }
 }
 
-.menuSlide-enter-active {
-  animation: menuSlide-in 0.3s;
+.slide-fade-enter-active {
+  transition: all .2s ease-out;
 }
 
-.menuSlide-leave-active {
-  animation: menuSlide-in 0.3s reverse;
+.slide-fade-leave-active {
+  transition: all .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
 }
 
-@keyframes menuSlide-in {
-  0% {
-    opacity: 0;
-    transform: translateX(-20%);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(0);
-  }
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+  transform: translateX(-20px);
+  opacity: 0;
 }
 </style>

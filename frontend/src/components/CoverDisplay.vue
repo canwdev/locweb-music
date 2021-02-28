@@ -38,9 +38,11 @@ name: "CoverDisplay",
     object-fit: cover;
     animation: rotating360 60s infinite linear;
     animation-play-state: paused;
+    border-radius: inherit;
+    overflow: hidden;
+
     &.rounded {
       border-radius: 50%;
-      overflow: hidden;
     }
     &.rotating {
       animation-play-state: running;
