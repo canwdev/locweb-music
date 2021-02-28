@@ -80,22 +80,33 @@
 
         <div class="tab-wrap">
           <button
-            v-for="item in detailTabList"
-            :key="item.value"
-            class="btn-no-style"
-            :class="{active: currentDetailTab === item.value}"
-            @click="currentDetailTab = item.value"
+              v-for="item in detailTabList"
+              :key="item.value"
+              class="btn-no-style"
+              :class="{active: currentDetailTab === item.value}"
+              @click="currentDetailTab = item.value"
           >
             {{ item.label }}
           </button>
         </div>
 
+        <div
+            v-show="currentDetailTab === DetailTabEnum.LYRIC"
+        >
+          <div v-if="lyricObj && lyricObj.lines" class="lrc-main">
+            <p
+                v-for="(line, index) in lyricObj.lines"
+                :class="{active: lyricCurrentLine===index}"
+                :key="index"
+            >{{ line.txt }}
+            </p>
+          </div>
+          <div v-else class="lrc-main no-lyric">
+            没有歌词，请欣赏
+          </div>
+        </div>
         <textarea
-            v-if="currentDetailTab === DetailTabEnum.LYRIC"
-            class="metadata" cols="30" rows="15" readonly
-            :value="musicItem.lyric"></textarea>
-        <textarea
-            v-if="currentDetailTab === DetailTabEnum.METADATA"
+            v-show="currentDetailTab === DetailTabEnum.METADATA"
             class="metadata" cols="30" rows="15" readonly
             :value="JSON.stringify(musicItem.metadata, null, 2)"></textarea>
 
@@ -113,8 +124,8 @@ import bus, {ACTION_CHANGE_CURRENT_TIME, ACTION_NEXT, ACTION_PREV, ACTION_TOGGLE
 import {formatTimeMS} from "@/utils";
 import ButtonCover from "@/components/ButtonCover.vue"
 import CoverDisplay from "@/components/CoverDisplay.vue"
-import useCoverImage from "@/composables/useCoverImage";
 import ModalDialog from '@/components/ModalDialog.vue'
+import useLyricObj from "@/composables/useLyricObj"
 
 const DetailTabEnum = {
   LYRIC: 'LYRIC',
@@ -155,7 +166,9 @@ export default defineComponent({
     const musicItem = computed((): MusicItem => {
       return store.getters.musicItem
     })
-    const {coverImage} = useCoverImage(musicItem)
+    const coverImage = computed(() => {
+      return musicItem.value.cover
+    })
     const paused = computed((): boolean => {
       return store.getters.paused
     })
@@ -211,10 +224,13 @@ export default defineComponent({
       })
     }
 
+    const lyricData = useLyricObj()
+
     return {
       DetailTabEnum,
       detailTabList,
       currentDetailTab,
+      ...lyricData,
       // data
       LoopModeEnum,
       mCurrentTime,
@@ -405,19 +421,24 @@ export default defineComponent({
 .music-detail {
   width: 300px;
   text-align: center;
+
   .big-cover {
     width: 300px;
     height: 300px;
+    border-radius: $generic-border-radius;
   }
+
   .title {
     margin-top: 10px;
     font-size: 22px;
     font-weight: bold;
     margin-bottom: 5px;
   }
+
   .subtitle {
     margin-bottom: 5px;
   }
+
   .metadata {
     width: 90%;
     font-size: 12px;
@@ -429,13 +450,46 @@ export default defineComponent({
     display: flex;
     margin-top: 10px;
     font-size: 14px;
+
     button {
       flex: 1;
       opacity: .3;
+
       &.active {
         opacity: 1;
         font-weight: bold;
       }
+    }
+  }
+
+  textarea {
+    height: 150px;
+    margin-top: 10px;
+    box-sizing: border-box;
+  }
+
+  .lrc-main {
+    height: 150px;
+    overflow: auto;
+    box-sizing: border-box;
+    margin-top: 10px;
+
+    & > p {
+      font-size: 14px;
+      margin: 10px 0 0 0;
+      text-align: center;
+      line-height: 1.3;
+
+      &.active {
+        color: $accent;
+      }
+    }
+
+    &.no-lyric {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: $grey;
     }
   }
 }

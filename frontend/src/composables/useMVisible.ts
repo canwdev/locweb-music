@@ -1,6 +1,6 @@
 import {computed} from 'vue'
 
-export default function useCoverImage(visible, context) {
+export default function (visible, context) {
   const mVisible = computed({
     get(): boolean {
       return visible.value

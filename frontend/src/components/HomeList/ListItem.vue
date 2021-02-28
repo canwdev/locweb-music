@@ -31,7 +31,7 @@
 import {defineComponent, toRefs, computed} from 'vue';
 import {isSupportedMusicFormat} from "@/utils/is";
 import ButtonCover from "@/components/ButtonCover.vue"
-import useCoverImage from "@/composables/useCoverImage";
+import store from "@/store";
 
 export default defineComponent({
   name: "ListItem",
@@ -60,7 +60,9 @@ export default defineComponent({
 
     const {item, active, isBigItem, isPaused} = toRefs(props)
 
-    const {coverImage} = useCoverImage(item)
+    const coverImage = computed(() => {
+      return item.value.cover
+    })
 
     const isSupport = computed(() => {
       return isSupportedMusicFormat(item.value.filename)
