@@ -2,11 +2,30 @@ const router = require('express').Router()
 const fs = require('fs-extra');
 const path = require('path');
 const mm = require('music-metadata')
-const {MUSIC_LIBRARY_PATH} = require('../config')
-const getRealPath = (dir) => {
+const chokidar = require('chokidar');
+const {MUSIC_LIBRARY_PATH, MUSIC_LYRICS_PATH} = require('../config')
+const getMusicPath = (dir = '') => {
   return path.join(MUSIC_LIBRARY_PATH, dir)
 }
-const {getMetadata} = require('../utils/music-tool')
+const getLyricsPath = (dir = '') => {
+  return path.join(MUSIC_LYRICS_PATH, dir)
+}
+const {getMetadata, getLyricFile} = require('../utils/music-tool')
+
+
+let lyrics = []
+const refreshLyrics = async () => {
+  lyrics = await fs.readdir(MUSIC_LYRICS_PATH)
+}
+refreshLyrics()
+
+console.log('watch', MUSIC_LYRICS_PATH)
+chokidar.watch(MUSIC_LYRICS_PATH, {
+  ignoreInitial: true
+}).on('all', (event, path) => {
+  console.log(event, path)
+  refreshLyrics()
+});
 
 /**
  * get file list
@@ -16,7 +35,7 @@ router.get('/list', async (req, res, next) => {
     const {
       path: musicPath = ''
     } = req.query
-    const dir = getRealPath(musicPath)
+    const dir = getMusicPath(musicPath)
     const files = await fs.readdir(dir)
 
     const result = files.map((filename, index) => {
@@ -49,7 +68,7 @@ router.get('/detail', async (req, res, next) => {
       })
     }
 
-    const dir = getRealPath(musicPath)
+    const dir = getMusicPath(musicPath)
     const filePath = path.join(dir, filename)
 
     if (!fs.existsSync(filePath)) {
@@ -65,9 +84,21 @@ router.get('/detail', async (req, res, next) => {
 
     delete metadata.native
 
+    // get lyric
+    let lyric
+    try {
+      const lyricFile = getLyricFile(lyrics, filename)
+      if (lyricFile) {
+        lyric = await fs.readFile(getLyricsPath(lyricFile), {encoding: 'utf-8'})
+      }
+    } catch (e) {
+      console.log('Get lyric error', e)
+    }
+
     const sendData = {
       filePath,
-      metadata: metadata
+      metadata: metadata,
+      lyric
     }
 
     if (coverFileName) {

@@ -3,7 +3,7 @@ const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
 const errorhandler = require('errorhandler')
-const {DATA_PATH, MUSIC_LIBRARY_PATH} = require('./config')
+const {DATA_PATH, MUSIC_LIBRARY_PATH, MUSIC_LYRICS_PATH} = require('./config')
 const {IMAGE_PATH} = require('./config/enum')
 const {normalizePort} = require('./utils')
 const isProduction = process.env.NODE_ENV === 'production';
@@ -27,6 +27,7 @@ app.use('/images', express.static(IMAGE_PATH));
 // Expose library filesystem
 app.use('/mfs', express.static(MUSIC_LIBRARY_PATH));
 console.log(`Serving /mfs from ${MUSIC_LIBRARY_PATH}`)
+app.use('/lrc', express.static(MUSIC_LYRICS_PATH));
 
 // Create Router
 app.use('/', require('./routes/index'));

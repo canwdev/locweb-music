@@ -42,6 +42,29 @@ const getMetadata = async (filePath) => {
   }
 }
 
+const getLyricFile = (lyrics, filename, isExact = false) => {
+  // Remove suffix
+  filename = filename.slice(0, filename.lastIndexOf('.'))
+
+  if (!isExact) {
+    // remove "05. Eagles - 加州旅馆" 's "05. "
+    filename = filename.replace(/^[\d]{1,8}.\s/, '')
+  }
+
+  console.log('search for:', filename)
+
+  for (let i = 0; i < lyrics.length; i++) {
+    const lyric = lyrics[i]
+    const mLyric = lyric.slice(0, lyric.lastIndexOf('.'))
+    if (filename === mLyric) {
+      console.log('lyric found:', lyric)
+      return lyric
+    }
+  }
+  console.log('lyric not found')
+}
+
 module.exports = {
-  getMetadata
+  getMetadata,
+  getLyricFile
 }

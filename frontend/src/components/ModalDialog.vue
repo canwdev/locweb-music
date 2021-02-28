@@ -6,7 +6,9 @@
         <button v-if="isShowClose" class="btn-no-style btn-close" @click="mVisible = false">
           <i class="material-icons">clear</i>
         </button>
-        <slot></slot>
+        <div class="dialog-inner">
+          <slot></slot>
+        </div>
       </div>
     </div>
   </transition>
@@ -62,9 +64,6 @@ export default defineComponent({
     border-radius: $generic-border-radius;
     position: relative;
     background: white;
-    padding: 10px;
-    max-width: 95vw;
-    max-height: 90vh;
 
     .btn-close {
       position: absolute;
@@ -80,6 +79,16 @@ export default defineComponent({
         top: 5px;
         right: 5px;
       }
+    }
+
+    .dialog-inner {
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      max-width: 95vw;
+      max-height: 92vh;
+      padding: 10px;
+      box-sizing: border-box;
     }
   }
 }

@@ -1,9 +1,12 @@
 const path = require('path')
 const fs = require('fs')
 
+const defaultPath = path.join(__dirname, '../data')
+
 let config = {
-  DATA_PATH: path.join(__dirname, '../data'),
-  MUSIC_LIBRARY_PATH: path.join(__dirname, '../data') // music library base path
+  DATA_PATH: defaultPath,
+  MUSIC_LIBRARY_PATH: defaultPath, // music library base path
+  MUSIC_LYRICS_PATH: defaultPath
 }
 
 const configPath = path.join(__dirname, 'config.json')

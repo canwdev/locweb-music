@@ -78,7 +78,27 @@
         <div class="subtitle">{{ musicItem.artist }}</div>
         <div class="subtitle">{{ musicItem.album }}</div>
 
-        <textarea class="metadata" cols="30" rows="10" readonly :value="JSON.stringify(musicItem.metadata, null, 2)"></textarea>
+        <div class="tab-wrap">
+          <button
+            v-for="item in detailTabList"
+            :key="item.value"
+            class="btn-no-style"
+            :class="{active: currentDetailTab === item.value}"
+            @click="currentDetailTab = item.value"
+          >
+            {{ item.label }}
+          </button>
+        </div>
+
+        <textarea
+            v-if="currentDetailTab === DetailTabEnum.LYRIC"
+            class="metadata" cols="30" rows="15" readonly
+            :value="musicItem.lyric"></textarea>
+        <textarea
+            v-if="currentDetailTab === DetailTabEnum.METADATA"
+            class="metadata" cols="30" rows="15" readonly
+            :value="JSON.stringify(musicItem.metadata, null, 2)"></textarea>
+
       </div>
 
     </ModalDialog>
@@ -96,6 +116,15 @@ import CoverDisplay from "@/components/CoverDisplay.vue"
 import useCoverImage from "@/composables/useCoverImage";
 import ModalDialog from '@/components/ModalDialog.vue'
 
+const DetailTabEnum = {
+  LYRIC: 'LYRIC',
+  METADATA: 'METADATA',
+}
+const detailTabList = [
+  {label: 'Lyric', value: DetailTabEnum.LYRIC},
+  {label: 'Metadata', value: DetailTabEnum.METADATA},
+]
+
 export default defineComponent({
   name: 'Actionbar',
   components: {
@@ -107,6 +136,7 @@ export default defineComponent({
     const mCurrentTime = ref(0)
     const isSeeking = ref(false)
     const detailDialogVisible = ref(false)
+    const currentDetailTab = ref(DetailTabEnum.LYRIC)
 
     const currentTime = computed(() => {
       return store.getters.currentTime
@@ -182,6 +212,9 @@ export default defineComponent({
     }
 
     return {
+      DetailTabEnum,
+      detailTabList,
+      currentDetailTab,
       // data
       LoopModeEnum,
       mCurrentTime,
@@ -390,6 +423,20 @@ export default defineComponent({
     font-size: 12px;
     font-family: monospace;
     resize: none;
+  }
+
+  .tab-wrap {
+    display: flex;
+    margin-top: 10px;
+    font-size: 14px;
+    button {
+      flex: 1;
+      opacity: .3;
+      &.active {
+        opacity: 1;
+        font-weight: bold;
+      }
+    }
   }
 }
 </style>

@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "body-parser": "^1.19.0",
+    "chokidar": "^3.5.1",
     "cross-env": "^7.0.3",
     "crypto": "^1.0.1",
     "errorhandler": "^1.5.1",

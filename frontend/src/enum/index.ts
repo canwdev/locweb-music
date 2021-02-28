@@ -32,6 +32,8 @@ export class MusicItem {
   size: number;
   metadata: IAudioMetadata;
   cover: string|undefined|null;
+  isDetailLoaded: boolean;
+  lyric: string|undefined
 
   constructor(item: any = {}) {
     this.id = item.id
@@ -47,6 +49,7 @@ export class MusicItem {
     this.size = item.size
     this.metadata = item.metadata
     this.cover = item.cover
+    this.isDetailLoaded = false
   }
 
   get filepath() {
@@ -67,7 +70,7 @@ export class MusicItem {
     return HOST_URL + '/mfs/' + this.filepath
   }
 
-  setMetadata(metadata: IAudioMetadata, cover?: string|undefined|null) {
+  setMetadata(metadata: IAudioMetadata, cover?: string|undefined|null, lyric?: string|undefined) {
     const {common: {
       title,
       artist,
@@ -84,5 +87,11 @@ export class MusicItem {
     if (cover) {
       this.cover = `${HOST_URL}${cover}`
     }
+
+    if (lyric) {
+      this.lyric = lyric
+    }
+
+    this.isDetailLoaded = true
   }
 }
