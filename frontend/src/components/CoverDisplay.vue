@@ -1,6 +1,6 @@
 <template>
-  <div v-if="src" class="cover-display">
-    <img :src="src" :class="{rounded: isRounded, rotating: isRotating}">
+  <div class="cover-display">
+    <img v-if="src" :src="src" :class="{rounded: isRounded, rotating: isRotating}">
   </div>
 </template>
 

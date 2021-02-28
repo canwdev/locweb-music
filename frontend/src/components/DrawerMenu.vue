@@ -4,7 +4,7 @@
       <div class="bg-shade" v-show="mVisible" @click="mVisible=false"></div>
     </transition>
     <transition name="menuSlide">
-      <div class="menu bg-glass-black" v-show="mVisible">
+      <div class="menu bg-transparent-black" v-show="mVisible">
         <div class="menu-title flex items-center justify-between">
           <span class="flex items-center">
             Menu
@@ -156,11 +156,11 @@ export default defineComponent({
 }
 
 .menuSlide-enter-active {
-  animation: menuSlide-in 0.2s;
+  animation: menuSlide-in 0.3s;
 }
 
 .menuSlide-leave-active {
-  animation: menuSlide-in 0.2s reverse;
+  animation: menuSlide-in 0.3s reverse;
 }
 
 @keyframes menuSlide-in {

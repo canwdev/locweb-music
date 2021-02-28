@@ -68,48 +68,61 @@
         v-model:visible="detailDialogVisible"
     >
       <div class="music-detail">
-        <CoverDisplay
-            class="big-cover"
-            :src="coverImage"
-            :is-rotating="false"
-            :is-rounded="false"
-        />
-        <div class="title">{{ displayTitle }}</div>
-        <div class="subtitle">{{ musicItem.artist }}</div>
-        <div class="subtitle">{{ musicItem.album }}</div>
+        <div class="cover-wrap">
+          <CoverDisplay
+              class="big-cover"
+              :src="coverImage"
+              :is-rotating="false"
+              :is-rounded="false"
+              @click="isShowDetail = true"
+          />
+          <transition name="fade">
+            <div v-show="isShowDetail" class="detail-content bg-glass-black">
+              <div class="tab-wrap">
+                <button
+                    v-for="item in detailTabList"
+                    :key="item.value"
+                    class="btn-no-style"
+                    :class="{active: currentDetailTab === item.value}"
+                    @click="currentDetailTab = item.value"
+                >
+                  {{ item.label }}
+                </button>
+              </div>
 
-        <div class="tab-wrap">
-          <button
-              v-for="item in detailTabList"
-              :key="item.value"
-              class="btn-no-style"
-              :class="{active: currentDetailTab === item.value}"
-              @click="currentDetailTab = item.value"
-          >
-            {{ item.label }}
-          </button>
+              <div
+                  style="flex: 1; overflow: hidden"
+                  v-show="currentDetailTab === DetailTabEnum.LYRIC"
+              >
+                <div v-if="lyricObj && lyricObj.lines" class="lrc-main">
+                  <p
+                      v-for="(line, index) in lyricObj.lines"
+                      :class="{active: lyricCurrentLine===index}"
+                      :key="index"
+                  >{{ line.txt }}
+                  </p>
+                </div>
+                <div v-else class="lrc-main no-lyric">
+                  没有歌词，请欣赏
+                </div>
+              </div>
+              <textarea
+                  v-show="currentDetailTab === DetailTabEnum.METADATA"
+                  class="metadata" cols="30" rows="15" readonly
+                  :value="JSON.stringify(musicItem.metadata, null, 2)"></textarea>
+            </div>
+          </transition>
         </div>
+
 
         <div
-            v-show="currentDetailTab === DetailTabEnum.LYRIC"
+          class="titles-wrap"
+          @click="isShowDetail = !isShowDetail"
         >
-          <div v-if="lyricObj && lyricObj.lines" class="lrc-main">
-            <p
-                v-for="(line, index) in lyricObj.lines"
-                :class="{active: lyricCurrentLine===index}"
-                :key="index"
-            >{{ line.txt }}
-            </p>
-          </div>
-          <div v-else class="lrc-main no-lyric">
-            没有歌词，请欣赏
-          </div>
+          <div class="title">{{ displayTitle }}</div>
+          <div class="subtitle">{{ musicItem.artist }}</div>
+          <div class="subtitle">{{ musicItem.album }}</div>
         </div>
-        <textarea
-            v-show="currentDetailTab === DetailTabEnum.METADATA"
-            class="metadata" cols="30" rows="15" readonly
-            :value="JSON.stringify(musicItem.metadata, null, 2)"></textarea>
-
       </div>
 
     </ModalDialog>
@@ -147,6 +160,7 @@ export default defineComponent({
     const mCurrentTime = ref(0)
     const isSeeking = ref(false)
     const detailDialogVisible = ref(false)
+    const isShowDetail = ref(true)
     const currentDetailTab = ref(DetailTabEnum.LYRIC)
 
     const currentTime = computed(() => {
@@ -235,6 +249,7 @@ export default defineComponent({
       LoopModeEnum,
       mCurrentTime,
       isSeeking,
+      isShowDetail,
       coverImage,
       detailDialogVisible,
       // computed
@@ -421,12 +436,7 @@ export default defineComponent({
 .music-detail {
   width: 300px;
   text-align: center;
-
-  .big-cover {
-    width: 300px;
-    height: 300px;
-    border-radius: $generic-border-radius;
-  }
+  user-select: text;
 
   .title {
     margin-top: 10px;
@@ -436,60 +446,90 @@ export default defineComponent({
   }
 
   .subtitle {
+    font-size: 14px;
     margin-bottom: 5px;
   }
 
-  .metadata {
-    width: 90%;
-    font-size: 12px;
-    font-family: monospace;
-    resize: none;
+  .cover-wrap {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    border-radius: $generic-border-radius;
+    background: $primary;
+    overflow: hidden;
+
+    .big-cover {
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+    }
   }
 
-  .tab-wrap {
+  .detail-content {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
     display: flex;
-    margin-top: 10px;
-    font-size: 14px;
+    flex-direction: column;
+    color: white;
+    background: rgba(0,0,0,0.6);
 
-    button {
-      flex: 1;
-      opacity: .3;
-
-      &.active {
-        opacity: 1;
-        font-weight: bold;
-      }
-    }
-  }
-
-  textarea {
-    height: 150px;
-    margin-top: 10px;
-    box-sizing: border-box;
-  }
-
-  .lrc-main {
-    height: 150px;
-    overflow: auto;
-    box-sizing: border-box;
-    margin-top: 10px;
-
-    & > p {
-      font-size: 14px;
-      margin: 10px 0 0 0;
-      text-align: center;
-      line-height: 1.3;
-
-      &.active {
-        color: $accent;
-      }
-    }
-
-    &.no-lyric {
+    .tab-wrap {
       display: flex;
-      align-items: center;
-      justify-content: center;
-      color: $grey;
+      font-size: 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+
+      button {
+        flex: 1;
+        opacity: .3;
+        padding: 10px 0;
+
+        &.active {
+          opacity: 1;
+          font-weight: bold;
+        }
+      }
+    }
+
+    .metadata {
+      flex: 1;
+      width: 100%;
+      font-size: 12px;
+      font-family: monospace;
+      resize: none;
+      box-sizing: border-box;
+      background: transparent;
+      outline: none;
+      border: none;
+      color: white;
+    }
+
+
+    .lrc-main {
+      height: 100%;
+      overflow: auto;
+      box-sizing: border-box;
+
+      & > p {
+        font-size: 14px;
+        margin: 10px 0 10px 0;
+        text-align: center;
+        line-height: 1.3;
+
+        &.active {
+          color: $accent;
+        }
+      }
+
+      &.no-lyric {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        opacity: .5;
+      }
     }
   }
 }
