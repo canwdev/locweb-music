@@ -1,6 +1,6 @@
 <template>
   <div class="actionbar-wrapper">
-    <div class="progressbar bg-glass-white flex items-center justify-between">
+    <div class="progressbar bg-white flex items-center justify-between">
       <span class="time text-overflow">{{ formatTimeMS(mCurrentTime) }}</span>
       <div class="seekbar-wrap">
         <div class="seekbar-fill"
@@ -20,7 +20,7 @@
 
       <span class="time text-overflow">{{ formatTimeMS(duration) }}</span>
     </div>
-    <div class="actionbar bg-glass-white flex items-center">
+    <div class="actionbar bg-white flex items-center">
       <ButtonCover
           @click="showDetailDialog"
           :src="coverImage"
@@ -239,13 +239,17 @@ export default defineComponent({
       })
     }
 
-    const lyricData = useLyricObj()
+    const {
+      lyricObj,
+      lyricCurrentLine
+    } = useLyricObj()
 
     return {
       DetailTabEnum,
       detailTabList,
       currentDetailTab,
-      ...lyricData,
+      lyricObj,
+      lyricCurrentLine,
       // data
       LoopModeEnum,
       mCurrentTime,
@@ -301,13 +305,17 @@ export default defineComponent({
         mCurrentTime.value = evt.target.value
       },
       seekbarProgressChange(evt) {
-        console.log('seekbarProgressChange', evt.target.value)
+        const progress = evt.target.value
+        console.log('seekbarProgressChange', progress)
 
-        bus.emit(ACTION_CHANGE_CURRENT_TIME, evt.target.value)
+        bus.emit(ACTION_CHANGE_CURRENT_TIME, progress)
         isSeeking.value = false
+        if (lyricObj.value) {
+          lyricObj.value.seek(progress * 1000)
+        }
       },
       showDetailDialog() {
-        detailDialogVisible.value = true
+        detailDialogVisible.value = !detailDialogVisible.value
         console.log(musicItem.value)
       }
     }
@@ -329,6 +337,8 @@ export default defineComponent({
   box-sizing: border-box;
   border-top: 1px solid $border-color;
   border-bottom: 1px solid $border-color;
+  position: relative;
+  z-index: 1000;
 
   .time {
     width: 50px;
@@ -381,6 +391,8 @@ export default defineComponent({
   box-shadow: $shadow-1;
   user-select: none;
   padding-left: 2px;
+  position: relative;
+  z-index: 1000;
 
   .btn-cover {
     background-color: $primary;
@@ -455,8 +467,14 @@ export default defineComponent({
     position: relative;
     width: 300px;
     height: 300px;
+    margin: 0 auto;
     border-radius: $generic-border-radius;
     overflow: hidden;
+
+    @media screen and (max-width: $mobile_min_width) {
+      width: 95%;
+      height: 270px;
+    }
 
     .big-cover {
       width: 100%;
