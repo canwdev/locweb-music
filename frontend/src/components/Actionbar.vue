@@ -65,6 +65,7 @@
     </div>
 
     <ModalDialog
+        dark
         v-model:visible="detailDialogVisible"
     >
       <div class="music-detail">
@@ -455,7 +456,6 @@ export default defineComponent({
     width: 300px;
     height: 300px;
     border-radius: $generic-border-radius;
-    background: $primary;
     overflow: hidden;
 
     .big-cover {
@@ -482,21 +482,22 @@ export default defineComponent({
     .tab-wrap {
       display: flex;
       font-size: 14px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 
       button {
         flex: 1;
         opacity: .3;
         padding: 10px 0;
+        font-weight: bold;
 
         &.active {
           opacity: 1;
-          font-weight: bold;
         }
       }
     }
 
     .metadata {
+      padding: 5px;
       flex: 1;
       width: 100%;
       font-size: 12px;

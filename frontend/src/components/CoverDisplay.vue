@@ -1,6 +1,7 @@
 <template>
   <div class="cover-display">
     <img v-if="src" :src="src" :class="{rounded: isRounded, rotating: isRotating}">
+    <span v-else class="material-icons">audiotrack</span>
   </div>
 </template>
 
@@ -28,6 +29,14 @@ name: "CoverDisplay",
 .cover-display {
   position: relative;
   overflow: hidden;
+
+  .material-icons {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 10rem
+  }
 
   img {
     position: relative;
