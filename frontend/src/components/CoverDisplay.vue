@@ -1,7 +1,7 @@
 <template>
   <div class="cover-display">
     <img v-if="src" :src="src" :class="{rounded: isRounded, rotating: isRotating}">
-    <span v-else class="material-icons">audiotrack</span>
+    <span v-else-if="isShowIcon" class="material-icons">audiotrack</span>
   </div>
 </template>
 
@@ -20,6 +20,10 @@ name: "CoverDisplay",
     isRotating: {
       type: Boolean,
       default: false
+    },
+    isShowIcon: {
+      type: Boolean,
+      default: true
     }
   }
 }

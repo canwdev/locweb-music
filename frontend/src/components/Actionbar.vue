@@ -75,6 +75,7 @@
               :src="coverImage"
               :is-rotating="false"
               :is-rounded="false"
+              :is-show-icon="!isShowDetail"
               @click="isShowDetail = true"
           />
           <transition name="fade">
@@ -470,6 +471,7 @@ export default defineComponent({
     margin: 0 auto;
     border-radius: $generic-border-radius;
     overflow: hidden;
+    box-shadow: 0 0 1px 1px rgba(255,255,255,.5);
 
     @media screen and (max-width: $mobile_min_width) {
       width: 95%;

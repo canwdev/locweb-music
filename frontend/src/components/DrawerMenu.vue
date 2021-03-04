@@ -86,7 +86,7 @@ export default defineComponent({
 <style lang="scss" scoped>
 .drawer-menu {
   position: relative;
-  z-index: 99;
+  z-index: 10001;
   user-select: none;
 
   .bg-shade {
