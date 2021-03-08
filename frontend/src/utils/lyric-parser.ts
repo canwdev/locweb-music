@@ -110,18 +110,47 @@ export default class LyricParser {
     }, delay)
   }
 
-  play(startTime = 0, skipLast = false) {
-    if (!this.lines.length) {
-      return
-    }
-    this.state = STATE_PLAYING
+  callHandler(cruNum = this.curNum - 1) {
+    this._callHandler(cruNum)
+  }
 
+  play() {
+    const now = +new Date();
+    this.seekAndPlay((this.pauseStamp || now) - (this.startStamp || now), true)
+    this.pauseStamp = 0
+  }
+
+  pause() {
+    if (this.timer) {
+      clearTimeout(this.timer)
+    }
+    this.pauseStamp = +new Date()
+    this.state = STATE_PAUSE
+
+  }
+
+  togglePlay() {
+    if (this.state === STATE_PLAYING) {
+      this.pause()
+    } else {
+      this.play()
+    }
+  }
+
+  seek(startTime, skipLast = false) {
     this.curNum = this._findCurNum(startTime)
     this.startStamp = +new Date() - startTime
 
     if (!skipLast) {
       this._callHandler(this.curNum - 1)
     }
+  }
+
+  seekAndPlay(startTime = 0, skipLast = false) {
+    if (!this.lines.length) {
+      return
+    }
+    this.seek(startTime, skipLast)
 
     if (this.curNum < this.lines.length) {
       if (this.timer) {
@@ -129,30 +158,13 @@ export default class LyricParser {
       }
       this._playRest()
     }
+    this.state = STATE_PLAYING
   }
 
-  // todo refactor
-  togglePlay() {
-    const now = +new Date();
-    if (this.state === STATE_PLAYING) {
-      this.stop()
-      this.pauseStamp = now
-    } else {
-      this.state = STATE_PLAYING
-      this.play((this.pauseStamp || now) - (this.startStamp || now), true)
-      this.pauseStamp = 0
-    }
-  }
-
-  stop() {
-    this.state = STATE_PAUSE
-    if (this.timer) {
-      clearTimeout(this.timer)
-    }
-  }
-
-  // todo bugfix
-  seek(offset) {
-    this.play(offset)
+  destroy() {
+    this.pause()
+    this.lrc = ''
+    this.tags = {}
+    this.lines = []
   }
 }

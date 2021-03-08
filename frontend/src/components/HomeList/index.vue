@@ -163,7 +163,7 @@ export default defineComponent({
   bottom: 80px;
   //padding: 45px 0 80px;
   //box-sizing: border-box;
-  //scroll-behavior: smooth;
+  scroll-behavior: smooth;
 
   .list-actions {
     position: sticky;

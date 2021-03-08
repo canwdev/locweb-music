@@ -32,14 +32,16 @@
         <span class="title text-overflow">{{ displayTitle }}</span>
         <span v-show="musicItem.artist" class="artist text-overflow">{{ musicItem.artist }}</span>
       </button>
-      <div class="buttons-scroll flex items-center ">
+      <div class="buttons-scroll flex items-center">
         <button
+            :disabled="actionDisabled"
             @click="previous"
             class="btn-no-style btn-action">
           <i class="material-icons" title="Previous">skip_previous</i>
         </button>
 
         <button
+            :disabled="actionDisabled"
             @click="togglePlay"
             class="btn-no-style btn-action">
           <i v-show="paused" class="material-icons" title="Play">play_arrow</i>
@@ -47,6 +49,7 @@
         </button>
 
         <button
+            :disabled="actionDisabled"
             @click="next"
             class="btn-no-style btn-action">
           <i class="material-icons" title="Next">skip_next</i>
@@ -55,15 +58,23 @@
         <!--        <button class="btn-no-style btn-action">-->
         <!--          <i class="material-icons" title="Volume">volume_up</i>-->
         <!--        </button>-->
-        <button class="btn-no-style btn-action" :class="{active: isRandom}" @click="toggleRandom">
+
+        <button
+            :disabled="actionDisabled"
+            class="btn-no-style btn-action"
+            :class="{active: isRandom}"
+            @click="toggleRandom"
+        >
           <i class="material-icons" title="Shuffle">shuffle</i>
         </button>
+
         <button class="btn-no-style btn-action" @click="switchLoopMode">
           <i class="material-icons" title="Loop">{{ loopIconName }}</i>
         </button>
       </div>
     </div>
 
+    <!--Music Detail Dialog-->
     <ModalDialog
         dark
         v-model:visible="detailDialogVisible"
@@ -96,15 +107,26 @@
                   style="flex: 1; overflow: hidden"
                   v-show="currentDetailTab === DetailTabEnum.LYRIC"
               >
+
                 <div v-if="lyricObj && lyricObj.lines" class="lrc-main">
-                  <p
-                      v-for="(line, index) in lyricObj.lines"
-                      :class="{active: lyricCurrentLine===index}"
-                      :key="index"
-                  >{{ line.txt }}
-                  </p>
+                  <button class="btn-no-style lyric-lock" title="Lock Lyric" @click="isLyricLock = !isLyricLock">
+                    <i class="material-icons">
+                      {{ isLyricLock ? 'lock' : 'lock_open' }}
+                    </i>
+                  </button>
+
+                  <div class="lrc-scroll-wrap">
+                    <p
+                        v-for="(line, index) in lyricObj.lines"
+                        :class="{active: lyricCurrentLine===index}"
+                        :key="index"
+                        :data-index="index"
+                    >{{ line.txt }}
+                    </p>
+                  </div>
+
                 </div>
-                <div v-else class="lrc-main no-lyric">
+                <div v-else class="lrc-main no-lyric" @click="isShowDetail = false">
                   没有歌词，请欣赏
                 </div>
               </div>
@@ -119,6 +141,7 @@
 
         <div
           class="titles-wrap"
+          :class="{opacity: isShowDetail}"
           @click="isShowDetail = !isShowDetail"
         >
           <div class="title">{{ displayTitle }}</div>
@@ -132,7 +155,7 @@
 </template>
 
 <script lang="ts">
-import {computed, defineComponent, ref, watch} from 'vue';
+import {computed, defineComponent, ref, watch, nextTick} from 'vue';
 import store from '@/store'
 import {LoopModeEnum, MusicItem} from "@/enum";
 import bus, {ACTION_CHANGE_CURRENT_TIME, ACTION_NEXT, ACTION_PREV, ACTION_TOGGLE_PLAY} from "@/utils/bus";
@@ -191,6 +214,9 @@ export default defineComponent({
     const playlist = computed((): Array<MusicItem> => {
       return store.getters.playlist
     })
+    const actionDisabled = computed((): boolean => {
+      return playlist.value.length === 0
+    })
     const isRandom = computed({
       get() {
         return store.getters.isRandom
@@ -242,8 +268,20 @@ export default defineComponent({
 
     const {
       lyricObj,
-      lyricCurrentLine
+      lyricCurrentLine,
+      isLyricLock,
     } = useLyricObj()
+
+    watch(isShowDetail, (val) => {
+      if (val) {
+        // console.log('isShowDetail', val)
+        nextTick(() =>{
+          if (lyricObj.value) {
+            lyricObj.value.callHandler()
+          }
+        })
+      }
+    })
 
     return {
       DetailTabEnum,
@@ -258,6 +296,7 @@ export default defineComponent({
       isShowDetail,
       coverImage,
       detailDialogVisible,
+      isLyricLock,
       // computed
       currentTime,
       duration,
@@ -268,6 +307,7 @@ export default defineComponent({
       loopMode,
       loopIconName,
       displayTitle,
+      actionDisabled,
       // methods
       previous() {
         bus.emit(ACTION_PREV)
@@ -307,7 +347,7 @@ export default defineComponent({
       },
       seekbarProgressChange(evt) {
         const progress = evt.target.value
-        console.log('seekbarProgressChange', progress)
+        // console.log('seekbarProgressChange', progress)
 
         bus.emit(ACTION_CHANGE_CURRENT_TIME, progress)
         isSeeking.value = false
@@ -452,16 +492,23 @@ export default defineComponent({
   text-align: center;
   user-select: text;
 
-  .title {
-    margin-top: 10px;
-    font-size: 22px;
-    font-weight: bold;
-    margin-bottom: 5px;
-  }
+  .titles-wrap {
+    &.opacity {
+      opacity: .8;
+      cursor: pointer;
+    }
 
-  .subtitle {
-    font-size: 14px;
-    margin-bottom: 5px;
+    .title {
+      margin-top: 10px;
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
   }
 
   .cover-wrap {
@@ -530,21 +577,37 @@ export default defineComponent({
       color: white;
     }
 
-
     .lrc-main {
       height: 100%;
-      overflow: auto;
-      box-sizing: border-box;
-      padding: 0 5px;
+      position: relative;
 
-      & > p {
-        font-size: 14px;
-        margin: 10px 0 10px 0;
-        text-align: center;
-        line-height: 1.3;
+      .lyric-lock {
+        position: absolute;
+        top: 5px;
+        left: 5px;
+        font-size: 16px;
+        i {
+          font-size: inherit;
+        }
+      }
 
-        &.active {
-          color: $accent;
+      .lrc-scroll-wrap {
+        height: 100%;
+        width: 100%;
+        overflow: auto;
+        padding: 0 5px;
+        box-sizing: border-box;
+        scroll-behavior: smooth;
+
+        & > p {
+          font-size: 14px;
+          margin: 10px 0 10px 0;
+          text-align: center;
+          line-height: 1.3;
+
+          &.active {
+            color: $accent;
+          }
         }
       }
 
