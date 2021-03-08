@@ -1,12 +1,19 @@
 import axios from 'axios'
 
-function Service(config = {}) {
+interface Config {
+  baseURL?: string;
+  withCredentials?: boolean;
+  timeout?: number;
+  headers?: any;
+}
+
+function Service(config: Config) {
   const {
     baseURL,
     withCredentials = false,
     timeout,
     headers
-  } = config
+  } = config || {}
 
   // 创建 axios 实例
   const service = axios.create({
@@ -31,10 +38,10 @@ function Service(config = {}) {
 
   // 响应 拦截器
   service.interceptors.response.use(
-    response => {
+    (response: any) => {
       return response.data
     },
-    error => {
+    (error: any) => {
       return Promise.reject(error)
     }
   )

@@ -19,10 +19,10 @@ export const LoopModeEnum = {
 // single song data
 export class MusicItem {
   id: number;
-  title: string|undefined;
-  artist: string|undefined;
-  album: string|undefined;
-  track: object|undefined;
+  title?: string;
+  artist?: string;
+  album?: string;
+  track?: object;
   coverImage: string;
   rating: number;
   // below are data for filesystem or directories
@@ -31,9 +31,9 @@ export class MusicItem {
   path: string;
   size: number;
   metadata: IAudioMetadata;
-  cover: string|undefined|null;
+  cover?: string;
   isDetailLoaded: boolean;
-  lyric: string|undefined
+  lyric?: string;
 
   constructor(item: any = {}) {
     this.id = item.id

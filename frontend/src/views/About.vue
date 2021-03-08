@@ -9,20 +9,23 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, ref, onMounted } from 'vue';
 import {getInfo} from "@/api/service";
 
 export default defineComponent({
   name: 'Home',
+  setup() {
+    const message = ref<string|any>('')
+    onMounted(() => {
+      getInfo().then(res=> {
+        message.value = res
+      })
+    })
+  },
   data() {
     return {
       message: null
     }
-  },
-  mounted() {
-    getInfo().then(res=> {
-      this.message = res
-    })
   },
   methods: {
     backHome() {
