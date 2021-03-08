@@ -1,7 +1,7 @@
 <template>
   <div class="about">
     <div class="title-wrap flex items-center">
-      <button @click="backHome">Home</button>
+      <button @click="backHome">Back</button>
       <span class="title"> About</span>
     </div>
     <textarea readonly :value="JSON.stringify(message, null, 2)"></textarea>
@@ -26,9 +26,7 @@ export default defineComponent({
   },
   methods: {
     backHome() {
-      this.$router.push({
-        name: 'Home'
-      })
+      this.$router.back()
     }
   }
 });

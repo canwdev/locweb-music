@@ -65,7 +65,7 @@ import NoData from '@/components/NoData.vue'
 import {MusicItem} from "@/enum";
 
 export default defineComponent({
-  name: 'HomeList',
+  name: 'MainList',
   components: {
     Loading,
     ListItem,

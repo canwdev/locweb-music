@@ -2,7 +2,7 @@
   <div class="home">
     <Navbar/>
 
-    <HomeList
+    <MainList
         v-show="!isPlaylist"
         :is-loading="isLoading"
         :list="fileList"
@@ -11,7 +11,7 @@
         @goUpDir="goUpDir"
         @refresh="getFileList"
     />
-    <HomeList
+    <MainList
         v-show="isPlaylist"
         :is-loading="isLoading"
         :list="playlist"
@@ -26,11 +26,11 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, ref, computed, watch, nextTick} from 'vue';
+import {defineComponent, ref, computed, watch, nextTick, onMounted} from 'vue';
 import store from '@/store'
 
 import Navbar from '@/components/Navbar.vue';
-import HomeList from '@/components/HomeList/index.vue';
+import MainList from '@/components/MainList/index.vue';
 import Actionbar from '@/components/Actionbar.vue';
 import {getList} from "@/api/music.ts";
 import {LoopModeEnum, MusicItem, NavbarTabsEnum} from "@/enum";
@@ -41,15 +41,19 @@ import bus, {
   ACTION_PLAY_ENDED
 } from "@/utils/bus";
 import {isSupportedMusicFormat} from "@/utils/is";
+import { useRoute } from 'vue-router'
+import router from '@/router'
 
 export default defineComponent({
   name: 'Home',
   components: {
     Navbar,
-    HomeList,
+    MainList,
     Actionbar,
   },
   setup() {
+    const route = useRoute()
+
     const isLoading = ref<boolean>(false)
     const fileList = ref<Array<MusicItem>>([])
     const directories = ref<Array<any>>([])
@@ -193,10 +197,30 @@ export default defineComponent({
       playNext()
     }
 
-
+    watch(() => route.query, (val) => {
+      const dir = val.dir
+      if (dir) {
+        // @ts-ignore
+        const list = JSON.parse(dir).map(item => new MusicItem({
+          filename: item,
+          isDirectory: true
+        }))
+        directories.value = list
+        // console.log('router.query.dir change', val)
+      }
+    }, {
+      immediate: true
+    })
 
     watch(directories, (val) => {
-      console.log('directories changed', val)
+      // console.log('directories changed', {val, router, route})
+
+      router.push({
+        query: {
+          ...route.query,
+          dir: JSON.stringify(val.map(item => item.filename))
+        }
+      })
       getFileList()
     }, {
       deep: true
