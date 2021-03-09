@@ -1,6 +1,6 @@
 <template>
   <div class="actionbar-wrapper">
-    <div class="progressbar bg-white flex items-center justify-between">
+    <div class="progressbar bg-dark flex items-center justify-between">
       <span class="time text-overflow">{{ formatTimeMS(mCurrentTime) }}</span>
       <div class="seekbar-wrap">
         <div class="seekbar-fill"
@@ -20,7 +20,7 @@
 
       <span class="time text-overflow">{{ formatTimeMS(duration) }}</span>
     </div>
-    <div class="actionbar bg-white flex items-center">
+    <div class="actionbar bg-dark flex items-center">
       <ButtonCover
           @click="showDetailDialog"
           :src="coverImage"
@@ -79,7 +79,7 @@
         dark
         v-model:visible="detailDialogVisible"
     >
-      <div class="music-detail scroll-dark">
+      <div class="music-detail">
         <div class="cover-wrap">
           <CoverDisplay
               class="big-cover"
@@ -200,7 +200,7 @@ export default defineComponent({
       return store.getters.duration
     })
     const progress = computed(() => {
-      return mCurrentTime.value / duration.value * 100
+      return Math.round(mCurrentTime.value / duration.value * 100)
     })
     const musicItem = computed((): MusicItem => {
       return store.getters.musicItem

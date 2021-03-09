@@ -36,7 +36,7 @@ export default defineComponent({
       }
       if (!val.isDetailLoaded) {
         const detail = await getDetail(params)
-        console.log('detail', detail)
+        // console.log('detail', detail)
 
         const {
           metadata,

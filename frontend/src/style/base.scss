@@ -25,7 +25,7 @@ $scrollbar-bg-dark: rgba(255, 255, 255, .1);
 }
 
 //黑色风格滚动条
-.scroll-dark {
+.bg-dark {
 
   ::-webkit-scrollbar-corner {
     background: $scrollbar-bg-dark
@@ -58,7 +58,7 @@ $scrollbar-bg-dark: rgba(255, 255, 255, .1);
   backdrop-filter: saturate(180%) blur(30px);
 }
 
-.bg-transparent-black {
+.bg-dark {
   color: white;
   background: rgba(0,0,0,0.85);
   //backdrop-filter: saturate(180%) blur(20px);

@@ -66,7 +66,7 @@ export default function ({beforeHandleLyric}) {
     }
     lyricObj.value = new LyricParser(val, handleLyric)
     lyricCurrentLine.value = 0
-    console.log('new lrc', lyricObj.value)
+    // console.log('new lrc', lyricObj.value)
 
     if (!paused.value) {
       // @ts-ignore

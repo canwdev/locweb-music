@@ -4,7 +4,7 @@
       <div class="bg-shade" v-show="mVisible" @click="mVisible=false"></div>
     </transition>
     <transition name="slide-fade">
-      <div class="menu bg-transparent-black" v-show="mVisible">
+      <div class="menu bg-dark" v-show="mVisible">
         <div class="menu-title flex items-center justify-between">
           <span class="flex items-center">
             Menu
