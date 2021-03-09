@@ -32,7 +32,8 @@ export default defineComponent({
       if (!val.isDetailLoaded) {
         const detail = await getDetail({
           path: val.path,
-          filename: val.filename
+          filename: val.filename,
+          updatePlayStat: true
         })
         console.log('detail', detail)
 

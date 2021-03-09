@@ -69,7 +69,7 @@ export default defineComponent({
     })
 
     const iconName = computed(() => {
-      if (active.value) {
+      if (isBigItem.value && active.value) {
         return isPaused.value ? 'pause' : 'play_arrow'
       }
       if (item.value.isDirectory) {
@@ -118,7 +118,7 @@ export default defineComponent({
 
   &.active {
     .list-item {
-      color: $accent;
+      color: $secondary;
     }
 
     .list-item-big {

@@ -11,7 +11,7 @@ const getLyricsPath = (dir = '') => {
   return path.join(MUSIC_LYRICS_PATH, dir)
 }
 const {getMetadata, getLyricFile} = require('../utils/music-tool')
-
+const mfpTool = require('../utils/mfp-tool')
 
 let lyrics = []
 const refreshLyrics = async () => {
@@ -33,12 +33,13 @@ chokidar.watch(MUSIC_LYRICS_PATH, {
 router.get('/list', async (req, res, next) => {
   try {
     const {
-      path: musicPath = ''
+      path: musicPath = '',
+      getPlayStat = false
     } = req.query
     const dir = getMusicPath(musicPath)
     const files = await fs.readdir(dir)
 
-    const result = files.map((filename, index) => {
+    const list = files.map((filename, index) => {
       const stat = fs.statSync(path.join(dir, filename))
       return {
         id: index,
@@ -49,7 +50,15 @@ router.get('/list', async (req, res, next) => {
       }
     })
 
-    return res.sendData(result)
+    let playStat
+    if (getPlayStat) {
+      playStat = await mfpTool.parseFromFolder(dir)
+    }
+
+    return res.sendData({
+      playStat,
+      list
+    })
   } catch (error) {
     next(error)
   }
@@ -59,7 +68,8 @@ router.get('/detail', async (req, res, next) => {
   try {
     const {
       path: musicPath = '',
-      filename
+      filename,
+      updatePlayStat = false
     } = req.query
 
     if (!filename) {
@@ -95,10 +105,19 @@ router.get('/detail', async (req, res, next) => {
       console.log('Get lyric error', e)
     }
 
+    if (updatePlayStat) {
+      const stat = fs.statSync(filePath)
+      mfpTool.writeToFolder(dir, {
+        position: 0,
+        filesize: stat.size,
+        file: filename
+      })
+    }
+
     const sendData = {
       filePath,
       metadata: metadata,
-      lyric
+      lyric,
     }
 
     if (coverFileName) {

@@ -47,7 +47,7 @@
         :key="item.id"
         :item="item"
         :data-index="item.id"
-        :active="isPlayList && activeId === item.id"
+        :active="activeId === item.id"
         :is-big-item="isPlayList"
         :is-paused="isPaused"
         @click="$emit('onItemClick', item)"

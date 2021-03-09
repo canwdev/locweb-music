@@ -25,7 +25,7 @@ app.use('/', express.static(path.join(__dirname, 'frontend-dist')));
 // Cover images
 app.use('/images', express.static(IMAGE_PATH));
 // Expose library filesystem
-app.use('/mfs', express.static(MUSIC_LIBRARY_PATH));
+app.use('/mfs', express.static(MUSIC_LIBRARY_PATH, {dotfiles:'allow'}));
 console.log(`Serving /mfs from ${MUSIC_LIBRARY_PATH}`)
 app.use('/lrc', express.static(MUSIC_LYRICS_PATH));
 
@@ -35,5 +35,5 @@ app.use('/', require('./routes/index'));
 // Start server
 const port = normalizePort(process.env.PORT || '12021')
 app.listen(port, () => {
-  console.log(`API running on http://localhost:${port}/api`);
+  console.log(`Server running on http://localhost:${port}`);
 });

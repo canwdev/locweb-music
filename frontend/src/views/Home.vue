@@ -7,6 +7,7 @@
         :is-loading="isLoading"
         :list="fileList"
         :show-up="directories.length > 0"
+        :active-id="lastPlayIndex"
         @onItemClick="handleItemClick"
         @goUpDir="goUpDir"
         @refresh="getFileList"
@@ -41,7 +42,7 @@ import bus, {
   ACTION_PLAY_ENDED
 } from "@/utils/bus";
 import {isSupportedMusicFormat} from "@/utils/is";
-import { useRoute } from 'vue-router'
+import {useRoute} from 'vue-router'
 import router from '@/router'
 
 export default defineComponent({
@@ -57,6 +58,7 @@ export default defineComponent({
     const isLoading = ref<boolean>(false)
     const fileList = ref<Array<MusicItem>>([])
     const directories = ref<Array<any>>([])
+    const lastPlayIndex = ref(-1)
 
     const playlist = computed(() => store.getters.playlist)
     const navbarTab = computed(() => store.getters.navbarTab)
@@ -80,18 +82,22 @@ export default defineComponent({
       }
       try {
         isLoading.value = true
+        lastPlayIndex.value = -1
+
         let path = ''
         directories.value.forEach((item: any) => {
           path += (item.filename + '/')
         })
 
-        const list = await getList({
-          path
+        const {list, playStat} = await getList({
+          path,
+          getPlayStat: true
         })
-        fileList.value = list.map(file => {
-          return new MusicItem({
-            ...file
-          })
+        fileList.value = list.map((file, index) => {
+          if (file.filename === playStat.file) {
+            lastPlayIndex.value = index
+          }
+          return new MusicItem(file)
         })
 
       } catch (e) {
@@ -144,12 +150,21 @@ export default defineComponent({
           // set current playing
           playMusicFromList(list, item)
         } else {
+
           window.$swal.fire({
             toast: true,
-            timer: 1500,
+            width: 300,
+            timer: 2500,
             icon: 'info',
-            title: 'Format not support (yet)',
-            showConfirmButton: false,
+            title: 'Format not support.',
+            showConfirmButton: true,
+            confirmButtonText: 'Try'
+          }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            console.log('result', result)
+            if (result.isConfirmed) {
+              window.open(item.getSource(), '_blank')
+            }
           })
         }
       }
@@ -231,6 +246,7 @@ export default defineComponent({
       isLoading,
       fileList,
       directories,
+      lastPlayIndex,
       // computed
       playlist,
       navbarTab,

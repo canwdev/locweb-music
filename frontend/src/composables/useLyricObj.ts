@@ -46,7 +46,7 @@ export default function () {
   })
 
   const destroyLyric = () => {
-    console.log('destroyLyric12', lyricObj.value)
+    // console.log('destroyLyric', lyricObj.value)
     if (lyricObj.value) {
       // @ts-ignore
       lyricObj.value.destroy()

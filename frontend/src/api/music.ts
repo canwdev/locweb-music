@@ -7,11 +7,13 @@ const service = Service({
 
 export function getList(params) {
   const {
-    path
+    path,
+    getPlayStat
   } = params
   return service.get('/music/list', {
     params: {
-      path
+      path,
+      getPlayStat
     }
   })
 }
@@ -19,12 +21,14 @@ export function getList(params) {
 export function getDetail(params) {
   const {
     path,
-    filename
+    filename,
+    updatePlayStat
   } = params
   return service.get('/music/detail', {
     params: {
       path,
-      filename
+      filename,
+      updatePlayStat
     }
   })
 }
