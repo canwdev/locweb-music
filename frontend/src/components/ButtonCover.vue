@@ -18,7 +18,7 @@ export default defineComponent({
   props: {
     iconName: {
       type: String,
-      default: "headset"
+      default: "audiotrack" // headset
     },
     src: {
       type: String,

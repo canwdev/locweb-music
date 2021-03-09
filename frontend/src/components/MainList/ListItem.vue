@@ -105,6 +105,8 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+$active-color: $cyan-7;
+
 .list-item-wrap {
   display: block;
 
@@ -112,30 +114,29 @@ export default defineComponent({
   //  background: rgba(0, 0, 0, 0.08);
   //}
 
-  &:active {
-    background: rgba(0, 0, 0, 0.18);
-  }
-
   &.active {
     .list-item {
-      color: $secondary;
+      background: $active-color;
+      color: white;
     }
 
     .list-item-big {
-      background: rgba(0, 0, 0, 0.1);
+      background: $active-color;
+      color: white;
       .btn-cover {
-        background-color: $primary;
+        background-color: white;
+        color: $active-color;
       }
     }
   }
 
-  & + .list-item-wrap {
-    border-top: $layout-border;
-  }
-
-  //&:nth-child(odd) {
-  //  background: rgba(0, 0, 0, 0.08);
+  //& + .list-item-wrap {
+  //  border-top: $layout-border;
   //}
+
+  &:nth-child(even) {
+    background: rgba(0, 0, 0, 0.05);
+  }
 
 
   &.grey {
@@ -160,12 +161,16 @@ export default defineComponent({
     height: 55px;
     display: flex;
     align-items: center;
-    padding-left: 4px;
+
+    .btn-cover {
+      width: 45px;
+      height: 45px;
+      margin: 0 5px;
+    }
 
     .right {
       overflow: hidden;
       flex: 1;
-      margin-left: 10px;
 
       .filename {
         margin-bottom: 5px;

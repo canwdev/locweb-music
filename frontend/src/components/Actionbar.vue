@@ -432,15 +432,15 @@ export default defineComponent({
 }
 
 .actionbar {
-  height: 55px;
+  height: 50px;
   box-shadow: $shadow-1;
   user-select: none;
-  padding-left: 2px;
   position: relative;
   z-index: 1000;
 
   .btn-cover {
     background-color: $primary;
+    border-radius: 0;
   }
 
   .btn-song {
@@ -609,11 +609,13 @@ export default defineComponent({
           margin: 10px 0 10px 0;
           text-align: center;
           line-height: 1.3;
-          opacity: .8;
+          opacity: .7;
+          transition: all .3s;
 
           &.active {
             opacity: 1;
             font-weight: bold;
+            font-size: 16px;
           }
         }
       }
