@@ -6,6 +6,52 @@ body {
   user-select: none;
 }
 
+//滚动条样式
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+$scrollbar-fg: rgba(0, 0, 0, .3);
+$scrollbar-fg-dark: rgba(255, 255, 255, .3);
+$scrollbar-bg: rgba(0, 0, 0, .1);
+$scrollbar-bg-dark: rgba(255, 255, 255, .1);
+
+::-webkit-scrollbar-thumb {
+  background: $scrollbar-fg;
+}
+::-webkit-scrollbar-track {
+  background: $scrollbar-bg;
+}
+
+//黑色风格滚动条
+.scroll-dark {
+
+  ::-webkit-scrollbar-corner {
+    background: $scrollbar-bg-dark
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: $scrollbar-fg-dark
+  }
+
+  ::-webkit-scrollbar-track {
+    background: $scrollbar-bg-dark
+  }
+
+  &::-webkit-scrollbar-corner {
+    background: $scrollbar-bg-dark
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $scrollbar-fg-dark
+  }
+
+  &::-webkit-scrollbar-track {
+    background: $scrollbar-bg-dark
+  }
+}
+
 .bg-glass-black {
   color: white;
   background: rgba(0,0,0,0.85);

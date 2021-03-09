@@ -3,7 +3,7 @@ import LyricParser from '@/utils/lyric-parser'
 import {MusicItem} from "@/enum";
 import store from "@/store";
 
-export default function () {
+export default function ({beforeHandleLyric}) {
   const lyricObj = ref<null | LyricParser>(null)
   const lyricCurrentLine = ref(0)
   const isLyricLock = ref(true)
@@ -16,6 +16,9 @@ export default function () {
   })
 
   const handleLyric = ({lineNum, txt}) => {
+    if (beforeHandleLyric && !beforeHandleLyric()) {
+      return
+    }
     // console.log('handleLyric', lineNum, txt)
 
     lyricCurrentLine.value = lineNum

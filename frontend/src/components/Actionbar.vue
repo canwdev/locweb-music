@@ -79,7 +79,7 @@
         dark
         v-model:visible="detailDialogVisible"
     >
-      <div class="music-detail">
+      <div class="music-detail scroll-dark">
         <div class="cover-wrap">
           <CoverDisplay
               class="big-cover"
@@ -270,7 +270,11 @@ export default defineComponent({
       lyricObj,
       lyricCurrentLine,
       isLyricLock,
-    } = useLyricObj()
+    } = useLyricObj({
+      beforeHandleLyric() {
+        return detailDialogVisible.value && isShowDetail.value
+      }
+    })
 
     watch(isShowDetail, (val) => {
       if (val) {
