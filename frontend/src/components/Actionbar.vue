@@ -590,6 +590,7 @@ export default defineComponent({
         top: 5px;
         left: 5px;
         font-size: 16px;
+        opacity: .6;
         i {
           font-size: inherit;
         }
@@ -608,9 +609,11 @@ export default defineComponent({
           margin: 10px 0 10px 0;
           text-align: center;
           line-height: 1.3;
+          opacity: .8;
 
           &.active {
-            color: $accent;
+            opacity: 1;
+            font-weight: bold;
           }
         }
       }

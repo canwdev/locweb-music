@@ -18,7 +18,7 @@ const filename = '.music_folder_player.properties'
 const generateComment = (date = new Date()) => `#This file was created by Music Folder Player.\n#${date.toString()}\n`
 
 const parseFile = async (filePath) => {
-  console.log(filePath)
+  // console.log(filePath)
   if (!fs.existsSync(filePath)) {
     return null
   }
@@ -32,7 +32,7 @@ const parseFile = async (filePath) => {
   });
   const result = {}
   for await (const line of rl) {
-    console.log(`${line}`);
+    // console.log(`${line}`);
     if (/^#/.test(line)) {
       continue
     }

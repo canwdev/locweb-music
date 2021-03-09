@@ -29,12 +29,13 @@ export default defineComponent({
       // console.log('musicItem changed', val)
       document.title = val.getDisplayTitle()
 
+      const params = {
+        path: val.path,
+        filename: val.filename,
+        updatePlayStat: true
+      }
       if (!val.isDetailLoaded) {
-        const detail = await getDetail({
-          path: val.path,
-          filename: val.filename,
-          updatePlayStat: true
-        })
+        const detail = await getDetail(params)
         console.log('detail', detail)
 
         const {
@@ -44,6 +45,12 @@ export default defineComponent({
         } = detail
         val.setMetadata(metadata, cover, lyric)
         document.title = val.getDisplayTitle()
+      } else {
+        // only update play status
+        await getDetail({
+          ...params,
+          updateStatOnly: true
+        })
       }
     })
     const source = computed((): string | null => {

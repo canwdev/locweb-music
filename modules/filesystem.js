@@ -69,7 +69,8 @@ router.get('/detail', async (req, res, next) => {
     const {
       path: musicPath = '',
       filename,
-      updatePlayStat = false
+      updatePlayStat = false,
+      updateStatOnly = false // only update play status
     } = req.query
 
     if (!filename) {
@@ -85,6 +86,19 @@ router.get('/detail', async (req, res, next) => {
       return res.sendError({
         message: 'file not exist'
       })
+    }
+
+    if (updatePlayStat) {
+      const stat = fs.statSync(filePath)
+      mfpTool.writeToFolder(dir, {
+        position: 0,
+        filesize: stat.size,
+        file: filename
+      })
+      if (updateStatOnly) {
+        console.log('updateStatOnly')
+        return res.sendData({})
+      }
     }
 
     const {
@@ -103,15 +117,6 @@ router.get('/detail', async (req, res, next) => {
       }
     } catch (e) {
       console.log('Get lyric error', e)
-    }
-
-    if (updatePlayStat) {
-      const stat = fs.statSync(filePath)
-      mfpTool.writeToFolder(dir, {
-        position: 0,
-        filesize: stat.size,
-        file: filename
-      })
     }
 
     const sendData = {

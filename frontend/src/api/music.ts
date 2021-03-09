@@ -22,13 +22,15 @@ export function getDetail(params) {
   const {
     path,
     filename,
-    updatePlayStat
+    updatePlayStat,
+    updateStatOnly
   } = params
   return service.get('/music/detail', {
     params: {
       path,
       filename,
-      updatePlayStat
+      updatePlayStat,
+      updateStatOnly
     }
   })
 }
