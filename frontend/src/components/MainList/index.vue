@@ -3,6 +3,7 @@
     <div class="list-actions">
       <form action="javascript:">
         <input
+            class="input-styled"
             v-model="searchInput"
             type="text" placeholder="Filter Text"
         >
@@ -22,10 +23,9 @@
       ><i class="material-icons">refresh</i>
       </button>
       <button
-          v-if="isPlayList"
           class="btn-no-style"
           @click="locateItem"
-          title="Locate playing"
+          title="Locate"
       ><i class="material-icons">my_location</i>
       </button>
     </div>
@@ -170,7 +170,7 @@ export default defineComponent({
     top: 0;
     left: 0;
     right: 0;
-    background: white;
+    background: rgba(255,255,255,.9);
     border-bottom: 1px solid $border-color;
     padding: 4px 10px;
     font-size: 12px;
@@ -181,16 +181,27 @@ export default defineComponent({
     height: 30px;
 
     form {
+      height: 100%;
       flex: 1;
       display: flex;
+      align-items: center;
 
       input {
+        height: 28px;
         flex: 1;
+        margin-right: 5px;
       }
     }
 
     button {
-      margin-left: 5px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      .material-icons {
+        font-size: 18px;
+      }
     }
   }
 

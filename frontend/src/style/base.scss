@@ -45,6 +45,17 @@ body {
     opacity: .5;
   }
 }
+
+.input-styled {
+  border: $layout-border;
+  border-radius: $generic-border-radius;
+  padding: 0 5px;
+  box-sizing: border-box;
+  &:focus {
+    outline-color: $primary;
+  }
+}
+
 .text-overflow {
   white-space: nowrap;
   overflow: hidden;

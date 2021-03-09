@@ -93,8 +93,9 @@ export default defineComponent({
           path,
           getPlayStat: true
         })
+        const lastFilename = playStat && playStat.file
         fileList.value = list.map((file, index) => {
-          if (file.filename === playStat.file) {
+          if (lastFilename && (file.filename === lastFilename)) {
             lastPlayIndex.value = index
           }
           return new MusicItem(file)
