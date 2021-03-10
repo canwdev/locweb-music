@@ -23,7 +23,6 @@ export class MusicItem {
   artist?: string;
   album?: string;
   track?: object;
-  coverImage: string;
   rating: number;
   // below are data for filesystem or directories
   filename: string;
@@ -41,7 +40,6 @@ export class MusicItem {
     this.artist = item.artist
     this.album = item.album
     this.track = item.track
-    this.coverImage = item.coverImage
     this.rating = item.rating
     this.filename = item.filename
     this.isDirectory = item.isDirectory

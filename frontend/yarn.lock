@@ -1132,6 +1132,11 @@
     "@types/webpack-sources" "*"
     source-map "^0.6.0"
 
+"@types/wicg-mediasession@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.npm.taobao.org/@types/wicg-mediasession/download/@types/wicg-mediasession-1.1.0.tgz#368bb113ffc1a5410895cbb1e5ba50ee291f162f"
+  integrity sha1-NouxE//BpUEIlcux5bpQ7ikfFi8=
+
 "@typescript-eslint/eslint-plugin@^2.33.0":
   version "2.34.0"
   resolved "https://registry.npm.taobao.org/@typescript-eslint/eslint-plugin/download/@typescript-eslint/eslint-plugin-2.34.0.tgz#6f8ce8a46c7dea4a6f1d171d2bb8fbae6dac2be9"

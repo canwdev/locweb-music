@@ -10,7 +10,13 @@
 <script lang="ts">
 import {computed, defineComponent, onBeforeUnmount, onMounted, watch} from 'vue'
 import {MusicItem} from "@/enum";
-import bus, {ACTION_CHANGE_CURRENT_TIME, ACTION_PLAY_ENDED, ACTION_TOGGLE_PLAY} from "@/utils/bus";
+import bus, {
+  ACTION_CHANGE_CURRENT_TIME,
+  ACTION_NEXT,
+  ACTION_PLAY_ENDED,
+  ACTION_PREV,
+  ACTION_TOGGLE_PLAY
+} from "@/utils/bus";
 import store from '@/store'
 import {getDetail} from "@/api/music.ts";
 
@@ -25,9 +31,15 @@ export default defineComponent({
     const musicItem = computed((): MusicItem => {
       return store.getters.musicItem
     })
+
+    const updateTitle = (musicItem: MusicItem, isPaused?: boolean) => {
+      document.title = `${isPaused ? '' : '▶'} ${musicItem.getDisplayTitle()}`
+    }
+
     watch(musicItem, async (val) => {
       // console.log('musicItem changed', val)
-      document.title = val.getDisplayTitle()
+
+      updateTitle(val)
 
       const params = {
         path: val.path,
@@ -44,7 +56,7 @@ export default defineComponent({
           lyric
         } = detail
         val.setMetadata(metadata, cover, lyric)
-        document.title = val.getDisplayTitle()
+        updateTitle(val)
       } else {
         // only update play status
         await getDetail({
@@ -52,6 +64,27 @@ export default defineComponent({
           updateStatOnly: true
         })
       }
+
+      // https://developers.google.com/web/updates/2017/02/media-session
+      if ('mediaSession' in navigator) {
+        let artwork: Array<any> = [{ src: require('@/assets/images/no-image.jpg'), sizes: '512x512' }]
+        if (val.cover) {
+          artwork = [
+            { src: val.cover, sizes: '512x512' },
+          ]
+        }
+
+        /* eslint-disable no-undef */
+        // @ts-ignore
+        navigator.mediaSession.metadata = new MediaMetadata({
+          /* eslint-enable no-undef */
+          title: val.title,
+          artist: val.artist,
+          album: val.album,
+          artwork
+        })
+      }
+
     })
     const source = computed((): string | null => {
       return musicItem.value.getSource() || null
@@ -66,11 +99,21 @@ export default defineComponent({
       }
     })
 
+    watch(paused, (val) => {
+      updateTitle(musicItem.value, val)
+    })
+
     const play = () => {
       audio.play()
     }
     const pause = () => {
       audio.pause()
+    }
+    const previous = () => {
+      bus.emit(ACTION_PREV)
+    }
+    const next = () => {
+      bus.emit(ACTION_NEXT)
     }
     const togglePlay = () => {
       if (!audio) {
@@ -83,6 +126,19 @@ export default defineComponent({
       }
     }
     const registerAudioEvents = (audio) => {
+      if ('mediaSession' in navigator) {
+        // @ts-ignore
+        navigator.mediaSession.setActionHandler('play', play);
+        // @ts-ignore
+        navigator.mediaSession.setActionHandler('pause', pause);
+        // navigator.mediaSession.setActionHandler('seekbackward', function() {});
+        // navigator.mediaSession.setActionHandler('seekforward', function() {});
+        // @ts-ignore
+        navigator.mediaSession.setActionHandler('previoustrack', previous);
+        // @ts-ignore
+        navigator.mediaSession.setActionHandler('nexttrack', next);
+      }
+
       audio.addEventListener('play', () => {
         paused.value = false
       })

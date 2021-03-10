@@ -28,7 +28,7 @@ chokidar.watch(MUSIC_LYRICS_PATH, {
 });
 
 /**
- * get file list
+ * Get file list
  */
 router.get('/list', async (req, res, next) => {
   try {
@@ -40,13 +40,24 @@ router.get('/list', async (req, res, next) => {
     const files = await fs.readdir(dir)
 
     const list = files.map((filename, index) => {
-      const stat = fs.statSync(path.join(dir, filename))
-      return {
-        id: index,
-        filename,
-        isDirectory: stat.isDirectory(),
-        path: musicPath,
-        size: stat.size
+      try {
+        const stat = fs.statSync(path.join(dir, filename))
+        return {
+          id: index,
+          filename,
+          isDirectory: stat.isDirectory(),
+          path: musicPath,
+          size: stat.size
+        }
+      } catch (e) {
+        console.log('fs stat error', e)
+        return {
+          id: index,
+          filename: filename + '.error',
+          isDirectory: false,
+          path: null,
+          size: 0
+        }
       }
     })
 
@@ -75,7 +86,7 @@ router.get('/detail', async (req, res, next) => {
 
     if (!filename) {
       return res.sendError({
-        message: 'filename can not be empty'
+        message: 'Filename can not be empty'
       })
     }
 
@@ -89,14 +100,18 @@ router.get('/detail', async (req, res, next) => {
     }
 
     if (updatePlayStat) {
-      const stat = fs.statSync(filePath)
-      mfpTool.writeToFolder(dir, {
-        position: 0,
-        filesize: stat.size,
-        file: filename
-      })
+      try {
+        const stat = fs.statSync(filePath)
+        mfpTool.writeToFolder(dir, {
+          position: 0,
+          filesize: stat.size,
+          file: filename
+        })
+      } catch (e) {
+        console.error('mfp tool error', e)
+      }
       if (updateStatOnly) {
-        console.log('updateStatOnly')
+        // console.log('updateStatOnly')
         return res.sendData({})
       }
     }
