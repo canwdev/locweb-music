@@ -6,7 +6,9 @@ const defaultPath = path.join(__dirname, '../data')
 let config = {
   DATA_PATH: defaultPath,
   MUSIC_LIBRARY_PATH: defaultPath, // music library base path
-  MUSIC_LYRICS_PATH: defaultPath
+  MUSIC_LYRICS_PATH: defaultPath,
+  enableAuth: false,
+  authUsers: {'admin': 'admin'}
 }
 
 const configPath = path.join(__dirname, 'config.json')

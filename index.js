@@ -3,10 +3,17 @@ const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
 const errorhandler = require('errorhandler')
-const {DATA_PATH, MUSIC_LIBRARY_PATH, MUSIC_LYRICS_PATH} = require('./config')
+const {
+  DATA_PATH,
+  MUSIC_LIBRARY_PATH,
+  MUSIC_LYRICS_PATH,
+  enableAuth,
+  authUsers
+} = require('./config')
 const {IMAGE_PATH} = require('./config/enum')
 const {normalizePort} = require('./utils')
 const isProduction = process.env.NODE_ENV === 'production';
+const basicAuth = require('express-basic-auth')
 
 // HTTP request logger middleware
 app.use(require('morgan')('dev'));
@@ -28,6 +35,13 @@ app.use('/images', express.static(IMAGE_PATH));
 app.use('/mfs', express.static(MUSIC_LIBRARY_PATH, {dotfiles:'allow'}));
 console.log(`Serving /mfs from ${MUSIC_LIBRARY_PATH}`)
 app.use('/lrc', express.static(MUSIC_LYRICS_PATH));
+
+if (isProduction && enableAuth) {
+  app.use(basicAuth({
+    users: authUsers,
+    challenge: true,
+  }))
+}
 
 // Create Router
 app.use('/', require('./routes/index'));
