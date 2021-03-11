@@ -13,9 +13,10 @@ const getLyricsPath = (dir = '') => {
 const {getMetadata, getLyricFile} = require('../utils/music-tool')
 const mfpTool = require('../utils/mfp-tool')
 
-let lyrics = []
+// init lyric files pool
+let lyricFileList = []
 const refreshLyrics = async () => {
-  lyrics = await fs.readdir(MUSIC_LYRICS_PATH)
+  lyricFileList = await fs.readdir(MUSIC_LYRICS_PATH)
 }
 refreshLyrics()
 
@@ -90,25 +91,26 @@ router.get('/detail', async (req, res, next) => {
       })
     }
 
-    const dir = getMusicPath(musicPath)
-    const filePath = path.join(dir, filename)
+    const currentMusicDir = getMusicPath(musicPath)
+    const filePath = path.join(currentMusicDir, filename)
 
     if (!fs.existsSync(filePath)) {
       return res.sendError({
-        message: 'file not exist'
+        message: 'File not exist'
       })
     }
 
+    // update play status
     if (updatePlayStat) {
       try {
         const stat = fs.statSync(filePath)
-        mfpTool.writeToFolder(dir, {
+        mfpTool.writeToFolder(currentMusicDir, {
           position: 0,
           filesize: stat.size,
           file: filename
         })
       } catch (e) {
-        console.error('mfp tool error', e)
+        console.error('MFP tool error', e)
       }
       if (updateStatOnly) {
         // console.log('updateStatOnly')
@@ -124,11 +126,19 @@ router.get('/detail', async (req, res, next) => {
     delete metadata.native
 
     // get lyric
-    let lyric
+    let lyricText
     try {
-      const lyricFile = getLyricFile(lyrics, filename)
+      const lyricFile = getLyricFile(lyricFileList, filename)
       if (lyricFile) {
-        lyric = await fs.readFile(getLyricsPath(lyricFile), {encoding: 'utf-8'})
+        lyricText = await fs.readFile(getLyricsPath(lyricFile), {encoding: 'utf-8'})
+      } else {
+        // try load lyric from same folder
+        const lyricFile = filename.substring(0, filename.lastIndexOf('.'))+'.lrc'
+        const lyricPath = path.join(currentMusicDir, lyricFile)
+        if (fs.existsSync(lyricPath)) {
+          lyricText = await fs.readFile(lyricPath, {encoding: 'utf-8'})
+          console.log('Same dir lyric found')
+        }
       }
     } catch (e) {
       console.log('Get lyric error', e)
@@ -137,12 +147,16 @@ router.get('/detail', async (req, res, next) => {
     const sendData = {
       filePath,
       metadata: metadata,
-      lyric,
+      lyric: lyricText
     }
 
     if (coverFileName) {
       sendData.cover = `/images/${coverFileName}`
-
+    } else {
+      const localCoverFilename = 'cover.jpg'
+      if (fs.existsSync(path.join(currentMusicDir, localCoverFilename))) {
+        sendData.cover = `/mfs/${musicPath}${localCoverFilename}`
+      }
     }
     return res.sendData(sendData)
   } catch (error) {

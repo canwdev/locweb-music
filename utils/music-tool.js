@@ -34,6 +34,8 @@ const getMetadata = async (filePath) => {
       coverSavePath,
       coverFileName
     }
+  } else {
+    // try use same dir cover.jpg
   }
 
 
@@ -42,7 +44,16 @@ const getMetadata = async (filePath) => {
   }
 }
 
-const getLyricFile = (lyrics, filename, isExact = false) => {
+/**
+ * Get lyric file from list
+ * @param lyricFileList List contains lyric filenames
+ * @param filename Music filename
+ * @param options
+ */
+const getLyricFile = (lyricFileList, filename, options = {}) => {
+  const {
+    isExact = false,
+  } = options
   // Remove suffix
   filename = filename.slice(0, filename.lastIndexOf('.'))
 
@@ -53,15 +64,15 @@ const getLyricFile = (lyrics, filename, isExact = false) => {
 
   console.log('search for:', filename)
 
-  for (let i = 0; i < lyrics.length; i++) {
-    const lyric = lyrics[i]
+  for (let i = 0; i < lyricFileList.length; i++) {
+    const lyric = lyricFileList[i]
     const mLyric = lyric.slice(0, lyric.lastIndexOf('.'))
     if (filename === mLyric) {
       console.log('lyric found:', lyric)
       return lyric
     }
   }
-  console.log('lyric not found')
+  console.log('lyric in list not found')
 }
 
 module.exports = {

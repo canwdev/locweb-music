@@ -160,7 +160,7 @@ export default defineComponent({
   top: 45px;
   left: 0;
   width: 100%;
-  bottom: 80px;
+  bottom: 75px;
   //padding: 45px 0 80px;
   //box-sizing: border-box;
   scroll-behavior: smooth;
