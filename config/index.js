@@ -1,12 +1,12 @@
 const path = require('path')
 const fs = require('fs')
 
-const defaultPath = path.join(__dirname, '../data')
+const defaultDataPath = path.join(__dirname, '../data')
 
 let config = {
-  DATA_PATH: defaultPath,
-  MUSIC_LIBRARY_PATH: defaultPath, // music library base path
-  MUSIC_LYRICS_PATH: defaultPath,
+  DATA_PATH: defaultDataPath,
+  MUSIC_LIBRARY_PATH: defaultDataPath, // music library base path
+  MUSIC_LYRICS_PATH: defaultDataPath,
   enableAuth: false,
   authUsers: {'admin': 'admin'}
 }

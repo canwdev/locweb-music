@@ -22,7 +22,8 @@
     "mime-types": "^2.1.28",
     "morgan": "^1.10.0",
     "music-metadata": "^7.6.4",
-    "sequelize": "^6.3.4"
+    "sequelize": "^6.5.0",
+    "sqlite3": "^5.0.2"
   },
   "devDependencies": {
     "nodemon": "^2.0.4"

@@ -1,6 +1,8 @@
 const Sequelize = require('sequelize')
 const path = require('path')
-const config = require('../config')
+const {
+  DATA_PATH
+} = require('../config')
 
 const sequelize = new Sequelize({
   host: 'localhost',
@@ -11,7 +13,7 @@ const sequelize = new Sequelize({
     acquire: 30000,
     idle: 10000
   },
-  storage: path.join(config.DATA_BASE_PATH, 'database.db'),
+  storage: path.join(DATA_PATH, 'database.db'),
   // disable logging; default: console.log
   logging: false
 })
