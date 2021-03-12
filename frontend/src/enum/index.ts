@@ -69,7 +69,7 @@ export class MusicItem {
     if (!this.filepath) {
       return ''
     }
-    return HOST_URL + '/mfs/' + this.filepath
+    return HOST_URL + '/mfs/' + encodeURIComponent(this.filepath)
   }
 
   setMetadata(metadata: IAudioMetadata, cover?: string | undefined | null, lyric?: string | undefined) {

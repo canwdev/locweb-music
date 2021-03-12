@@ -482,7 +482,7 @@ export default defineComponent({
       justify-content: center;
 
       .reverse-x {
-        color: red;
+        color: $red;
         transform: rotateX(-180deg);
       }
 
