@@ -1,12 +1,16 @@
-import {IAudioMetadata, ICommonTagsResult}  from 'music-metadata/lib/type'
+import {IAudioMetadata, ICommonTagsResult} from 'music-metadata/lib/type'
 
 // server api url
 export const HOST_URL = process.env.VUE_APP_API_HOST || '';
 
 // navbar tab index
-export const NavbarTabsEnum = {
-  MAIN: 1, // showing main list
-  PLAYING: 2, // showing playing list
+// export const NavbarTabsEnum = {
+//
+// }
+
+export enum NavbarTabsEnum {
+  MAIN = 1, // showing main list
+  PLAYING = 2 // showing playing list
 }
 
 export const LoopModeEnum = {
@@ -68,13 +72,15 @@ export class MusicItem {
     return HOST_URL + '/mfs/' + this.filepath
   }
 
-  setMetadata(metadata: IAudioMetadata, cover?: string|undefined|null, lyric?: string|undefined) {
-    const {common: {
-      title,
-      artist,
-      album,
-      track,
-    }}: {common: ICommonTagsResult} = metadata
+  setMetadata(metadata: IAudioMetadata, cover?: string | undefined | null, lyric?: string | undefined) {
+    const {
+      common: {
+        title,
+        artist,
+        album,
+        track,
+      }
+    }: { common: ICommonTagsResult } = metadata
 
     this.title = title
     this.artist = artist
