@@ -34,8 +34,8 @@
 
     <ListItem
         :item="rootItem"
-        v-show="showUp"
-        @click="$emit('goUpDir')"
+        v-if="showUp"
+        @click.prevent="$emit('goUpDir')"
     />
 
     <NoData
@@ -50,7 +50,7 @@
         :active="activeId === item.id"
         :is-big-item="isPlayList"
         :is-paused="isPaused"
-        @click="$emit('onItemClick', item)"
+        @click.prevent="$emit('onItemClick', item)"
     />
 
 

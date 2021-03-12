@@ -2,6 +2,7 @@
   <a
       class="btn-no-style list-item-wrap"
       :class="{grey: !isSupport && !item.isDirectory, active}"
+      :href="item.getSource()"
   >
     <div
         v-if="!isBigItem"
