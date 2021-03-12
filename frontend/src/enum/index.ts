@@ -13,11 +13,11 @@ export enum NavbarTabsEnum {
   PLAYING = 2 // showing playing list
 }
 
-export const LoopModeEnum = {
-  NONE: 1, // play stops after last track
-  LOOP_SEQUENCE: 2, // Sequence play
-  LOOP_REVERSE: 3,  // Reverse play
-  LOOP_SINGLE: 4, // Single cycle
+export enum LoopModeEnum {
+  NONE = 1, // play stops after last track
+  LOOP_SEQUENCE = 2, // Sequence play
+  LOOP_REVERSE = 3,  // Reverse play
+  LOOP_SINGLE = 4, // Single cycle
 }
 
 // single song data

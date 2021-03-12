@@ -211,11 +211,11 @@ export default defineComponent({
     const paused = computed((): boolean => {
       return store.getters.paused
     })
-    const playlist = computed((): Array<MusicItem> => {
-      return store.getters.playlist
+    const playingList = computed((): Array<MusicItem> => {
+      return store.getters.playingList
     })
     const actionDisabled = computed((): boolean => {
-      return playlist.value.length === 0
+      return playingList.value.length === 0
     })
     const isRandom = computed({
       get() {
@@ -323,7 +323,7 @@ export default defineComponent({
         bus.emit(ACTION_TOGGLE_PLAY)
       },
       toggleRandom() {
-        if (playlist.value.length === 0) {
+        if (playingList.value.length === 0) {
           return
         }
         const flag = !isRandom.value

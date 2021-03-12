@@ -3,15 +3,10 @@
     <Navbar/>
 
     <FilesystemList
-        v-show="!isPlaylist"
+        v-show="!isPlayingList"
     />
-    <MainList
-        v-show="isPlaylist"
-        :list="playlist"
-        :active-id="playingId"
-        is-play-list
-        :is-paused="paused"
-        @onItemClick="handleItemClick"
+    <PlayingList
+        v-show="isPlayingList"
     />
     <Actionbar/>
   </div>
@@ -21,149 +16,32 @@
 import {
   defineComponent,
   computed,
-  nextTick,
-  onMounted,
-  onBeforeUnmount
 } from 'vue';
 import store from '@/store'
 
 import Navbar from '@/components/Navbar.vue';
-import MainList from '@/components/MainList/index.vue';
 import Actionbar from '@/components/Actionbar.vue';
-import {LoopModeEnum, MusicItem, NavbarTabsEnum} from "@/enum";
-import bus, {
-  ACTION_PLAY_START,
-  ACTION_TOGGLE_PLAY,
-  ACTION_PREV,
-  ACTION_NEXT,
-  ACTION_PLAY_ENDED
-} from "@/utils/bus";
+import PlayingList from "@/components/PlayingList.vue";
+
 import FilesystemList from "@/components/FilesystemList.vue";
+import {NavbarTabsEnum} from "@/enum";
 
 export default defineComponent({
   name: 'Home',
   components: {
     Navbar,
-    MainList,
     Actionbar,
-    FilesystemList
+    FilesystemList,
+    PlayingList
   },
   setup() {
-    const playlist = computed(() => store.getters.playlist)
     const navbarTab = computed(() => store.getters.navbarTab)
-    const isRandom = computed(() => store.getters.isRandom)
-    const loopMode = computed(() => store.getters.loopMode)
-    const paused = computed(() => store.getters.paused)
-    const playingId = computed(() => store.getters.musicItem.id)
-    const playingIndex = computed<number>({
-      get() {
-        return store.getters.playingIndex
-      },
-      set(val) {
-        store.commit('setPlayingIndex', val)
-      }
-    })
-    const isPlaylist = computed(() => store.getters.navbarTab === NavbarTabsEnum.PLAYING)
+    const isPlayingList = computed(() => store.getters.navbarTab === NavbarTabsEnum.PLAYING)
 
-    const playMusicFromList = (list: Array<MusicItem>, item: MusicItem): void => {
-      store.commit('setMusicItem', item)
-      playingIndex.value = list.findIndex((val: any) => {
-        return val.filename === item.filename
-      })
-
-      nextTick(() => {
-        // jump to playing list
-        store.commit('setNavbarTab', NavbarTabsEnum.PLAYING)
-        bus.emit(ACTION_TOGGLE_PLAY)
-      })
-    }
-    const handleItemClick = (item: MusicItem) => {
-      if (item.isDirectory) {
-        return
-      }
-
-      // play a song
-      playMusicFromList(playlist.value, item)
-    }
-    const playMusicIndexed = (index: number) => {
-      // console.log('playMusicIndexed', index)
-      store.commit('setMusicItem', playlist.value[index])
-      playingIndex.value = index
-      nextTick(() => {
-        bus.emit(ACTION_TOGGLE_PLAY)
-      })
-    }
-    const playPrev = () => {
-      const index = playingIndex.value - 1
-      if (index < 0) {
-        return
-      }
-      playMusicIndexed(index)
-    }
-    const playNext = () => {
-      let index = playingIndex.value + 1
-      if (index > playlist.value.length - 1) {
-        if (loopMode.value === LoopModeEnum.LOOP_SEQUENCE) {
-          // loop list from first
-          index = 0
-        } else {
-          // stop at last
-          return
-        }
-      }
-      playMusicIndexed(index)
-    }
-    const handlePlayEnded = () => {
-      // console.log('handlePlayEnded', loopMode.value)
-      if (loopMode.value === LoopModeEnum.LOOP_SINGLE) {
-        // single loop
-        bus.emit(ACTION_TOGGLE_PLAY)
-        return
-      }
-      if (loopMode.value === LoopModeEnum.LOOP_REVERSE) {
-        // reverse play
-        playPrev()
-        return
-      }
-      playNext()
-    }
-
-    const handlePlayStart = (event) => {
-      const {
-        list,
-        item
-      } = event
-      playMusicFromList(list, item)
-    }
-
-    onMounted(() => {
-      bus.on(ACTION_PLAY_START, handlePlayStart)
-      bus.on(ACTION_PREV, playPrev)
-      bus.on(ACTION_NEXT, playNext)
-      bus.on(ACTION_PLAY_ENDED, handlePlayEnded)
-    })
-    onBeforeUnmount(() => {
-      bus.off(ACTION_PLAY_START, handlePlayStart)
-      bus.off(ACTION_PREV, playPrev)
-      bus.off(ACTION_NEXT, playNext)
-      bus.off(ACTION_PLAY_ENDED, handlePlayEnded)
-    })
 
     return {
-      playlist,
       navbarTab,
-      isRandom,
-      loopMode,
-      playingId,
-      playingIndex,
-      isPlaylist,
-      paused,
-      playMusicFromList,
-      handleItemClick,
-      playMusicIndexed,
-      playPrev,
-      playNext,
-      handlePlayEnded
+      isPlayingList,
     }
   },
 });

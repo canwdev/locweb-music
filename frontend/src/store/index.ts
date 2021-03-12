@@ -6,16 +6,16 @@ import bus, {
   ACTION_TOGGLE_PLAY,
 } from "@/utils/bus";
 
-const playlist: Array<MusicItem> = [];
+const playingList: Array<MusicItem> = [];
 const playlistBackup: Array<MusicItem> = [];
 
 export default createStore({
   state: {
     musicItem: new MusicItem(), // current playing music
     navbarTab: NavbarTabsEnum.MAIN, // navbar index
-    playlist, // current playing list
+    playingList, // current playing list
     playlistBackup, // backup original list from random mode
-    playingIndex: 0, // playing music index in playlist
+    playingIndex: 0, // playing music index in playingList
     playingIndexBackup: 0, // backup original index from random mode
     paused: true, // is current playing paused
     isRandom: false, // is random choose next song to play
@@ -26,7 +26,7 @@ export default createStore({
   getters: {
     musicItem: state => state.musicItem,
     navbarTab: state => state.navbarTab,
-    playlist: state => state.playlist,
+    playingList: state => state.playingList,
     playingIndex: state => state.playingIndex,
     paused: state => state.paused,
     isRandom: state => state.isRandom,
@@ -41,12 +41,12 @@ export default createStore({
     setNavbarTab: (state, payload: number) => {
       state.navbarTab = payload
     },
-    setPlaylist: (state, payload: Array<MusicItem>) => {
-      state.playlistBackup = [...state.playlist]
-      state.playlist = payload
+    setPlayingList: (state, payload: Array<MusicItem>) => {
+      state.playlistBackup = [...state.playingList]
+      state.playingList = payload
     },
-    restorePlaylist: (state) => {
-      state.playlist = state.playlistBackup
+    restorePlayingList: (state) => {
+      state.playingList = state.playlistBackup
       state.playlistBackup = []
     },
     setPlayingIndex: (state, payload: number) => {
@@ -57,11 +57,11 @@ export default createStore({
     },
     setShuffle(state) {
       // @ts-ignore
-      this.commit('setPlaylist', shuffleArray(state.playlist))
+      this.commit('setPlayingList', shuffleArray(state.playingList))
 
       state.playingIndexBackup = state.playingIndex
       state.playingIndex = 0
-      state.musicItem = state.playlist[0]
+      state.musicItem = state.playingList[0]
       setTimeout(() => {
         bus.emit(ACTION_TOGGLE_PLAY)
       }, 0)
@@ -69,10 +69,10 @@ export default createStore({
     },
     setShuffleRestore(state) {
       // @ts-ignore
-      this.commit('restorePlaylist')
+      this.commit('restorePlayingList')
 
       state.playingIndex = state.playingIndexBackup
-      state.musicItem = state.playlist[state.playingIndex]
+      state.musicItem = state.playingList[state.playingIndex]
       setTimeout(() => {
         bus.emit(ACTION_TOGGLE_PLAY)
 

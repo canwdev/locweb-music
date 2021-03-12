@@ -125,7 +125,7 @@ export default defineComponent({
         const list = fileList.value.filter((val: any) => {
           return isSupportedMusicFormat(val.filename)
         })
-        store.commit('setPlaylist', list)
+        store.commit('setPlayingList', list)
         // set current playing
         // playMusicFromList(list, item)
         bus.emit(ACTION_PLAY_START, {list, item})
@@ -139,8 +139,6 @@ export default defineComponent({
           showConfirmButton: true,
           confirmButtonText: 'Try'
         }).then((result) => {
-          /* Read more about isConfirmed, isDenied below */
-          console.log('result', result)
           if (result.isConfirmed) {
             window.open(item.getSource(), '_blank')
           }
