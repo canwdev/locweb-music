@@ -69,7 +69,7 @@
         </button>
 
         <button class="btn-no-style btn-action" @click="switchLoopMode">
-          <i class="material-icons" title="Loop">{{ loopIconName }}</i>
+          <i class="material-icons" :class="loopIcon.className" title="Loop">{{ loopIcon.name }}</i>
         </button>
       </div>
     </div>
@@ -149,8 +149,8 @@
           <div class="subtitle">{{ musicItem.album }}</div>
         </div>
       </div>
-
     </ModalDialog>
+
   </div>
 </template>
 
@@ -233,18 +233,18 @@ export default defineComponent({
         store.commit('setLoopMode', val)
       }
     })
-    const loopIconName = computed((): string => {
+    const loopIcon = computed((): object => {
       switch (loopMode.value) {
         case LoopModeEnum.NONE:
-          return 'arrow_forward'
+          return {name: 'arrow_forward'}
         case LoopModeEnum.LOOP_SEQUENCE:
-          return 'repeat'
+          return {name: 'repeat'}
         case LoopModeEnum.LOOP_REVERSE:
-          return 'arrow_back'
+          return {name: 'repeat', className: 'reverse-x'}
         case LoopModeEnum.LOOP_SINGLE:
-          return 'repeat_one'
+          return {name: 'repeat_one'}
         default:
-          return 'help'
+          return {name: 'help'}
       }
     })
     const displayTitle = computed(() => {
@@ -254,15 +254,16 @@ export default defineComponent({
     const loopText = {
       1: 'Play in order',
       2: 'Sequential loop',
-      3: 'Reverse playback',
+      3: 'Reverse loop',
       4: 'Single cycle',
     }
     const showTip = (text) => {
       window.$swal.fire({
         toast: true,
-        timer: 1000,
+        timer: 2000,
         title: text,
         showConfirmButton: false,
+        position: 'bottom',
       })
     }
 
@@ -309,7 +310,7 @@ export default defineComponent({
       paused,
       isRandom,
       loopMode,
-      loopIconName,
+      loopIcon,
       displayTitle,
       actionDisabled,
       // methods
@@ -479,6 +480,11 @@ export default defineComponent({
       display: flex;
       align-items: center;
       justify-content: center;
+
+      .reverse-x {
+        color: red;
+        transform: rotateX(-180deg);
+      }
 
       &.active {
         color: $primary;

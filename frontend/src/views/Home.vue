@@ -8,6 +8,7 @@
     <PlayingList
         v-show="isPlayingList"
     />
+
     <Actionbar/>
   </div>
 </template>

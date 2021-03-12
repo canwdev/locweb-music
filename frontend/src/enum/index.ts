@@ -14,7 +14,7 @@ export enum NavbarTabsEnum {
 }
 
 export enum LoopModeEnum {
-  NONE = 1, // play stops after last track
+  NONE = 1, // Play stops after last track
   LOOP_SEQUENCE = 2, // Sequence play
   LOOP_REVERSE = 3,  // Reverse play
   LOOP_SINGLE = 4, // Single cycle
