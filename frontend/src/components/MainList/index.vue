@@ -193,8 +193,8 @@ export default defineComponent({
     scroll-behavior: smooth;
 
     ::v-deep .vue-recycle-scroller__item-view {
-      &:nth-child(even) {
-        background: rgba(0, 0, 0, 0.05);
+      &+.vue-recycle-scroller__item-view {
+        border-top: $layout-border;
       }
     }
   }
