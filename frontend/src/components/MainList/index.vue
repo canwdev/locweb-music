@@ -1,5 +1,5 @@
 <template>
-  <div class="main-list" ref="mainListEl">
+  <div class="main-list">
     <div class="list-actions">
       <form action="javascript:">
         <input
@@ -32,28 +32,40 @@
 
     <Loading :visible="isLoading"/>
 
-    <ListItem
-        :item="rootItem"
-        v-if="showUp"
-        @click.prevent="$emit('goUpDir')"
-    />
-
     <NoData
         v-if="!isLoading && filteredList.length === 0"
         text="List is empty"/>
 
-    <ListItem
-        v-for="(item) in filteredList"
-        :key="item.id"
-        :item="item"
-        :data-index="item.id"
-        :active="activeId === item.id"
-        :is-big-item="isPlayList"
-        :is-paused="isPaused"
-        @click.prevent="$emit('onItemClick', item)"
-    />
+    <DynamicScroller
+        ref="mainListEl"
+        class="virtual-scroller"
+        :items="filteredList"
+        :min-item-size="40"
+    >
+      <template #before>
+        <ListItem
+            :item="rootItem"
+            v-if="showUp"
+            @click.prevent="$emit('goUpDir')"
+        />
+      </template>
+      <template v-slot="{ item, index, active }">
+        <DynamicScrollerItem
+            :item="item"
+            :active="active"
+            :data-index="index"
+        >
+          <ListItem
+              :item="item"
+              :active="activeId === item.id"
+              :is-big-item="isPlayList"
+              :is-paused="isPaused"
+              @click.prevent="$emit('onItemClick', item)"
+          />
+        </DynamicScrollerItem>
 
-
+      </template>
+    </DynamicScroller>
   </div>
 </template>
 
@@ -69,7 +81,7 @@ export default defineComponent({
   components: {
     Loading,
     ListItem,
-    NoData
+    NoData,
   },
   props: {
     isLoading: {
@@ -97,7 +109,7 @@ export default defineComponent({
     }
   },
   setup(props) {
-    const {list, activeId} = toRefs(props)
+    const {list, activeId, isPlayList} = toRefs(props)
     const searchInput = ref('')
     const searchText = ref('')
 
@@ -123,18 +135,27 @@ export default defineComponent({
     }
 
     const locateItem = () => {
-      const wrapEl = mainListEl.value
-      if (wrapEl) {
+      const virtualScroll = mainListEl.value
+      if (!virtualScroll) {
+        return;
+      }
+      console.log('wrapEl', virtualScroll)
+
+      // @ts-ignore: TS2339
+      const el = virtualScroll.$el
+      if (el) {
         // @ts-ignore: TS2339
-        const item = wrapEl.querySelector(`a[data-index="${activeId.value}"]`)
-        if (!item) {
-          return
+        // const item = virtualScroll.querySelector(`a[data-index="${activeId.value}"]`)
+        // if (!item) {
+        //   return
+        // }
+
+        const index = filteredList.value.findIndex(item => item.id === activeId.value)
+
+        if (index > -1) {
+          el.scrollTop = index * (isPlayList.value ? 55 : 40)
         }
-        // item.scrollIntoView({
-        //   behavior: 'smooth'
-        // })
-        // @ts-ignore: TS2339
-        wrapEl.scrollTop = item.offsetTop - 39
+
       }
     }
 
@@ -156,21 +177,35 @@ export default defineComponent({
 <style lang="scss" scoped>
 .main-list {
   position: absolute;
-  overflow: auto;
+  overflow: hidden;
   top: 45px;
   left: 0;
   width: 100%;
   bottom: 75px;
   //padding: 45px 0 80px;
   //box-sizing: border-box;
-  scroll-behavior: smooth;
+  display: flex;
+  flex-direction: column;
+
+  .virtual-scroller {
+    overflow: auto;
+    flex: 1;
+    scroll-behavior: smooth;
+
+    ::v-deep .vue-recycle-scroller__item-view {
+      &:nth-child(even) {
+        background: rgba(0, 0, 0, 0.05);
+      }
+    }
+  }
+
 
   .list-actions {
     position: sticky;
     top: 0;
     left: 0;
     right: 0;
-    background: rgba(255,255,255,.9);
+    background: rgba(255, 255, 255, .9);
     border-bottom: 1px solid $border-color;
     padding: 4px 10px;
     font-size: 12px;
@@ -199,6 +234,7 @@ export default defineComponent({
       align-items: center;
       justify-content: center;
       width: 28px;
+
       .material-icons {
         font-size: 18px;
       }

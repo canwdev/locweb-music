@@ -3,6 +3,7 @@ const fs = require('fs')
 
 const defaultDataPath = path.join(__dirname, '../data')
 
+// default config
 let config = {
   DATA_PATH: defaultDataPath,
   MUSIC_LIBRARY_PATH: defaultDataPath, // music library base path

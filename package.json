@@ -8,7 +8,7 @@
   "license": "MIT",
   "scripts": {
     "start": "cross-env NODE_ENV=production PORT=12021 node index.js",
-    "dev": "nodemon index.js --trace-sync-io"
+    "dev": "cross-env PORT=12022 nodemon index.js --trace-sync-io"
   },
   "dependencies": {
     "body-parser": "^1.19.0",
