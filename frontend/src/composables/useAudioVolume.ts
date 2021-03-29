@@ -5,7 +5,7 @@ const LS_KEY_VOLUME = 'LOCWEB_AUDIO_VOLUME'
 const getLsVolume = (): number => {
   const volume = localStorage.getItem(LS_KEY_VOLUME)
 
-  if (volume !== null) {
+  if (volume === null) {
     return 100
   }
 
@@ -28,9 +28,6 @@ export default () => {
     }
     if (value < 0) {
       value = 0
-    }
-    if (audioVolume.value === value) {
-      return
     }
 
     // console.log(value)
