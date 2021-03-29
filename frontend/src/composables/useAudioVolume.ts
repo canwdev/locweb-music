@@ -63,13 +63,13 @@ export default () => {
   return {
     audioVolume,
     volumeIcon,
-    volumeUp(step = 2) {
+    volumeUp(step = 5) {
       const volume = audioVolume.value + step
-      setVolume(volume)
+      setVolume(volume, true)
     },
-    volumeDown(step = 2) {
+    volumeDown(step = 5) {
       const volume = audioVolume.value - step
-      setVolume(volume)
+      setVolume(volume, true)
     },
     volumeSeeking(evt) {
       isSeeking.value = true
