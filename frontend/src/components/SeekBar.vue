@@ -1,7 +1,9 @@
 <template>
-  <div class="volume-slider">
-    <div class="seekbar-fill"
-         :style="'width:'+progress+'%'"></div>
+  <div class="seekbar-wrap" :class="{vertical}">
+    <div
+        v-if="!vertical"
+        class="seekbar-fill"
+        :style="'width:'+progress+'%'"></div>
     <input
         ref="seekBar"
         type="range"
@@ -19,7 +21,7 @@
 import {computed, defineComponent, ref, toRefs} from 'vue';
 
 export default defineComponent({
-  name: "VolumeSlider",
+  name: "SeekBar",
   props: {
     min: {
       type: Number,
@@ -33,7 +35,10 @@ export default defineComponent({
       type: Number,
       default: 100
     },
-
+    vertical: {
+      type: Boolean,
+      default: false
+    }
   },
   setup(props) {
     const {max, value} = toRefs(props)
@@ -49,11 +54,20 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.volume-slider {
+.seekbar-wrap {
   height: 100%;
   flex: 1;
   position: relative;
   overflow: hidden;
+
+  &.vertical {
+    input {
+      writing-mode: bt-lr; /* IE */
+      -webkit-appearance: slider-vertical; /* WebKit */
+      height: 100%;
+    }
+
+  }
 
   .seekbar-fill {
     position: absolute;

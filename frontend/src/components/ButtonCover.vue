@@ -1,6 +1,7 @@
 <template>
   <button
       class="btn-no-style btn-cover flex items-center justify-center">
+    <slot></slot>
     <CoverDisplay v-if="src" :src="src"/>
     <i v-else class="material-icons">{{ iconName }}</i>
   </button>
@@ -36,7 +37,6 @@ export default defineComponent({
   color: white;
   font-size: 28px;
   border-radius: 4px;
-  overflow: hidden;
   .material-icons {
     font-size: 29px;
   }

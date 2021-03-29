@@ -15,7 +15,8 @@ import bus, {
   ACTION_NEXT,
   ACTION_PLAY_ENDED,
   ACTION_PREV,
-  ACTION_TOGGLE_PLAY
+  ACTION_TOGGLE_PLAY,
+  ACTION_CHANGE_VOLUME
 } from "@/utils/bus";
 import store from '@/store'
 import {getDetail} from "@/api/music.ts";
@@ -33,7 +34,7 @@ export default defineComponent({
     })
 
     const updateTitle = (musicItem: MusicItem, isPaused?: boolean) => {
-      document.title = `${isPaused ? '' : '▶'} ${musicItem.displayTitle}`
+      document.title = `${isPaused ? '⏸️' : '▶️'} ${musicItem.displayTitle}`
     }
 
     watch(musicItem, async (val) => {
@@ -176,15 +177,21 @@ export default defineComponent({
       audio && (audio.currentTime = newTime)
     }
 
+    const changeVolume = (val) => {
+      audio && (audio.volume = val/100)
+    }
+
     onMounted(() => {
       bus.on(ACTION_TOGGLE_PLAY, togglePlay)
       bus.on(ACTION_CHANGE_CURRENT_TIME, changeCurrentTime)
+      bus.on(ACTION_CHANGE_VOLUME, changeVolume)
 
       registerAudioEvents(audio)
     })
     onBeforeUnmount(() => {
       bus.off(ACTION_TOGGLE_PLAY, togglePlay)
       bus.off(ACTION_CHANGE_CURRENT_TIME, changeCurrentTime)
+      bus.off(ACTION_CHANGE_VOLUME, changeVolume)
     })
 
     return {

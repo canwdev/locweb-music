@@ -33,6 +33,7 @@ name: "CoverDisplay",
 .cover-display {
   position: relative;
   overflow: hidden;
+  display: flex;
 
   .material-icons {
     position: absolute;

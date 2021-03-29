@@ -3,11 +3,11 @@
     <div class="progressbar bg-dark flex items-center justify-between">
       <span class="time text-overflow">{{ formatTimeMS(mCurrentTime) }}</span>
 
-      <VolumeSlider
+      <SeekBar
           :max="duration"
           :value="mCurrentTime"
-          @input="seekbarProgressSeeking"
-          @change="seekbarProgressChange"
+          @input="progressSeeking"
+          @change="progressChange"
       />
 
 
@@ -15,9 +15,24 @@
     </div>
     <div class="actionbar bg-dark flex items-center">
       <ButtonCover
-          @click="showDetailDialog"
+          @click="isShowVolumeSlider = !isShowVolumeSlider"
           :src="coverImage"
-      />
+          :icon-name="volumeIcon"
+      >
+        <div
+            v-show="isShowVolumeSlider"
+            @click.stop
+            class="volume-slider-wrap bg-dark"
+        >
+          <SeekBar
+              vertical
+              :value="audioVolume"
+              @input="volumeSeeking"
+              @change="volumeChange"
+          />
+          <div class="tip">{{ audioVolume }}%</div>
+        </div>
+      </ButtonCover>
       <button
           @click="showDetailDialog"
           class="btn-no-style btn-song"
@@ -46,10 +61,6 @@
             @click="next"
             class="btn-no-style btn-action">
           <i class="material-icons" title="Next">skip_next</i>
-        </button>
-
-        <button class="btn-no-style btn-action">
-          <i class="material-icons" title="Volume">volume_up</i>
         </button>
 
         <button
@@ -151,13 +162,19 @@
 import {computed, defineComponent, ref, watch, nextTick, onMounted, onBeforeUnmount} from 'vue';
 import store from '@/store'
 import {LoopModeEnum, MusicItem} from "@/enum";
-import bus, {ACTION_CHANGE_CURRENT_TIME, ACTION_NEXT, ACTION_PREV, ACTION_TOGGLE_PLAY} from "@/utils/bus";
+import bus, {
+  ACTION_CHANGE_CURRENT_TIME,
+  ACTION_NEXT, ACTION_PREV,
+  ACTION_TOGGLE_PLAY,
+  ACTION_CHANGE_VOLUME
+} from "@/utils/bus";
 import {formatTimeMS} from "@/utils";
 import ButtonCover from "@/components/ButtonCover.vue"
 import CoverDisplay from "@/components/CoverDisplay.vue"
 import ModalDialog from '@/components/ModalDialog.vue'
-import VolumeSlider from '@/components/VolumeSlider.vue'
+import SeekBar from '@/components/SeekBar.vue'
 import useLyricObj from "@/composables/useLyricObj"
+import useAudioVolume from "@/composables/useAudioVolume"
 import hotkeys from 'hotkeys-js';
 
 const DetailTabEnum = {
@@ -175,7 +192,7 @@ export default defineComponent({
     ButtonCover,
     ModalDialog,
     CoverDisplay,
-    VolumeSlider
+    SeekBar
   },
   setup() {
     const mCurrentTime = ref(0)
@@ -183,6 +200,7 @@ export default defineComponent({
     const detailDialogVisible = ref(false)
     const isShowDetail = ref(false)
     const currentDetailTab = ref(DetailTabEnum.LYRIC)
+    const isShowVolumeSlider = ref(false)
 
     const currentTime = computed(() => {
       return store.getters.currentTime
@@ -241,6 +259,23 @@ export default defineComponent({
           return {name: 'help'}
       }
     })
+
+    const {
+      audioVolume,
+      volumeIcon,
+      volumeSeeking,
+      volumeChange,
+      volumeUp,
+      volumeDown,
+    } = useAudioVolume()
+
+    const volumeUpFn = () => {
+      volumeUp()
+    }
+    const volumeDownFn = () => {
+      volumeDown()
+    }
+
     const displayTitle = computed(() => {
       return musicItem.value.title || musicItem.value.filename || 'N/A'
     })
@@ -316,8 +351,8 @@ export default defineComponent({
     const keySpace = 'space'
     const keyPrevious = 'left,pageup,k,l'
     const keyNext = 'right,pagedown,h,j'
-    // const keyUp = 'up'
-    // const keyDown = 'down'
+    const keyUp = 'up'
+    const keyDown = 'down'
 
     onMounted(() => {
       hotkeys(keySpace, togglePlay)
@@ -326,8 +361,8 @@ export default defineComponent({
       hotkeys('z', toggleRandom)
       hotkeys('x', switchLoopMode)
 
-      // hotkeys(keyUp, this.rankUp)
-      // hotkeys(keyDown, this.rankDown)
+      hotkeys(keyUp, volumeUpFn)
+      hotkeys(keyDown, volumeDownFn)
     })
     onBeforeUnmount(() => {
       hotkeys.unbind(keySpace, togglePlay)
@@ -336,8 +371,8 @@ export default defineComponent({
       hotkeys.unbind('z', toggleRandom)
       hotkeys.unbind('x', switchLoopMode)
 
-      // hotkeys.unbind(keyUp, this.rankUp)
-      // hotkeys.unbind(keyDown, this.rankDown)
+      hotkeys.unbind(keyUp, volumeUpFn)
+      hotkeys.unbind(keyDown, volumeDownFn)
     })
 
     return {
@@ -354,6 +389,9 @@ export default defineComponent({
       coverImage,
       detailDialogVisible,
       isLyricLock,
+      isShowVolumeSlider,
+      audioVolume,
+      volumeIcon,
       // computed
       currentTime,
       duration,
@@ -371,21 +409,23 @@ export default defineComponent({
       toggleRandom,
       switchLoopMode,
       formatTimeMS,
-      seekbarProgressSeeking(evt) {
-        // console.log('seekbarProgressSeeking', evt.target.value)
+      progressSeeking(evt) {
+        // console.log('progressSeeking', evt.target.value)
         isSeeking.value = true
         mCurrentTime.value = Number(evt.target.value)
       },
-      seekbarProgressChange(evt) {
-        const progress = evt.target.value
-        // console.log('seekbarProgressChange', progress)
+      progressChange(evt) {
+        const value = Number(evt.target.value)
+        // console.log('progressChange', value)
 
-        bus.emit(ACTION_CHANGE_CURRENT_TIME, progress)
+        bus.emit(ACTION_CHANGE_CURRENT_TIME, value)
         isSeeking.value = false
         if (lyricObj.value) {
-          lyricObj.value.seek(progress * 1000)
+          lyricObj.value.seek(value * 1000)
         }
       },
+      volumeSeeking,
+      volumeChange,
       showDetailDialog() {
         detailDialogVisible.value = !detailDialogVisible.value
         console.log(musicItem.value)
@@ -450,6 +490,25 @@ export default defineComponent({
     & > span {
       display: block;
       width: 100%;
+    }
+  }
+
+  .volume-slider-wrap {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    width: 50px;
+    height: 150px;
+    z-index: 10;
+    border-radius: 0 $generic-border-radius 0 0;
+    padding: 10px 0 0 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+
+    .tip {
+      font-size: 12px;
+      margin: 5px 10px;
     }
   }
 
