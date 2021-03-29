@@ -2,8 +2,8 @@
   <transition name="fade">
     <div v-show="visible" class="loading-shade flex items-center justify-center">
       <div class="loading bg-glass-white">
-        <i class="material-icons icon-hourglass-empty"></i>
-        <span v-if="text" class="text">{{text}}</span>
+        <i class="material-icons">hourglass_empty</i>
+        <span v-if="text" class="text">{{ text }}</span>
       </div>
     </div>
   </transition>
@@ -29,7 +29,8 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .loading-shade {
-  background: rgba(0,0,0,0.2);
+  background: rgba(0, 0, 0, 0.2);
+
   .loading {
     width: 100px;
     height: 100px;
@@ -39,10 +40,12 @@ export default defineComponent({
     position: absolute;
     border-radius: 10px;
     flex-direction: column;
+
     .material-icons {
       font-size: 32px;
-      animation: rotating180 1.5s infinite;
+      animation: rotating180 1.5s infinite linear;
     }
+
     .text {
       padding-top: 5px;
       font-size: 14px;

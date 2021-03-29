@@ -75,7 +75,7 @@ export default defineComponent({
         })
         console.error(e)
       } finally {
-        isLoading.value = false
+        isLoading.value = true
       }
 
     }
