@@ -4,6 +4,7 @@
       :list="fileList"
       :show-up="directories.length > 0"
       :active-id="lastPlayIndex"
+      :min-item-size="40"
       @onItemClick="handleItemClick"
       @goUpDir="goUpDir"
       @refresh="getFileList"

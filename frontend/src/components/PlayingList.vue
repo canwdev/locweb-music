@@ -4,6 +4,7 @@
       :active-id="playingId"
       is-play-list
       :is-paused="paused"
+      :min-item-size="55"
       @onItemClick="handleItemClick"
   />
 </template>

@@ -1,33 +1,40 @@
 <template>
   <div class="main-list">
-    <div class="list-actions">
-      <form action="javascript:">
-        <input
-            class="input-styled"
-            v-model="searchInput"
-            type="text" placeholder="Filter Text"
-        >
+    <div class="list-action-wrap">
+      <ListItem
+          :item="rootItem"
+          v-if="showUp"
+          @click.prevent="$emit('goUpDir')"
+      />
+      <div class="list-actions">
+        <form action="javascript:">
+          <input
+              class="input-styled"
+              v-model="searchInput"
+              type="text" placeholder="Filter Text"
+          >
+          <button
+              type="submit"
+              class="btn-no-style"
+              @click="handleSearch"
+              title="Search"
+          ><i class="material-icons">search</i>
+          </button>
+        </form>
         <button
-            type="submit"
+            v-if="!isPlayList"
             class="btn-no-style"
-            @click="handleSearch"
-            title="Search"
-        ><i class="material-icons">search</i>
+            @click="$emit('refresh')"
+            title="Refresh List"
+        ><i class="material-icons">refresh</i>
         </button>
-      </form>
-      <button
-          v-if="!isPlayList"
-          class="btn-no-style"
-          @click="$emit('refresh')"
-          title="Refresh List"
-      ><i class="material-icons">refresh</i>
-      </button>
-      <button
-          class="btn-no-style"
-          @click="locateItem"
-          title="Locate"
-      ><i class="material-icons">my_location</i>
-      </button>
+        <button
+            class="btn-no-style"
+            @click="locateItem"
+            title="Locate"
+        ><i class="material-icons">my_location</i>
+        </button>
+      </div>
     </div>
 
     <Loading :visible="isLoading"/>
@@ -40,15 +47,8 @@
         ref="mainListEl"
         class="virtual-scroller"
         :items="filteredList"
-        :min-item-size="40"
+        :min-item-size="minItemSize"
     >
-      <template #before>
-        <ListItem
-            :item="rootItem"
-            v-if="showUp"
-            @click.prevent="$emit('goUpDir')"
-        />
-      </template>
       <template v-slot="{ item, index, active }">
         <DynamicScrollerItem
             :item="item"
@@ -70,7 +70,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, ref, toRefs, computed} from 'vue';
+import {computed, defineComponent, ref, toRefs} from 'vue';
 import Loading from '@/components/Loading.vue'
 import ListItem from './ListItem.vue'
 import NoData from '@/components/NoData.vue'
@@ -106,6 +106,10 @@ export default defineComponent({
     },
     list: {
       type: Array
+    },
+    minItemSize: {
+      type: Number,
+      default: 40
     }
   },
   setup(props) {
@@ -139,7 +143,8 @@ export default defineComponent({
       if (!virtualScroll) {
         return;
       }
-      console.log('wrapEl', virtualScroll)
+      // @ts-ignore: TS2339
+      // console.log('wrapEl', virtualScroll.$el)
 
       // @ts-ignore: TS2339
       const el = virtualScroll.$el
@@ -153,7 +158,16 @@ export default defineComponent({
         const index = filteredList.value.findIndex(item => item.id === activeId.value)
 
         if (index > -1) {
-          el.scrollTop = index * (isPlayList.value ? 55 : 40)
+          window.$swal.fire({
+            toast: true,
+            timer: 2000,
+            // @ts-ignore
+            title: filteredList.value[index].filename,
+            showConfirmButton: false,
+            position: 'top',
+          })
+          const itemHeight = el.scrollHeight / filteredList.value.length
+          el.scrollTop = index * itemHeight
         }
 
       }
@@ -192,21 +206,23 @@ export default defineComponent({
     flex: 1;
     scroll-behavior: smooth;
 
-    ::v-deep .vue-recycle-scroller__item-view {
-      &+.vue-recycle-scroller__item-view {
-        border-top: $layout-border;
-      }
-    }
+    //::v-deep .vue-recycle-scroller__item-view {
+    //  & + .vue-recycle-scroller__item-view {
+    //    border-top: $layout-border;
+    //  }
+    //}
   }
 
-
-  .list-actions {
+  .list-action-wrap {
     position: sticky;
     top: 0;
     left: 0;
     right: 0;
     background: rgba(255, 255, 255, .9);
     border-bottom: 1px solid $border-color;
+  }
+
+  .list-actions {
     padding: 4px 10px;
     font-size: 12px;
     display: flex;
@@ -214,6 +230,7 @@ export default defineComponent({
     justify-content: flex-end;
     z-index: 1;
     height: 30px;
+    border-top: 1px solid $border-color;
 
     form {
       height: 100%;

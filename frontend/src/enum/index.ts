@@ -58,7 +58,7 @@ export class MusicItem {
     return this.path + this.filename
   }
 
-  getDisplayTitle(): string {
+  get displayTitle(): string {
     if (this.title) {
       return [this.title, this.artist].join(' - ')
     }

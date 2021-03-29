@@ -33,7 +33,7 @@ export default defineComponent({
     })
 
     const updateTitle = (musicItem: MusicItem, isPaused?: boolean) => {
-      document.title = `${isPaused ? '' : '▶'} ${musicItem.getDisplayTitle()}`
+      document.title = `${isPaused ? '' : '▶'} ${musicItem.displayTitle}`
     }
 
     watch(musicItem, async (val) => {

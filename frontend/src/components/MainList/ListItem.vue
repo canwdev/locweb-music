@@ -135,9 +135,9 @@ $active-color: $cyan-7;
   //  border-top: $layout-border;
   //}
 
-  &:nth-child(even) {
-    background: rgba(0, 0, 0, 0.05);
-  }
+  //&:nth-child(even) {
+  //  background: rgba(0, 0, 0, 0.05);
+  //}
 
 
   &.grey {
