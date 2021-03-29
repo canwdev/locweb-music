@@ -2,20 +2,13 @@
   <div class="actionbar-wrapper">
     <div class="progressbar bg-dark flex items-center justify-between">
       <span class="time text-overflow">{{ formatTimeMS(mCurrentTime) }}</span>
-      <div class="seekbar-wrap">
-        <div class="seekbar-fill"
-             :style="'width:'+progress+'%'"></div>
-        <input
-            ref="seekBar"
-            type="range"
-            min="0"
-            :max="duration"
-            :value="mCurrentTime"
-            @input="seekbarProgressSeeking"
-            @change="seekbarProgressChange"
-            class="common-seekbar seekbar-input"
-        >
-      </div>
+
+      <VolumeSlider
+          :max="duration"
+          :value="mCurrentTime"
+          @input="seekbarProgressSeeking"
+          @change="seekbarProgressChange"
+      />
 
 
       <span class="time text-overflow">{{ formatTimeMS(duration) }}</span>
@@ -55,9 +48,9 @@
           <i class="material-icons" title="Next">skip_next</i>
         </button>
 
-        <!--        <button class="btn-no-style btn-action">-->
-        <!--          <i class="material-icons" title="Volume">volume_up</i>-->
-        <!--        </button>-->
+        <button class="btn-no-style btn-action">
+          <i class="material-icons" title="Volume">volume_up</i>
+        </button>
 
         <button
             :disabled="actionDisabled"
@@ -163,6 +156,7 @@ import {formatTimeMS} from "@/utils";
 import ButtonCover from "@/components/ButtonCover.vue"
 import CoverDisplay from "@/components/CoverDisplay.vue"
 import ModalDialog from '@/components/ModalDialog.vue'
+import VolumeSlider from '@/components/VolumeSlider.vue'
 import useLyricObj from "@/composables/useLyricObj"
 import hotkeys from 'hotkeys-js';
 
@@ -180,7 +174,8 @@ export default defineComponent({
   components: {
     ButtonCover,
     ModalDialog,
-    CoverDisplay
+    CoverDisplay,
+    VolumeSlider
   },
   setup() {
     const mCurrentTime = ref(0)
@@ -194,15 +189,13 @@ export default defineComponent({
     })
     watch(currentTime, (val) => {
       if (!isSeeking.value) {
-        mCurrentTime.value = val
+        mCurrentTime.value = Number(val)
       }
     })
     const duration = computed(() => {
       return store.getters.duration
     })
-    const progress = computed(() => {
-      return Math.round(mCurrentTime.value / duration.value * 100)
-    })
+
     const musicItem = computed((): MusicItem => {
       return store.getters.musicItem
     })
@@ -364,7 +357,6 @@ export default defineComponent({
       // computed
       currentTime,
       duration,
-      progress,
       musicItem,
       paused,
       isRandom,
@@ -382,7 +374,7 @@ export default defineComponent({
       seekbarProgressSeeking(evt) {
         // console.log('seekbarProgressSeeking', evt.target.value)
         isSeeking.value = true
-        mCurrentTime.value = evt.target.value
+        mCurrentTime.value = Number(evt.target.value)
       },
       seekbarProgressChange(evt) {
         const progress = evt.target.value
@@ -425,45 +417,6 @@ export default defineComponent({
     text-align: center;
   }
 
-  .seekbar-wrap {
-    height: 100%;
-    flex: 1;
-    position: relative;
-    overflow: hidden;
-
-    .seekbar-fill {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      height: 5px;
-      width: 0;
-      background: $primary;
-      user-select: none;
-      pointer-events: none;
-      z-index: 0;
-      border-radius: 2px;
-    }
-
-    input {
-      width: 100%;
-      appearance: none;
-      height: 5px;
-      background: $border-color;
-      outline: none;
-      border-radius: 2px;
-
-      &::-webkit-slider-thumb {
-        position: relative;
-        appearance: none;
-        width: 18px;
-        height: 18px;
-        border-radius: 50%;
-        background: $primary;
-        z-index: 1;
-        border: 1px solid rgba(0, 0, 0, 0.2);
-      }
-    }
-  }
 }
 
 .actionbar {
