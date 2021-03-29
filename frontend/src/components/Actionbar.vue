@@ -140,9 +140,9 @@
 
 
         <div
-          class="titles-wrap"
-          :class="{opacity: isShowDetail}"
-          @click="isShowDetail = !isShowDetail"
+            class="titles-wrap"
+            :class="{opacity: isShowDetail}"
+            @click="isShowDetail = !isShowDetail"
         >
           <div class="title">{{ displayTitle }}</div>
           <div class="subtitle">{{ musicItem.artist }}</div>
@@ -155,7 +155,7 @@
 </template>
 
 <script lang="ts">
-import {computed, defineComponent, ref, watch, nextTick} from 'vue';
+import {computed, defineComponent, ref, watch, nextTick, onMounted, onBeforeUnmount} from 'vue';
 import store from '@/store'
 import {LoopModeEnum, MusicItem} from "@/enum";
 import bus, {ACTION_CHANGE_CURRENT_TIME, ACTION_NEXT, ACTION_PREV, ACTION_TOGGLE_PLAY} from "@/utils/bus";
@@ -164,6 +164,7 @@ import ButtonCover from "@/components/ButtonCover.vue"
 import CoverDisplay from "@/components/CoverDisplay.vue"
 import ModalDialog from '@/components/ModalDialog.vue'
 import useLyricObj from "@/composables/useLyricObj"
+import hotkeys from 'hotkeys-js';
 
 const DetailTabEnum = {
   LYRIC: 'LYRIC',
@@ -280,12 +281,70 @@ export default defineComponent({
     watch(isShowDetail, (val) => {
       if (val) {
         // console.log('isShowDetail', val)
-        nextTick(() =>{
+        nextTick(() => {
           if (lyricObj.value) {
             lyricObj.value.callHandler()
           }
         })
       }
+    })
+
+    const previous = () => {
+      bus.emit(ACTION_PREV)
+    }
+    const next = () => {
+      bus.emit(ACTION_NEXT)
+    }
+    const togglePlay = () => {
+      bus.emit(ACTION_TOGGLE_PLAY)
+    }
+    const toggleRandom = () => {
+      if (playingList.value.length === 0) {
+        return
+      }
+      const flag = !isRandom.value
+      if (flag) {
+        store.commit('setShuffle')
+      } else {
+        store.commit('setShuffleRestore')
+      }
+      showTip('Shuffle: ' + (flag ? 'ON' : 'OFF'))
+    }
+    const switchLoopMode = () => {
+      let index = loopMode.value
+      ++index
+      if (index > LoopModeEnum.LOOP_SINGLE) {
+        index = LoopModeEnum.NONE
+      }
+      loopMode.value = index
+      showTip(loopText[index])
+    }
+
+    const keySpace = 'space'
+    const keyPrevious = 'left,pageup,k,l'
+    const keyNext = 'right,pagedown,h,j'
+    // const keyUp = 'up'
+    // const keyDown = 'down'
+
+    onMounted(() => {
+      hotkeys(keySpace, togglePlay)
+      hotkeys(keyPrevious, previous)
+      hotkeys(keyNext, next)
+      hotkeys('z', toggleRandom)
+      hotkeys('x', switchLoopMode)
+
+      // hotkeys(keyUp, this.rankUp)
+      // hotkeys(keyDown, this.rankDown)
+    })
+    onBeforeUnmount(() => {
+      hotkeys.unbind(keySpace, togglePlay)
+      hotkeys.unbind(keyPrevious, previous)
+      hotkeys.unbind(keyNext, next)
+      hotkeys.unbind('z', toggleRandom)
+      hotkeys.unbind('x', switchLoopMode)
+
+      // hotkeys.unbind(keyUp, this.rankUp)
+      // hotkeys.unbind(keyDown, this.rankDown)
     })
 
     return {
@@ -314,36 +373,11 @@ export default defineComponent({
       displayTitle,
       actionDisabled,
       // methods
-      previous() {
-        bus.emit(ACTION_PREV)
-      },
-      next() {
-        bus.emit(ACTION_NEXT)
-      },
-      togglePlay() {
-        bus.emit(ACTION_TOGGLE_PLAY)
-      },
-      toggleRandom() {
-        if (playingList.value.length === 0) {
-          return
-        }
-        const flag = !isRandom.value
-        if (flag) {
-          store.commit('setShuffle')
-        } else {
-          store.commit('setShuffleRestore')
-        }
-        showTip('Shuffle: ' + (flag ? 'ON' : 'OFF'))
-      },
-      switchLoopMode() {
-        let index = loopMode.value
-        ++index
-        if (index > LoopModeEnum.LOOP_SINGLE) {
-          index = LoopModeEnum.NONE
-        }
-        loopMode.value = index
-        showTip(loopText[index])
-      },
+      previous,
+      next,
+      togglePlay,
+      toggleRandom,
+      switchLoopMode,
       formatTimeMS,
       seekbarProgressSeeking(evt) {
         // console.log('seekbarProgressSeeking', evt.target.value)
@@ -528,7 +562,7 @@ export default defineComponent({
     margin: 0 auto;
     border-radius: $generic-border-radius;
     overflow: hidden;
-    box-shadow: 0 0 1px 1px rgba(255,255,255,.5);
+    box-shadow: 0 0 1px 1px rgba(255, 255, 255, .5);
 
     @media screen and (max-width: $mobile_min_width) {
       width: 95%;
@@ -553,7 +587,7 @@ export default defineComponent({
     display: flex;
     flex-direction: column;
     color: white;
-    background: rgba(0,0,0,0.4);
+    background: rgba(0, 0, 0, 0.4);
     border-radius: inherit;
 
     .tab-wrap {
@@ -597,6 +631,7 @@ export default defineComponent({
         left: 5px;
         font-size: 16px;
         opacity: .6;
+
         i {
           font-size: inherit;
         }

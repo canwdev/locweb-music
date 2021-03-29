@@ -130,6 +130,7 @@ export default defineComponent({
         // set current playing
         // playMusicFromList(list, item)
         bus.emit(ACTION_PLAY_START, {list, item})
+        lastPlayIndex.value = item.id
       } else {
         window.$swal.fire({
           toast: true,
