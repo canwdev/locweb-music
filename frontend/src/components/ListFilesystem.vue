@@ -32,7 +32,11 @@ import store from '@/store'
 import {useRoute} from 'vue-router'
 import router from '@/router'
 import {MusicItem} from "@/enum"
-import {getList} from "@/api/music"
+import {FileAction} from "@/enum/service"
+import {
+  getList,
+  fileAction
+} from "@/api/music"
 import {isSupportedMusicFormat} from "@/utils/is";
 import bus, {
   ACTION_PLAY_START,
@@ -180,10 +184,39 @@ export default defineComponent({
       console.log('Rename', newName)
       actionDialogVisible.value = false
     }
+    const handleDelete = async () => {
+      if (!selectedItem.value) return
+      const sItem = selectedItem.value
+      actionDialogVisible.value = false
+
+      const flag = confirm(`Are you sure you want to delete 《${sItem.filename}》 ?`)
+      if (!flag) {
+        return
+      }
+
+      isLoading.value = true
+      try {
+        await fileAction({
+          path: sItem.path,
+          filename: sItem.filename,
+          action: FileAction.DELETE
+        })
+        // @ts-ignore
+        const index = fileList.value.findIndex(item => item.id === sItem.id)
+        if (index !== -1) {
+          fileList.value.splice(index, 1)
+        }
+      } catch (e) {
+        console.error(e)
+      } finally {
+        isLoading.value = false
+      }
+
+    }
 
     const menuList = [
       {label: 'Rename', action: handleRename},
-      {label: 'Delete'},
+      {label: 'Delete', action: handleDelete},
       {label: 'Replace'},
     ]
 

@@ -34,3 +34,16 @@ export function getDetail(params) {
     }
   })
 }
+
+export function fileAction(params) {
+  const {
+    path,
+    filename,
+    action,
+  } = params
+  return service.post('/music/action', {
+    path,
+    filename,
+    action
+  })
+}

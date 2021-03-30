@@ -78,7 +78,7 @@ $scrollbar-bg-dark: rgba(255, 255, 255, .1);
 .btn-no-style {
   background: none;
   border: none;
-  outline: none;
+  //outline: none;
   cursor: pointer;
   color: inherit;
   padding: 0;
@@ -89,6 +89,10 @@ $scrollbar-bg-dark: rgba(255, 255, 255, .1);
   &:disabled {
     cursor: not-allowed;
     opacity: .5;
+  }
+  &:focus {
+    outline: 1px solid $primary;
+    outline-offset: -1px;
   }
 }
 

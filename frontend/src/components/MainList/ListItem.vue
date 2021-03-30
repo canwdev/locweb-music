@@ -10,10 +10,10 @@
     >
       <i class="left material-icons">{{ iconName }}</i>
       <span class="middle text-overflow">{{ item.filename }}</span>
-      <span v-if="isShowAction"
-            class="right"
+      <button v-if="isShowAction"
+            class="right btn-no-style"
             @click.stop.prevent="$emit('onAction', item)"
-      ><i class="material-icons">more_vert</i></span>
+      ><i class="material-icons">more_vert</i></button>
     </div>
     <div
         v-else
@@ -27,13 +27,13 @@
         <div class="text-overflow filename">{{ item.filename }}</div>
         <div class="text-overflow display-title">{{ displayTitle }}</div>
       </div>
-      <div
+      <button
           v-if="isShowAction"
-          class="right"
+          class="right btn-no-style"
           @click.stop.prevent="$emit('onAction', item)"
       >
         <i class="material-icons">more_vert</i>
-      </div>
+      </button>
     </div>
 
   </a>

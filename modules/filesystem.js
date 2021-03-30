@@ -4,12 +4,14 @@ const fs = require('fs-extra');
 const path = require('path');
 const mm = require('music-metadata')
 const chokidar = require('chokidar');
+const rimraf = require('rimraf')
+
 const {MUSIC_LIBRARY_PATH, MUSIC_LYRICS_PATH} = require('../config')
-const getMusicPath = (dir = '') => {
-  return path.join(MUSIC_LIBRARY_PATH, dir)
+const getMusicPath = (p = '') => {
+  return path.join(MUSIC_LIBRARY_PATH, p)
 }
-const getLyricsPath = (dir = '') => {
-  return path.join(MUSIC_LYRICS_PATH, dir)
+const getLyricsPath = (p = '') => {
+  return path.join(MUSIC_LYRICS_PATH, p)
 }
 const {getMetadata, getLyricFile} = require('../utils/music-tool')
 const mfpTool = require('../utils/mfp-tool')
@@ -147,7 +149,7 @@ router.get('/detail', async (req, res, next) => {
         lyricText = await fs.readFile(getLyricsPath(lyricFile), {encoding: 'utf-8'})
       } else {
         // try load lyric from same folder
-        const lyricFile = filename.substring(0, filename.lastIndexOf('.'))+'.lrc'
+        const lyricFile = filename.substring(0, filename.lastIndexOf('.')) + '.lrc'
         const lyricPath = path.join(currentMusicDir, lyricFile)
         if (fs.existsSync(lyricPath)) {
           lyricText = await fs.readFile(lyricPath, {encoding: 'utf-8'})
@@ -178,13 +180,18 @@ router.get('/detail', async (req, res, next) => {
   }
 })
 
-router.get('/rename', async (req, res, next) => {
+const FileAction = {
+  RENAME: 'RENAME',
+  DELETE: 'DELETE',
+}
+
+router.post('/action', async (req, res, next) => {
   try {
     const {
       path: musicPath = '',
       filename,
-      newName,
-    } = req.query
+      action,
+    } = req.body
 
     let filePath
 
@@ -194,7 +201,17 @@ router.get('/rename', async (req, res, next) => {
       return res.sendError(e)
     }
 
-    return res.sendData({filePath, newName})
+    if (filePath === MUSIC_LIBRARY_PATH) {
+      return res.sendError({message: 'Invalid dir'})
+    }
+
+    if (action === FileAction.RENAME) {
+
+    } else if (action === FileAction.DELETE) {
+      rimraf.sync(filePath)
+    }
+
+    return res.sendData()
   } catch (error) {
     next(error)
   }
