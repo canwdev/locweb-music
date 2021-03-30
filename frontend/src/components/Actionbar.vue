@@ -15,7 +15,7 @@
     </div>
     <div class="actionbar bg-dark flex items-center">
       <ButtonCover
-          @click="isShowVolumeSlider = !isShowVolumeSlider"
+          @click="handleCoverClick"
           :src="coverImage"
           :icon-name="volumeIcon"
       >
@@ -177,6 +177,7 @@ import SeekBar from '@/components/SeekBar.vue'
 import useLyricObj from "@/composables/useLyricObj"
 import useAudioVolume from "@/composables/useAudioVolume"
 import hotkeys from 'hotkeys-js';
+import is from 'is_js'
 
 const DetailTabEnum = {
   LYRIC: 'LYRIC',
@@ -345,6 +346,15 @@ export default defineComponent({
       showTip(loopText[index])
     }
 
+    const handleCoverClick = () => {
+      if (is.ios()) {
+        // window.$notify.warning('iOS may not support this function')
+        detailDialogVisible.value = !detailDialogVisible.value
+        return
+      }
+      isShowVolumeSlider.value = !isShowVolumeSlider.value
+    }
+
     const keySpace = 'space'
     const keyPrevious = 'left,pageup,k,l'
     const keyNext = 'right,pagedown,h,j'
@@ -426,7 +436,8 @@ export default defineComponent({
       showDetailDialog() {
         detailDialogVisible.value = !detailDialogVisible.value
         console.log(musicItem.value)
-      }
+      },
+      handleCoverClick
     }
   }
 });
@@ -544,6 +555,7 @@ export default defineComponent({
   width: 300px;
   text-align: center;
   user-select: text;
+  padding: 10px;
 
   .titles-wrap {
     &.opacity {

@@ -101,7 +101,6 @@ export default defineComponent({
       overflow: auto;
       max-width: 95vw;
       max-height: 92vh;
-      padding: 10px;
       box-sizing: border-box;
     }
   }

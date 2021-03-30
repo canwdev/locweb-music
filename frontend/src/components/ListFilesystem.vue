@@ -191,7 +191,9 @@ export default defineComponent({
       actionDialogVisible.value = false
 
       const name = prompt(`Rename 《${sItem.filename}》`, sItem.filename) || ''
-
+      if (!name) {
+        return
+      }
       isLoading.value = true
       try {
         const {newName} = await fileAction({

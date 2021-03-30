@@ -60,7 +60,7 @@
               :active="activeId === item.id"
               :is-big-item="isPlayList"
               :is-paused="isPaused"
-              is-show-action
+              :is-show-action="!isPlayList"
               @onAction="i => $emit('onItemAction', i)"
               @click.prevent="$emit('onItemClick', item)"
           />
