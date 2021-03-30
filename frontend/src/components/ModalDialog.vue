@@ -27,7 +27,7 @@ export default defineComponent({
     },
     isShowClose: {
       type: Boolean,
-      default: true
+      default: false
     },
     dark: {
       type: Boolean,

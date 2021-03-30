@@ -48,6 +48,13 @@ app.use('/', require('./routes/index'));
 
 // Start server
 const port = normalizePort(process.env.PORT || '12021')
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
 });
+
+process.on('SIGTERM', () => {
+  console.log('SIGTERM signal received.');
+  server.close(() => {
+    console.log('Process terminated')
+  })
+})

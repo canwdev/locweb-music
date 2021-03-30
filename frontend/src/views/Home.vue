@@ -2,10 +2,10 @@
   <div class="home">
     <Navbar/>
 
-    <FilesystemList
+    <ListFilesystem
         v-show="!isPlayingList"
     />
-    <PlayingList
+    <ListPlaying
         v-show="isPlayingList"
     />
 
@@ -22,9 +22,9 @@ import store from '@/store'
 
 import Navbar from '@/components/Navbar.vue';
 import Actionbar from '@/components/Actionbar.vue';
-import PlayingList from "@/components/PlayingList.vue";
+import ListPlaying from "@/components/ListPlaying.vue";
 
-import FilesystemList from "@/components/FilesystemList.vue";
+import ListFilesystem from "@/components/ListFilesystem.vue";
 import {NavbarTabsEnum} from "@/enum";
 
 export default defineComponent({
@@ -32,8 +32,8 @@ export default defineComponent({
   components: {
     Navbar,
     Actionbar,
-    FilesystemList,
-    PlayingList
+    ListFilesystem,
+    ListPlaying
   },
   setup() {
     const navbarTab = computed(() => store.getters.navbarTab)

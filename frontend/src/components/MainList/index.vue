@@ -1,11 +1,6 @@
 <template>
   <div class="main-list">
     <div class="list-action-wrap">
-      <ListItem
-          :item="rootItem"
-          v-if="showUp"
-          @click.prevent="$emit('goUpDir')"
-      />
       <div class="list-actions">
         <form action="javascript:">
           <input
@@ -35,13 +30,18 @@
         ><i class="material-icons">my_location</i>
         </button>
       </div>
+      <ListItem
+          :item="rootItem"
+          v-if="showUp"
+          @click.prevent="$emit('goUpDir')"
+      />
     </div>
 
     <Loading :visible="isLoading"/>
 
     <NoData
         v-if="!isLoading && filteredList.length === 0"
-        text="List is empty"/>
+    />
 
     <DynamicScroller
         ref="mainListEl"
@@ -60,6 +60,8 @@
               :active="activeId === item.id"
               :is-big-item="isPlayList"
               :is-paused="isPaused"
+              is-show-action
+              @onAction="i => $emit('onItemAction', i)"
               @click.prevent="$emit('onItemClick', item)"
           />
         </DynamicScrollerItem>
@@ -219,7 +221,10 @@ export default defineComponent({
     left: 0;
     right: 0;
     background: rgba(255, 255, 255, .9);
-    border-bottom: 1px solid $border-color;
+
+    .list-item-wrap {
+      border-bottom: 1px solid $border-color;
+    }
   }
 
   .list-actions {
@@ -230,7 +235,7 @@ export default defineComponent({
     justify-content: flex-end;
     z-index: 1;
     height: 30px;
-    border-top: 1px solid $border-color;
+    border-bottom: 1px solid $border-color;
 
     form {
       height: 100%;

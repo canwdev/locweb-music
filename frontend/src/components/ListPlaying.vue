@@ -29,7 +29,7 @@ import bus, {
 import {LoopModeEnum, MusicItem, NavbarTabsEnum} from "@/enum";
 
 export default defineComponent({
-  name: "PlayingList",
+  name: "ListPlaying",
   components: {
     MainList,
   },

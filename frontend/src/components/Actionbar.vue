@@ -81,6 +81,7 @@
     <!--Music Detail Dialog-->
     <ModalDialog
         dark
+        is-show-close
         v-model:visible="detailDialogVisible"
     >
       <div class="music-detail">

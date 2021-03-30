@@ -8,8 +8,12 @@
         v-if="!isBigItem"
         class="list-item"
     >
-      <i class="material-icons">{{ iconName }}</i>
-      <span class="text-overflow">{{ item.filename }}</span>
+      <i class="left material-icons">{{ iconName }}</i>
+      <span class="middle text-overflow">{{ item.filename }}</span>
+      <span v-if="isShowAction"
+            class="right"
+            @click.stop.prevent="$emit('onAction', item)"
+      ><i class="material-icons">more_vert</i></span>
     </div>
     <div
         v-else
@@ -19,9 +23,16 @@
           :icon-name="iconName"
           :src="coverImage"
       />
-      <div class="right">
+      <div class="middle">
         <div class="text-overflow filename">{{ item.filename }}</div>
         <div class="text-overflow display-title">{{ displayTitle }}</div>
+      </div>
+      <div
+          v-if="isShowAction"
+          class="right"
+          @click.stop.prevent="$emit('onAction', item)"
+      >
+        <i class="material-icons">more_vert</i>
       </div>
     </div>
 
@@ -56,6 +67,10 @@ export default defineComponent({
       type: Boolean,
       default: false
     },
+    isShowAction: {
+      type: Boolean,
+      default: false
+    }
   },
   setup(props) {
 
@@ -92,7 +107,7 @@ export default defineComponent({
         artist,
         album
       } = musicItem
-      return [title,artist,album].join(' - ')
+      return [title, artist, album].join(' - ')
     })
 
     return {
@@ -124,6 +139,7 @@ $active-color: $cyan-7;
     .list-item-big {
       background: $active-color;
       color: white;
+
       .btn-cover {
         background-color: white;
         color: $active-color;
@@ -149,13 +165,24 @@ $active-color: $cyan-7;
     align-items: center;
     width: 100%;
     box-sizing: border-box;
+    padding-left: 10px;
+    height: 40px;
 
-    .material-icons {
+    .left {
       margin-right: 5px;
     }
 
-    padding: 0 10px;
-    height: 40px;
+    .middle {
+      flex: 1;
+    }
+
+    .right {
+      padding-left: 10px;
+      padding-right: 10px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+    }
   }
 
   .list-item-big {
@@ -169,7 +196,7 @@ $active-color: $cyan-7;
       margin: 0 5px;
     }
 
-    .right {
+    .middle {
       overflow: hidden;
       flex: 1;
 
@@ -180,6 +207,14 @@ $active-color: $cyan-7;
       .display-title {
         opacity: .5;
       }
+    }
+
+    .right {
+      padding-left: 10px;
+      padding-right: 10px;
+      height: 100%;
+      display: flex;
+      align-items: center;
     }
   }
 }

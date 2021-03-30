@@ -1,14 +1,24 @@
 <template>
-  <MainList
-      :is-loading="isLoading"
-      :list="fileList"
-      :show-up="directories.length > 0"
-      :active-id="lastPlayIndex"
-      :min-item-size="40"
-      @onItemClick="handleItemClick"
-      @goUpDir="goUpDir"
-      @refresh="getFileList"
-  />
+  <div class="list-file-system">
+    <MainList
+        :is-loading="isLoading"
+        :list="fileList"
+        :show-up="directories.length > 0"
+        :active-id="lastPlayIndex"
+        :min-item-size="40"
+        @onItemClick="handleItemClick"
+        @onItemAction="handleItemAction"
+        @goUpDir="goUpDir"
+        @refresh="getFileList"
+    />
+    <ModalDialog
+        v-model:visible="actionDialogVisible"
+    >
+      <ListMenu
+          :list="menuList"
+      />
+    </ModalDialog>
+  </div>
 </template>
 
 <script lang="ts">
@@ -28,11 +38,15 @@ import bus, {
   ACTION_PLAY_START,
 } from "@/utils/bus";
 import MainList from "@/components/MainList/index.vue";
+import ModalDialog from '@/components/ModalDialog.vue'
+import ListMenu from '@/components/ListMenu.vue'
 
 export default defineComponent({
-  name: "FilesystemList",
+  name: "ListFilesystem",
   components: {
     MainList,
+    ModalDialog,
+    ListMenu
   },
   setup() {
     const route = useRoute()
@@ -148,6 +162,31 @@ export default defineComponent({
       }
     }
 
+    const actionDialogVisible = ref<boolean>(false)
+    const selectedItem = ref<MusicItem | null>(null)
+    const handleItemAction = (item: MusicItem) => {
+      actionDialogVisible.value = true
+      selectedItem.value = item
+    }
+    watch(actionDialogVisible, (val) => {
+      if (!val) {
+        selectedItem.value = null
+      }
+    })
+
+    const handleRename = () => {
+      if (!selectedItem.value) return
+      const newName = prompt('Rename', selectedItem.value.filename)
+      console.log('Rename', newName)
+      actionDialogVisible.value = false
+    }
+
+    const menuList = [
+      {label: 'Rename', action: handleRename},
+      {label: 'Delete'},
+      {label: 'Replace'},
+    ]
+
     onMounted(() => {
       getFileList()
     })
@@ -157,10 +196,12 @@ export default defineComponent({
       fileList,
       lastPlayIndex,
       directories,
-      // methods
       getFileList,
       goUpDir,
-      handleItemClick
+      handleItemClick,
+      handleItemAction,
+      actionDialogVisible,
+      menuList
     }
   }
 })

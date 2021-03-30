@@ -1,3 +1,4 @@
+const isProduction = process.env.NODE_ENV === 'production';
 const router = require('express').Router()
 const fs = require('fs-extra');
 const path = require('path');
@@ -20,13 +21,18 @@ const refreshLyrics = async () => {
 }
 refreshLyrics()
 
-console.log('watch', MUSIC_LYRICS_PATH)
-chokidar.watch(MUSIC_LYRICS_PATH, {
-  ignoreInitial: true
-}).on('all', (event, path) => {
-  console.log(event, path)
-  refreshLyrics()
-});
+if (isProduction) {
+  console.log('Watching lrc folder', MUSIC_LYRICS_PATH)
+  chokidar.watch(MUSIC_LYRICS_PATH, {
+    ignoreInitial: true
+  }).on('all', (event, path) => {
+    console.log(event, path)
+    refreshLyrics()
+  });
+} else {
+  console.log('Dev mode will NOT watch', MUSIC_LYRICS_PATH)
+}
+
 
 /**
  * Get file list
@@ -76,6 +82,21 @@ router.get('/list', async (req, res, next) => {
   }
 })
 
+const getMusicExactPath = (musicPath, filename) => {
+  if (!filename) {
+    throw new Error('Filename can not be empty')
+  }
+
+  const currentMusicDir = getMusicPath(musicPath)
+  const filePath = path.join(currentMusicDir, filename)
+
+  if (!fs.existsSync(filePath)) {
+    throw new Error('File not exist')
+  }
+
+  return filePath
+}
+
 router.get('/detail', async (req, res, next) => {
   try {
     const {
@@ -85,19 +106,12 @@ router.get('/detail', async (req, res, next) => {
       updateStatOnly = false // only update play status
     } = req.query
 
-    if (!filename) {
-      return res.sendError({
-        message: 'Filename can not be empty'
-      })
-    }
+    let filePath
 
-    const currentMusicDir = getMusicPath(musicPath)
-    const filePath = path.join(currentMusicDir, filename)
-
-    if (!fs.existsSync(filePath)) {
-      return res.sendError({
-        message: 'File not exist'
-      })
+    try {
+      filePath = getMusicExactPath(musicPath, filename)
+    } catch (e) {
+      return res.sendError(e)
     }
 
     // update play status
@@ -114,7 +128,7 @@ router.get('/detail', async (req, res, next) => {
       }
       if (updateStatOnly) {
         // console.log('updateStatOnly')
-        return res.sendData({})
+        return res.sendData()
       }
     }
 
@@ -163,5 +177,28 @@ router.get('/detail', async (req, res, next) => {
     next(error)
   }
 })
+
+router.get('/rename', async (req, res, next) => {
+  try {
+    const {
+      path: musicPath = '',
+      filename,
+      newName,
+    } = req.query
+
+    let filePath
+
+    try {
+      filePath = getMusicExactPath(musicPath, filename)
+    } catch (e) {
+      return res.sendError(e)
+    }
+
+    return res.sendData({filePath, newName})
+  } catch (error) {
+    next(error)
+  }
+})
+
 
 module.exports = router
