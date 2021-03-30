@@ -5,6 +5,7 @@
         :key="index"
         class="btn-no-style"
         @click="item.action"
+        :disabled="item.disabled"
     >{{ item.label }}
     </button>
   </div>

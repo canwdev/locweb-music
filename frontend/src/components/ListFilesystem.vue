@@ -85,12 +85,7 @@ export default defineComponent({
         })
 
       } catch (e) {
-        window.$swal.fire({
-          toast: true,
-          icon: 'error',
-          title: e.message,
-          showConfirmButton: false,
-        })
+        window.$notify.error(e.message)
         console.error(e)
       } finally {
         isLoading.value = false
@@ -154,7 +149,7 @@ export default defineComponent({
           toast: true,
           width: 300,
           timer: 2500,
-          icon: 'info',
+          icon: 'warning',
           title: 'Format not support.',
           showConfirmButton: true,
           confirmButtonText: 'Try'
@@ -178,18 +173,48 @@ export default defineComponent({
       }
     })
 
-    const handleRename = () => {
-      if (!selectedItem.value) return
-      const newName = prompt('Rename', selectedItem.value.filename)
-      console.log('Rename', newName)
-      actionDialogVisible.value = false
+    const spliceLocalItem = (item, newItem?: MusicItem) => {
+      // @ts-ignore
+      const index = fileList.value.findIndex(v => v.id === item.id)
+      if (index !== -1) {
+        if (newItem) {
+          fileList.value.splice(index, 1, newItem)
+        } else {
+          fileList.value.splice(index, 1)
+        }
+      }
     }
+
+    const handleRename = async () => {
+      if (!selectedItem.value) return
+      const sItem = selectedItem.value
+      actionDialogVisible.value = false
+
+      const name = prompt(`Rename 《${sItem.filename}》`, sItem.filename) || ''
+
+      isLoading.value = true
+      try {
+        const {newName} = await fileAction({
+          path: sItem.path,
+          filename: sItem.filename,
+          action: FileAction.RENAME,
+          actionValue: name
+        })
+        sItem.filename = newName
+      } catch (e) {
+        console.error(e)
+      } finally {
+        isLoading.value = false
+      }
+
+    }
+
     const handleDelete = async () => {
       if (!selectedItem.value) return
       const sItem = selectedItem.value
       actionDialogVisible.value = false
 
-      const flag = confirm(`Are you sure you want to delete 《${sItem.filename}》 ?`)
+      const flag = confirm(`WARNING!! Delete 《${sItem.filename}》?\nThis operation cannot be undone.`)
       if (!flag) {
         return
       }
@@ -201,23 +226,18 @@ export default defineComponent({
           filename: sItem.filename,
           action: FileAction.DELETE
         })
-        // @ts-ignore
-        const index = fileList.value.findIndex(item => item.id === sItem.id)
-        if (index !== -1) {
-          fileList.value.splice(index, 1)
-        }
+        spliceLocalItem(sItem)
       } catch (e) {
         console.error(e)
       } finally {
         isLoading.value = false
       }
-
     }
 
     const menuList = [
       {label: 'Rename', action: handleRename},
       {label: 'Delete', action: handleDelete},
-      {label: 'Replace'},
+      {label: 'Replace', disabled: true},
     ]
 
     onMounted(() => {

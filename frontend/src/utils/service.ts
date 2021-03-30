@@ -42,6 +42,16 @@ function Service(config: Config) {
       return response.data
     },
     (error: any) => {
+      let message = error.message
+      const {response} = error || {}
+      if (response) {
+        // @ts-ignore
+        const {data: {message: msg} = {}} = response
+        if (msg) {
+          message = msg
+        }
+      }
+      window.$notify.error(message)
       return Promise.reject(error)
     }
   )

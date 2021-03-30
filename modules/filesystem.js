@@ -5,6 +5,7 @@ const path = require('path');
 const mm = require('music-metadata')
 const chokidar = require('chokidar');
 const rimraf = require('rimraf')
+const sanitize = require("sanitize-filename");
 
 const {MUSIC_LIBRARY_PATH, MUSIC_LYRICS_PATH} = require('../config')
 const getMusicPath = (p = '') => {
@@ -191,6 +192,7 @@ router.post('/action', async (req, res, next) => {
       path: musicPath = '',
       filename,
       action,
+      actionValue
     } = req.body
 
     let filePath
@@ -206,9 +208,21 @@ router.post('/action', async (req, res, next) => {
     }
 
     if (action === FileAction.RENAME) {
+      if (!actionValue) {
+        return res.sendError({message: 'Filename cannot be empty'})
+      }
+      const newName = sanitize(actionValue, {replacement: '_'})
+      const newPath = getMusicPath(path.join(musicPath, newName))
+
+      try {
+        await fs.move(filePath, newPath)
+      } catch (e) {
+        return res.sendError(e)
+      }
+      return res.sendData({newName})
 
     } else if (action === FileAction.DELETE) {
-      rimraf.sync(filePath)
+      await fs.remove(filePath)
     }
 
     return res.sendData()

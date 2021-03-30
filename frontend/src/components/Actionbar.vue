@@ -288,11 +288,7 @@ export default defineComponent({
       4: 'Single cycle',
     }
     const showTip = (text) => {
-      window.$swal.fire({
-        toast: true,
-        timer: 2000,
-        title: text,
-        showConfirmButton: false,
+      window.$notify.info(text, {
         position: 'bottom',
       })
     }

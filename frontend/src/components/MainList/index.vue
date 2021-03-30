@@ -160,14 +160,11 @@ export default defineComponent({
         const index = filteredList.value.findIndex(item => item.id === activeId.value)
 
         if (index > -1) {
-          window.$swal.fire({
-            toast: true,
-            timer: 2000,
-            // @ts-ignore
-            title: filteredList.value[index].filename,
-            showConfirmButton: false,
+          // @ts-ignore
+          window.$notify.info(filteredList.value[index].filename, {
             position: 'top',
           })
+
           const itemHeight = el.scrollHeight / filteredList.value.length
           el.scrollTop = index * itemHeight
         }

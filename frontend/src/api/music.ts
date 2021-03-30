@@ -40,10 +40,12 @@ export function fileAction(params) {
     path,
     filename,
     action,
+    actionValue
   } = params
   return service.post('/music/action', {
     path,
     filename,
-    action
+    action,
+    actionValue
   })
 }

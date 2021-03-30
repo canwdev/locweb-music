@@ -163,13 +163,7 @@ export default defineComponent({
       })
 
       audio.addEventListener('error', (error) => {
-        window.$swal.fire({
-          toast: true,
-          timer: 1500,
-          icon: 'error',
-          title: 'Load fail or no supported source',
-          showConfirmButton: false,
-        })
+        window.$notify.error('Load fail or no supported source')
         console.error(error)
       })
     }
