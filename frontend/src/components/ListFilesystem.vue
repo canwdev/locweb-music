@@ -10,47 +10,38 @@
         @onItemAction="handleItemAction"
         @goUpDir="goUpDir"
         @refresh="getFileList"
+        @openMenu="showFolderMenu"
     />
-    <ModalDialog
-        v-model:visible="actionDialogVisible"
-    >
-      <ListMenu
-          :list="menuList"
-      />
-    </ModalDialog>
+    <DialogMenu
+        v-model:visible="isShowFileMenu"
+        :list="fileMenuList"
+    />
+    <DialogMenu
+        v-model:visible="isShowFolderMenu"
+        auto-close
+        :list="folderMenuList"
+    />
   </div>
 </template>
 
 <script lang="ts">
-import {
-  defineComponent,
-  ref,
-  watch,
-  onMounted
-} from 'vue';
+import {defineComponent, onMounted, ref, watch} from 'vue';
 import store from '@/store'
 import {useRoute} from 'vue-router'
 import router from '@/router'
 import {MusicItem} from "@/enum"
 import {FileAction} from "@/enum/service"
-import {
-  getList,
-  fileAction
-} from "@/api/music"
+import {fileAction, getList} from "@/api/music"
 import {isSupportedMusicFormat} from "@/utils/is";
-import bus, {
-  ACTION_PLAY_START,
-} from "@/utils/bus";
+import bus, {ACTION_PLAY_START,} from "@/utils/bus";
 import MainList from "@/components/MainList/index.vue";
-import ModalDialog from '@/components/ModalDialog.vue'
-import ListMenu from '@/components/ListMenu.vue'
+import DialogMenu from "@/components/DialogMenu.vue";
 
 export default defineComponent({
   name: "ListFilesystem",
   components: {
     MainList,
-    ModalDialog,
-    ListMenu
+    DialogMenu
   },
   setup() {
     const route = useRoute()
@@ -97,11 +88,10 @@ export default defineComponent({
       const dir = val.dir
       if (dir) {
         // @ts-ignore
-        const list = JSON.parse(dir).map(item => new MusicItem({
+        directories.value = JSON.parse(dir).map(item => new MusicItem({
           filename: item,
           isDirectory: true
         }))
-        directories.value = list
         // console.log('router.query.dir change', val)
       }
     }, {
@@ -161,13 +151,13 @@ export default defineComponent({
       }
     }
 
-    const actionDialogVisible = ref<boolean>(false)
+    const isShowFileMenu = ref<boolean>(false)
     const selectedItem = ref<MusicItem | null>(null)
     const handleItemAction = (item: MusicItem) => {
-      actionDialogVisible.value = true
+      isShowFileMenu.value = true
       selectedItem.value = item
     }
-    watch(actionDialogVisible, (val) => {
+    watch(isShowFileMenu, (val) => {
       if (!val) {
         selectedItem.value = null
       }
@@ -185,10 +175,10 @@ export default defineComponent({
       }
     }
 
-    const handleRename = async () => {
+    const fileRename = async () => {
       if (!selectedItem.value) return
       const sItem = selectedItem.value
-      actionDialogVisible.value = false
+      isShowFileMenu.value = false
 
       const name = prompt(`Rename 《${sItem.filename}》`, sItem.filename) || ''
       if (!name) {
@@ -210,11 +200,10 @@ export default defineComponent({
       }
 
     }
-
-    const handleDelete = async () => {
+    const fileDelete = async () => {
       if (!selectedItem.value) return
       const sItem = selectedItem.value
-      actionDialogVisible.value = false
+      isShowFileMenu.value = false
 
       const flag = confirm(`WARNING!! Delete 《${sItem.filename}》?\nThis operation cannot be undone.`)
       if (!flag) {
@@ -235,11 +224,34 @@ export default defineComponent({
         isLoading.value = false
       }
     }
+    const fileMenuList = [
+      {label: 'Rename', action: fileRename},
+      {label: 'Delete', action: fileDelete},
+      {label: 'Replace...', disabled: true},
+    ]
 
-    const menuList = [
-      {label: 'Rename', action: handleRename},
-      {label: 'Delete', action: handleDelete},
-      {label: 'Replace', disabled: true},
+    const isShowFolderMenu = ref(false)
+    const showFolderMenu = () => {
+      isShowFolderMenu.value = true
+    }
+    const createFolder = async () => {
+      const name = prompt(`Create Folder`) || ''
+      if (!name) {
+        return
+      }
+
+      await fileAction({
+        path: directories.value.map(item => item.filename).join('/'),
+        action: FileAction.CREATE_FOLDER,
+        actionValue: name
+      })
+    }
+
+    const folderMenuList = [
+      {label: 'Create Folder', action: createFolder},
+      {label: 'Upload Files...', disabled: true},
+      {label: 'Upload Folder...', disabled: true},
+      {label: 'Download archive', disabled: true},
     ]
 
     onMounted(() => {
@@ -255,8 +267,11 @@ export default defineComponent({
       goUpDir,
       handleItemClick,
       handleItemAction,
-      actionDialogVisible,
-      menuList
+      isShowFileMenu,
+      fileMenuList,
+      showFolderMenu,
+      isShowFolderMenu,
+      folderMenuList
     }
   }
 })

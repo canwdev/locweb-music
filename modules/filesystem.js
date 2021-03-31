@@ -87,7 +87,7 @@ router.get('/list', async (req, res, next) => {
 
 const getMusicExactPath = (musicPath, filename) => {
   if (!filename) {
-    throw new Error('Filename can not be empty')
+    throw new Error('getMusicExactPath: Filename can not be empty')
   }
 
   const currentMusicDir = getMusicPath(musicPath)
@@ -184,6 +184,7 @@ router.get('/detail', async (req, res, next) => {
 const FileAction = {
   RENAME: 'RENAME',
   DELETE: 'DELETE',
+  CREATE_FOLDER: 'CREATE_FOLDER',
 }
 
 router.post('/action', async (req, res, next) => {
@@ -209,7 +210,7 @@ router.post('/action', async (req, res, next) => {
 
     if (action === FileAction.RENAME) {
       if (!actionValue) {
-        return res.sendError({message: 'Filename cannot be empty'})
+        return res.sendError({message: 'Rename: Filename cannot be empty'})
       }
       const newName = sanitize(actionValue, {replacement: '_'})
       const newPath = getMusicPath(path.join(musicPath, newName))
@@ -223,6 +224,9 @@ router.post('/action', async (req, res, next) => {
 
     } else if (action === FileAction.DELETE) {
       await fs.remove(filePath)
+    } else if (action === FileAction.CREATE_FOLDER) {
+      // TODO
+      return res.sendData({filePath})
     }
 
     return res.sendData()
