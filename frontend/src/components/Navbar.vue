@@ -3,7 +3,7 @@
     v-model:visible="isShowMenu"
   />
 
-  <div class="navbar bg-glass-white flex">
+  <div class="navbar flex">
     <button class="btn-no-style btn-menu" @click="isShowMenu = true"><i class="material-icons">menu</i></button>
     <button
         v-for="item in tabs"
@@ -56,8 +56,8 @@ export default defineComponent({
   top: 0;
   left: 0;
   width: 100%;
-  height: 45px;
-  box-shadow: $shadow-1;
+  height: $navbarHeight;
+  border-bottom: 1px solid $border-color;
   user-select: none;
   z-index: 2;
 
@@ -81,19 +81,24 @@ export default defineComponent({
     }
 
     &.btn-tab {
+      font-size: 14px;
+
       &:after {
         position: absolute;
         left: 0;
         bottom: 0;
         content: " ";
         width: 100%;
-        height: 10%;
+        height: 6%;
         background: $primary;
         opacity: 0;
         transition: $generic-hover-transition;
       }
 
       &.active {
+        color: $primary;
+        font-weight: bold;
+
         &:after {
           opacity: 1;
         }

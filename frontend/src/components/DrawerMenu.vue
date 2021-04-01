@@ -111,8 +111,8 @@ export default defineComponent({
 
     .menu-title {
       font-size: 18px;
-      height: 45px;
-      line-height: 45px;
+      height: $navbarHeight;
+      line-height: $navbarHeight;
       padding: 0 10px;
       font-weight: bold;
       background: rgba(0, 0, 0, 0.9);
@@ -138,7 +138,6 @@ export default defineComponent({
         border-top: 1px solid $grey-9;
       }
 
-      font-size: 16px;
       display: block;
       width: 100%;
       line-height: 40px;

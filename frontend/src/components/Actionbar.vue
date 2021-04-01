@@ -1,6 +1,6 @@
 <template>
   <div class="actionbar-wrapper">
-    <div class="progressbar bg-dark flex items-center justify-between">
+    <div class="progressbar flex items-center justify-between">
       <span class="time text-overflow">{{ formatTimeMS(mCurrentTime) }}</span>
 
       <SeekBar
@@ -13,7 +13,7 @@
 
       <span class="time text-overflow">{{ formatTimeMS(duration) }}</span>
     </div>
-    <div class="actionbar bg-dark flex items-center">
+    <div class="actionbar flex items-center">
       <ButtonCover
           @click="handleCoverClick"
           :src="coverImage"

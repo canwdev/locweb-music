@@ -60,7 +60,7 @@ $scrollbar-bg-dark: rgba(255, 255, 255, .1);
 
 .bg-dark {
   color: white;
-  background: rgba(0,0,0,0.85);
+  background: $dark;
   //backdrop-filter: saturate(180%) blur(20px);
 }
 
@@ -98,11 +98,13 @@ $scrollbar-bg-dark: rgba(255, 255, 255, .1);
 
 .input-styled {
   border: $layout-border;
-  border-radius: $generic-border-radius;
+  border-radius: 0;
   padding: 0 5px;
   box-sizing: border-box;
+  background: transparent;
+  color: inherit;
   &:focus {
-    outline-color: $primary;
+    outline: 1px solid $primary;
   }
 }
 

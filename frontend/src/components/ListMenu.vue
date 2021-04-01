@@ -1,5 +1,5 @@
 <template>
-  <div class="list-menu">
+  <div class="list-menu bg-dark">
     <button
         v-for="(item, index) in list"
         :key="index"

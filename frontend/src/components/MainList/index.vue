@@ -198,7 +198,7 @@ export default defineComponent({
 .main-list {
   position: absolute;
   overflow: hidden;
-  top: 45px;
+  top: $navbarHeight;
   left: 0;
   width: 100%;
   bottom: 75px;
@@ -224,7 +224,6 @@ export default defineComponent({
     top: 0;
     left: 0;
     right: 0;
-    background: rgba(255, 255, 255, .9);
 
     .list-item-wrap {
       border-bottom: 1px solid $border-color;
@@ -232,7 +231,7 @@ export default defineComponent({
   }
 
   .list-actions {
-    padding: 4px 10px;
+    padding: 2px 10px;
     font-size: 12px;
     display: flex;
     align-items: center;
