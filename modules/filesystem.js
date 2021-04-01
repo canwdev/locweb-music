@@ -97,7 +97,10 @@ const getMusicExactPath = (musicPath, filename) => {
     throw new Error('File not exist')
   }
 
-  return filePath
+  return {
+    filePath,
+    currentMusicDir
+  }
 }
 
 router.get('/detail', async (req, res, next) => {
@@ -109,10 +112,12 @@ router.get('/detail', async (req, res, next) => {
       updateStatOnly = false // only update play status
     } = req.query
 
-    let filePath
+    let filePath, currentMusicDir
 
     try {
-      filePath = getMusicExactPath(musicPath, filename)
+      const res = getMusicExactPath(musicPath, filename)
+      filePath = res.filePath
+      currentMusicDir = res.currentMusicDir
     } catch (e) {
       return res.sendError(e)
     }
@@ -199,7 +204,8 @@ router.post('/action', async (req, res, next) => {
     let filePath
 
     try {
-      filePath = getMusicExactPath(musicPath, filename)
+      const res = getMusicExactPath(musicPath, filename)
+      filePath = res.filePath
     } catch (e) {
       return res.sendError(e)
     }
