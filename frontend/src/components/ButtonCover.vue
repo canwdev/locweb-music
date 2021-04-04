@@ -33,7 +33,7 @@ export default defineComponent({
 .btn-cover {
   width: 50px;
   height: 50px;
-  background: $grey-6;
+  background: $primary;
   color: white;
   font-size: 28px;
   border-radius: 4px;

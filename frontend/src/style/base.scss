@@ -12,8 +12,8 @@ body {
   height: 10px;
 }
 
-$scrollbar-fg: rgba(0, 0, 0, .3);
-$scrollbar-fg-dark: rgba(255, 255, 255, .3);
+$scrollbar-fg: $primary; //rgba(0, 0, 0, .3);
+$scrollbar-fg-dark: $primary; //rgba(255, 255, 255, .3);
 $scrollbar-bg: rgba(0, 0, 0, .1);
 $scrollbar-bg-dark: rgba(255, 255, 255, .1);
 

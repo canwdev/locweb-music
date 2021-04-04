@@ -121,7 +121,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-$active-color: $cyan-7;
+$active-color: $primary;
 
 .list-item-wrap {
   display: block;
