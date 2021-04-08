@@ -75,6 +75,8 @@
 
       </template>
     </DynamicScroller>
+
+    <slot></slot>
   </div>
 </template>
 

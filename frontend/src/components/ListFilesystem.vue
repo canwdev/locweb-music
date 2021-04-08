@@ -1,17 +1,16 @@
 <template>
-  <div class="list-file-system">
-    <MainList
-        :is-loading="isLoading"
-        :list="fileList"
-        :show-up="directories.length > 0"
-        :active-id="lastPlayIndex"
-        :min-item-size="40"
-        @onItemClick="handleItemClick"
-        @onItemAction="handleItemAction"
-        @goUpDir="goUpDir"
-        @refresh="getFileList"
-        @openMenu="showFolderMenu"
-    />
+  <MainList
+      :is-loading="isLoading"
+      :list="fileList"
+      :show-up="directories.length > 0"
+      :active-id="lastPlayIndex"
+      :min-item-size="40"
+      @onItemClick="handleItemClick"
+      @onItemAction="handleItemAction"
+      @goUpDir="goUpDir"
+      @refresh="getFileList"
+      @openMenu="showFolderMenu"
+  >
     <DialogMenu
         v-model:visible="isShowFileMenu"
         :list="fileMenuList"
@@ -21,7 +20,7 @@
         auto-close
         :list="folderMenuList"
     />
-  </div>
+  </MainList>
 </template>
 
 <script lang="ts">
