@@ -16,7 +16,7 @@
     <div class="actionbar flex items-center">
       <ButtonCover
           @click="handleCoverClick"
-          :src="coverImage"
+          :src="musicItem.cover"
           :icon-name="volumeIcon"
       >
         <div
@@ -37,7 +37,7 @@
           @click="showDetailDialog"
           class="btn-no-style btn-song"
       >
-        <span class="title text-overflow">{{ displayTitle }}</span>
+        <span class="title text-overflow">{{ musicItem.titleDisplay }}</span>
         <span v-show="musicItem.artist" class="artist text-overflow">{{ musicItem.artist }}</span>
       </button>
       <div class="buttons-scroll flex items-center">
@@ -84,76 +84,9 @@
         is-show-close
         v-model:visible="detailDialogVisible"
     >
-      <div class="music-detail">
-        <div class="cover-wrap">
-          <CoverDisplay
-              class="big-cover"
-              :src="coverImage"
-              :is-rotating="false"
-              :is-rounded="false"
-              :is-show-icon="!isShowDetail"
-              @click="isShowDetail = true"
-          />
-          <transition name="fade">
-            <div v-show="isShowDetail" class="detail-content bg-glass-black">
-              <div class="tab-wrap">
-                <button
-                    v-for="item in detailTabList"
-                    :key="item.value"
-                    class="btn-no-style"
-                    :class="{active: currentDetailTab === item.value}"
-                    @click="currentDetailTab = item.value"
-                >
-                  {{ item.label }}
-                </button>
-              </div>
-
-              <div
-                  style="flex: 1; overflow: hidden"
-                  v-show="currentDetailTab === DetailTabEnum.LYRIC"
-              >
-
-                <div v-if="lyricObj && lyricObj.lines" class="lrc-main">
-                  <button class="btn-no-style lyric-lock" title="Lock Lyric" @click="isLyricLock = !isLyricLock">
-                    <i class="material-icons">
-                      {{ isLyricLock ? 'lock' : 'lock_open' }}
-                    </i>
-                  </button>
-
-                  <div class="lrc-scroll-wrap">
-                    <p
-                        v-for="(line, index) in lyricObj.lines"
-                        :class="{active: lyricCurrentLine===index}"
-                        :key="index"
-                        :data-index="index"
-                    >{{ line.txt }}
-                    </p>
-                  </div>
-
-                </div>
-                <div v-else class="lrc-main no-lyric" @click="isShowDetail = false">
-                  没有歌词，请欣赏
-                </div>
-              </div>
-              <textarea
-                  v-show="currentDetailTab === DetailTabEnum.METADATA"
-                  class="metadata" cols="30" rows="15" readonly
-                  :value="JSON.stringify(musicItem.metadata, null, 2)"></textarea>
-            </div>
-          </transition>
-        </div>
-
-
-        <div
-            class="titles-wrap"
-            :class="{opacity: isShowDetail}"
-            @click="isShowDetail = !isShowDetail"
-        >
-          <div class="title">{{ displayTitle }}</div>
-          <div class="subtitle">{{ musicItem.artist }}</div>
-          <div class="subtitle">{{ musicItem.album }}</div>
-        </div>
-      </div>
+      <MusicDetail
+        :is-parent-visible="detailDialogVisible"
+      />
     </ModalDialog>
 
   </div>
@@ -167,41 +100,28 @@ import bus, {
   ACTION_CHANGE_CURRENT_TIME,
   ACTION_NEXT, ACTION_PREV,
   ACTION_TOGGLE_PLAY,
-  ACTION_CHANGE_VOLUME
 } from "@/utils/bus";
 import {formatTimeMS} from "@/utils";
 import ButtonCover from "@/components/ButtonCover.vue"
-import CoverDisplay from "@/components/CoverDisplay.vue"
 import ModalDialog from '@/components/ModalDialog.vue'
 import SeekBar from '@/components/SeekBar.vue'
-import useLyricObj from "@/composables/useLyricObj"
+import MusicDetail from '@/components/MusicDetail.vue'
 import useAudioVolume from "@/composables/useAudioVolume"
 import hotkeys from 'hotkeys-js';
 import is from 'is_js'
-
-const DetailTabEnum = {
-  LYRIC: 'LYRIC',
-  METADATA: 'METADATA',
-}
-const detailTabList = [
-  {label: 'Lyric', value: DetailTabEnum.LYRIC},
-  {label: 'Metadata', value: DetailTabEnum.METADATA},
-]
 
 export default defineComponent({
   name: 'Actionbar',
   components: {
     ButtonCover,
     ModalDialog,
-    CoverDisplay,
-    SeekBar
+    SeekBar,
+    MusicDetail
   },
   setup() {
     const mCurrentTime = ref(0)
     const isSeeking = ref(false)
     const detailDialogVisible = ref(false)
-    const isShowDetail = ref(false)
-    const currentDetailTab = ref(DetailTabEnum.LYRIC)
     const isShowVolumeSlider = ref(false)
 
     const currentTime = computed(() => {
@@ -218,9 +138,6 @@ export default defineComponent({
 
     const musicItem = computed((): MusicItem => {
       return store.getters.musicItem
-    })
-    const coverImage = computed(() => {
-      return musicItem.value.cover
     })
     const paused = computed((): boolean => {
       return store.getters.paused
@@ -278,10 +195,6 @@ export default defineComponent({
       volumeDown()
     }
 
-    const displayTitle = computed(() => {
-      return musicItem.value.title || musicItem.value.filename || 'N/A'
-    })
-
     const loopText = {
       1: 'Play in order',
       2: 'Sequential loop',
@@ -293,27 +206,6 @@ export default defineComponent({
         position: 'bottom',
       })
     }
-
-    const {
-      lyricObj,
-      lyricCurrentLine,
-      isLyricLock,
-    } = useLyricObj({
-      beforeHandleLyric() {
-        return detailDialogVisible.value && isShowDetail.value
-      }
-    })
-
-    watch(isShowDetail, (val) => {
-      if (val) {
-        // console.log('isShowDetail', val)
-        nextTick(() => {
-          if (lyricObj.value) {
-            lyricObj.value.callHandler()
-          }
-        })
-      }
-    })
 
     const previous = () => {
       bus.emit(ACTION_PREV)
@@ -383,19 +275,11 @@ export default defineComponent({
     })
 
     return {
-      DetailTabEnum,
-      detailTabList,
-      currentDetailTab,
-      lyricObj,
-      lyricCurrentLine,
       // data
       LoopModeEnum,
       mCurrentTime,
       isSeeking,
-      isShowDetail,
-      coverImage,
       detailDialogVisible,
-      isLyricLock,
       isShowVolumeSlider,
       audioVolume,
       volumeIcon,
@@ -407,7 +291,6 @@ export default defineComponent({
       isRandom,
       loopMode,
       loopIcon,
-      displayTitle,
       actionDisabled,
       // methods
       previous,
@@ -427,9 +310,7 @@ export default defineComponent({
 
         bus.emit(ACTION_CHANGE_CURRENT_TIME, value)
         isSeeking.value = false
-        if (lyricObj.value) {
-          lyricObj.value.seek(value * 1000)
-        }
+
       },
       volumeSeeking,
       volumeChange,
@@ -546,148 +427,6 @@ export default defineComponent({
 
       & + button {
         border-left: 1px solid $border-color;
-      }
-    }
-  }
-}
-
-.music-detail {
-  width: 300px;
-  text-align: center;
-  user-select: text;
-  padding: 10px;
-
-  .titles-wrap {
-    &.opacity {
-      opacity: .8;
-      cursor: pointer;
-    }
-
-    .title {
-      margin-top: 10px;
-      font-size: 22px;
-      font-weight: bold;
-      margin-bottom: 5px;
-    }
-
-    .subtitle {
-      font-size: 14px;
-      margin-bottom: 5px;
-    }
-  }
-
-  .cover-wrap {
-    position: relative;
-    width: 300px;
-    height: 300px;
-    margin: 0 auto;
-    border-radius: $generic-border-radius;
-    overflow: hidden;
-    box-shadow: 0 0 1px 1px rgba(255, 255, 255, .5);
-
-    @media screen and (max-width: $mobile_min_width) {
-      width: 95%;
-      height: 270px;
-    }
-
-    .big-cover {
-      width: 100%;
-      height: 100%;
-      cursor: pointer;
-      border-radius: inherit;
-      overflow: hidden;
-    }
-  }
-
-  .detail-content {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    color: white;
-    background: rgba(0, 0, 0, 0.4);
-    border-radius: inherit;
-
-    .tab-wrap {
-      display: flex;
-      font-size: 14px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-
-      button {
-        flex: 1;
-        opacity: .3;
-        padding: 10px 0;
-        font-weight: bold;
-
-        &.active {
-          opacity: 1;
-        }
-      }
-    }
-
-    .metadata {
-      padding: 5px;
-      flex: 1;
-      width: 100%;
-      font-size: 12px;
-      font-family: monospace;
-      resize: none;
-      box-sizing: border-box;
-      background: transparent;
-      outline: none;
-      border: none;
-      color: white;
-    }
-
-    .lrc-main {
-      height: 100%;
-      position: relative;
-
-      .lyric-lock {
-        position: absolute;
-        top: 5px;
-        left: 5px;
-        font-size: 16px;
-        opacity: .6;
-
-        i {
-          font-size: inherit;
-        }
-      }
-
-      .lrc-scroll-wrap {
-        height: 100%;
-        width: 100%;
-        overflow: auto;
-        padding: 0 5px;
-        box-sizing: border-box;
-        scroll-behavior: smooth;
-
-        & > p {
-          font-size: 14px;
-          margin: 10px 0 10px 0;
-          text-align: center;
-          line-height: 1.3;
-          opacity: .7;
-          transition: all .3s;
-
-          &.active {
-            opacity: 1;
-            font-weight: bold;
-            font-size: 16px;
-          }
-        }
-      }
-
-      &.no-lyric {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        opacity: .5;
       }
     }
   }

@@ -3,7 +3,11 @@ import LyricParser from '@/utils/lyric-parser'
 import {MusicItem} from "@/enum";
 import store from "@/store";
 
-export default function ({beforeHandleLyric}) {
+/**
+ *
+ * @param checkAllowUpdate check if need update lyric before execute
+ */
+export default function ({checkAllowUpdate}) {
   const lyricObj = ref<null | LyricParser>(null)
   const lyricCurrentLine = ref(0)
   const isLyricLock = ref(true)
@@ -15,11 +19,16 @@ export default function ({beforeHandleLyric}) {
     return store.getters.paused
   })
 
-  const handleLyric = ({lineNum, txt}) => {
-    if (beforeHandleLyric && !beforeHandleLyric()) {
+  /**
+   * Update lyric scroll
+   * @param lineNum
+   * @param txt
+   */
+  const updateLyric = ({lineNum, txt}) => {
+    if (checkAllowUpdate && !checkAllowUpdate()) {
       return
     }
-    // console.log('handleLyric', lineNum, txt)
+    // console.log('updateLyric', lineNum, txt)
 
     lyricCurrentLine.value = lineNum
 
@@ -64,7 +73,7 @@ export default function ({beforeHandleLyric}) {
     if (!val) {
       return
     }
-    lyricObj.value = new LyricParser(val, handleLyric)
+    lyricObj.value = new LyricParser(val, updateLyric)
     lyricCurrentLine.value = 0
     // console.log('new lrc', lyricObj.value)
 
