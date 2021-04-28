@@ -10,7 +10,7 @@
           @click="isShowDetail = true"
       />
       <transition name="fade">
-        <div v-show="isShowDetail" class="detail-content bg-glass-black">
+        <div v-show="isShowDetail" class="detail-content bg-dark">
           <div class="tab-wrap">
             <button
                 v-for="item in detailTabList"
@@ -216,7 +216,7 @@ export default defineComponent({
     display: flex;
     flex-direction: column;
     color: white;
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, 0.8);
     border-radius: inherit;
 
     .tab-wrap {

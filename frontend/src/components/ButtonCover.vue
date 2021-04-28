@@ -37,6 +37,11 @@ export default defineComponent({
   color: white;
   font-size: 28px;
   border-radius: 4px;
+  overflow: hidden;
+  .cover-display {
+    width: 100%;
+    height: 100%;
+  }
   .material-icons {
     font-size: 29px;
   }
