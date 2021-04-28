@@ -7,7 +7,8 @@ const defaultDataPath = path.join(__dirname, '../data')
 let config = {
   DATA_PATH: defaultDataPath,
   MUSIC_LIBRARY_PATH: defaultDataPath, // music library base path
-  MUSIC_LYRICS_PATH: defaultDataPath,
+  MUSIC_LYRICS_PATH: path.join(defaultDataPath, 'lyrics'),
+  enableModify: false, // Allow modify/delete files
   enableAuth: false,
   authUsers: {'admin': 'admin'}
 }

@@ -1,7 +1,7 @@
 <template>
   <div class="no-data">
-    <img src="@/assets/images/no-data.png" alt="No data!">
-    <div v-if="text" class="text">{{ text }}</div>
+<!--    <img src="@/assets/images/no-data.png" alt="No data!">-->
+    <div class="text">{{ text || 'No Data' }}</div>
   </div>
 </template>
 

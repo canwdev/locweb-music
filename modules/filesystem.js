@@ -4,8 +4,10 @@ const fs = require('fs-extra');
 const path = require('path');
 const mm = require('music-metadata')
 const chokidar = require('chokidar');
-const rimraf = require('rimraf')
 const sanitize = require("sanitize-filename");
+const {
+  enableModify
+} = require('../config')
 
 const {MUSIC_LIBRARY_PATH, MUSIC_LYRICS_PATH} = require('../config')
 const getMusicPath = (p = '') => {
@@ -194,6 +196,10 @@ const FileAction = {
 
 router.post('/action', async (req, res, next) => {
   try {
+    if (!enableModify) {
+      return res.sendError({code: 403, message: 'Modify not allowed'})
+    }
+
     const {
       path: musicPath = '',
       filename,
