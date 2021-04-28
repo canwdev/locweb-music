@@ -1,1 +1,1 @@
-Resource and DB files go here
+Caches and Settings go here
