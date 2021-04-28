@@ -65,7 +65,7 @@ export default defineComponent({
       {name: 'System', subtitle: true},
       // {name: 'Settings', icon: 'settings'},
       // {name: 'User Management', icon: 'account_circle'},
-      {name: 'Rescan Media', icon: 'loop'},
+      // {name: 'Rescan Media', icon: 'loop'},
       {
         name: 'About', icon: 'info', action: () => {
           router.push({

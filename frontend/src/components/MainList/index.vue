@@ -269,11 +269,12 @@ export default defineComponent({
   }
 
   .loading-shade {
-    position: fixed;
-    top: 45px;
+    position: absolute;
+    top: 0;
     left: 0;
     width: 100%;
-    bottom: 55px;
+    bottom: 0;
+    z-index: 10;
   }
 
 }

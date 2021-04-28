@@ -54,7 +54,7 @@ export default defineComponent({
 .home {
   height: 100%;
   @media screen and (max-width: $mobile_width) {
-    background: linear-gradient(to bottom, rgba(0, 0, 0, .5), rgba(0, 0, 0, .5)), url('~@/assets/images/bg.jpg') no-repeat center/cover;
+    //background: linear-gradient(to bottom, rgba(0, 0, 0, .5), rgba(0, 0, 0, .5)), url('~@/assets/images/bg.jpg') no-repeat center/cover;
   }
   @media screen and (min-width: $tablet_width) {
     ::v-deep .main-list {
