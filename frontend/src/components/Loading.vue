@@ -19,6 +19,10 @@ export default defineComponent({
       type: Boolean,
       default: false
     },
+    absolute: {
+      type: Boolean,
+      default: false
+    },
     text: {
       type: String,
       default: "Loading"
@@ -30,6 +34,20 @@ export default defineComponent({
 <style lang="scss" scoped>
 .loading-shade {
   background: rgba(0, 0, 0, 0.2);
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+
+  &.absolute {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    bottom: 0;
+    z-index: 10;
+  }
 
   .loading {
     width: 100px;

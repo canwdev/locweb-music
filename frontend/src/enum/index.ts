@@ -3,10 +3,8 @@ import {IAudioMetadata, ICommonTagsResult} from 'music-metadata/lib/type'
 // server api url
 export const HOST_URL = process.env.VUE_APP_API_HOST || '';
 
-// navbar tab index
-// export const NavbarTabsEnum = {
-//
-// }
+// https://github.com/Binaryify/NeteaseCloudMusicApi
+export const NCM_API_URL = 'https://konsole.top:9001'
 
 export enum NavbarTabsEnum {
   MAIN = 1, // showing main list

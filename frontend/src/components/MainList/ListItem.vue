@@ -218,6 +218,4 @@ $active-color: $primary;
     }
   }
 }
-
-
 </style>

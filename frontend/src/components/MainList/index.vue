@@ -44,7 +44,7 @@
       />
     </div>
 
-    <Loading :visible="isLoading"/>
+    <Loading absolute :visible="isLoading"/>
 
     <NoData
         v-if="!isLoading && filteredList.length === 0"
@@ -214,7 +214,7 @@ export default defineComponent({
     flex: 1;
     scroll-behavior: smooth;
 
-    //::v-deep .vue-recycle-scroller__item-view {
+    //::deep .vue-recycle-scroller__item-view {
     //  & + .vue-recycle-scroller__item-view {
     //    border-top: $layout-border;
     //  }
@@ -266,15 +266,6 @@ export default defineComponent({
         font-size: 18px;
       }
     }
-  }
-
-  .loading-shade {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    bottom: 0;
-    z-index: 10;
   }
 
 }

@@ -67,7 +67,15 @@
       <div class="title">{{ musicItem.titleDisplay }}</div>
       <div class="subtitle">{{ musicItem.artist }}</div>
       <div class="subtitle">{{ musicItem.album }}</div>
+      <button @click="isShowLyricSearch = true">Search Lyric</button>
     </div>
+
+    <ModalDialog
+        v-model:visible="isShowLyricSearch"
+        is-show-close
+    >
+      <LyricSearch/>
+    </ModalDialog>
   </div>
 </template>
 
@@ -80,6 +88,8 @@ import useLyricObj from "@/composables/useLyricObj";
 import bus, {
   ACTION_CHANGE_CURRENT_TIME
 } from "@/utils/bus";
+import LyricSearch from "@/components/LyricSearch.vue";
+import ModalDialog from "@/components/ModalDialog.vue";
 
 const DetailTabEnum = {
   LYRIC: 'LYRIC',
@@ -93,7 +103,9 @@ const detailTabList = [
 export default defineComponent({
   name: 'MusicDetail',
   components: {
-    CoverDisplay
+    CoverDisplay,
+    LyricSearch,
+    ModalDialog
   },
   props: {
     isParentVisible: {
@@ -105,6 +117,7 @@ export default defineComponent({
     const {isParentVisible} = toRefs(props)
     const currentDetailTab = ref(DetailTabEnum.LYRIC)
     const isShowDetail = ref(false)
+    const isShowLyricSearch = ref(false)
 
     const musicItem = computed((): MusicItem => {
       return store.getters.musicItem
@@ -153,6 +166,7 @@ export default defineComponent({
       lyricCurrentLine,
       isLyricLock,
       isShowDetail,
+      isShowLyricSearch
     }
   }
 })

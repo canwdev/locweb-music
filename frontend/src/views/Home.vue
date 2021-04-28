@@ -12,6 +12,8 @@
     />
 
     <Actionbar/>
+
+
   </div>
 </template>
 
@@ -25,7 +27,6 @@ import store from '@/store'
 import Navbar from '@/components/Navbar.vue';
 import Actionbar from '@/components/Actionbar.vue';
 import ListPlaying from "@/components/ListPlaying.vue";
-
 import ListFilesystem from "@/components/ListFilesystem.vue";
 import {NavbarTabsEnum} from "@/enum";
 
@@ -57,7 +58,7 @@ export default defineComponent({
     //background: linear-gradient(to bottom, rgba(0, 0, 0, .5), rgba(0, 0, 0, .5)), url('~@/assets/images/bg.jpg') no-repeat center/cover;
   }
   @media screen and (min-width: $tablet_width) {
-    ::v-deep .main-list {
+    ::deep .main-list {
       display: flex !important;
       width: 50%;
 

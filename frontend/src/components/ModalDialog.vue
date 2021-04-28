@@ -68,6 +68,7 @@ export default defineComponent({
     border-radius: $generic-border-radius;
     position: relative;
     background: white;
+    color: black;
 
     &.dark {
       background: rgba(0,0,0,0.8);
@@ -76,6 +77,7 @@ export default defineComponent({
 
       .btn-close {
         background: black;
+        color: white;
       }
     }
 
@@ -85,6 +87,7 @@ export default defineComponent({
       right: -14px;
       z-index: 2;
       background: white;
+      color: black;
       width: 28px;
       height: 28px;
       border-radius: 50%;
