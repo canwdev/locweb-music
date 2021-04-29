@@ -49,3 +49,15 @@ export function fileAction(params) {
     actionValue
   })
 }
+
+export function saveLyric(params) {
+  const {
+    filename,
+    lyric
+  } = params
+
+  return service.post('/music/save-lyric', {
+    filename,
+    lyric
+  })
+}

@@ -98,6 +98,9 @@ import bus, {
 } from "@/utils/bus";
 import LyricSearch from "@/components/LyricSearch.vue";
 import ModalDialog from "@/components/ModalDialog.vue";
+import {
+  saveLyric
+} from "@/api/music";
 
 const DetailTabEnum = {
   LYRIC: 'LYRIC',
@@ -163,6 +166,15 @@ export default defineComponent({
       musicItem.value.lyric = lyric
       isShowDetail.value = true
       currentDetailTab.value = DetailTabEnum.LYRIC
+
+      const {saveFilename} = await saveLyric({
+        filename: musicItem.value.filename,
+        lyric
+      })
+
+      window.$notify.info(saveFilename, {
+        position: 'bottom',
+      })
     }
 
     onMounted(() => {
@@ -253,13 +265,13 @@ export default defineComponent({
     .tab-wrap {
       display: flex;
       font-size: 14px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 
       button {
         flex: 1;
         opacity: .3;
         padding: 10px 0;
         font-weight: bold;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.2);
 
         &.active {
           opacity: 1;
@@ -294,7 +306,7 @@ export default defineComponent({
       }
 
       button {
-        margin-right: 5px;
+        margin-left: 5px;
       }
     }
 

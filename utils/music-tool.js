@@ -5,6 +5,7 @@ const mime = require('mime-types')
 const util = require('util')
 const path = require('path');
 const fs = require('fs-extra');
+const {MUSIC_LYRICS_PATH} = require('../config')
 
 /**
  * Get music metadata and extract cover
@@ -44,13 +45,7 @@ const getMetadata = async (filePath) => {
   }
 }
 
-/**
- * Get lyric file from list
- * @param lyricFileList List contains lyric filenames
- * @param filename Music filename
- * @param options
- */
-const getLyricFile = (lyricFileList, filename, options = {}) => {
+const getLyricFilename = (filename, options = {}) => {
   const {
     isExact = false,
   } = options
@@ -58,9 +53,20 @@ const getLyricFile = (lyricFileList, filename, options = {}) => {
   filename = filename.slice(0, filename.lastIndexOf('.'))
 
   if (!isExact) {
-    // remove "05. Eagles - 加州旅馆" 's "05. "
+    // "05. Eagles - 加州旅馆" => "Eagles - 加州旅馆"
     filename = filename.replace(/^[\d]{1,8}.\s/, '')
   }
+  return filename
+}
+
+/**
+ * Get lyric file from list
+ * @param lyricFileList List contains lyric filenames
+ * @param filename Music filename
+ * @param options
+ */
+const getLyricFile = (lyricFileList, filename, options = {}) => {
+  filename = getLyricFilename(filename, options)
 
   console.log('search for:', filename)
 
@@ -75,7 +81,21 @@ const getLyricFile = (lyricFileList, filename, options = {}) => {
   console.log('lyric in list not found')
 }
 
+const saveLyricFile = (filename, lyric, options = {}) => {
+  filename = getLyricFilename(filename, options) + '.lrc'
+
+  const savePath = path.join(MUSIC_LYRICS_PATH, filename)
+  console.log('Save lyric', savePath)
+  fs.writeFileSync(savePath, lyric, {encoding: 'utf8'})
+  return {
+    savePath,
+    filename
+  }
+}
+
 module.exports = {
   getMetadata,
-  getLyricFile
+  getLyricFilename,
+  getLyricFile,
+  saveLyricFile,
 }

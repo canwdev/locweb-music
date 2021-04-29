@@ -16,7 +16,11 @@ const getMusicPath = (p = '') => {
 const getLyricsPath = (p = '') => {
   return path.join(MUSIC_LYRICS_PATH, p)
 }
-const {getMetadata, getLyricFile} = require('../utils/music-tool')
+const {
+  getMetadata,
+  getLyricFile,
+  saveLyricFile
+} = require('../utils/music-tool')
 const mfpTool = require('../utils/mfp-tool')
 
 // init lyric files pool
@@ -247,5 +251,27 @@ router.post('/action', async (req, res, next) => {
   }
 })
 
+router.post('/save-lyric', async (req, res, next) => {
+  try {
+    if (!enableModify) {
+      return res.sendError({code: 403, message: 'Modify not allowed'})
+    }
+
+    const {
+      filename,
+      lyric
+    } = req.body
+
+    const {
+      filename: saveFilename
+    } = saveLyricFile(filename, lyric)
+
+    return res.sendData({
+      saveFilename
+    })
+  } catch (error) {
+    next(error)
+  }
+})
 
 module.exports = router
