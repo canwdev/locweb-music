@@ -31,15 +31,18 @@
     </div>
 
     <div v-show="isDetail" class="search-detail">
-      <button class="btn-no-style" @click="isDetail = false">Back</button>
-      <textarea readonly :value="lrc" rows="20"></textarea>
+      <textarea readonly :value="lyric" rows="20"></textarea>
+      <div class="flex justify-between">
+        <button class="btn-no-style" @click="isDetail = false">Back</button>
+        <button class="btn-no-style" @click="saveLyric">Save</button>
+      </div>
     </div>
 
   </div>
 </template>
 
 <script>
-import {defineComponent, ref} from 'vue'
+import {defineComponent, ref, toRefs, watch} from 'vue'
 import {
   searchMusic,
   getLyric
@@ -51,12 +54,25 @@ export default defineComponent({
   components: {
     Loading,
   },
-  setup() {
-    const searchText = ref('告白气球 周杰伦')
+  props: {
+    search: {
+      type: String,
+      default: ''
+    }
+  },
+  setup(props, context) {
+    const {search} = toRefs(props)
+    const searchText = ref('')
     const resultList = ref([])
     const isLoading = ref(false)
     const isDetail = ref(false)
-    const lrc = ref('')
+    const lyric = ref('')
+
+    watch(search, (val) => {
+      searchText.value = val
+    }, {
+      immediate: true
+    })
 
     const handleSearch = async () => {
       try {
@@ -81,11 +97,18 @@ export default defineComponent({
           id: item.id
         })
         console.log(res)
-        lrc.value = res.lrc.lyric
+        lyric.value = res.lrc.lyric
         isDetail.value = true
       } finally {
         isLoading.value = false
       }
+    }
+
+    const saveLyric = async () => {
+      context.emit('saveLyric', lyric.value)
+      resultList.value = []
+      lyric.value = ''
+      isDetail.value = false
     }
 
     return {
@@ -95,7 +118,8 @@ export default defineComponent({
       resultList,
       chooseMusic,
       isDetail,
-      lrc
+      lyric,
+      saveLyric
     }
   }
 })

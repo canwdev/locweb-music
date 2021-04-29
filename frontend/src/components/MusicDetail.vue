@@ -24,17 +24,23 @@
           </div>
 
           <div
-              style="flex: 1; overflow: hidden"
+              class="lyric-content"
               v-show="currentDetailTab === DetailTabEnum.LYRIC"
           >
+            <div class="lyric-lock">
+              <button class="btn-no-style" title="Search Lyric" @click="isShowLyricSearch = true">
+                <i class="material-icons">search</i>
+              </button>
 
-            <div v-if="lyricObj && lyricObj.lines" class="lrc-main">
-              <button class="btn-no-style lyric-lock" title="Lock Lyric" @click="isLyricLock = !isLyricLock">
+              <button class="btn-no-style" title="Lock Lyric" @click="isLyricLock = !isLyricLock">
                 <i class="material-icons">
                   {{ isLyricLock ? 'lock' : 'lock_open' }}
                 </i>
               </button>
+            </div>
 
+
+            <div v-if="lyricObj && lyricObj.lines" class="lrc-main">
               <div class="lrc-scroll-wrap">
                 <p
                     v-for="(line, index) in lyricObj.lines"
@@ -67,14 +73,16 @@
       <div class="title">{{ musicItem.titleDisplay }}</div>
       <div class="subtitle">{{ musicItem.artist }}</div>
       <div class="subtitle">{{ musicItem.album }}</div>
-      <button @click="isShowLyricSearch = true">Search Lyric</button>
     </div>
 
     <ModalDialog
         v-model:visible="isShowLyricSearch"
         is-show-close
     >
-      <LyricSearch/>
+      <LyricSearch
+          :search="musicItem.filenameDisplay"
+          @saveLyric="handleSaveLyric"
+      />
     </ModalDialog>
   </div>
 </template>
@@ -149,6 +157,14 @@ export default defineComponent({
       }
     }
 
+    const handleSaveLyric = async (lyric) => {
+      // console.log(lyric)
+      isShowLyricSearch.value = false
+      musicItem.value.lyric = lyric
+      isShowDetail.value = true
+      currentDetailTab.value = DetailTabEnum.LYRIC
+    }
+
     onMounted(() => {
       bus.on(ACTION_CHANGE_CURRENT_TIME, changeCurrentTime)
     })
@@ -166,7 +182,8 @@ export default defineComponent({
       lyricCurrentLine,
       isLyricLock,
       isShowDetail,
-      isShowLyricSearch
+      isShowLyricSearch,
+      handleSaveLyric
     }
   }
 })
@@ -264,21 +281,32 @@ export default defineComponent({
       color: white;
     }
 
+    .lyric-lock {
+      position: absolute;
+      bottom: 5px;
+      right: 5px;
+      font-size: 18px;
+      opacity: .6;
+      z-index: 10;
+
+      i {
+        font-size: inherit;
+      }
+
+      button {
+        margin-right: 5px;
+      }
+    }
+
+    .lyric-content {
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+    }
+
     .lrc-main {
       height: 100%;
       position: relative;
-
-      .lyric-lock {
-        position: absolute;
-        top: 5px;
-        left: 5px;
-        font-size: 16px;
-        opacity: .6;
-
-        i {
-          font-size: inherit;
-        }
-      }
 
       .lrc-scroll-wrap {
         height: 100%;
