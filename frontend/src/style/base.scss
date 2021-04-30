@@ -22,6 +22,7 @@ $scrollbar-bg-dark: rgba(255, 255, 255, .1);
 ::-webkit-scrollbar-thumb {
   background: $scrollbar-fg;
 }
+
 ::-webkit-scrollbar-track {
   background: $scrollbar-bg;
 }
@@ -56,7 +57,7 @@ $scrollbar-bg-dark: rgba(255, 255, 255, .1);
 
 .bg-glass-black {
   color: white;
-  background: rgba(0,0,0,0.85);
+  background: rgba(0, 0, 0, 0.85);
   backdrop-filter: saturate(180%) blur(30px);
 }
 
@@ -73,7 +74,7 @@ $scrollbar-bg-dark: rgba(255, 255, 255, .1);
 
 .bg-glass-white {
   color: black;
-  background: rgba(255,255,255,0.72);
+  background: rgba(255, 255, 255, 0.72);
   //backdrop-filter: saturate(180%) blur(20px);
 }
 
@@ -85,13 +86,16 @@ $scrollbar-bg-dark: rgba(255, 255, 255, .1);
   color: inherit;
   padding: 0;
   text-decoration: none;
+
   &:active {
     opacity: .8;
   }
+
   &:disabled {
     cursor: not-allowed;
     opacity: .5;
   }
+
   //&:focus {
   //  //outline: 1px solid $primary;
   //  //outline-offset: -1px;
@@ -100,13 +104,11 @@ $scrollbar-bg-dark: rgba(255, 255, 255, .1);
 
 .input-styled {
   border: $layout-border;
-  border-radius: 0;
   padding: 2px 5px;
   box-sizing: border-box;
   background: transparent;
   color: inherit;
   border-radius: $generic-border-radius;
-
 }
 
 button, input, textarea, a, {

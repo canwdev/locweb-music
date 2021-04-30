@@ -68,7 +68,6 @@
     </AutoRatioBox>
 
 
-
     <div
         class="titles-wrap"
         :class="{opacity: isShowDetail}"
@@ -330,6 +329,7 @@ export default defineComponent({
         .lrc-scroll-wrap {
           & > p {
             opacity: 1;
+
             &.active {
               text-decoration: underline;
             }
