@@ -173,6 +173,7 @@ export default defineComponent({
   .search-detail {
     textarea {
       width: 100%;
+      box-sizing: border-box;
     }
     button {
       color: $primary;

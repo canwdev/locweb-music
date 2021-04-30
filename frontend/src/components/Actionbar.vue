@@ -445,6 +445,11 @@ export default defineComponent({
       top: 10px;
       right: 10px;
     }
+
+    & > .dialog-inner {
+      display: flex;
+      align-items: center;
+    }
   }
 }
 </style>

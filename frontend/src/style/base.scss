@@ -1,9 +1,11 @@
 html, body {
   height: 100%;
 }
+
 body {
   touch-action: manipulation; // disable ios double tap zoom
   user-select: none;
+  -webkit-tap-highlight-color: $primary-tr;
 }
 
 //滚动条样式
@@ -90,21 +92,28 @@ $scrollbar-bg-dark: rgba(255, 255, 255, .1);
     cursor: not-allowed;
     opacity: .5;
   }
-  &:focus {
-    outline: 1px solid $primary;
-    outline-offset: -1px;
-  }
+  //&:focus {
+  //  //outline: 1px solid $primary;
+  //  //outline-offset: -1px;
+  //}
 }
 
 .input-styled {
   border: $layout-border;
   border-radius: 0;
-  padding: 0 5px;
+  padding: 2px 5px;
   box-sizing: border-box;
   background: transparent;
   color: inherit;
+  border-radius: $generic-border-radius;
+
+}
+
+button, input, textarea, a, {
   &:focus {
-    outline: 1px solid $primary;
+    //outline: 1px solid $primary;
+    outline: none;
+    box-shadow: 0 0 0 0.12rem $primary-tr inset;
   }
 }
 

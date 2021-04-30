@@ -235,7 +235,7 @@ export default defineComponent({
   }
 
   .cover-wrap-box {
-    margin: 40px auto 0;
+    margin: 0 auto 0;
     max-width: 600px;
   }
 
@@ -245,7 +245,7 @@ export default defineComponent({
     height: 100%;
     border-radius: $generic-border-radius;
     overflow: hidden;
-    box-shadow: 0 0 1px 1px rgba(255, 255, 255, .5);
+    box-shadow: 0 0 0 0.1rem rgba(255, 255, 255, .5);
 
     .big-cover {
       width: 100%;
@@ -274,13 +274,13 @@ export default defineComponent({
 
       button {
         flex: 1;
-        opacity: .3;
         padding: 10px 0;
         font-weight: bold;
         border-bottom: 2px solid rgba(255, 255, 255, 0.2);
 
         &.active {
-          opacity: 1;
+          color: $primary;
+          border-bottom-color: $primary;
         }
       }
     }
@@ -331,8 +331,6 @@ export default defineComponent({
           & > p {
             opacity: 1;
             &.active {
-              font-weight: normal;
-              font-size: 14px;
               text-decoration: underline;
             }
           }
@@ -349,11 +347,10 @@ export default defineComponent({
         scroll-behavior: smooth;
 
         & > p {
-          font-size: 14px;
           margin: 10px 0 10px 0;
           text-align: center;
           line-height: 1.3;
-          opacity: .7;
+          opacity: .6;
           transition: all .3s;
 
           &.active {

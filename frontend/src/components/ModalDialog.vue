@@ -79,8 +79,8 @@ export default defineComponent({
       color: white;
       box-shadow: 0 0 10px black;
 
-      .btn-close {
-        background: black;
+      &>.btn-close {
+        background: $primary;
         color: white;
       }
     }
@@ -91,10 +91,10 @@ export default defineComponent({
       right: -14px;
       z-index: 2;
       background: white;
-      color: black;
+      color: $primary;
       width: 28px;
       height: 28px;
-      border-radius: 50%;
+      border-radius: $generic-border-radius;
       border: 2px solid;
       @media screen and (max-width: $mobile_min_width) {
         top: 5px;
