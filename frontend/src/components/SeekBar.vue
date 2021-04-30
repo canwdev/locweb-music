@@ -43,7 +43,7 @@ export default defineComponent({
   setup(props) {
     const {max, value} = toRefs(props)
     const progress = computed(() => {
-      return Math.round(value.value / max.value * 100)
+      return (value.value / max.value * 100).toFixed(1)
     })
 
     return {
@@ -71,7 +71,7 @@ export default defineComponent({
 
   .seekbar-fill {
     position: absolute;
-    top: 50%;
+    top: 49%;
     transform: translateY(-50%);
     height: 5px;
     width: 0;
