@@ -214,7 +214,7 @@ export default defineComponent({
     flex: 1;
     scroll-behavior: smooth;
 
-    //::deep .vue-recycle-scroller__item-view {
+    //::v-deep .vue-recycle-scroller__item-view {
     //  & + .vue-recycle-scroller__item-view {
     //    border-top: $layout-border;
     //  }

@@ -58,7 +58,7 @@ export default defineComponent({
     //background: linear-gradient(to bottom, rgba(0, 0, 0, .5), rgba(0, 0, 0, .5)), url('~@/assets/images/bg.jpg') no-repeat center/cover;
   }
   @media screen and (min-width: $tablet_width) {
-    ::deep .main-list {
+    ::v-deep .main-list {
       display: flex !important;
       width: 50%;
 

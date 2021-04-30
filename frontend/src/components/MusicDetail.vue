@@ -1,68 +1,72 @@
 <template>
   <div class="music-detail">
-    <div class="cover-wrap">
-      <CoverDisplay
-          class="big-cover"
-          :src="musicItem.cover"
-          :is-rotating="false"
-          :is-rounded="false"
-          :is-show-icon="!isShowDetail"
-          @click="isShowDetail = true"
-      />
-      <transition name="fade">
-        <div v-show="isShowDetail" class="detail-content bg-dark">
-          <div class="tab-wrap">
-            <button
-                v-for="item in detailTabList"
-                :key="item.value"
-                class="btn-no-style"
-                :class="{active: currentDetailTab === item.value}"
-                @click="currentDetailTab = item.value"
-            >
-              {{ item.label }}
-            </button>
-          </div>
 
-          <div
-              class="lyric-content"
-              v-show="currentDetailTab === DetailTabEnum.LYRIC"
-          >
-            <div class="lyric-lock">
-              <button class="btn-no-style" title="Search Lyric" @click="isShowLyricSearch = true">
-                <i class="material-icons">search</i>
-              </button>
-
-              <button class="btn-no-style" title="Lock Lyric" @click="isLyricLock = !isLyricLock">
-                <i class="material-icons">
-                  {{ isLyricLock ? 'lock' : 'lock_open' }}
-                </i>
+    <AutoRatioBox class="cover-wrap-box">
+      <div class="cover-wrap">
+        <CoverDisplay
+            class="big-cover"
+            :src="musicItem.cover"
+            :is-rotating="false"
+            :is-rounded="false"
+            :is-show-icon="!isShowDetail"
+            @click="isShowDetail = true"
+        />
+        <transition name="fade">
+          <div v-show="isShowDetail" class="detail-content bg-dark">
+            <div class="tab-wrap">
+              <button
+                  v-for="item in detailTabList"
+                  :key="item.value"
+                  class="btn-no-style"
+                  :class="{active: currentDetailTab === item.value}"
+                  @click="currentDetailTab = item.value"
+              >
+                {{ item.label }}
               </button>
             </div>
 
+            <div
+                class="lyric-content"
+                v-show="currentDetailTab === DetailTabEnum.LYRIC"
+            >
+              <div class="lyric-lock">
+                <button class="btn-no-style" title="Search Lyric" @click="isShowLyricSearch = true">
+                  <i class="material-icons">search</i>
+                </button>
 
-            <div v-if="lyricObj && lyricObj.lines" class="lrc-main">
-              <div class="lrc-scroll-wrap">
-                <p
-                    v-for="(line, index) in lyricObj.lines"
-                    :class="{active: lyricCurrentLine===index}"
-                    :key="index"
-                    :data-index="index"
-                >{{ line.txt }}
-                </p>
+                <button class="btn-no-style" title="Lock Lyric" @click="isLyricLock = !isLyricLock">
+                  <i class="material-icons">
+                    {{ isLyricLock ? 'lock' : 'lock_open' }}
+                  </i>
+                </button>
               </div>
 
+
+              <div v-if="lyricObj && lyricObj.lines" class="lrc-main" :class="{unlocked: !isLyricLock}">
+                <div class="lrc-scroll-wrap">
+                  <p
+                      v-for="(line, index) in lyricObj.lines"
+                      :class="{active: lyricCurrentLine===index}"
+                      :key="index"
+                      :data-index="index"
+                  >{{ line.txt }}
+                  </p>
+                </div>
+
+              </div>
+              <div v-else class="lrc-main no-lyric" @click="isShowDetail = false">
+                没有歌词，请欣赏
+              </div>
             </div>
-            <div v-else class="lrc-main no-lyric" @click="isShowDetail = false">
-              没有歌词，请欣赏
-            </div>
+            <textarea
+                v-show="currentDetailTab === DetailTabEnum.METADATA"
+                class="metadata" cols="30" rows="15" readonly
+                :value="JSON.stringify(musicItem.metadata, null, 2)"></textarea>
           </div>
-          <textarea
-              v-show="currentDetailTab === DetailTabEnum.METADATA"
-              class="metadata" cols="30" rows="15" readonly
-              :value="JSON.stringify(musicItem.metadata, null, 2)"></textarea>
-        </div>
-      </transition>
-    </div>
+        </transition>
+      </div>
+    </AutoRatioBox>
+
 
 
     <div
@@ -101,6 +105,7 @@ import ModalDialog from "@/components/ModalDialog.vue";
 import {
   saveLyric
 } from "@/api/music";
+import AutoRatioBox from '@/components/AutoRatioBox.vue'
 
 const DetailTabEnum = {
   LYRIC: 'LYRIC',
@@ -116,7 +121,8 @@ export default defineComponent({
   components: {
     CoverDisplay,
     LyricSearch,
-    ModalDialog
+    ModalDialog,
+    AutoRatioBox
   },
   props: {
     isParentVisible: {
@@ -203,10 +209,11 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .music-detail {
-  width: 300px;
+  width: 100%;
   text-align: center;
   user-select: text;
   padding: 10px;
+  box-sizing: border-box;
 
   .titles-wrap {
     &.opacity {
@@ -227,19 +234,18 @@ export default defineComponent({
     }
   }
 
+  .cover-wrap-box {
+    margin: 40px auto 0;
+    max-width: 600px;
+  }
+
   .cover-wrap {
     position: relative;
-    width: 300px;
-    height: 300px;
-    margin: 0 auto;
+    width: 100%;
+    height: 100%;
     border-radius: $generic-border-radius;
     overflow: hidden;
     box-shadow: 0 0 1px 1px rgba(255, 255, 255, .5);
-
-    @media screen and (max-width: $mobile_min_width) {
-      width: 95%;
-      height: 270px;
-    }
 
     .big-cover {
       width: 100%;
@@ -320,6 +326,20 @@ export default defineComponent({
       height: 100%;
       position: relative;
 
+      &.unlocked {
+        .lrc-scroll-wrap {
+          & > p {
+            opacity: 1;
+            &.active {
+              font-weight: normal;
+              font-size: 14px;
+              text-decoration: underline;
+            }
+          }
+
+        }
+      }
+
       .lrc-scroll-wrap {
         height: 100%;
         width: 100%;
@@ -338,8 +358,6 @@ export default defineComponent({
 
           &.active {
             opacity: 1;
-            font-weight: bold;
-            font-size: 16px;
           }
         }
       }

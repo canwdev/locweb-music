@@ -1,12 +1,12 @@
 <template>
   <transition name="fade">
-    <div v-show="mVisible" class="modal-dialog-wrap">
+    <div v-show="mVisible" class="modal-dialog-wrap" :class="className">
       <div class="dialog-shadow" @click="mVisible = false"></div>
       <div class="dialog-main" :class="{dark}">
         <button v-if="isShowClose" class="btn-no-style btn-close" @click="mVisible = false">
           <i class="material-icons">clear</i>
         </button>
-        <div class="dialog-inner">
+        <div class="dialog-inner" :class="{'limited-size': !unlimitedSize}">
           <slot></slot>
         </div>
       </div>
@@ -30,6 +30,10 @@ export default defineComponent({
       default: false
     },
     dark: {
+      type: Boolean,
+      default: false
+    },
+    unlimitedSize: {
       type: Boolean,
       default: false
     }
@@ -102,9 +106,12 @@ export default defineComponent({
       width: 100%;
       height: 100%;
       overflow: auto;
-      max-width: 95vw;
-      max-height: 92vh;
       box-sizing: border-box;
+
+      &.limited-size {
+        max-width: 95vw;
+        max-height: 92vh;
+      }
     }
   }
 }

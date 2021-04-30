@@ -80,12 +80,14 @@
 
     <!--Music Detail Dialog-->
     <ModalDialog
+        class="music-detail-dialog"
         dark
         is-show-close
+        unlimited-size
         v-model:visible="detailDialogVisible"
     >
       <MusicDetail
-        :is-parent-visible="detailDialogVisible"
+          :is-parent-visible="detailDialogVisible"
       />
     </ModalDialog>
 
@@ -428,6 +430,20 @@ export default defineComponent({
       & + button {
         border-left: 1px solid $border-color;
       }
+    }
+  }
+}
+
+.music-detail-dialog {
+  align-items: start;
+
+  ::v-deep & > .dialog-main {
+    width: 100%;
+    height: calc(100% - 75px);
+
+    & > .btn-no-style {
+      top: 10px;
+      right: 10px;
     }
   }
 }
