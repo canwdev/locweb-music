@@ -116,7 +116,15 @@ export default defineComponent({
           id: item.id
         })
         console.log(res)
-        lyric.value = res.lrc.lyric
+
+        const tlyric = res.tlyric.lyric || '' // translated lyric
+        const lrc = res.lrc.lyric || ''
+
+        if (tlyric) {
+          lyric.value = tlyric + '\n\n\n\n' + lrc
+        } else {
+          lyric.value = lrc
+        }
       } catch (e) {
         window.$notify.error(e.message)
         console.error(e)
