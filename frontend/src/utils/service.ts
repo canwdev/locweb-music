@@ -1,4 +1,5 @@
 import axios from 'axios'
+import {getToken} from './auth'
 
 interface Config {
   baseURL?: string;
@@ -26,11 +27,10 @@ function Service(config: Config) {
   // 请求 拦截器
   service.interceptors.request.use(
     config => {
-      const Authorization = localStorage.getItem('Authorization')
-      if (Authorization) config.headers.Authorization = Authorization
-
-      // console.log('config', config)
-
+      const Authorization = getToken()
+      if (Authorization) {
+        config.headers.Authorization = Authorization
+      }
       return config
     },
     error => Promise.reject(error)

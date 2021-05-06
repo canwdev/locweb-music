@@ -8,3 +8,7 @@ const service = Service({
 export function getInfo() {
   return service.get('/')
 }
+
+export function getAuth(params) {
+  return service.post('/auth', params)
+}

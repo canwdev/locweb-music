@@ -32,16 +32,31 @@
       </div>
     </transition>
 
+    <ModalDialog
+        v-model:visible="isShowLogin"
+        is-show-close
+    >
+      <LoginPrompt
+        @submitted="isShowLogin = false"
+      />
+    </ModalDialog>
   </div>
 </template>
 
 <script lang="ts">
-import {defineComponent, toRefs, computed} from 'vue';
+import {defineComponent, toRefs, computed, ref} from 'vue';
 import useMVisible from "@/composables/useMVisible";
 import router from '@/router'
+import store from "@/store";
+import ModalDialog from '@/components/ModalDialog.vue'
+import LoginPrompt from '@/components/LoginPrompt.vue'
 
 export default defineComponent({
   name: 'DrawerMenu',
+  components: {
+    ModalDialog,
+    LoginPrompt
+  },
   props: {
     visible: {
       type: Boolean,
@@ -50,34 +65,50 @@ export default defineComponent({
   },
   setup(props, context) {
     const {visible} = toRefs(props)
-
     const {mVisible} = useMVisible(visible, context)
+    const isShowLogin = ref(false)
 
-    const menuList = [
-      {name: 'Music', subtitle: true},
-      {name: 'File System', icon: 'storage'},
-      {name: 'Playlists', icon: 'queue_music', disabled: true},
-      // {name: 'Albums', icon: 'album'},
-      // {name: 'Artists', icon: 'mic'},
-      // {name: 'Recent', icon: 'history'},
-      // {name: 'Rated', icon: 'stars'},
-      // {name: 'Search', icon: 'search'},
-      {name: 'System', subtitle: true},
-      // {name: 'Settings', icon: 'settings'},
-      // {name: 'User Management', icon: 'account_circle'},
-      // {name: 'Rescan Media', icon: 'loop'},
-      {
-        name: 'About', icon: 'info', action: () => {
-          router.push({
-            name: 'About'
-          })
-        }
-      },
-    ]
+    const token = computed(() => {
+      return store.state.token
+    })
+
+    const menuList = computed(() => {
+      return [
+        {name: 'Music', subtitle: true},
+        {name: 'File System', icon: 'storage'},
+        {name: 'Playlists', icon: 'queue_music', disabled: true},
+        // {name: 'Albums', icon: 'album'},
+        // {name: 'Artists', icon: 'mic'},
+        // {name: 'Recent', icon: 'history'},
+        // {name: 'Rated', icon: 'stars'},
+        // {name: 'Search', icon: 'search'},
+        {name: 'System', subtitle: true},
+        // {name: 'Settings', icon: 'settings'},
+        !token.value ? {
+          name: 'Login', icon: 'account_circle', action: () => {
+            isShowLogin.value = true
+          }
+        } : {
+          name: 'Logout', icon: 'account_circle', action: () => {
+            store.commit('setToken', null)
+          }
+        },
+        // {name: 'Rescan Media', icon: 'loop'},
+        {
+          name: 'About', icon: 'info', action: () => {
+            router.push({
+              name: 'About'
+            })
+          }
+        },
+      ]
+    })
 
     return {
       menuList,
-      mVisible
+      mVisible,
+      token,
+      isShowLogin
     }
   }
 })
@@ -86,7 +117,7 @@ export default defineComponent({
 <style lang="scss" scoped>
 .drawer-menu {
   position: relative;
-  z-index: 10001;
+  z-index: 1001;
   user-select: none;
 
   .bg-shade {

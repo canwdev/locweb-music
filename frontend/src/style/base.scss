@@ -78,13 +78,8 @@ $scrollbar-bg-dark: rgba(255, 255, 255, .1);
   //backdrop-filter: saturate(180%) blur(20px);
 }
 
-.btn-no-style {
-  background: none;
-  border: none;
-  //outline: none;
+@mixin btnMixin {
   cursor: pointer;
-  color: inherit;
-  padding: 0;
   text-decoration: none;
 
   &:active {
@@ -102,6 +97,27 @@ $scrollbar-bg-dark: rgba(255, 255, 255, .1);
   //}
 }
 
+.btn-no-style {
+  background: none;
+  border: none;
+  //outline: none;
+  color: inherit;
+  padding: 0;
+
+  @include btnMixin
+}
+
+.btn-styled {
+  border: $layout-border;
+  padding: 2px 5px;
+  box-sizing: border-box;
+  background: $primary;
+  color: white;
+  border-radius: $generic-border-radius;
+
+  @include btnMixin
+}
+
 .input-styled {
   border: $layout-border;
   padding: 2px 5px;
@@ -109,6 +125,10 @@ $scrollbar-bg-dark: rgba(255, 255, 255, .1);
   background: transparent;
   color: inherit;
   border-radius: $generic-border-radius;
+}
+
+.text-center {
+  text-align: center;
 }
 
 button, input, textarea, a, {

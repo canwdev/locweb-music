@@ -8,6 +8,8 @@ const sanitize = require("sanitize-filename");
 const {
   enableModify
 } = require('../config')
+const userAuth = require('../routes/middleware/user-auth')
+
 
 const {MUSIC_LIBRARY_PATH, MUSIC_LYRICS_PATH} = require('../config')
 const getMusicPath = (p = '') => {
@@ -198,7 +200,7 @@ const FileAction = {
   CREATE_FOLDER: 'CREATE_FOLDER',
 }
 
-router.post('/action', async (req, res, next) => {
+router.post('/action', userAuth, async (req, res, next) => {
   try {
     if (!enableModify) {
       return res.sendError({code: 403, message: 'Modify not allowed'})
@@ -251,7 +253,7 @@ router.post('/action', async (req, res, next) => {
   }
 })
 
-router.post('/save-lyric', async (req, res, next) => {
+router.post('/save-lyric', userAuth, async (req, res, next) => {
   try {
     if (!enableModify) {
       return res.sendError({code: 403, message: 'Modify not allowed'})

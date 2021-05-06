@@ -13,12 +13,12 @@
             placeholder="Search song name"
             v-model="searchText"
         >
-        <button type="submit" class="btn-no-style">Search</button>
+        <button type="submit" class="btn-styled">Search</button>
       </form>
 
       <div class="result-list">
         <button
-            class="btn-no-style list-item edit-current"
+            class="btn-styled list-item"
             @click="chooseMusic()"
         >
           <div class="title">Edit Current Lyric</div>
@@ -43,8 +43,8 @@
           placeholder="Type Lyrics Here (.lrc)"
       ></textarea>
       <div class="flex justify-between">
-        <button class="btn-no-style" @click="isDetail = false">Back</button>
-        <button class="btn-no-style" @click="saveLyric">Save</button>
+        <button class="btn-styled" @click="isDetail = false">Back</button>
+        <button class="btn-styled" @click="saveLyric">Save</button>
       </div>
     </div>
 
@@ -170,10 +170,6 @@ export default defineComponent({
       flex: 1;
       margin-right: 5px;
     }
-
-    button {
-      color: $primary;
-    }
   }
 
   .result-list {
@@ -192,10 +188,6 @@ export default defineComponent({
         border-top: 1px solid $border-color;
       }
 
-      &.edit-current {
-        color: $primary;
-      }
-
       .title {
         font-weight: bold;
       }
@@ -212,10 +204,6 @@ export default defineComponent({
       padding: 5px;
       width: 100%;
       box-sizing: border-box;
-    }
-
-    button {
-      color: $primary;
     }
   }
 }

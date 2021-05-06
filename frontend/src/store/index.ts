@@ -5,6 +5,11 @@ import {shuffleArray} from "@/utils";
 import bus, {
   ACTION_TOGGLE_PLAY,
 } from "@/utils/bus";
+import {
+  setToken,
+  getToken,
+  removeToken
+} from "@/utils/auth";
 
 const playingList: Array<MusicItem> = [];
 const playlistBackup: Array<MusicItem> = [];
@@ -22,6 +27,7 @@ export default createStore({
     loopMode: LoopModeEnum.LOOP_SEQUENCE, // music playing loop mode
     currentTime: 0,
     duration: 0,
+    token: getToken() // Authorization token
   },
   getters: {
     musicItem: state => state.musicItem,
@@ -96,6 +102,14 @@ export default createStore({
     setDuration: (state, payload: number) => {
       state.duration = payload
     },
+    setToken: (state, val) => {
+      if (val) {
+        setToken(val)
+      } else {
+        removeToken()
+      }
+      state.token = val
+    }
   },
   actions: {},
   modules: {}
