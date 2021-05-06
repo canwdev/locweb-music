@@ -1,13 +1,11 @@
 import {watch, ref, computed, onBeforeUnmount} from 'vue'
 import LyricParser from '@/utils/lyric-parser'
-import {MusicItem} from "@/enum";
 import store from "@/store";
 
-/**
- *
- * @param checkAllowUpdate check if need update lyric before execute
- */
-export default function ({checkAllowUpdate}) {
+export default function (config: any = {}) {
+  const {
+    checkAllowUpdate // check if need update lyric before execute
+  } = config
   const lyricObj = ref<null | LyricParser>(null)
   const lyricCurrentLine = ref(0)
   const isLyricLock = ref(true)

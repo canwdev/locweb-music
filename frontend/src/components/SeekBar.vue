@@ -65,6 +65,7 @@ export default defineComponent({
       writing-mode: bt-lr; /* IE */
       -webkit-appearance: slider-vertical; /* WebKit */
       height: 100%;
+      outline: none;
     }
 
   }

@@ -18,6 +18,12 @@
 
       <div class="result-list">
         <button
+            class="btn-no-style list-item edit-current"
+            @click="chooseMusic()"
+        >
+          <div class="title">Edit Current Lyric</div>
+        </button>
+        <button
             v-for="(item, index) in resultList"
             :key="index"
             class="btn-no-style list-item"
@@ -31,7 +37,11 @@
     </div>
 
     <div v-show="isDetail" class="search-detail">
-      <textarea readonly :value="lyric" rows="20"></textarea>
+      <textarea
+          v-model="lyric"
+          rows="20"
+          placeholder="Type Lyrics Here (.lrc)"
+      ></textarea>
       <div class="flex justify-between">
         <button class="btn-no-style" @click="isDetail = false">Back</button>
         <button class="btn-no-style" @click="saveLyric">Save</button>
@@ -58,10 +68,14 @@ export default defineComponent({
     search: {
       type: String,
       default: ''
+    },
+    currentLyric: {
+      type: String,
+      default: ''
     }
   },
   setup(props, context) {
-    const {search} = toRefs(props)
+    const {search, currentLyric} = toRefs(props)
     const searchText = ref('')
     const resultList = ref([])
     const isLoading = ref(false)
@@ -90,6 +104,11 @@ export default defineComponent({
     }
 
     const chooseMusic = async (item) => {
+      if (!item) {
+        lyric.value = currentLyric.value
+        isDetail.value = true
+        return
+      }
       try {
         isLoading.value = true
         // console.log(item)
@@ -98,9 +117,14 @@ export default defineComponent({
         })
         console.log(res)
         lyric.value = res.lrc.lyric
-        isDetail.value = true
+      } catch (e) {
+        window.$notify.error(e.message)
+        console.error(e)
+
+        lyric.value = ''
       } finally {
         isLoading.value = false
+        isDetail.value = true
       }
     }
 
@@ -138,6 +162,7 @@ export default defineComponent({
       flex: 1;
       margin-right: 5px;
     }
+
     button {
       color: $primary;
     }
@@ -159,6 +184,10 @@ export default defineComponent({
         border-top: 1px solid $border-color;
       }
 
+      &.edit-current {
+        color: $primary;
+      }
+
       .title {
         font-weight: bold;
       }
@@ -172,9 +201,11 @@ export default defineComponent({
 
   .search-detail {
     textarea {
+      padding: 5px;
       width: 100%;
       box-sizing: border-box;
     }
+
     button {
       color: $primary;
     }

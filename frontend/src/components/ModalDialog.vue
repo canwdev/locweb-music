@@ -1,6 +1,6 @@
 <template>
   <transition name="fade">
-    <div v-show="mVisible" class="modal-dialog-wrap" :class="className">
+    <div v-show="mVisible" class="modal-dialog-wrap">
       <div class="dialog-shadow" @click="mVisible = false"></div>
       <div class="dialog-main" :class="{dark}">
         <button v-if="isShowClose" class="btn-no-style btn-close" @click="mVisible = false">

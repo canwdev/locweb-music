@@ -84,6 +84,7 @@
     >
       <LyricSearch
           :search="musicItem.filenameDisplay"
+          :current-lyric="musicItem.lyric"
           @saveLyric="handleSaveLyric"
       />
     </ModalDialog>
@@ -134,6 +135,7 @@ export default defineComponent({
     const currentDetailTab = ref(DetailTabEnum.LYRIC)
     const isShowDetail = ref(false)
     const isShowLyricSearch = ref(false)
+    const currentPlayTime = ref(0) // ms
 
     const musicItem = computed((): MusicItem => {
       return store.getters.musicItem
@@ -158,17 +160,23 @@ export default defineComponent({
         })
       }
     })
+    watch(currentPlayTime, (val, oldVal) => {
+      // console.log('currentPlayTime', val, oldVal)
+      if (lyricObj.value) {
+        lyricObj.value.seek(val)
+      }
+    })
 
     const changeCurrentTime = (newTime) => {
-      if (lyricObj.value) {
-        lyricObj.value.seek(newTime * 1000)
-      }
+      currentPlayTime.value = newTime * 1000
     }
 
     const handleSaveLyric = async (lyric) => {
       // console.log(lyric)
       isShowLyricSearch.value = false
       musicItem.value.lyric = lyric
+      // fix lyric progress bug
+      bus.emit(ACTION_CHANGE_CURRENT_TIME, 0)
       isShowDetail.value = true
       currentDetailTab.value = DetailTabEnum.LYRIC
 
@@ -188,7 +196,6 @@ export default defineComponent({
     onBeforeUnmount(() => {
       bus.off(ACTION_CHANGE_CURRENT_TIME, changeCurrentTime)
     })
-
 
     return {
       DetailTabEnum,
@@ -235,7 +242,7 @@ export default defineComponent({
 
   .cover-wrap-box {
     margin: 0 auto 0;
-    max-width: 600px;
+    max-width: 500px;
   }
 
   .cover-wrap {
