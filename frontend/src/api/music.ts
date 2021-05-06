@@ -1,5 +1,6 @@
 import Service from '@/utils/service'
 import {HOST_URL} from "@/enum"
+import qs from 'qs'
 
 const service = Service({
   baseURL: HOST_URL + '/api'
@@ -60,4 +61,8 @@ export function saveLyric(params) {
     filename,
     lyric
   })
+}
+
+export function getDownloadUrl(params) {
+  return HOST_URL + '/api/music/download?' + qs.stringify(params)
 }

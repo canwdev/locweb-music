@@ -35,3 +35,28 @@ export const blobToDataURL = (blob) => {
     reader.readAsDataURL(blob);
   })
 }
+
+export function downLoadFile(src: string, name = 'download') {
+  try {
+    if (('download' in document.createElement('a'))) {
+      const el = document.createElement('a')
+      if (name) {
+        el.setAttribute('download', name)
+      }
+      el.style.display = 'none'
+      el.href = src
+      document.body.appendChild(el)
+      el.click()
+      URL.revokeObjectURL(el.href) // 释放 URL 对象
+      document.body.removeChild(el)
+    } else {
+      const elIf = document.createElement('iframe')
+      elIf.src = src
+      elIf.style.display = 'none'
+      document.body.appendChild(elIf)
+    }
+  } catch (e) {
+    console.error(e)
+    window.open(src)
+  }
+}

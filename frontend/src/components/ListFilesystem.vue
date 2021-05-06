@@ -24,15 +24,20 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, onMounted, ref, watch} from 'vue';
+import {computed, defineComponent, onMounted, ref, watch} from 'vue';
 import store from '@/store'
 import {useRoute} from 'vue-router'
 import router from '@/router'
 import {MusicItem} from "@/enum"
 import {FileAction} from "@/enum/service"
-import {fileAction, getList} from "@/api/music"
+import {
+  fileAction,
+  getList,
+  getDownloadUrl
+} from "@/api/music"
 import {isSupportedMusicFormat} from "@/utils/is";
 import bus, {ACTION_PLAY_START,} from "@/utils/bus";
+import {downLoadFile} from "@/utils";
 import MainList from "@/components/MainList/index.vue";
 import DialogMenu from "@/components/DialogMenu.vue";
 
@@ -223,13 +228,36 @@ export default defineComponent({
         isLoading.value = false
       }
     }
-    const fileMenuList = [
-      {label: 'Rename', action: fileRename},
-      {label: 'Delete', action: fileDelete},
-      {label: 'Replace...', disabled: true},
-      {label: 'Download', action: null},
-      {label: 'Download archive', disabled: true},
-    ]
+    const fileDownload = async () => {
+      if (!selectedItem.value) return
+      const sItem = selectedItem.value
+      isLoading.value = true
+      try {
+        downLoadFile(getDownloadUrl({
+          path: sItem.path,
+          filename: sItem.filename,
+        }), sItem.filename)
+      } catch (e) {
+        console.error(e)
+      } finally {
+        isLoading.value = false
+      }
+
+    }
+    const fileMenuList = computed(() => {
+      if (!selectedItem.value) return
+      const sItem = selectedItem.value
+      const list = [
+        {label: 'Rename', action: fileRename},
+        {label: 'Delete', action: fileDelete},
+        !sItem.isDirectory ? {label: 'Download', action: fileDownload} :
+            {label: 'Download Archive', disabled: true},
+      ]
+      if (!sItem.isDirectory) {
+        list.push({label: 'Replace...', disabled: true})
+      }
+      return list
+    })
 
     const isShowFolderMenu = ref(false)
     const showFolderMenu = () => {
