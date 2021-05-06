@@ -227,6 +227,8 @@ export default defineComponent({
       {label: 'Rename', action: fileRename},
       {label: 'Delete', action: fileDelete},
       {label: 'Replace...', disabled: true},
+      {label: 'Download', action: null},
+      {label: 'Download archive', disabled: true},
     ]
 
     const isShowFolderMenu = ref(false)
@@ -249,8 +251,7 @@ export default defineComponent({
     const folderMenuList = [
       {label: 'Create Folder', action: createFolder},
       {label: 'Upload Files...', disabled: true},
-      {label: 'Upload Folder...', disabled: true},
-      {label: 'Download archive', disabled: true},
+      {label: 'Upload Folder...', disabled: true}
     ]
 
     onMounted(() => {

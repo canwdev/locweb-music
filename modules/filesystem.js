@@ -215,6 +215,13 @@ router.post('/action', userAuth, async (req, res, next) => {
 
     let filePath
 
+    if (action === FileAction.CREATE_FOLDER) {
+      const curPath = getMusicPath(musicPath)
+      const dir = path.join(curPath, sanitize(actionValue, {replacement: '_'}))
+      await fs.mkdirp(dir)
+      return res.sendData()
+    }
+
     try {
       const res = getMusicExactPath(musicPath, filename)
       filePath = res.filePath
@@ -242,9 +249,6 @@ router.post('/action', userAuth, async (req, res, next) => {
 
     } else if (action === FileAction.DELETE) {
       await fs.remove(filePath)
-    } else if (action === FileAction.CREATE_FOLDER) {
-      // TODO
-      return res.sendData({filePath})
     }
 
     return res.sendData()

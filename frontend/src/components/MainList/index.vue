@@ -29,13 +29,13 @@
             title="Locate"
         ><i class="material-icons">my_location</i>
         </button>
-        <!--<button
+        <button
             v-if="!isPlayList"
             class="btn-no-style"
             @click="$emit('openMenu')"
             title="Menu"
         ><i class="material-icons">more_vert</i>
-        </button>-->
+        </button>
       </div>
       <ListItem
           :item="rootItem"
