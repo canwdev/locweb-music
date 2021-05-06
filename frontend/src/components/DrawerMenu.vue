@@ -89,7 +89,7 @@ export default defineComponent({
             isShowLogin.value = true
           }
         } : {
-          name: 'Logout', icon: 'account_circle', action: () => {
+          name: 'Logout', icon: 'logout', action: () => {
             store.commit('setToken', null)
           }
         },

@@ -6,6 +6,7 @@ interface Config {
   withCredentials?: boolean;
   timeout?: number;
   headers?: any;
+  isAuth?: boolean;
 }
 
 function Service(config: Config) {
@@ -13,7 +14,8 @@ function Service(config: Config) {
     baseURL,
     withCredentials = false,
     timeout,
-    headers
+    headers,
+    isAuth = true
   } = config || {}
 
   // 创建 axios 实例
@@ -27,9 +29,11 @@ function Service(config: Config) {
   // 请求 拦截器
   service.interceptors.request.use(
     config => {
-      const Authorization = getToken()
-      if (Authorization) {
-        config.headers.Authorization = Authorization
+      if (isAuth) {
+        const Authorization = getToken()
+        if (Authorization) {
+          config.headers.Authorization = Authorization
+        }
       }
       return config
     },
