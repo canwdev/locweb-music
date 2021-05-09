@@ -4,10 +4,11 @@ const app = express()
 const bodyParser = require('body-parser')
 const errorhandler = require('errorhandler')
 const {
+  PORT,
   MUSIC_LIBRARY_PATH,
   MUSIC_LYRICS_PATH,
 } = require('./config')
-const {IMAGE_PATH} = require('./config/enum')
+const {IMAGE_PATH} = require('./config')
 const {normalizePort} = require('./utils')
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -45,9 +46,9 @@ app.use('/lrc', express.static(MUSIC_LYRICS_PATH));
 app.use('/', require('./routes/index'));
 
 // Start server
-const port = normalizePort(process.env.PORT || '12021')
+const port = normalizePort(process.env.PORT || PORT)
 const server = app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
+  console.log(`Locweb Music Server running on http://localhost:${port}`);
 });
 
 process.on('SIGTERM', () => {

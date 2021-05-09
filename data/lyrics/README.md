@@ -1,1 +1,1 @@
-Lyrics(.lrc) file is stored here
+Lyrics(.lrc) files is stored here

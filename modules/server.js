@@ -3,9 +3,9 @@ const router = require('express').Router()
 const {enableAuth, authUsers} = require('../config')
 const jwt = require('jsonwebtoken')
 const {
-  JWT_TOKEN,
-  JWT_TOKEN_EXPIRE
-} = require('../config/enum')
+  jwtToken,
+  jwtTokenExpire
+} = require('../config')
 
 router.get('/', async (req, res, next) => {
   try {
@@ -41,8 +41,8 @@ router.post('/auth', async (req, res, next) => {
 
     // Generate token
     // jwt.sign() 接受两个参数，一个是传入的对象，一个是自定义的密钥
-    const token = jwt.sign({id: String(username)}, JWT_TOKEN, {
-      expiresIn: JWT_TOKEN_EXPIRE
+    const token = jwt.sign({id: String(username)}, jwtToken, {
+      expiresIn: jwtTokenExpire
     })
 
     return res.sendData({

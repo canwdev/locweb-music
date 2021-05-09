@@ -7,7 +7,7 @@
   "author": "canwdev <c2097@live.com>",
   "license": "MIT",
   "scripts": {
-    "start": "cross-env NODE_ENV=production PORT=12021 node index.js",
+    "start": "cross-env NODE_ENV=production node index.js",
     "dev": "cross-env PORT=12022 nodemon index.js --trace-sync-io"
   },
   "dependencies": {

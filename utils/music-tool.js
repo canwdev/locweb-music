@@ -1,11 +1,10 @@
-const {IMAGE_PATH} = require('../config/enum')
 const mm = require('music-metadata')
 const {calcBufferHash} = require('./index')
 const mime = require('mime-types')
 const util = require('util')
 const path = require('path');
 const fs = require('fs-extra');
-const {MUSIC_LYRICS_PATH} = require('../config')
+const {MUSIC_LYRICS_PATH, IMAGE_PATH} = require('../config')
 
 /**
  * Get music metadata and extract cover

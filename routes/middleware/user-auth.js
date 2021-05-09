@@ -1,10 +1,13 @@
 const jwt = require('jsonwebtoken')
 const {
-  JWT_TOKEN,
-  CODE_TOKEN_EXPIRE,
   CODE_CLIENT_FORBIDDEN
 } = require('../../config/enum')
-const {enableAuth, authUsers} = require('../../config')
+const {
+  jwtToken,
+  CODE_TOKEN_EXPIRE,
+  enableAuth,
+  authUsers
+} = require('../../config')
 
 /**
  * 验证登录中间件
@@ -23,7 +26,7 @@ module.exports = async function authLogin(req, res, next) {
 
     if (token) {
       const raw = String(token)
-      const {id} = jwt.verify(raw, JWT_TOKEN)
+      const {id} = jwt.verify(raw, jwtToken)
 
       const hasUser = authUsers[id]
 
