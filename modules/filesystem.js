@@ -57,27 +57,31 @@ router.get('/list', async (req, res, next) => {
     const dir = getMusicPath(musicPath)
     const files = await fs.readdir(dir)
 
-    const list = files.map((filename, index) => {
+    const _folders = [], _files = []
+    files.filter(name => {
+      return name !== '@eaDir' && name !== '.music_folder_player.properties'
+    }).forEach((name, index) => {
       try {
-        const stat = fs.statSync(path.join(dir, filename))
-        return {
+        const stat = fs.statSync(path.join(dir, name))
+        const isDirectory = stat.isDirectory()
+        const f = {
           id: index,
-          filename,
-          isDirectory: stat.isDirectory(),
+          filename: name,
+          isDirectory,
           path: musicPath,
-          size: stat.size
+        }
+        if (isDirectory) {
+          _folders.push(f)
+        } else {
+          _files.push(f)
         }
       } catch (e) {
         console.log('fs stat error', e)
-        return {
-          id: index,
-          filename: filename + '.error',
-          isDirectory: false,
-          path: null,
-          size: 0
-        }
       }
+
     })
+
+    const list = [..._folders, ..._files]
 
     let playStat
     if (getPlayStat) {
