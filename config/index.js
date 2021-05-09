@@ -15,6 +15,7 @@ let config = {
   authUsers: {'admin': 'admin'},
   jwtToken: 'token_secret_j3478n68o23ui',
   jwtTokenExpire: '7 days',
+  showHiddenFiles: false
 }
 
 const configPath = path.join(__dirname, 'config.json')

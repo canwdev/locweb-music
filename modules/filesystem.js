@@ -6,7 +6,8 @@ const mm = require('music-metadata')
 const chokidar = require('chokidar');
 const sanitize = require("sanitize-filename");
 const {
-  enableModify
+  enableModify,
+  showHiddenFiles
 } = require('../config')
 const userAuth = require('../routes/middleware/user-auth')
 
@@ -55,12 +56,15 @@ router.get('/list', async (req, res, next) => {
       getPlayStat = false
     } = req.query
     const dir = getMusicPath(musicPath)
-    const files = await fs.readdir(dir)
+    let files = await fs.readdir(dir)
 
     const _folders = [], _files = []
-    files.filter(name => {
-      return name !== '@eaDir' && name !== '.music_folder_player.properties'
-    }).forEach((name, index) => {
+    if (!showHiddenFiles) {
+      files = files.filter(name => {
+        return !/^\./.test(name) && name !== '@eaDir'
+      })
+    }
+    files.forEach((name, index) => {
       try {
         const stat = fs.statSync(path.join(dir, name))
         const isDirectory = stat.isDirectory()
