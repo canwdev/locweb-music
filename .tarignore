@@ -3,4 +3,4 @@ frontend
 .idea
 data
 config/config.json
-dists.tar
+*.tar
