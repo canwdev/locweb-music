@@ -34,14 +34,14 @@ export default defineComponent({
     MainList,
   },
   setup() {
-    const playingList = computed(() => store.getters.playingList)
-    const isRandom = computed(() => store.getters.isRandom)
-    const loopMode = computed(() => store.getters.loopMode)
-    const paused = computed(() => store.getters.paused)
-    const playingId = computed(() => store.getters.musicItem.id)
+    const playingList = computed(() => store.state.playingList)
+    const isRandom = computed(() => store.state.isRandom)
+    const loopMode = computed(() => store.state.loopMode)
+    const paused = computed(() => store.state.paused)
+    const playingId = computed(() => store.state.musicItem.id)
     const playingIndex = computed<number>({
       get() {
-        return store.getters.playingIndex
+        return store.state.playingIndex
       },
       set(val) {
         store.commit('setPlayingIndex', val)

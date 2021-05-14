@@ -10,6 +10,7 @@ import {
   getToken,
   removeToken
 } from "@/utils/auth";
+import {loadSettings, saveSettings} from "@/utils/settings";
 
 const playingList: Array<MusicItem> = [];
 const playlistBackup: Array<MusicItem> = [];
@@ -27,18 +28,11 @@ export default createStore({
     loopMode: LoopModeEnum.LOOP_SEQUENCE, // music playing loop mode
     currentTime: 0,
     duration: 0,
-    token: getToken() // Authorization token
+    token: getToken(), // Authorization token
+    settings: loadSettings()
   },
   getters: {
-    musicItem: state => state.musicItem,
-    navbarTab: state => state.navbarTab,
-    playingList: state => state.playingList,
-    playingIndex: state => state.playingIndex,
-    paused: state => state.paused,
-    isRandom: state => state.isRandom,
-    loopMode: state => state.loopMode,
-    currentTime: state => state.currentTime,
-    duration: state => state.duration,
+    isDarkTheme: state => state.settings.isDarkTheme
   },
   mutations: {
     setMusicItem: (state, payload: MusicItem) => {
@@ -109,6 +103,15 @@ export default createStore({
         removeToken()
       }
       state.token = val
+    },
+    setSettings: (state, val: object) => {
+      state.settings = val
+      saveSettings(state.settings)
+    },
+    updateSettings: (state, payload) => {
+      const {key, value} = payload
+      state.settings[key] = value
+      saveSettings(state.settings)
     }
   },
   actions: {},

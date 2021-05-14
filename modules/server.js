@@ -10,7 +10,6 @@ const {
 router.get('/', async (req, res, next) => {
   try {
     res.sendData({
-      title: 'Locweb Music',
       name: pkg.name,
       version: pkg.version,
       author: pkg.author

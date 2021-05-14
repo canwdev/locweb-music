@@ -29,6 +29,16 @@
           </button>
         </template>
 
+        <div class="subtitle">Settings</div>
+        <button
+            class="btn-no-style menu-item flex items-center"
+            @click="toggleDarkTheme"
+        >
+          <span class="material-icons">brightness_4</span> <span>Dark Theme <input type="checkbox"
+                                                                                   :checked="isDarkTheme"
+                                                                                   readonly></span>
+        </button>
+
       </div>
     </transition>
 
@@ -37,7 +47,7 @@
         is-show-close
     >
       <LoginPrompt
-        @submitted="isShowLogin = false"
+          @submitted="isShowLogin = false"
       />
     </ModalDialog>
   </div>
@@ -104,11 +114,20 @@ export default defineComponent({
       ]
     })
 
+    const isDarkTheme = computed(() => store.getters.isDarkTheme)
+
     return {
       menuList,
       mVisible,
       token,
-      isShowLogin
+      isShowLogin,
+      isDarkTheme,
+      toggleDarkTheme() {
+        store.commit('updateSettings', {
+          key: 'isDarkTheme',
+          value: !isDarkTheme.value
+        })
+      }
     }
   }
 })

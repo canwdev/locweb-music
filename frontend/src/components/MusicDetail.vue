@@ -138,7 +138,7 @@ export default defineComponent({
     const currentPlayTime = ref(0) // ms
 
     const musicItem = computed((): MusicItem => {
-      return store.getters.musicItem
+      return store.state.musicItem
     })
 
     const {

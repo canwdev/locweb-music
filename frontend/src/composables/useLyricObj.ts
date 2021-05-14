@@ -11,10 +11,10 @@ export default function (config: any = {}) {
   const isLyricLock = ref(true)
 
   const lyric = computed(() => {
-    return store.getters.musicItem.lyric
+    return store.state.musicItem.lyric
   })
   const paused = computed(() => {
-    return store.getters.paused
+    return store.state.paused
   })
 
   /**

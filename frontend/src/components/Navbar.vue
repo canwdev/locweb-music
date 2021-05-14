@@ -31,7 +31,7 @@ export default defineComponent({
 
     const navbarTab = computed({
       get() {
-        return store.getters.navbarTab
+        return store.state.navbarTab
       },
       set(val) {
         store.commit('setNavbarTab', val)

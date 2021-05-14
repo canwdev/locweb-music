@@ -1,5 +1,5 @@
 <template>
-  <div class="home bg-dark">
+  <div class="home" :class="[isDarkTheme ? 'bg-dark':'bg-light']">
     <Navbar/>
 
     <ListFilesystem
@@ -39,13 +39,14 @@ export default defineComponent({
     ListPlaying
   },
   setup() {
-    const navbarTab = computed(() => store.getters.navbarTab)
-    const isPlayingList = computed(() => store.getters.navbarTab === NavbarTabsEnum.PLAYING)
+    const navbarTab = computed(() => store.state.navbarTab)
+    const isPlayingList = computed(() => store.state.navbarTab === NavbarTabsEnum.PLAYING)
 
 
     return {
       navbarTab,
       isPlayingList,
+      isDarkTheme:computed(() => store.getters.isDarkTheme)
     }
   },
 });

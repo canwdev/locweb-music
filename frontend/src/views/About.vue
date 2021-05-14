@@ -1,10 +1,12 @@
 <template>
   <div class="about">
-    <div class="title-wrap flex items-center">
-      <button @click="backHome">Back</button>
-      <span class="title"> About</span>
+    <div class="container">
+      <div class="title-wrap flex items-center justify-between">
+        <span class="title"> About</span>
+        <button class="btn-styled" @click="backHome">Back</button>
+      </div>
+      <textarea readonly :value="JSON.stringify(message, null, 2)"></textarea>
     </div>
-    <textarea readonly :value="JSON.stringify(message, null, 2)"></textarea>
   </div>
 </template>
 
@@ -15,16 +17,15 @@ import {getInfo} from "@/api/service";
 export default defineComponent({
   name: 'Home',
   setup() {
-    const message = ref<string|any>('')
+    const message = ref<string|object>({})
     onMounted(() => {
       getInfo().then(res=> {
+        console.log('res',res)
         message.value = res
       })
     })
-  },
-  data() {
     return {
-      message: null
+      message
     }
   },
   methods: {
@@ -47,17 +48,20 @@ export default defineComponent({
     margin-bottom: 10px;
   }
   .title {
-    margin-left: 10px;
     font-size: 30px;
   }
   textarea {
     width: 98%;
-    height: 80vh;
+    height: 300px;
     resize: none;
     font-size: 12px;
     font-family: monospace;
     color: inherit;
     background: inherit;
+  }
+  .container {
+    max-width: 500px;
+    margin: 0 auto;
   }
 }
 </style>

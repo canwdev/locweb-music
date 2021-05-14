@@ -127,7 +127,7 @@ export default defineComponent({
     const isShowVolumeSlider = ref(false)
 
     const currentTime = computed(() => {
-      return store.getters.currentTime
+      return store.state.currentTime
     })
     watch(currentTime, (val) => {
       if (!isSeeking.value) {
@@ -135,24 +135,24 @@ export default defineComponent({
       }
     })
     const duration = computed(() => {
-      return store.getters.duration
+      return store.state.duration
     })
 
     const musicItem = computed((): MusicItem => {
-      return store.getters.musicItem
+      return store.state.musicItem
     })
     const paused = computed((): boolean => {
-      return store.getters.paused
+      return store.state.paused
     })
     const playingList = computed((): Array<MusicItem> => {
-      return store.getters.playingList
+      return store.state.playingList
     })
     const actionDisabled = computed((): boolean => {
       return playingList.value.length === 0
     })
     const isRandom = computed({
       get() {
-        return store.getters.isRandom
+        return store.state.isRandom
       },
       set(val) {
         store.commit('setIsRandom', val)
@@ -160,7 +160,7 @@ export default defineComponent({
     })
     const loopMode = computed({
       get(): number {
-        return store.getters.loopMode
+        return store.state.loopMode
       },
       set(val: number) {
         store.commit('setLoopMode', val)

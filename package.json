@@ -1,10 +1,10 @@
 {
   "name": "locweb-music",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A web music player for playing local music",
   "main": "index.js",
   "repository": "https://github.com/canwdev/locweb-music.git",
-  "author": "canwdev <c2097@live.com>",
+  "author": "canwdev",
   "license": "MIT",
   "scripts": {
     "start": "cross-env NODE_ENV=production node index.js",

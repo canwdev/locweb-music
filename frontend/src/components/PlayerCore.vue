@@ -30,7 +30,7 @@ export default defineComponent({
     }
 
     const musicItem = computed((): MusicItem => {
-      return store.getters.musicItem
+      return store.state.musicItem
     })
 
     const updateTitle = (musicItem: MusicItem, isPaused?: boolean) => {
@@ -93,7 +93,7 @@ export default defineComponent({
 
     const paused = computed({
       get(): boolean {
-        return store.getters.paused
+        return store.state.paused
       },
       set(value: boolean) {
         store.commit('setPaused', value)
