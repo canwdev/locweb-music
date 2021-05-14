@@ -1,7 +1,7 @@
 <template>
   <transition name="fade">
     <div v-show="visible" class="loading-shade flex items-center justify-center">
-      <div class="loading bg-glass-white">
+      <div class="loading" :class="[isDarkTheme ? 'bg-dark' : 'bg-glass-white']">
         <i class="material-icons">hourglass_empty</i>
         <span v-if="text" class="text">{{ text }}</span>
       </div>
@@ -10,7 +10,8 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from 'vue';
+import {computed, defineComponent} from 'vue';
+import store from "@/store";
 
 export default defineComponent({
   name: "Loading",
@@ -26,6 +27,11 @@ export default defineComponent({
     text: {
       type: String,
       default: "Loading"
+    }
+  },
+  setup() {
+    return {
+      isDarkTheme: computed(() => store.getters.isDarkTheme),
     }
   }
 })
@@ -58,6 +64,10 @@ export default defineComponent({
     position: absolute;
     border-radius: 10px;
     flex-direction: column;
+
+    &.bg-dark {
+      box-shadow: 0 0 8px 2px $primary;
+    }
 
     .material-icons {
       font-size: 32px;

@@ -4,7 +4,7 @@
       <div class="bg-shade" v-show="mVisible" @click="mVisible=false"></div>
     </transition>
     <transition name="slide-fade">
-      <div class="menu bg-dark" v-show="mVisible">
+      <div class="menu" :class="themeClass" v-show="mVisible">
         <div class="menu-title flex items-center justify-between">
           <span class="flex items-center">
             Menu
@@ -44,6 +44,7 @@
 
     <ModalDialog
         v-model:visible="isShowLogin"
+        :dark="isDarkTheme"
         is-show-close
     >
       <LoginPrompt
@@ -127,7 +128,8 @@ export default defineComponent({
           key: 'isDarkTheme',
           value: !isDarkTheme.value
         })
-      }
+      },
+      themeClass: computed(() => store.getters.themeClass),
     }
   }
 })
@@ -159,13 +161,28 @@ export default defineComponent({
     box-shadow: $shadow-5;
     overflow-x: hidden;
 
+    &.bg-dark {
+      .menu-title {
+        background: rgba(0, 0, 0, 0.9);
+      }
+      .subtitle {
+        background: rgba(0, 0, 0, 0.8);
+        border-color: $grey-9;
+      }
+      .menu-item {
+        & + .menu-item {
+          border-color: $grey-9;
+        }
+      }
+    }
+
     .menu-title {
       font-size: 18px;
       height: $navbarHeight;
       line-height: $navbarHeight;
       padding: 0 10px;
       font-weight: bold;
-      background: rgba(0, 0, 0, 0.9);
+      background: $grey-3;
 
       .menu-icon {
         margin-right: 4px;
@@ -175,17 +192,17 @@ export default defineComponent({
     .subtitle {
       padding: 0 10px;
       line-height: 2;
-      border: 1px solid $grey-9;
+      border: 1px solid $border-color;
       border-left: 0;
       border-right: 0;
       font-size: 12px;
       font-weight: bold;
-      background: rgba(0, 0, 0, 0.8);
+      background: $grey-3;
     }
 
     .menu-item {
       & + .menu-item {
-        border-top: 1px solid $grey-9;
+        border-top: 1px solid $border-color;
       }
 
       display: block;

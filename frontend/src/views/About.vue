@@ -1,5 +1,5 @@
 <template>
-  <div class="about">
+  <div class="about" :class="themeClass">
     <div class="container">
       <div class="title-wrap flex items-center justify-between">
         <span class="title"> About</span>
@@ -11,8 +11,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted } from 'vue';
+import {defineComponent, ref, onMounted, computed} from 'vue';
 import {getInfo} from "@/api/service";
+import store from "@/store";
 
 export default defineComponent({
   name: 'Home',
@@ -25,7 +26,8 @@ export default defineComponent({
       })
     })
     return {
-      message
+      message,
+      themeClass: computed(() => store.getters.themeClass)
     }
   },
   methods: {
@@ -41,7 +43,6 @@ export default defineComponent({
   box-sizing: border-box;
   padding: 10px;
   color: $primary;
-  background: $dark-page;
   height: 100%;
 
   .title-wrap {

@@ -67,9 +67,9 @@ $scrollbar-bg-dark: rgba(255, 255, 255, .1);
   //backdrop-filter: saturate(180%) blur(20px);
 }
 
-.bg-white {
+.bg-light {
   color: black;
-  background: white;
+  background: $grey-2;
 }
 
 .bg-glass-white {

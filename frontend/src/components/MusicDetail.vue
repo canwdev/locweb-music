@@ -80,6 +80,7 @@
 
     <ModalDialog
         v-model:visible="isShowLyricSearch"
+        :dark="isDarkTheme"
         is-show-close
     >
       <LyricSearch
@@ -207,7 +208,8 @@ export default defineComponent({
       isLyricLock,
       isShowDetail,
       isShowLyricSearch,
-      handleSaveLyric
+      handleSaveLyric,
+      isDarkTheme: computed(() => store.getters.isDarkTheme),
     }
   }
 })

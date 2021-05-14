@@ -1,5 +1,5 @@
 <template>
-  <div class="home" :class="[isDarkTheme ? 'bg-dark':'bg-light']">
+  <div class="home" :class="themeClass">
     <Navbar/>
 
     <ListFilesystem
@@ -46,7 +46,7 @@ export default defineComponent({
     return {
       navbarTab,
       isPlayingList,
-      isDarkTheme:computed(() => store.getters.isDarkTheme)
+      themeClass: computed(() => store.getters.themeClass)
     }
   },
 });

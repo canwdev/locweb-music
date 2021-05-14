@@ -2,7 +2,7 @@
   <transition name="fade">
     <div v-show="mVisible" class="modal-dialog-wrap">
       <div class="dialog-shadow" @click="mVisible = false"></div>
-      <div class="dialog-main" :class="{dark}">
+      <div class="dialog-main" :class="{dark, 'no-radius': noRadius}">
         <button v-if="isShowClose" class="btn-no-style btn-close" @click="mVisible = false">
           <i class="material-icons">clear</i>
         </button>
@@ -34,6 +34,10 @@ export default defineComponent({
       default: false
     },
     unlimitedSize: {
+      type: Boolean,
+      default: false
+    },
+    noRadius: {
       type: Boolean,
       default: false
     }
@@ -74,10 +78,14 @@ export default defineComponent({
     background: white;
     color: black;
 
+    &.no-radius {
+      border-radius: 0;
+    }
+
     &.dark {
       background: rgba(0,0,0,0.8);
       color: white;
-      box-shadow: 0 0 10px black;
+      box-shadow: 0 0 8px 2px $primary;
 
       &>.btn-close {
         background: $primary;

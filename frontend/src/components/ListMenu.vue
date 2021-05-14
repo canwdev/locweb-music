@@ -1,5 +1,5 @@
 <template>
-  <div class="list-menu bg-dark">
+  <div class="list-menu" :class="themeClass">
     <button
         v-for="(item, index) in list"
         :key="index"
@@ -13,8 +13,10 @@
 
 <script lang="ts">
 import {
+  computed,
   defineComponent,
 } from 'vue';
+import store from "@/store";
 
 export default defineComponent({
   name: "ListMenu",
@@ -25,6 +27,11 @@ export default defineComponent({
         return []
       }
     }
+  },
+  setup() {
+    return {
+      themeClass: computed(() => store.getters.themeClass)
+    }
   }
 })
 </script>
@@ -32,6 +39,7 @@ export default defineComponent({
 <style lang="scss" scoped>
 .list-menu {
   width: 200px;
+  border-radius: $generic-border-radius;
 
   & > button {
     width: 100%;

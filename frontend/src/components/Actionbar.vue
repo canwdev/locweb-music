@@ -1,6 +1,6 @@
 <template>
   <div class="actionbar-wrapper">
-    <div class="progressbar flex items-center justify-between">
+    <div class="progressbar flex items-center justify-between" :class="themeClass">
       <span class="time text-overflow">{{ formatTimeMS(mCurrentTime) }}</span>
 
       <SeekBar
@@ -13,7 +13,7 @@
 
       <span class="time text-overflow">{{ formatTimeMS(duration) }}</span>
     </div>
-    <div class="actionbar flex items-center">
+    <div class="actionbar flex items-center" :class="themeClass">
       <ButtonCover
           @click="handleCoverClick"
           :src="musicItem.cover"
@@ -81,8 +81,9 @@
     <!--Music Detail Dialog-->
     <ModalDialog
         class="music-detail-dialog"
-        dark
+        :dark="isDarkTheme"
         is-show-close
+        no-radius
         unlimited-size
         v-model:visible="detailDialogVisible"
     >
@@ -320,7 +321,9 @@ export default defineComponent({
         detailDialogVisible.value = !detailDialogVisible.value
         console.log(musicItem.value)
       },
-      handleCoverClick
+      handleCoverClick,
+      isDarkTheme: computed(() => store.getters.isDarkTheme),
+      themeClass: computed(() => store.getters.themeClass)
     }
   }
 });

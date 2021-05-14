@@ -204,6 +204,8 @@ export default defineComponent({
       padding: 5px;
       width: 100%;
       box-sizing: border-box;
+      background: inherit;
+      color: inherit;
     }
   }
 }
