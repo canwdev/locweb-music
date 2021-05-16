@@ -1,4 +1,4 @@
-git pull &&
+#git pull &&
 yarn &&
 cd ./frontend && yarn && yarn build &&
 cd .. &&

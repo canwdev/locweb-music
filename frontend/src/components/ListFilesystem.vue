@@ -67,10 +67,13 @@ export default defineComponent({
           path += (item.filename + '/')
         })
 
-        const {list, playStat} = await getList({
+        const {list, playStat, message} = await getList({
           path,
           getPlayStat: true
         })
+        if (message) {
+          window.$notify.warning(message)
+        }
         const lastFilename = playStat && playStat.file
         fileList.value = list.map((file, index) => {
           if (lastFilename && (file.filename === lastFilename)) {

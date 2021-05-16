@@ -7,9 +7,16 @@ const chokidar = require('chokidar');
 const sanitize = require("sanitize-filename");
 const {
   enableModify,
+  enableAuth,
   showHiddenFiles
 } = require('../config')
-const userAuth = require('../routes/middleware/user-auth')
+const {
+  loginOnlyFileName
+} = require('../config/enum')
+const {
+  userAuth,
+  getUserId
+} = require('../routes/middleware/user-auth')
 
 
 const {MUSIC_LIBRARY_PATH, MUSIC_LYRICS_PATH} = require('../config')
@@ -49,13 +56,19 @@ if (isProduction) {
 /**
  * Get file list
  */
-router.get('/list', async (req, res, next) => {
+router.get('/list', getUserId, async (req, res, next) => {
   try {
     const {
       path: musicPath = '',
       getPlayStat = false
     } = req.query
     const dir = getMusicPath(musicPath)
+    if (enableAuth && fs.existsSync(path.join(dir, loginOnlyFileName))) {
+      if (!req.__userid) {
+        return res.sendData({message: 'You are not authorized', list: []})
+      }
+    }
+    console.log('dir',dir)
     let files = await fs.readdir(dir)
 
     const _folders = [], _files = []
