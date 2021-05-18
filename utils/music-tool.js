@@ -28,6 +28,8 @@ const getMetadata = async (filePath) => {
     }
 
     delete common.picture
+    delete common.comment
+    delete metadata.quality
 
     return {
       metadata,

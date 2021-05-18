@@ -2,7 +2,6 @@ const isProduction = process.env.NODE_ENV === 'production';
 const router = require('express').Router()
 const fs = require('fs-extra');
 const path = require('path');
-const mm = require('music-metadata')
 const chokidar = require('chokidar');
 const sanitize = require("sanitize-filename");
 const {

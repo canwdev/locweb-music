@@ -251,9 +251,6 @@ export default defineComponent({
     position: relative;
     width: 100%;
     height: 100%;
-    border-radius: $generic-border-radius;
-    overflow: hidden;
-    box-shadow: 0 0 0 0.1rem rgba(255, 255, 255, .5);
 
     .big-cover {
       width: 100%;
