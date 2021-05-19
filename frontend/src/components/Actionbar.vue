@@ -191,10 +191,12 @@ export default defineComponent({
       volumeDown,
     } = useAudioVolume()
 
-    const volumeUpFn = () => {
+    const volumeUpFn = (e) => {
+      e.preventDefault()
       volumeUp()
     }
-    const volumeDownFn = () => {
+    const volumeDownFn = (e) => {
+      e.preventDefault()
       volumeDown()
     }
 
@@ -216,7 +218,8 @@ export default defineComponent({
     const next = () => {
       bus.emit(ACTION_NEXT)
     }
-    const togglePlay = () => {
+    const togglePlay = (e) => {
+      e.preventDefault()
       bus.emit(ACTION_TOGGLE_PLAY)
     }
     const toggleRandom = () => {

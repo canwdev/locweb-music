@@ -187,7 +187,7 @@ export default defineComponent({
       })
 
       window.$notify.info(saveFilename, {
-        position: 'bottom',
+        position: 'top',
       })
     }
 
