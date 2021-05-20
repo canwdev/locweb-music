@@ -77,6 +77,7 @@ export default defineComponent({
     position: relative;
     background: white;
     color: black;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, .5);
 
     &.no-radius {
       border-radius: 0;
@@ -104,6 +105,7 @@ export default defineComponent({
       height: 28px;
       border-radius: $generic-border-radius;
       border: 2px solid;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, .2);
       @media screen and (max-width: $mobile_min_width) {
         top: 5px;
         right: 5px;

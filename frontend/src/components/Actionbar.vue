@@ -446,6 +446,7 @@ export default defineComponent({
   ::v-deep & > .dialog-main {
     width: 100%;
     height: calc(100% - 75px);
+    background: rgba(255, 255, 255, .85);
 
     & > .btn-no-style {
       top: 10px;
