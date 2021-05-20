@@ -39,7 +39,10 @@ export default defineComponent({
 <style lang="scss" scoped>
 .list-menu {
   width: 200px;
-  border-radius: $generic-border-radius;
+
+  &.bg-light {
+    border-radius: $generic-border-radius;
+  }
 
   & > button {
     width: 100%;

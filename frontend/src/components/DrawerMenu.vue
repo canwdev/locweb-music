@@ -25,7 +25,8 @@
               class="btn-no-style menu-item flex items-center"
               @click="item.action && item.action()"
           >
-            <span v-if="item.icon" class="material-icons">{{ item.icon }}</span> <span>{{ item.name }}</span>
+            <span v-if="item.icon" class="material-icons">{{ item.icon }}</span> <span
+              class="menu-item-title">{{ item.name }}</span>
           </button>
         </template>
 
@@ -34,9 +35,12 @@
             class="btn-no-style menu-item flex items-center"
             @click="toggleDarkTheme"
         >
-          <span class="material-icons">brightness_4</span> <span>Dark Theme <input type="checkbox"
-                                                                                   :checked="isDarkTheme"
-                                                                                   readonly></span>
+          <span class="material-icons">brightness_4</span>
+          <span class="menu-item-title">Dark Theme
+          <input type="checkbox"
+                 :checked="isDarkTheme"
+                 readonly>
+          </span>
         </button>
 
       </div>
@@ -165,10 +169,12 @@ export default defineComponent({
       .menu-title {
         background: rgba(0, 0, 0, 0.9);
       }
+
       .subtitle {
         background: rgba(0, 0, 0, 0.8);
         border-color: $grey-9;
       }
+
       .menu-item {
         & + .menu-item {
           border-color: $grey-9;
@@ -204,8 +210,6 @@ export default defineComponent({
       & + .menu-item {
         border-top: 1px solid $border-color;
       }
-
-      display: block;
       width: 100%;
       line-height: 40px;
       text-align: left;
@@ -213,9 +217,15 @@ export default defineComponent({
 
       .material-icons {
         color: $primary;
-        margin-right: 5px;
+        margin-right: 10px;
         font-size: 20px;
-        transform: translateY(4px);
+      }
+
+      .menu-item-title {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
       }
     }
   }
