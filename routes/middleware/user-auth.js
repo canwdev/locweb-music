@@ -67,7 +67,7 @@ async function userAuth(req, res, next) {
 
       if (!hasUser) return res.sendError({
         code: CODE_CLIENT_FORBIDDEN,
-        message: 'Token expired'
+        message: 'Token expired 1'
       })
 
       // 向下一级传值
@@ -84,7 +84,7 @@ async function userAuth(req, res, next) {
     if (e.message === 'jwt expired') {
       return res.sendError({
         code: CODE_CLIENT_FORBIDDEN,
-        message: 'Token expired'
+        message: 'Token expired 2'
       })
     }
 

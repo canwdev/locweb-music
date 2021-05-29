@@ -81,7 +81,7 @@
 </template>
 
 <script lang="ts">
-import {computed, defineComponent, ref, toRefs} from 'vue';
+import {computed, defineComponent, ref, toRefs, watch} from 'vue';
 import Loading from '@/components/Loading.vue'
 import ListItem from './ListItem.vue'
 import NoData from '@/components/NoData.vue'
@@ -121,6 +121,16 @@ export default defineComponent({
     minItemSize: {
       type: Number,
       default: 40
+    }
+  },
+  watch: {
+    list() {
+      this.searchText = this.searchInput = ''
+    },
+    searchInput(val) {
+      if (!val) {
+        this.searchText = ''
+      }
     }
   },
   setup(props) {
@@ -170,9 +180,9 @@ export default defineComponent({
 
         if (index > -1) {
           // @ts-ignore
-          window.$notify.info(filteredList.value[index].filename, {
-            position: 'top',
-          })
+          // window.$notify.info(filteredList.value[index].filename, {
+          //   position: 'top',
+          // })
 
           const itemHeight = el.scrollHeight / filteredList.value.length
           el.scrollTop = index * itemHeight
@@ -190,7 +200,8 @@ export default defineComponent({
       handleSearch,
       filteredList,
       mainListEl,
-      locateItem
+      locateItem,
+      searchText
     }
   }
 })
