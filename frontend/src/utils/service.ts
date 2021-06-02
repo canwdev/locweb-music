@@ -49,8 +49,10 @@ function Service(config: Config) {
       let message = error.message
       const {response} = error || {}
       if (response) {
+        console.log('response',response)
         // @ts-ignore
         const {data: {message: msg} = {}} = response
+        console.log('msg',msg)
         if (msg) {
           message = msg
         }

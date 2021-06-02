@@ -83,7 +83,8 @@ export default defineComponent({
         })
 
       } catch (e) {
-        window.$notify.error(e.message)
+        fileList.value = []
+        // window.$notify.error(e.message)
         console.error(e)
       } finally {
         isLoading.value = false

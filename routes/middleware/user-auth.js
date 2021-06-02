@@ -9,7 +9,7 @@ const {
   authUsers
 } = require('../../config')
 
-function checkAuth(token) {
+const checkAuth = (token) => {
   if (!token) {
     return null
   }
@@ -29,6 +29,21 @@ function checkAuth(token) {
   }
 }
 
+const handleError = (error, res) => {
+  console.log(error)
+
+  if (error.message === 'jwt expired') {
+    return res.sendError({
+      code: CODE_CLIENT_FORBIDDEN,
+      message: 'Token expired (2)'
+    })
+  }
+
+  return res.status(500).send({
+    message: error.message
+  })
+}
+
 async function getUserId(req, res, next) {
   try {
     req.__userid = null
@@ -41,9 +56,7 @@ async function getUserId(req, res, next) {
 
     next()
   } catch (e) {
-    return res.status(500).send({
-      message: e.message
-    })
+    return handleError(e, res)
   }
 }
 
@@ -67,7 +80,7 @@ async function userAuth(req, res, next) {
 
       if (!hasUser) return res.sendError({
         code: CODE_CLIENT_FORBIDDEN,
-        message: 'Token expired 1'
+        message: 'Token expired (1)'
       })
 
       // 向下一级传值
@@ -79,18 +92,7 @@ async function userAuth(req, res, next) {
       })
     }
   } catch (e) {
-    console.log(e)
-
-    if (e.message === 'jwt expired') {
-      return res.sendError({
-        code: CODE_CLIENT_FORBIDDEN,
-        message: 'Token expired 2'
-      })
-    }
-
-    return res.status(500).send({
-      message: e.message
-    })
+    return handleError(e, res)
   }
 }
 
