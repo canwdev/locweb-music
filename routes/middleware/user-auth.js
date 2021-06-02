@@ -4,7 +4,6 @@ const {
 } = require('../../config/enum')
 const {
   jwtToken,
-  CODE_TOKEN_EXPIRE,
   enableAuth,
   authUsers
 } = require('../../config')
