@@ -121,7 +121,7 @@ export default defineComponent({
         const lrc = res.lrc.lyric || ''
 
         if (tlyric) {
-          lyric.value = lrc + '\n\n\n' + tlyric
+          lyric.value = tlyric + '\n\n\n' + lrc
         } else {
           lyric.value = lrc
         }
