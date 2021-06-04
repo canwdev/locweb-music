@@ -13,7 +13,7 @@ const sequelize = new Sequelize({
     acquire: 30000,
     idle: 10000
   },
-  storage: path.join(DATA_PATH, 'database.db'),
+  storage: path.join(DATA_PATH, 'locweb-music.db'),
   // disable logging; default: console.log
   logging: false
 })

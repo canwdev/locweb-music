@@ -1,4 +1,7 @@
-#git pull &&
+#git pull
+yarn config set registry https://registry.npm.taobao.org
+yarn config set disturl https://npm.taobao.org/dist
+
 yarn &&
 cd ./frontend && yarn && yarn build &&
 cd .. &&

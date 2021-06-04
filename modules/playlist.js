@@ -1,5 +1,5 @@
 const Playlist = require('../database/models/playlist')
-const PlaylistItem = require('../database/models/playlist-item')
+const Music = require('../database/models/music')
 // const Op = require('sequelize').Op
 const router = require('express').Router()
 
@@ -34,11 +34,14 @@ router.get('/list', async (req, res, next) => {
 router.post('/add', async (req, res, next) => {
   try {
     const {
-      title
+      pid,
+      title,
+      desc,
+      cover
     } = req.body
 
     if (!title) {
-      return res.sendError({message: 'title can not be empty'})
+      return res.sendError({message: 'Title can not be empty'})
     }
 
     const data = await Playlist.create({
