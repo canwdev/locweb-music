@@ -20,11 +20,16 @@ let config = {
 
 const configPath = path.join(__dirname, 'config.json')
 if (fs.existsSync(configPath)) {
-  const userConfig = require(configPath)
-  config = {
-    ...config,
-    ...userConfig
+  try {
+    const userConfig = require(configPath)
+    config = {
+      ...config,
+      ...userConfig
+    }
+  } catch (e) {
+    console.warn('config.json SyntaxError')
   }
+
 }
 
 fs.mkdirpSync(config.MUSIC_LIBRARY_PATH)

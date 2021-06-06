@@ -209,14 +209,9 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .main-list {
-  position: absolute;
   overflow: hidden;
-  top: $navbarHeight;
-  left: 0;
+  height: 100%;
   width: 100%;
-  bottom: 75px;
-  //padding: 45px 0 80px;
-  //box-sizing: border-box;
   display: flex;
   flex-direction: column;
 

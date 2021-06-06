@@ -26,7 +26,7 @@ import bus, {
   ACTION_NEXT,
   ACTION_PLAY_ENDED
 } from "@/utils/bus";
-import {LoopModeEnum, MusicItem, NavbarTabsEnum} from "@/enum";
+import {LoopModeType, MusicItem, NavbarTabsType} from "@/enum";
 
 export default defineComponent({
   name: "ListPlaying",
@@ -56,7 +56,7 @@ export default defineComponent({
 
       nextTick(() => {
         // jump to playing list
-        store.commit('setNavbarTab', NavbarTabsEnum.PLAYING)
+        store.commit('setNavbarIndex', 1)
         bus.emit(ACTION_TOGGLE_PLAY)
       })
     }
@@ -86,7 +86,7 @@ export default defineComponent({
     const playNext = () => {
       let index = playingIndex.value + 1
       if (index > playingList.value.length - 1) {
-        if (loopMode.value === LoopModeEnum.LOOP_SEQUENCE) {
+        if (loopMode.value === LoopModeType.LOOP_SEQUENCE) {
           // loop list from first
           index = 0
         } else {
@@ -98,12 +98,12 @@ export default defineComponent({
     }
     const handlePlayEnded = () => {
       // console.log('handlePlayEnded', loopMode.value)
-      if (loopMode.value === LoopModeEnum.LOOP_SINGLE) {
+      if (loopMode.value === LoopModeType.LOOP_SINGLE) {
         // single loop
         bus.emit(ACTION_TOGGLE_PLAY)
         return
       }
-      if (loopMode.value === LoopModeEnum.LOOP_REVERSE) {
+      if (loopMode.value === LoopModeType.LOOP_REVERSE) {
         // reverse play
         playPrev()
         return

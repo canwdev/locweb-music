@@ -1,6 +1,6 @@
 import {createStore} from 'vuex'
 import {MusicItem} from "@/enum";
-import {NavbarTabsEnum, LoopModeEnum} from "@/enum";
+import {NavbarTabsType, LoopModeType} from "@/enum";
 import {shuffleArray} from "@/utils";
 import bus, {
   ACTION_TOGGLE_PLAY,
@@ -18,14 +18,15 @@ const playlistBackup: Array<MusicItem> = [];
 export default createStore({
   state: {
     musicItem: new MusicItem(), // current playing music
-    navbarTab: NavbarTabsEnum.MAIN, // navbar index
+    navbarTab: NavbarTabsType.MAIN,
+    navbarIndex: 0, // 0=left, 1=right
     playingList, // current playing list
     playlistBackup, // backup original list from random mode
     playingIndex: 0, // playing music index in playingList
     playingIndexBackup: 0, // backup original index from random mode
     paused: true, // is current playing paused
     isRandom: false, // is random choose next song to play
-    loopMode: LoopModeEnum.LOOP_SEQUENCE, // music playing loop mode
+    loopMode: LoopModeType.LOOP_SEQUENCE, // music playing loop mode
     currentTime: 0,
     duration: 0,
     token: getToken(), // Authorization token
@@ -41,6 +42,9 @@ export default createStore({
     },
     setNavbarTab: (state, payload: number) => {
       state.navbarTab = payload
+    },
+    setNavbarIndex: (state, payload: number) => {
+      state.navbarIndex = payload
     },
     setPlayingList: (state, payload: Array<MusicItem>) => {
       state.playlistBackup = [...state.playingList]

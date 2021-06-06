@@ -98,7 +98,7 @@
 <script lang="ts">
 import {computed, defineComponent, ref, watch, nextTick, onMounted, onBeforeUnmount} from 'vue';
 import store from '@/store'
-import {LoopModeEnum, MusicItem} from "@/enum";
+import {LoopModeType, MusicItem} from "@/enum";
 import bus, {
   ACTION_CHANGE_CURRENT_TIME,
   ACTION_NEXT, ACTION_PREV,
@@ -169,13 +169,13 @@ export default defineComponent({
     })
     const loopIcon = computed((): object => {
       switch (loopMode.value) {
-        case LoopModeEnum.NONE:
+        case LoopModeType.NONE:
           return {name: 'arrow_forward'}
-        case LoopModeEnum.LOOP_SEQUENCE:
+        case LoopModeType.LOOP_SEQUENCE:
           return {name: 'repeat'}
-        case LoopModeEnum.LOOP_REVERSE:
+        case LoopModeType.LOOP_REVERSE:
           return {name: 'repeat', className: 'reverse-x'}
-        case LoopModeEnum.LOOP_SINGLE:
+        case LoopModeType.LOOP_SINGLE:
           return {name: 'repeat_one'}
         default:
           return {name: 'help'}
@@ -237,8 +237,8 @@ export default defineComponent({
     const switchLoopMode = () => {
       let index = loopMode.value
       ++index
-      if (index > LoopModeEnum.LOOP_SINGLE) {
-        index = LoopModeEnum.NONE
+      if (index > LoopModeType.LOOP_SINGLE) {
+        index = LoopModeType.NONE
       }
       loopMode.value = index
       showTip(loopText[index])
@@ -282,7 +282,7 @@ export default defineComponent({
 
     return {
       // data
-      LoopModeEnum,
+      LoopModeType,
       mCurrentTime,
       isSeeking,
       detailDialogVisible,

@@ -11,7 +11,7 @@ const Model = sequelize.define('playlists', {
 }, {timestamps: true})
 
 sequelize.sync({
-  force: true,
+  force: false,
   alter: true
 })
 

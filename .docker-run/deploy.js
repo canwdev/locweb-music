@@ -16,8 +16,10 @@ async function run() {
   automate.checkEnv(['node', 'yarn', 'docker'])
 
   automate.cd(projectDir)
+  automate.exec('pwd')
 
   automate.exec(`./build.sh`, '构建中...')
+  // automate.exec(`su -c ./build.sh can`, '构建中...')
 
   automate.execCommands([
     `docker build -t ${dockerImageName} .`,

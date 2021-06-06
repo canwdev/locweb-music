@@ -4,14 +4,55 @@ import {IAudioMetadata, ICommonTagsResult} from 'music-metadata/lib/type'
 export const HOST_URL = process.env.VUE_APP_API_HOST || '';
 
 // https://github.com/Binaryify/NeteaseCloudMusicApi
-export const NCM_API_URL = 'https://konsole.top:9001'
+export const NCM_API_URL = process.env.NCM_API_URL || 'https://konsole.top:9001'
 
-export enum NavbarTabsEnum {
-  MAIN = 1, // showing main list
-  PLAYING = 2 // showing playing list
+export enum NavbarTabsType {
+  MAIN = 1, // file list
+  PLAYING = 2, // playing list
+  PLAYLIST = 3, // playlist
+  ALBUMS = 4,
+  ARTISTS = 5,
+  RECENT = 6,
+  RATED = 7,
+  SEARCH = 8,
+  SETTINGS = 9,
+  RESCAN = 10,
 }
 
-export enum LoopModeEnum {
+export const NavbarTabs = {
+  [NavbarTabsType.MAIN]: {
+    icon: 'storage',
+    name: 'Files',
+    value: NavbarTabsType.MAIN,
+  },
+  [NavbarTabsType.PLAYING]: {
+    icon: 'audiotrack',
+    name: 'Playing',
+    value: NavbarTabsType.PLAYING,
+  },
+  [NavbarTabsType.PLAYLIST]: {
+    icon: 'queue_music',
+    name: 'Playlist',
+    value: NavbarTabsType.PLAYLIST,
+  },
+  [NavbarTabsType.ALBUMS]: {name: 'Albums', icon: 'album', value: NavbarTabsType.ALBUMS, disabled: true},
+  [NavbarTabsType.ARTISTS]: {name: 'Artists', icon: 'mic', value: NavbarTabsType.ARTISTS, disabled: true},
+  [NavbarTabsType.RECENT]: {name: 'Recent', icon: 'history', value: NavbarTabsType.RECENT, disabled: true},
+  [NavbarTabsType.RATED]: {name: 'Rated', icon: 'stars', value: NavbarTabsType.RATED, disabled: true},
+  [NavbarTabsType.SEARCH]: {name: 'Search', icon: 'search', value: NavbarTabsType.SEARCH, disabled: true},
+}
+
+export const DrawerMenuTabItems = [
+  NavbarTabs[NavbarTabsType.MAIN],
+  NavbarTabs[NavbarTabsType.PLAYLIST],
+  NavbarTabs[NavbarTabsType.ALBUMS],
+  NavbarTabs[NavbarTabsType.ARTISTS],
+  NavbarTabs[NavbarTabsType.RECENT],
+  NavbarTabs[NavbarTabsType.RATED],
+  NavbarTabs[NavbarTabsType.SEARCH],
+]
+
+export enum LoopModeType {
   NONE = 1, // Play stops after last track
   LOOP_SEQUENCE = 2, // Sequence play
   LOOP_REVERSE = 3,  // Reverse play

@@ -90,6 +90,7 @@ export default defineComponent({
     background: $border-color;
     outline: none;
     border-radius: 2px;
+    box-shadow: none;
 
     &::-webkit-slider-thumb {
       position: relative;

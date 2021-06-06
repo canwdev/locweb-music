@@ -8,14 +8,24 @@ const router = require('express').Router()
  */
 router.get('/list', async (req, res, next) => {
   try {
-    const {offset, limit} = req.query
+    const {
+      pid,
+      offset,
+      limit
+    } = req.query
     let paginationQuery = limit ? {
       offset: parseInt(offset) || 0,
       limit: parseInt(limit),
     } : {}
 
+    const where = {}
+    if (pid) {
+      where.pid = Number(pid)
+    }
+
     let result = await Playlist.findAndCountAll({
       ...paginationQuery,
+      where,
       order: [
         // ['sort', 'ASC'],
         ['id', 'DESC'],
@@ -45,7 +55,10 @@ router.post('/add', async (req, res, next) => {
     }
 
     const data = await Playlist.create({
-      title
+      title,
+      pid: Number(pid) || -1,
+      desc,
+      cover
     })
 
     return res.sendData(data)

@@ -12,7 +12,8 @@ router.get('/', async (req, res, next) => {
     res.sendData({
       name: pkg.name,
       version: pkg.version,
-      author: pkg.author
+      author: pkg.author,
+      repository: pkg.repository,
     })
   } catch (error) {
     next(error)

@@ -1,16 +1,19 @@
 <template>
   <DrawerMenu
-    v-model:visible="isShowMenu"
+      v-model:visible="isShowMenu"
   />
 
   <div class="navbar flex">
     <button class="btn-no-style btn-menu" @click="isShowMenu = true"><i class="material-icons">menu</i></button>
     <button
-        v-for="item in tabs"
+        v-for="(item, index) in tabs"
         :key="item.value"
-        @click="navbarTab = item.value"
-        :class="{active: item.value === navbarTab}"
-        class="btn-no-style btn-tab">{{ item.name }}</button>
+        @click="navbarIndex = index"
+        :class="{active: index === navbarIndex}"
+        class="btn-no-style btn-tab">
+      <span v-if="item.icon" class="material-icons">{{ item.icon }}</span>
+      {{ item.name }}
+    </button>
   </div>
 </template>
 
@@ -19,7 +22,10 @@ import {defineComponent, ref, computed} from 'vue';
 import store from '@/store'
 
 import DrawerMenu from "@/components/DrawerMenu.vue";
-import {NavbarTabsEnum} from "@/enum";
+import {
+  NavbarTabsType,
+  NavbarTabs
+} from "@/enum";
 
 export default defineComponent({
   name: 'NavBar',
@@ -38,13 +44,28 @@ export default defineComponent({
       }
     })
 
+    const navbarIndex = computed({
+      get() {
+        return store.state.navbarIndex
+      },
+      set(val) {
+        store.commit('setNavbarIndex', val)
+      }
+    })
+
+    const tabs = computed(() => {
+      return [
+        // @ts-ignore
+        NavbarTabs[navbarTab.value],
+        NavbarTabs[NavbarTabsType.PLAYING],
+      ]
+    })
+
     return {
       isShowMenu,
-      tabs: [
-        {name: 'Files', value: NavbarTabsEnum.MAIN},
-        {name: 'Playing', value: NavbarTabsEnum.PLAYING},
-      ],
-      navbarTab
+      tabs,
+      navbarTab,
+      navbarIndex
     }
   }
 });
@@ -68,6 +89,10 @@ export default defineComponent({
 
   .btn-tab {
     flex: 1;
+    .material-icons {
+      font-size: 16px;
+      margin-right: 5px;
+    }
   }
 
   & > button {

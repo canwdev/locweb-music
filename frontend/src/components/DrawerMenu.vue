@@ -21,8 +21,9 @@
           <div v-if="item.subtitle" class="subtitle">{{ item.name }}</div>
           <button
               v-else
-              :disabled="item.disabled"
+              v-show="!item.disabled"
               class="btn-no-style menu-item flex items-center"
+              :class="{active: item.active}"
               @click="item.action && item.action()"
           >
             <span v-if="item.icon" class="material-icons">{{ item.icon }}</span> <span
@@ -30,7 +31,6 @@
           </button>
         </template>
 
-        <div class="subtitle">Settings</div>
         <button
             class="btn-no-style menu-item flex items-center"
             @click="toggleDarkTheme"
@@ -65,6 +65,7 @@ import router from '@/router'
 import store from "@/store";
 import ModalDialog from '@/components/ModalDialog.vue'
 import LoginPrompt from '@/components/LoginPrompt.vue'
+import {DrawerMenuTabItems} from "@/enum";
 
 export default defineComponent({
   name: 'DrawerMenu',
@@ -87,35 +88,52 @@ export default defineComponent({
       return store.state.token
     })
 
+    const navbarTab = computed({
+      get() {
+        return store.state.navbarTab
+      },
+      set(val) {
+        store.commit('setNavbarTab', val)
+      }
+    })
+
+    const itemAbout = {
+      name: 'About', icon: 'info', action: () => {
+        router.push({
+          name: 'About'
+        })
+      }
+    }
     const menuList = computed(() => {
+      const itemLogin = !token.value ? {
+        name: 'Login', icon: 'account_circle', action: () => {
+          isShowLogin.value = true
+        }
+      } : {
+        name: 'Logout', icon: 'logout', action: () => {
+          store.commit('setToken', null)
+        }
+      }
+
+      const tabItems = DrawerMenuTabItems.map(item => {
+        return {
+          ...item,
+          active: navbarTab.value === item.value,
+          action: () => {
+            navbarTab.value = item.value
+            mVisible.value = false
+          }
+        }
+      })
+
       return [
         {name: 'Music', subtitle: true},
-        {name: 'File System', icon: 'storage'},
-        {name: 'Playlists', icon: 'queue_music', disabled: true},
-        // {name: 'Albums', icon: 'album'},
-        // {name: 'Artists', icon: 'mic'},
-        // {name: 'Recent', icon: 'history'},
-        // {name: 'Rated', icon: 'stars'},
-        // {name: 'Search', icon: 'search'},
+        ...tabItems,
         {name: 'System', subtitle: true},
-        // {name: 'Settings', icon: 'settings'},
-        !token.value ? {
-          name: 'Login', icon: 'account_circle', action: () => {
-            isShowLogin.value = true
-          }
-        } : {
-          name: 'Logout', icon: 'logout', action: () => {
-            store.commit('setToken', null)
-          }
-        },
-        // {name: 'Rescan Media', icon: 'loop'},
-        {
-          name: 'About', icon: 'info', action: () => {
-            router.push({
-              name: 'About'
-            })
-          }
-        },
+        {name: 'Settings', icon: 'settings', disabled: true},
+        {name: 'Rescan Media', icon: 'loop', disabled: true},
+        itemLogin,
+        itemAbout,
       ]
     })
 
@@ -189,6 +207,9 @@ export default defineComponent({
       padding: 0 10px;
       font-weight: bold;
       background: $grey-3;
+      position: sticky;
+      top: 0;
+      left: 0;
 
       .menu-icon {
         margin-right: 4px;
@@ -204,16 +225,29 @@ export default defineComponent({
       font-size: 12px;
       font-weight: bold;
       background: $grey-3;
+      position: sticky;
+      top: 40px;
+      left: 0;
     }
 
     .menu-item {
       & + .menu-item {
         border-top: 1px solid $border-color;
       }
+
       width: 100%;
       line-height: 40px;
       text-align: left;
       padding: 0 10px;
+
+      &.active {
+        background: $primary;
+        color: white;
+
+        .material-icons {
+          color: white;
+        }
+      }
 
       .material-icons {
         color: $primary;

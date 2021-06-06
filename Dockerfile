@@ -5,6 +5,6 @@ RUN node -v
 
 RUN pwd
 #RUN ./build.sh
-ADD dists.tar /dist
+ADD dist.tar /app
 
-CMD npm start --prefix /dist
+CMD npm start --prefix /app
