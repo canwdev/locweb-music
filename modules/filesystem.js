@@ -73,7 +73,7 @@ router.get('/list', getUserId, async (req, res, next) => {
     const _folders = [], _files = []
     if (!showHiddenFiles) {
       files = files.filter(name => {
-        return !/^\./.test(name) && name !== '@eaDir'
+        return !/\.db$/.test(name) && !/^\./.test(name) && name !== '@eaDir'
       })
     }
     files.forEach((name, index) => {
