@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize')
 const path = require('path')
 const {
-  DATA_PATH
+  MUSIC_LIBRARY_PATH
 } = require('../config')
 
 const sequelize = new Sequelize({
@@ -13,7 +13,7 @@ const sequelize = new Sequelize({
     acquire: 30000,
     idle: 10000
   },
-  storage: path.join(DATA_PATH, 'locweb-music.db'),
+  storage: path.join(MUSIC_LIBRARY_PATH, 'locweb-music.db'),
   // disable logging; default: console.log
   logging: false
 })
