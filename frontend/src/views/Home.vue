@@ -7,8 +7,12 @@
         @click="navbarIndex=0"
         v-show="isLeftPanel"
     >
-      <ListFilesystem
-      />
+      <component
+          :is="NavbarTabs[navbarTab].componentName"
+      ></component>
+
+<!--      <ListFilesystem v-if="navbarTab === NavbarTabsType.MAIN"/>
+      <ListPlaylist v-if="navbarTab === NavbarTabsType.PLAYLIST"/>-->
     </div>
     <div
         class="panel-item right-panel"
@@ -28,6 +32,7 @@
 <script lang="ts">
 import {
   defineComponent,
+  defineAsyncComponent,
   computed,
 } from 'vue';
 import store from '@/store'
@@ -35,16 +40,37 @@ import store from '@/store'
 import Navbar from '@/components/Navbar.vue';
 import Actionbar from '@/components/Actionbar.vue';
 import ListPlaying from "@/components/ListPlaying.vue";
-import ListFilesystem from "@/components/ListFilesystem.vue";
-import {NavbarTabsType} from "@/enum";
+// import ListPlaylist from "@/components/ListPlaylist.vue";
+// import ListFilesystem from "@/components/ListFilesystem.vue";
+import {
+  NavbarTabsType,
+  NavbarTabs
+} from "@/enum";
+
+// Dynamic child components
+const dynamicImportComponents = {}
+
+for (const key in NavbarTabs) {
+  const item = NavbarTabs[key]
+  if (!item.componentName) {
+    continue
+  }
+  dynamicImportComponents[item.componentName] = defineAsyncComponent(() =>
+      import(`@/components/${item.componentName}.vue`)
+  )
+}
+
+console.log('dynamicImportComponents',dynamicImportComponents)
 
 export default defineComponent({
   name: 'Home',
   components: {
     Navbar,
     Actionbar,
-    ListFilesystem,
-    ListPlaying
+    ListPlaying,
+    // ListFilesystem,
+    // ListPlaylist,
+    ...dynamicImportComponents
   },
   setup() {
     const navbarTab = computed(() => store.state.navbarTab)
@@ -62,6 +88,8 @@ export default defineComponent({
 
     return {
       navbarTab,
+      NavbarTabsType,
+      NavbarTabs,
       navbarIndex,
       isLeftPanel,
       themeClass: computed(() => store.getters.themeClass)

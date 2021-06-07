@@ -24,22 +24,50 @@ export const NavbarTabs = {
     icon: 'storage',
     name: 'Files',
     value: NavbarTabsType.MAIN,
+    componentName: 'ListFilesystem',
   },
   [NavbarTabsType.PLAYING]: {
     icon: 'audiotrack',
     name: 'Playing',
     value: NavbarTabsType.PLAYING,
+    componentName: 'ListPlaying',
   },
   [NavbarTabsType.PLAYLIST]: {
     icon: 'queue_music',
     name: 'Playlist',
     value: NavbarTabsType.PLAYLIST,
+    componentName: 'ListPlaylist',
   },
-  [NavbarTabsType.ALBUMS]: {name: 'Albums', icon: 'album', value: NavbarTabsType.ALBUMS, disabled: true},
-  [NavbarTabsType.ARTISTS]: {name: 'Artists', icon: 'mic', value: NavbarTabsType.ARTISTS, disabled: true},
-  [NavbarTabsType.RECENT]: {name: 'Recent', icon: 'history', value: NavbarTabsType.RECENT, disabled: true},
-  [NavbarTabsType.RATED]: {name: 'Rated', icon: 'stars', value: NavbarTabsType.RATED, disabled: true},
-  [NavbarTabsType.SEARCH]: {name: 'Search', icon: 'search', value: NavbarTabsType.SEARCH, disabled: true},
+  [NavbarTabsType.ALBUMS]: {
+    name: 'Albums',
+    icon: 'album',
+    value: NavbarTabsType.ALBUMS,
+    disabled: true
+  },
+  [NavbarTabsType.ARTISTS]: {
+    name: 'Artists',
+    icon: 'mic',
+    value: NavbarTabsType.ARTISTS,
+    disabled: true
+  },
+  [NavbarTabsType.RECENT]: {
+    name: 'Recent',
+    icon: 'history',
+    value: NavbarTabsType.RECENT,
+    disabled: true
+  },
+  [NavbarTabsType.RATED]: {
+    name: 'Rated',
+    icon: 'stars',
+    value: NavbarTabsType.RATED,
+    disabled: true
+  },
+  [NavbarTabsType.SEARCH]: {
+    name: 'Search',
+    icon: 'search',
+    value: NavbarTabsType.SEARCH,
+    disabled: true
+  },
 }
 
 export const DrawerMenuTabItems = [
