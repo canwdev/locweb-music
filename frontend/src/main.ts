@@ -12,8 +12,11 @@ import 'normalize.css'
 import './style/tools.sass'
 import './style/base.scss'
 
+import TkTree from './components/Tree'
+
 createApp(App)
   .use(store)
   .use(router)
   .use(VueVirtualScroller)
+  .use(TkTree)
   .mount('#app')
