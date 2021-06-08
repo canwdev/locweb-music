@@ -1,16 +1,17 @@
 <template>
   <div class="tk-tree-item tree-bg-line" :class="{'is-last': isLast}">
     <div
-      class="tree-item-title tree-bg-line"
-      :class="{'is-last': isLast, 'is-selected': isSelected}"
-      :title="item.name"
-      @click="handleClick"
-      @dblclick="handleToggleOpen"
+        class="tree-item-title tree-bg-line"
+        :class="{'is-last': isLast, 'is-selected': isSelected}"
+        :title="item.name"
+        @click="handleClick"
+        @dblclick="handleToggleOpen"
     >
       <img v-if="item.isLoading" src="./images/loading.gif" class="loading-img">
       <div
-        v-else-if="isFolder && !isFolderEmpty"
-        @click.stop="handleToggleOpen"
+          class="flex"
+          v-else-if="isFolder && !isFolderEmpty"
+          @click.stop="handleToggleOpen"
       >
         <img v-if="item.isOpen" class="node-open-close" src="./images/line-node-open.png">
         <img v-else class="node-open-close" src="./images/line-node-close.png">
@@ -18,29 +19,42 @@
       <img v-else src="./images/line-node.png">
 
       <div class="title-inner">
-        <img v-if="isFolder" src="./images/folder.png">
-        <img v-else src="./images/file.png">
+        <slot name="icon" :item="item">
+          <img v-if="isFolder" src="./images/folder.png">
+          <img v-else src="./images/file.png">
+        </slot>
 
-        {{ item.name }}
+        <span class="title text-overflow">{{ item.title }}</span>
+        <span class="append">
+          <slot name="append" :item="item"></slot>
+        </span>
       </div>
     </div>
-    <div v-show="item.isOpen" v-if="isFolder">
+    <div class="tree-item-sub" v-show="item.isOpen" v-if="isFolder">
       <TkTreeItem
-        v-for="(child, index) in item.children"
-        :key="index"
-        class="item"
-        :item="child"
-        :selected="selected"
-        :is-last="index === item.children.length - 1"
-        @onItemClick="$emit('onItemClick', $event)"
-        @onItemLazyLoad="$emit('onItemLazyLoad', $event)"
-      ></TkTreeItem>
+          v-for="(child, index) in item.children"
+          :key="index"
+          class="item"
+          :item="child"
+          :selected-id="selectedId"
+          :is-last="index === item.children.length - 1"
+          @onItemClick="$emit('onItemClick', $event)"
+          @onItemLazyLoad="$emit('onItemLazyLoad', $event)"
+      >
+        <template v-slot:icon="{item}">
+          <slot name="icon" :item="item"></slot>
+        </template>
+        <template v-slot:append="{item}">
+          <slot name="append" :item="item"></slot>
+        </template>
+      </TkTreeItem>
     </div>
   </div>
 </template>
 
 <script>
 import {reactive} from 'vue'
+
 export default {
   name: 'TkTreeItem',
   props: {
@@ -55,7 +69,7 @@ export default {
       default: true
     },
     // 当前选中节点 id
-    selected: {
+    selectedId: {
       type: [Number, String],
       default: null
     }
@@ -63,7 +77,7 @@ export default {
   computed: {
     // 是否为文件夹（或懒加载项）
     isFolder() {
-      return this.item.lazy || this.item.children
+      return this.item.isLazy || this.item.children
     },
     // 是否为空文件夹
     isFolderEmpty() {
@@ -71,7 +85,7 @@ export default {
     },
     // 当前节点是否选中
     isSelected() {
-      return this.item.id === this.selected
+      return this.item.id === this.selectedId
     }
   },
   created() {
@@ -90,7 +104,7 @@ export default {
      * isOpen boolean 强制打开或关闭
      */
     handleToggleOpen({isOpen} = {}) {
-      if (this.item.lazy && !this.item.isLoading) {
+      if (this.item.isLazy && !this.item.isLoading) {
         this.item.isLoading = true
         this.$emit('onItemLazyLoad', this.lazyLoad())
       } else if (this.item.children) {
@@ -115,7 +129,7 @@ export default {
           this.item.children = reactive(children)
           this.item.isOpen = true
           this.item.isLoading = false
-          this.item.lazy = false
+          this.item.isLazy = false
         },
         fail: () => {
           console.error('lazyLoad fail')
@@ -127,7 +141,8 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>.tree-bg-line {
+<style lang="scss" scoped>
+.tree-bg-line {
   background-repeat: repeat-y;
   background-image: url("./images/line.png");
 
@@ -145,6 +160,9 @@ export default {
     margin-left: 32px;
   }
 
+  .tree-item-sub {
+  }
+
   .tree-item-title {
     display: flex;
     align-items: center;
@@ -154,9 +172,16 @@ export default {
       flex: 1;
       display: flex;
       align-items: center;
-      border-radius: 3px;
-      padding-right: 5px;
-      margin-right: 5px;
+      justify-content: space-between;
+      border-radius: 4px;
+      padding: 0 2px;
+      margin-right: 4px;
+      height: 32px;
+
+      .title {
+        margin-left: 4px;
+        flex: 1;
+      }
     }
 
     &.is-selected {
@@ -168,7 +193,6 @@ export default {
     .loading-img {
       margin-left: 8px;
       margin-right: 8px;
-      background: white;
       flex-shrink: 0;
     }
 

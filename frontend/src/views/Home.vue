@@ -60,8 +60,6 @@ for (const key in NavbarTabs) {
   )
 }
 
-console.log('dynamicImportComponents',dynamicImportComponents)
-
 export default defineComponent({
   name: 'Home',
   components: {

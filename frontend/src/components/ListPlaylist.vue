@@ -2,52 +2,45 @@
   <div class="list-playlist">
     <TkTree
         :nodes="treeData"
-        :selected="selected"
+        :selected-id="selected && selected.id"
         @onItemClick="handleClick"
         @onItemLazyLoad="handleLazyLoad"
-    />
+    >
+      <template v-slot:icon>
+        <span class="material-icons">folder</span>
+      </template>
+      <template v-slot:append="{item}">
+        <div @click.stop>
+          {{item.id}}
+          <button class="btn-styled" @click="handleAdd(item)">add</button>
+          <button class="btn-styled" @click="handleDel(item)">del</button>
+        </div>
+      </template>
+    </TkTree>
+
   </div>
 </template>
 
 <script lang="ts">
 import {defineComponent, ref} from "vue";
 import TreeNode from '@/components/Tree/tree-node.js'
+import {
+  getPlaylist,
+  addPlaylist
+} from "@/api/playlist";
 
 export default defineComponent({
   name: 'ListPlaylist',
   setup() {
-    const treeData = ref(new TreeNode({
-      name: 'My Tree',
-      children: [
-        {
-          name: 'hello'
-        },
-        {
-          name: 'wat'
-        },
-        {
-          name: 'New Lazy Folder New Lazy Folder New Lazy Folder',
-          lazy: true
-        },
-        {
-          name: 'child folder',
-          children: [
-            {
-              name: 'child folder',
-              children: [{name: 'hello'}, {name: 'wat'}].map(i => new TreeNode(i))
-            },
-            {
-              name: 'child folder',
-              children: [{name: 'hello'}, {name: 'wat'}].map(i => new TreeNode(i))
-            },
-            {name: 'hello'},
-            {name: 'wat'}
-          ].map(i => new TreeNode(i))
-        }
-      ].map(i => new TreeNode(i))
-    }))
-    const selected = ref(null)
-    const breadcrumbList = ref<Array<string>>([])
+    const root = new TreeNode({
+      title: 'Playlist',
+      isLazy: true,
+      id: -1,
+    })
+    const treeData = ref(root)
+    const selected = ref<TreeNode|null>(root)
+    const isLoading = ref<boolean>(false)
+    // const breadcrumbList = ref<Array<string>>([])
 
     let nodePathArray: TreeNode[] = []
 
@@ -85,7 +78,7 @@ export default defineComponent({
     }
 
     const getNodePathById = (id) => {
-      id = id !== undefined ? id : selected.value
+      id = id !== undefined ? id : selected.value.id
       const rootNode = treeData.value
       if (id === rootNode.id) {
         return []
@@ -94,38 +87,65 @@ export default defineComponent({
     }
 
     const handleClick = (node) => {
-      selected.value = node.id
-      console.log('handleClick', node)
+      selected.value = node
+      // console.log('handleClick', node)
       // const list = getNodePathById(node.id)
       // breadcrumbList.value = [treeData.value, ...list].map(item => item.name)
     }
 
-    return {
+    const handleLazyLoad = async ({node, key, done, fail}) => {
+
+      const {list} = await getPlaylist({
+        pid: node.id
+      })
+      console.log('handleLazyLoad', node, key)
+      console.log('list',list)
+
+      done(list.map(i => {
+        return new TreeNode({
+          ...i,
+          isLazy: true,
+          id: i.id
+        })
+      }))
+    }
+
+    const handleAdd = async (item) => {
+      try {
+        const pid = item.id
+        const title = prompt(`Add Playlist under ${pid}`, 'Playlist' + Date.now())
+        if (!title) {
+          return
+        }
+        isLoading.value = true
+        const res = await addPlaylist({
+          pid,
+          title
+        })
+        item.isLazy = true
+        console.log('ok', res)
+        item.toggleOpen()
+      } catch (e) {
+        console.error(e)
+      } finally {
+        isLoading.value = false
+      }
+    }
+
+    const handleDel = async (item) => {
+      const flag = confirm(`WARNING!! Delete 《${item.title}》?\nThis operation cannot be undone.`)
+      if (!flag) {
+        return
+      }
+    }
+
+      return {
       selected,
       treeData,
       handleClick,
-      handleLazyLoad({node, key, done, fail}) {
-        console.log('handleLazyLoad', node, key)
-        setTimeout(() => {
-          // fail()
-          done([
-            {name: 'hello'},
-            {
-              name: 'New Lazy Folder New Lazy Folder New Lazy Folder',
-              lazy: true
-            },
-            {name: 'wat'},
-            {
-              name: 'Empty Folder',
-              children: []
-            },
-            {
-              name: 'Lazy',
-              lazy: true
-            }
-          ].map(i => new TreeNode(i)))
-        }, 500)
-      }
+      handleLazyLoad,
+      handleAdd,
+      handleDel,
     }
   }
 })

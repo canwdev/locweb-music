@@ -2,6 +2,10 @@ const Playlist = require('../database/models/playlist')
 const Music = require('../database/models/music')
 // const Op = require('sequelize').Op
 const router = require('express').Router()
+const {
+  userAuth,
+  getUserId
+} = require('../routes/middleware/user-auth')
 
 /**
  * Get playlists
@@ -41,7 +45,7 @@ router.get('/list', async (req, res, next) => {
   }
 })
 
-router.post('/add', async (req, res, next) => {
+router.post('/add', userAuth, async (req, res, next) => {
   try {
     const {
       pid,

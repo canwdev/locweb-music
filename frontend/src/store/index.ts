@@ -18,7 +18,7 @@ const playlistBackup: Array<MusicItem> = [];
 export default createStore({
   state: {
     musicItem: new MusicItem(), // current playing music
-    navbarTab: NavbarTabsType.MAIN,
+    navbarTab: NavbarTabsType.PLAYLIST,
     navbarIndex: 0, // 0=left, 1=right
     playingList, // current playing list
     playlistBackup, // backup original list from random mode
