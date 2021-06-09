@@ -47,7 +47,10 @@ export default {
   mounted() {
     // 自动打开第一个节点
     this.$refs.treeFirstItem.handleClick()
-  }
+  },
+  // methods() {
+  //
+  // }
 }
 </script>
 

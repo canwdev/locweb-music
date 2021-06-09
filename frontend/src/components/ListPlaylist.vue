@@ -3,7 +3,7 @@
     <TkTree
         :nodes="treeData"
         :selected-id="selected && selected.id"
-        @onItemClick="handleItemClick"
+        @onItemClick="handleNodeClick"
         @onItemLazyLoad="handleLazyLoad"
     >
       <template v-slot:icon="{data}">
@@ -11,13 +11,14 @@
         <span v-else class="material-icons">audiotrack</span>
       </template>
       <template v-slot:title="{item}">
-        {{item.data.title}}
+        {{ item.data.title }}
       </template>
       <template v-slot:append="{item}">
         <div @click.stop>
-          {{item.data.id}}
+          {{ item.id }}
+          <button class="btn-styled" @click="logNode(item)">{{ item.data.id }}</button>
           <button class="btn-styled" @click="handleAdd(item)">add</button>
-          <button class="btn-styled" @click="handleDel(item)">del</button>
+          <button v-if="item.parent" class="btn-styled" @click="handleDel(item)">del</button>
         </div>
       </template>
     </TkTree>
@@ -44,80 +45,32 @@ export default defineComponent({
       }
     })
     const treeData = ref(root)
-    const selected = ref<TreeNode|null>(root)
+    const selected = ref<TreeNode | null>(root)
     const isLoading = ref<boolean>(false)
-    // const breadcrumbList = ref<Array<string>>([])
 
-    let nodePathArray: TreeNode[] = []
-
-    const getNodePath = (node: TreeNode, key, value) => {
-      nodePathArray.push(node)
-
-      // 找到符合条件的节点，通过throw终止掉递归
-      if (node[key] === value) {
-        // 也可以直接使用return;结束循环
-        throw new Error('over!')
-      }
-      if (node.children && node.children.length > 0) {
-        for (let i = 0; i < node.children.length; i++) {
-          getNodePath(node.children[i], key, value)
-        }
-        // 当前节点的子节点遍历完依旧没找到，则删除路径中的该节点
-        nodePathArray.pop()
-      } else {
-        // 找到叶子节点时，删除路径当中的该叶子节点
-        nodePathArray.pop()
-      }
-    }
-
-    // 获取指定节点的路径数组
-    const getPathByKey = (value, key, arr) => {
-      // 用于存储节点唯一标识值路径数组
-      nodePathArray = []
-      try {
-        for (let i = 0; i < arr.length; i++) {
-          getNodePath(arr[i], key, value)
-        }
-      } catch (e) {
-        return nodePathArray
-      }
-    }
-
-    const getNodePathById = (id) => {
-      id = id !== undefined ? id : selected.value.id
-      const rootNode = treeData.value
-      if (id === rootNode.id) {
-        return []
-      }
-      return getPathByKey(id, 'id', rootNode.children)
-    }
-
-    const handleItemClick = (node) => {
+    const handleNodeClick = (node) => {
       selected.value = node
-      // console.log('handleItemClick', node)
-      // const list = getNodePathById(node.id)
-      // breadcrumbList.value = [treeData.value, ...list].map(item => item.name)
     }
 
-    const handleLazyLoad = async ({node, key, done, fail}) => {
-
-      const {list} = await getPlaylist({
-        pid: node.data.id
-      })
-      console.log('handleLazyLoad', node, key)
-      console.log('list',list)
-
-      done(list.map(i => {
-        return new TreeNode({
-          isLazy: true,
-          data: i
-        })
-      }))
-    }
-
-    const handleAdd = async (item) => {
+    const handleLazyLoad = async ({node, done, fail}) => {
       try {
-        const pid = item.data.id
+        const {list} = await getPlaylist({
+          pid: node.data.id
+        })
+        done(list.map(i => {
+          return new TreeNode({
+            isLazy: true,
+            data: i
+          })
+        }))
+      } catch (e) {
+        fail(e)
+      }
+    }
+
+    const handleAdd = async (node) => {
+      try {
+        const pid = node.data.id
         const title = prompt(`Add Playlist under ${pid}`, 'Playlist' + Date.now())
         if (!title) {
           return
@@ -127,9 +80,14 @@ export default defineComponent({
           pid,
           title
         })
-        item.isLazy = true
-        console.log('ok', res)
-        item.$click()
+        // console.log('ok', res)
+        node.prependChild(new TreeNode({
+          isLazy: true,
+          data: res,
+          parent: node
+        }))
+        // node.isLazy = true
+        // node.$click()
       } catch (e) {
         console.error(e)
       } finally {
@@ -142,15 +100,22 @@ export default defineComponent({
       if (!flag) {
         return
       }
+      if (item.parent) {
+        const res = item.parent.removeChild(item);
+        console.log(res)
+      }
     }
 
-      return {
+    return {
       selected,
       treeData,
-      handleItemClick,
+      handleNodeClick,
       handleLazyLoad,
       handleAdd,
       handleDel,
+      logNode(n) {
+        console.log(n)
+      }
     }
   }
 })

@@ -4,10 +4,10 @@ const sequelize = require('../sequelize')
 // Table schema
 const Model = sequelize.define('playlists', {
   pid: {type: Sequelize.NUMBER, allowNull: false, defaultValue: -1},
-  title: Sequelize.STRING,
-  desc: Sequelize.STRING,
-  cover: Sequelize.STRING,
-  sort: Sequelize.NUMBER,
+  title: {type: Sequelize.STRING, defaultValue: ''},
+  desc: {type: Sequelize.STRING, defaultValue: ''},
+  cover: {type: Sequelize.STRING, defaultValue: ''},
+  sort: {type: Sequelize.NUMBER, defaultValue: ''},
 }, {timestamps: true})
 
 sequelize.sync({
