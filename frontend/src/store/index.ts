@@ -18,7 +18,6 @@ const playlistBackup: Array<MusicItem> = [];
 export default createStore({
   state: {
     musicItem: new MusicItem(), // current playing music
-    navbarTab: NavbarTabsType.PLAYLIST,
     navbarIndex: 0, // 0=left, 1=right
     playingList, // current playing list
     playlistBackup, // backup original list from random mode
@@ -34,14 +33,19 @@ export default createStore({
   },
   getters: {
     isDarkTheme: state => state.settings.isDarkTheme,
+    navbarTab: state => state.settings.navbarTab,
     themeClass: state => state.settings.isDarkTheme ? 'bg-dark' : 'bg-light'
   },
   mutations: {
     setMusicItem: (state, payload: MusicItem) => {
       state.musicItem = payload
     },
-    setNavbarTab: (state, payload: number) => {
-      state.navbarTab = payload
+    setNavbarTab(state, payload: number) {
+      // @ts-ignore
+      this.commit('updateSettings', {
+        key: 'navbarTab',
+        value: payload
+      })
     },
     setNavbarIndex: (state, payload: number) => {
       state.navbarIndex = payload

@@ -71,7 +71,7 @@ export default defineComponent({
     ...dynamicImportComponents
   },
   setup() {
-    const navbarTab = computed(() => store.state.navbarTab)
+    const navbarTab = computed(() => store.getters.navbarTab)
 
     const navbarIndex = computed({
       get() {

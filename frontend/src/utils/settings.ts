@@ -1,8 +1,11 @@
+import {NavbarTabsType} from "@/enum";
+
 const LS_KEY = 'LS_KEY_LOCWEB_SETTINGS'
 
 const defaultSettings = {
   isDarkTheme: true,
-  ncmApi: null
+  ncmApi: null,
+  navbarTab: NavbarTabsType.PLAYLIST
 }
 
 export function loadSettings() {
