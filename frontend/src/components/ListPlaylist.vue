@@ -11,15 +11,13 @@
         <span v-else class="material-icons">audiotrack</span>
       </template>
       <template v-slot:title="{item}">
-        {{ item.data.title }}
+        {{ item.data.title }} | {{ item.id }} |
+        <button class="btn-no-style" @click="logNode(item)">{{ item.data.id }}</button>
       </template>
       <template v-slot:append="{item}">
-        <div @click.stop>
-          {{ item.id }}
-          <button class="btn-styled" @click="logNode(item)">{{ item.data.id }}</button>
-          <button class="btn-styled" @click="handleAdd(item)">add</button>
-          <button v-if="item.parent" class="btn-styled" @click="handleDel(item)">del</button>
-        </div>
+        <button class="btn-no-style" @click="handleAdd(item)" title="Add"><i class="material-icons">add</i></button>
+        <button v-if="item.parent" class="btn-no-style" @click="handleDel(item)" title="Delete"><i
+            class="material-icons">delete</i></button>
       </template>
     </TkTree>
 
@@ -31,7 +29,8 @@ import {defineComponent, ref} from "vue";
 import TreeNode from '@/components/Tree/tree-node.js'
 import {
   getPlaylist,
-  addPlaylist
+  addPlaylist,
+  deletePlaylist
 } from "@/api/playlist";
 
 export default defineComponent({
@@ -96,13 +95,24 @@ export default defineComponent({
     }
 
     const handleDel = async (item) => {
-      const flag = confirm(`WARNING!! Delete 《${item.data.id}》?\nThis operation cannot be undone.`)
+      if (!item.parent) {
+        return
+      }
+      const flag = confirm(`WARNING!! Delete 《${item.data.title}》 and its sub?\nThis operation cannot be undone.`)
       if (!flag) {
         return
       }
-      if (item.parent) {
-        const res = item.parent.removeChild(item);
-        console.log(res)
+      isLoading.value = true
+      try {
+        const count = await deletePlaylist({
+          id: item.data.id
+        })
+        item.parent.removeChild(item)
+        window.$notify.success(`Playlist deleted (${count})`)
+      } catch (e) {
+        console.error(e)
+      } finally {
+        isLoading.value = false
       }
     }
 

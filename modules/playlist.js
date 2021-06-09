@@ -71,4 +71,44 @@ router.post('/add', userAuth, async (req, res, next) => {
   }
 })
 
+/**
+ * Delete recursively
+ */
+router.post('/delete', userAuth, async (req, res, next) => {
+  try {
+    const {
+      id,
+    } = req.body
+    if (!id) {
+      return res.sendError({message: 'id can not be empty'})
+    }
+
+    const findList = []
+    const recursiveFind = async (id) => {
+      const list = await Playlist.findAll({
+        where: {pid: id}
+      })
+
+      for (const key in list) {
+        const node = list[key]
+        findList.push(node)
+        await recursiveFind(node.id)
+        // TODO: Delete musics
+      }
+    }
+    await recursiveFind(id)
+
+    const ids = findList.map(item => item.id)
+    const result = await Playlist.destroy({
+      where: {
+        id: [id, ...ids]
+      }
+    })
+
+    return res.sendData(result)
+  } catch (error) {
+    next(error)
+  }
+})
+
 module.exports = router

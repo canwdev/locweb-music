@@ -14,3 +14,7 @@ export function getPlaylist(params?: object) {
 export function addPlaylist(params?: object) {
   return service.post('/add', params)
 }
+
+export function deletePlaylist(params?: object) {
+  return service.post('/delete', params)
+}

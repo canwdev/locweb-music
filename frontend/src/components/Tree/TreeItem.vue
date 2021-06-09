@@ -27,7 +27,7 @@
         <span class="title text-overflow">
           <slot name="title" :item="item">{{ item.title || item.id }}</slot>
         </span>
-        <span class="append">
+        <span class="append flex items-center" @click.stop>
           <slot name="append" :item="item"></slot>
         </span>
       </div>
