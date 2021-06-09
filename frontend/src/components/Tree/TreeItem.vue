@@ -19,12 +19,14 @@
       <img v-else src="./images/line-node.png">
 
       <div class="title-inner">
-        <slot name="icon" :item="item">
+        <slot name="icon" :data="{item, isFolder}">
           <img v-if="isFolder" src="./images/folder.png">
           <img v-else src="./images/file.png">
         </slot>
 
-        <span class="title text-overflow">{{ item.title }}</span>
+        <span class="title text-overflow">
+          <slot name="title" :item="item">{{ item.title || item.id }}</slot>
+        </span>
         <span class="append">
           <slot name="append" :item="item"></slot>
         </span>
@@ -41,8 +43,11 @@
           @onItemClick="$emit('onItemClick', $event)"
           @onItemLazyLoad="$emit('onItemLazyLoad', $event)"
       >
-        <template v-slot:icon="{item}">
-          <slot name="icon" :item="item"></slot>
+        <template v-slot:icon="{data}">
+          <slot name="icon" :data="data"></slot>
+        </template>
+        <template v-slot:title="{item}">
+          <slot name="title" :item="item"></slot>
         </template>
         <template v-slot:append="{item}">
           <slot name="append" :item="item"></slot>
@@ -77,7 +82,7 @@ export default {
   computed: {
     // 是否为文件夹（或懒加载项）
     isFolder() {
-      return this.item.isLazy || this.item.children
+      return Boolean(this.item.isLazy || this.item.children)
     },
     // 是否为空文件夹
     isFolderEmpty() {
@@ -89,7 +94,7 @@ export default {
     }
   },
   created() {
-    this.item.toggleOpen = this.handleClick
+    this.item.$click = this.handleClick
   },
   methods: {
     /**
@@ -106,35 +111,9 @@ export default {
     handleToggleOpen({isOpen} = {}) {
       if (this.item.isLazy && !this.item.isLoading) {
         this.item.isLoading = true
-        this.$emit('onItemLazyLoad', this.lazyLoad())
+        this.$emit('onItemLazyLoad', this.item.lazyLoad())
       } else if (this.item.children) {
         this.item.isOpen = isOpen !== undefined ? isOpen : !this.item.isOpen
-      }
-    },
-    /**
-     * 处理异步加载的数据
-     * node 节点
-     * key 节点 id
-     * done 异步加载成功后回调，传入 children 数组
-     * fail 异步加载失败后回调
-     * @returns {{node: Object, fail: fail, done: done, key: *}}
-     */
-    lazyLoad() {
-      return {
-        node: this.item,
-        key: this.item.id,
-        done: (children) => {
-          // this.item.children = children
-          // this.$set(this.item, 'children', children)
-          this.item.children = reactive(children)
-          this.item.isOpen = true
-          this.item.isLoading = false
-          this.item.isLazy = false
-        },
-        fail: () => {
-          console.error('lazyLoad fail')
-          this.item.isLoading = false
-        }
       }
     }
   }

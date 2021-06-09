@@ -6,6 +6,16 @@ export const guid = () => {
   return (S4() + S4() + '-' + S4() + '-' + S4() + '-' + S4() + '-' + S4() + S4() + S4())
 }
 
+export class IncreaseNumber {
+  private seed: number;
+  constructor(seed = 0) {
+    this.seed = seed
+  }
+  get() {
+    return ++this.seed
+  }
+}
+
 export const formatTimeMS = (ms: number): string => {
   ms = Math.floor(ms)
   const minute = Math.floor(ms / 60)

@@ -3,15 +3,19 @@
     <TkTree
         :nodes="treeData"
         :selected-id="selected && selected.id"
-        @onItemClick="handleClick"
+        @onItemClick="handleItemClick"
         @onItemLazyLoad="handleLazyLoad"
     >
-      <template v-slot:icon>
-        <span class="material-icons">folder</span>
+      <template v-slot:icon="{data}">
+        <span v-if="data.isFolder" class="material-icons">folder</span>
+        <span v-else class="material-icons">audiotrack</span>
+      </template>
+      <template v-slot:title="{item}">
+        {{item.data.title}}
       </template>
       <template v-slot:append="{item}">
         <div @click.stop>
-          {{item.id}}
+          {{item.data.id}}
           <button class="btn-styled" @click="handleAdd(item)">add</button>
           <button class="btn-styled" @click="handleDel(item)">del</button>
         </div>
@@ -33,9 +37,11 @@ export default defineComponent({
   name: 'ListPlaylist',
   setup() {
     const root = new TreeNode({
-      title: 'Playlist',
       isLazy: true,
-      id: -1,
+      data: {
+        id: -1,
+        title: 'Playlist',
+      }
     })
     const treeData = ref(root)
     const selected = ref<TreeNode|null>(root)
@@ -86,9 +92,9 @@ export default defineComponent({
       return getPathByKey(id, 'id', rootNode.children)
     }
 
-    const handleClick = (node) => {
+    const handleItemClick = (node) => {
       selected.value = node
-      // console.log('handleClick', node)
+      // console.log('handleItemClick', node)
       // const list = getNodePathById(node.id)
       // breadcrumbList.value = [treeData.value, ...list].map(item => item.name)
     }
@@ -96,23 +102,22 @@ export default defineComponent({
     const handleLazyLoad = async ({node, key, done, fail}) => {
 
       const {list} = await getPlaylist({
-        pid: node.id
+        pid: node.data.id
       })
       console.log('handleLazyLoad', node, key)
       console.log('list',list)
 
       done(list.map(i => {
         return new TreeNode({
-          ...i,
           isLazy: true,
-          id: i.id
+          data: i
         })
       }))
     }
 
     const handleAdd = async (item) => {
       try {
-        const pid = item.id
+        const pid = item.data.id
         const title = prompt(`Add Playlist under ${pid}`, 'Playlist' + Date.now())
         if (!title) {
           return
@@ -124,7 +129,7 @@ export default defineComponent({
         })
         item.isLazy = true
         console.log('ok', res)
-        item.toggleOpen()
+        item.$click()
       } catch (e) {
         console.error(e)
       } finally {
@@ -133,7 +138,7 @@ export default defineComponent({
     }
 
     const handleDel = async (item) => {
-      const flag = confirm(`WARNING!! Delete 《${item.title}》?\nThis operation cannot be undone.`)
+      const flag = confirm(`WARNING!! Delete 《${item.data.id}》?\nThis operation cannot be undone.`)
       if (!flag) {
         return
       }
@@ -142,7 +147,7 @@ export default defineComponent({
       return {
       selected,
       treeData,
-      handleClick,
+      handleItemClick,
       handleLazyLoad,
       handleAdd,
       handleDel,

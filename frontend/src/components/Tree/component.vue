@@ -7,8 +7,11 @@
       @onItemClick="$emit('onItemClick', $event)"
       @onItemLazyLoad="$emit('onItemLazyLoad', $event)"
     >
-      <template v-slot:icon="{item}">
-        <slot name="icon" :item="item"></slot>
+      <template v-slot:icon="{data}">
+        <slot name="icon" :data="data"></slot>
+      </template>
+      <template v-slot:title="{item}">
+        <slot name="title" :item="item"></slot>
       </template>
       <template v-slot:append="{item}">
         <slot name="append" :item="item"></slot>
