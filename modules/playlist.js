@@ -15,7 +15,8 @@ router.get('/list', async (req, res, next) => {
     const {
       pid,
       offset,
-      limit
+      limit,
+      showMusic = false,
     } = req.query
     let paginationQuery = limit ? {
       offset: parseInt(offset) || 0,
@@ -27,7 +28,7 @@ router.get('/list', async (req, res, next) => {
       where.pid = Number(pid)
     }
 
-    let result = await Playlist.findAndCountAll({
+    let resPlaylist = await Playlist.findAndCountAll({
       ...paginationQuery,
       where,
       order: [
@@ -36,15 +37,32 @@ router.get('/list', async (req, res, next) => {
       ]
     })
 
+    let resMusic
+    // TODO: List musics
+    if (showMusic) {
+      resMusic = await Music.findAndCountAll({
+        where: {
+          pid: pid
+        },
+        order: [
+          ['id', 'DESC'],
+        ]
+      })
+    }
+
     return res.sendData({
-      list: result.rows,
-      count: result.count
+      list: resPlaylist.rows,
+      musics: resMusic && resMusic.rows,
+      count: resPlaylist.count
     })
   } catch (error) {
     next(error)
   }
 })
 
+/**
+ * Add playlist
+ */
 router.post('/add', userAuth, async (req, res, next) => {
   try {
     const {
@@ -58,21 +76,21 @@ router.post('/add', userAuth, async (req, res, next) => {
       return res.sendError({message: 'Title can not be empty'})
     }
 
-    const data = await Playlist.create({
+    const resData = await Playlist.create({
       title,
       pid: Number(pid) || -1,
       desc,
       cover
     })
 
-    return res.sendData(data)
+    return res.sendData(resData)
   } catch (error) {
     next(error)
   }
 })
 
 /**
- * Delete recursively
+ * Delete playlist recursively
  */
 router.post('/delete', userAuth, async (req, res, next) => {
   try {
@@ -99,13 +117,63 @@ router.post('/delete', userAuth, async (req, res, next) => {
     await recursiveFind(id)
 
     const ids = findList.map(item => item.id)
-    const result = await Playlist.destroy({
+    const resData = await Playlist.destroy({
       where: {
         id: [id, ...ids]
       }
     })
 
-    return res.sendData(result)
+    return res.sendData(resData)
+  } catch (error) {
+    next(error)
+  }
+})
+
+/**
+ * Add music to playlist
+ */
+router.post('/add-music', userAuth, async (req, res, next) => {
+  try {
+    // const {
+    //   pid,
+    //   title,
+    //   artists,
+    //   cover,
+    //   desc,
+    //   tags,
+    //   file,
+    //   sort,
+    //   rank,
+    // } = req.body
+
+    const resData = await Music.create(req.body)
+
+    return res.sendData(resData)
+  } catch (error) {
+    next(error)
+  }
+})
+
+const deleteMusics = (ids) => {
+  return Music.destroy({
+    where: {
+      id: [id, ...ids]
+    }
+  })
+}
+
+/**
+ * Remove playlist music
+ */
+router.post('/remove-music', userAuth, async (req, res, next) => {
+  try {
+    const {
+      ids,
+    } = req.body
+
+    const resData = await deleteMusics(ids)
+
+    return res.sendData(resData)
   } catch (error) {
     next(error)
   }

@@ -3,16 +3,26 @@ const sequelize = require('../sequelize')
 
 // Table schema
 const Model = sequelize.define('musics', {
-  pid: {type: Sequelize.NUMBER, allowNull: false},
-  title: Sequelize.STRING,
-  artists: Sequelize.STRING,
-  cover: Sequelize.STRING,
-  desc: Sequelize.STRING,
-  tags: Sequelize.STRING,
-  file: Sequelize.STRING, // Relative file path
-  sort: Sequelize.NUMBER,
-  rank: Sequelize.NUMBER,
-}, { timestamps: false })
+  pid: {type: Sequelize.NUMBER, defaultValue: -1}, // Playlist id
+  title: {type: Sequelize.STRING, defaultValue: ''},
+  artists: {
+    type: Sequelize.STRING,
+    defaultValue: '',
+    get() {
+      return JSON.stringify(this.getDataValue('artists') || '[]')
+    },
+    set(val) {
+      this.setDataValue('artists', JSON.parse(val));
+    }
+  },
+  cover: {type: Sequelize.STRING, defaultValue: ''},
+  desc: {type: Sequelize.STRING, defaultValue: ''},
+  album: {type: Sequelize.STRING, defaultValue: ''},
+  tags: {type: Sequelize.STRING, defaultValue: ''},
+  file: {type: Sequelize.STRING, defaultValue: '', allowNull: false}, // Relative file path
+  sort: {type: Sequelize.NUMBER, defaultValue: 0},
+  rank: {type: Sequelize.NUMBER, defaultValue: 0},
+}, {timestamps: true})
 
 sequelize.sync()
 

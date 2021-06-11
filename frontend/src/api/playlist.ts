@@ -18,3 +18,11 @@ export function addPlaylist(params?: object) {
 export function deletePlaylist(params?: object) {
   return service.post('/delete', params)
 }
+
+export function addPlaylistMusic(params?: object) {
+  return service.post('/add-music', params)
+}
+
+export function removePlaylistMusic(params?: object) {
+  return service.post('/remove-music', params)
+}

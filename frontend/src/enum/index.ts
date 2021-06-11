@@ -30,7 +30,7 @@ export const NavbarTabs = {
     icon: 'audiotrack',
     name: 'Playing',
     value: NavbarTabsType.PLAYING,
-    componentName: 'ListPlaying',
+    // componentName: 'ListPlaying',
   },
   [NavbarTabsType.PLAYLIST]: {
     icon: 'queue_music',
@@ -91,9 +91,9 @@ export enum LoopModeType {
 export class MusicItem {
   id: number;
   title?: string;
-  artist?: string;
+  artists: string[];
   album?: string;
-  track?: object;
+  // track?: object;
   rating: number;
   // below are data for filesystem or directories
   filename: string;
@@ -101,24 +101,34 @@ export class MusicItem {
   path: string;
   size: number;
   metadata: IAudioMetadata;
-  cover?: string;
+  coverOrigin?: string;
   isDetailLoaded: boolean;
   lyric?: string;
 
   constructor(item: any = {}) {
     this.id = item.id
     this.title = item.title
-    this.artist = item.artist
+    this.artists = item.artists || []
     this.album = item.album
-    this.track = item.track
     this.rating = item.rating
     this.filename = item.filename
     this.isDirectory = item.isDirectory
     this.path = item.path
     this.size = item.size
     this.metadata = item.metadata
-    this.cover = item.cover
+    this.coverOrigin = item.cover
     this.isDetailLoaded = false
+  }
+
+  get artist() {
+    return this.artists.join(', ')
+  }
+
+  get cover() {
+    if (!this.coverOrigin) {
+      return null
+    }
+    return `${HOST_URL}${this.coverOrigin}`
   }
 
   get filepath() {
@@ -133,7 +143,7 @@ export class MusicItem {
   }
 
   get titleDisplay(): string {
-    return this.title || this.filename || 'N/A'
+    return this.title || this.filename || ''
   }
 
   getSource(): string {
@@ -147,20 +157,19 @@ export class MusicItem {
     const {
       common: {
         title,
-        artist,
+        artists,
         album,
-        track,
+        // track,
       }
     }: { common: ICommonTagsResult } = metadata
 
     this.title = title
-    this.artist = artist
+    this.artists = artists || []
     this.album = album
-    this.track = track
     this.metadata = metadata
 
     if (cover) {
-      this.cover = `${HOST_URL}${cover}`
+      this.coverOrigin = cover
     }
 
     if (lyric) {

@@ -53,15 +53,20 @@ export default defineComponent({
 
     const handleLazyLoad = async ({node, done, fail}) => {
       try {
-        const {list} = await getPlaylist({
-          pid: node.data.id
+        const {list, musics} = await getPlaylist({
+          pid: node.data.id,
+          showMusic: true
         })
-        done(list.map(i => {
-          return new TreeNode({
+        const resList = [
+          ...list.map(i => new TreeNode({
             isLazy: true,
             data: i
-          })
-        }))
+          })),
+          ...musics.map(i => new TreeNode({
+            data: i
+          }))
+        ]
+        done(resList)
       } catch (e) {
         fail(e)
       }

@@ -39,7 +39,7 @@ import store from '@/store'
 
 import Navbar from '@/components/Navbar.vue';
 import Actionbar from '@/components/Actionbar.vue';
-import ListPlaying from "@/components/ListPlaying.vue";
+import ListPlaying from "@/components/ListPlaying/index.vue";
 // import ListPlaylist from "@/components/ListPlaylist.vue";
 // import ListFilesystem from "@/components/ListFilesystem.vue";
 import {

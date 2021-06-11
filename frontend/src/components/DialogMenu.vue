@@ -40,9 +40,8 @@ export default defineComponent({
   setup(props, context) {
     // @ts-ignore
     const {visible} = toRefs(props)
-    const {mVisible} = useMVisible(visible, context)
     return {
-      mVisible
+      ...useMVisible(visible, context)
     }
   }
 })

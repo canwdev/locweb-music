@@ -1,12 +1,19 @@
 <template>
   <MainList
+      :is-loading="isLoading"
       :list="playingList"
       :active-id="playingId"
       is-play-list
       :is-paused="paused"
       :min-item-size="55"
       @onItemClick="handleItemClick"
-  />
+      @onItemAction="handleItemAction"
+  >
+    <DialogMenu
+        v-model:visible="isShowFileMenu"
+        :list="fileMenuList"
+    />
+  </MainList>
 </template>
 
 <script lang="ts">
@@ -15,7 +22,7 @@ import {
   computed,
   nextTick,
   onMounted,
-  onBeforeUnmount
+  onBeforeUnmount, ref
 } from 'vue';
 import store from '@/store'
 import MainList from '@/components/MainList/index.vue';
@@ -27,13 +34,17 @@ import bus, {
   ACTION_PLAY_ENDED
 } from "@/utils/bus";
 import {LoopModeType, MusicItem, NavbarTabsType} from "@/enum";
+import DialogMenu from "@/components/DialogMenu.vue";
+import useDialogMenu from "./useDialogMenu";
 
 export default defineComponent({
   name: "ListPlaying",
   components: {
     MainList,
+    DialogMenu
   },
   setup() {
+    const isLoading = ref<boolean>(false)
     const playingList = computed(() => store.state.playingList)
     const isRandom = computed(() => store.state.isRandom)
     const loopMode = computed(() => store.state.loopMode)
@@ -135,6 +146,7 @@ export default defineComponent({
     })
 
     return {
+      isLoading,
       playingList,
       isRandom,
       loopMode,
@@ -146,7 +158,8 @@ export default defineComponent({
       playMusicIndexed,
       playPrev,
       playNext,
-      handlePlayEnded
+      handlePlayEnded,
+      ...useDialogMenu(isLoading)
     }
   }
 })

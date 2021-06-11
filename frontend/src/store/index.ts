@@ -48,7 +48,6 @@ export default createStore({
       })
     },
     setNavbarIndex: (state, payload: number) => {
-      console.log('setNavbarIndex',payload)
       state.navbarIndex = payload
     },
     setPlayingList: (state, payload: Array<MusicItem>) => {
