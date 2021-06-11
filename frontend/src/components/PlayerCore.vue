@@ -116,11 +116,11 @@ export default defineComponent({
     const next = () => {
       bus.emit(ACTION_NEXT)
     }
-    const togglePlay = () => {
+    const togglePlay = ({isPlay = false} = {}) => {
       if (!audio || !audio.src) {
         return
       }
-      if (audio.paused) {
+      if (audio.paused || isPlay) {
         play()
       } else {
         pause()

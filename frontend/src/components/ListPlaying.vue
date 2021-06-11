@@ -56,8 +56,10 @@ export default defineComponent({
 
       nextTick(() => {
         // jump to playing list
-        store.commit('setNavbarIndex', 1)
-        bus.emit(ACTION_TOGGLE_PLAY)
+        setTimeout(() => {
+          store.commit('setNavbarIndex', 1)
+        }, 30)
+        bus.emit(ACTION_TOGGLE_PLAY, {isPlay: true})
       })
     }
     const handleItemClick = (item: MusicItem) => {
