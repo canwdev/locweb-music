@@ -9,10 +9,10 @@ const Model = sequelize.define('musics', {
     type: Sequelize.STRING,
     defaultValue: '',
     get() {
-      return JSON.stringify(this.getDataValue('artists') || '[]')
+      return JSON.parse(this.getDataValue('artists') || '[]')
     },
     set(val) {
-      this.setDataValue('artists', JSON.parse(val));
+      this.setDataValue('artists', JSON.stringify(val));
     }
   },
   cover: {type: Sequelize.STRING, defaultValue: ''},

@@ -14,7 +14,7 @@ let config = {
   enableAuth: true,
   authUsers: {'admin': 'admin'},
   jwtToken: 'token_secret_j3478n68o23ui',
-  jwtTokenExpire: '7d',
+  jwtTokenExpire: '49d',
   showHiddenFiles: false
 }
 
