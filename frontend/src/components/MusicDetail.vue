@@ -141,6 +141,9 @@ export default defineComponent({
     const musicItem = computed((): MusicItem => {
       return store.state.musicItem
     })
+    const currentTime = computed(() => {
+      return store.state.currentTime
+    })
 
     const {
       lyricObj,
@@ -177,9 +180,16 @@ export default defineComponent({
       isShowLyricSearch.value = false
       musicItem.value.lyric = lyric
       // fix lyric progress bug
+      const curTime = currentTime.value
       bus.emit(ACTION_CHANGE_CURRENT_TIME, 0)
+      setTimeout(() => {
+        bus.emit(ACTION_CHANGE_CURRENT_TIME, curTime)
+      }, 200)
+
       isShowDetail.value = true
       currentDetailTab.value = DetailTabEnum.LYRIC
+
+
 
       const {saveFilename} = await saveLyric({
         filename: musicItem.value.filename,
