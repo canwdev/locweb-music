@@ -101,6 +101,7 @@ export default defineComponent({
 <style lang="scss" scoped>
 .file-upload-wrap {
   padding: 20px;
+  max-width: 500px;
 
   .title-box {
     margin-bottom: 10px;

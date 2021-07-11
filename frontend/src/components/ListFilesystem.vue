@@ -270,8 +270,21 @@ export default defineComponent({
       } finally {
         isLoading.value = false
       }
-
     }
+    const fileReplace = async () => {
+      if (!selectedItem.value) return
+      const sItem = selectedItem.value
+      const path = getCurrentPath()
+
+      uploadConfig.value = {
+        path,
+        filename: sItem.filename
+      }
+      fileUpload.clearFileInput()
+      isShowUploadModal.value = true
+      isShowFileMenu.value = false
+    }
+
     const fileMenuList = computed(() => {
       if (!selectedItem.value) return
       const sItem = selectedItem.value
@@ -282,7 +295,7 @@ export default defineComponent({
             {label: 'Download Archive', disabled: true},
       ]
       if (!sItem.isDirectory) {
-        list.push({label: 'Replace...', disabled: true})
+        list.push({label: 'Replace...', action: fileReplace})
       }
       return list
     })
