@@ -41,6 +41,7 @@ export default defineComponent({
   .cover-display {
     width: 100%;
     height: 100%;
+    background: $dark;
   }
   .material-icons {
     font-size: 29px;

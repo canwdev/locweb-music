@@ -1,6 +1,6 @@
 <template>
   <div class="no-data">
-    <img src="@/assets/images/no-data.png" alt="No data!">
+    <img class="no-data-img" src="@/assets/images/Transparent_Akkarin.webp" alt="No data!">
     <div class="text">{{ text || 'No Data' }}</div>
   </div>
 </template>
@@ -24,6 +24,12 @@ export default defineComponent({
   width: 100%;
   text-align: center;
   padding: 50px 0;
+
+  .no-data-img {
+    width: 160px;
+    height: auto;
+    border-radius: $generic-border-radius;
+  }
 
   .text {
     color: $primary;

@@ -20,10 +20,12 @@ $scrollbar-bg: rgba(0, 0, 0, .1);
 $scrollbar-bg-dark: rgba(255, 255, 255, .1);
 
 ::-webkit-scrollbar-thumb {
+  box-shadow: 0 0 1px 0 $border-color inset;
   background: $scrollbar-fg;
 }
 
 ::-webkit-scrollbar-track {
+  box-shadow: 0 0 1px 0 $border-color inset;
   background: $scrollbar-bg;
 }
 

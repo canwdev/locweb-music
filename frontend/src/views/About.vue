@@ -68,7 +68,7 @@ export default defineComponent({
     resize: none;
     font-size: 14px;
     font-family: 'Consolas', monospace;
-    color: inherit;
+    color: #00ccff;
     background: $dark;
     padding: 10px;
     overflow: hidden;
