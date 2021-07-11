@@ -73,13 +73,12 @@ export function uploadFile(params, config = {}) {
     filename,
     path,
   } = params
-  const uploadUrl = HOST_URL + '/api/music/upload'
 
   const formData = new FormData();
   formData.append('sampleFile', file);
   formData.append('filename', filename);
   formData.append('path', path);
-  return service.post(uploadUrl, formData, {
+  return service.post(HOST_URL + '/music/upload', formData, {
     headers: {
       'Content-Type': 'multipart/form-data'
     },

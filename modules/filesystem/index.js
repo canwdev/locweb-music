@@ -31,6 +31,6 @@ router.post('/save-lyric', userAuth, saveLyric)
 
 router.get('/download', downloadFile)
 
-router.post('/upload', uploadFile)
+router.post('/upload', userAuth, uploadFile)
 
 module.exports = router
