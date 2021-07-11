@@ -70,17 +70,16 @@ const getLyricFilename = (filename, options = {}) => {
 const getLyricFile = (lyricFileList, filename, options = {}) => {
   filename = getLyricFilename(filename, options)
 
-  console.log('search for:', filename)
+  console.log('>>> Search lyric:', filename)
 
   for (let i = 0; i < lyricFileList.length; i++) {
     const lyric = lyricFileList[i]
-    const mLyric = lyric.slice(0, lyric.lastIndexOf('.'))
-    if (filename === mLyric) {
-      console.log('lyric found:', lyric)
+    if (new RegExp(`^${filename}`, 'ig').test(lyric)) {
+      console.log('<<< Lyric found:', lyric)
       return lyric
     }
   }
-  console.log('lyric in list not found')
+  console.log('<<< Lyric not found')
 }
 
 const saveLyricFile = (filename, lyric, options = {}) => {

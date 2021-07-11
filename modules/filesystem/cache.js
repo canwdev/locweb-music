@@ -5,8 +5,8 @@ const isProduction = process.env.NODE_ENV === 'production';
 
 // init lyric files cache pool
 let lyricFileCache = []
-const refreshLyrics = async () => {
-  lyricFileCache = await fs.readdir(MUSIC_LYRICS_PATH)
+const refreshLyrics = () => {
+  lyricFileCache = fs.readdirSync(MUSIC_LYRICS_PATH)
 }
 refreshLyrics()
 
