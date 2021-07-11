@@ -1,10 +1,10 @@
-# Changelog
+# 更新日志
 
 ## Update v0.2.4 2021-7-11
 
-- [x] Add upload function
-- [x] Add update log
-- [x] UI Improvement
-- [x] Fix music regex
-- [x] Fix security issues
-- [ ] Refactor code
+- [x] 新增：上传功能
+- [x] 新增：更新日志
+- [x] 修复：本地歌词加载
+- [x] 修复：路径安全问题
+- [x] 优化：UI 交互优化
+- [ ] 优化：代码重构

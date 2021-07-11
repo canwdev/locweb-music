@@ -1,5 +1,9 @@
 <template>
   <div class="file-upload-wrap">
+    <div class="title-box">
+      <b>Upload to:</b> {{ (uploadConfig.path + uploadConfig.filename) || 'Root dir' }}
+    </div>
+
     <form
         class="upload-form"
         id='uploadForm'
@@ -8,14 +12,15 @@
         encType="multipart/form-data"
         @submit="handleSubmit"
     >
-      <input class="input-styled" :disabled="isUploading" :ref="setInputRef" type="file" name="sampleFile"/>
+      <input class="input-styled input-upload" :disabled="isUploading" :ref="setInputRef" type="file"
+             name="sampleFile"/>
       <button class="btn-styled" :disabled="isUploading" @click="clearFileInput">Clear</button>
       <button class="btn-styled" type='submit'>Upload</button>
     </form>
 
     <div class="progress-box">
       <div class="progress-text">
-        Progress: {{progress}}%
+        Progress: {{ progress }}%
       </div>
       <ProgressBar :progress="progress"></ProgressBar>
     </div>
@@ -54,6 +59,7 @@ export default defineComponent({
     const handleSubmit = async () => {
       const {files} = input
       if (!files.length) {
+        window.$notify.error(`Please select a file to upload`)
         return
       }
 
@@ -65,15 +71,14 @@ export default defineComponent({
           ...uploadConfig.value
         }, {
           onUploadProgress: (event) => {
-            const percentCompleted = Math.round((event.loaded * 100) / event.total)
-            console.log(percentCompleted)
-            progress.value = percentCompleted
+            progress.value = Math.round((event.loaded * 100) / event.total)
           }
         })
         console.log('ok', result)
         context.emit('uploaded', result)
       } catch (e) {
         console.error(e)
+        window.$notify.error(e)
       } finally {
         isUploading.value = false
       }
@@ -97,14 +102,25 @@ export default defineComponent({
 .file-upload-wrap {
   padding: 20px;
 
+  .title-box {
+    margin-bottom: 10px;
+  }
+
   .upload-form {
     display: flex;
     align-items: center;
     height: 30px;
+
+    .input-upload {
+      width: 100%;
+      flex: 1;
+    }
+
     input, button {
       height: 100%;
       display: block;
     }
+
     button {
       margin-left: 5px;
     }
@@ -112,6 +128,7 @@ export default defineComponent({
 
   .progress-box {
     margin-top: 10px;
+
     .progress-text {
       margin-bottom: 5px;
     }
