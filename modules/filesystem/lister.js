@@ -2,7 +2,7 @@ const {
   getMusicExactPath,
   getMusicPath,
   getLyricsPath
-} = require('./utils')
+} = require('../../utils/fs-tool')
 const {
   lyricFileCache
 } = require('./cache')
@@ -16,6 +16,7 @@ const {
   loginOnlyFileName
 } = require('../../config/enum')
 const mfpTool = require('../../utils/mfp-tool')
+const {getSafePath} = require("../../utils/fs-tool")
 
 const {
   getMetadata,
@@ -136,7 +137,7 @@ const getDetail = async (req, res, next) => {
       } else {
         // try load lyric from same folder
         const lyricFile = filename.substring(0, filename.lastIndexOf('.')) + '.lrc'
-        const lyricPath = path.join(currentMusicDir, lyricFile)
+        const lyricPath = path.join(currentMusicDir, getSafePath(lyricFile))
         if (fs.existsSync(lyricPath)) {
           lyricText = await fs.readFile(lyricPath, {encoding: 'utf-8'})
           console.log('Same dir lyric found')
@@ -156,7 +157,7 @@ const getDetail = async (req, res, next) => {
       sendData.cover = `/images/${coverFileName}`
     } else {
       const localCoverFilename = 'cover.jpg'
-      if (fs.existsSync(path.join(currentMusicDir, localCoverFilename))) {
+      if (fs.existsSync(path.join(currentMusicDir, getSafePath(localCoverFilename)))) {
         sendData.cover = `/mfs/${musicPath}${localCoverFilename}`
       }
     }

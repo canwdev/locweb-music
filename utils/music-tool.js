@@ -1,10 +1,11 @@
 const mm = require('music-metadata')
 const {calcBufferHash} = require('./index')
+const {getLyricsPath,getSafePath} = require('./fs-tool')
 const mime = require('mime-types')
 const util = require('util')
 const path = require('path');
 const fs = require('fs-extra');
-const {MUSIC_LYRICS_PATH, IMAGE_PATH} = require('../config')
+const {IMAGE_PATH} = require('../config')
 
 /**
  * Get music metadata and extract cover
@@ -22,7 +23,7 @@ const getMetadata = async (filePath) => {
     const coverBuffer = picture.data
     const coverHash = await calcBufferHash(coverBuffer)
     const coverFileName = `${coverHash}.${mime.extension(picture.format)}`
-    const coverSavePath = path.join(IMAGE_PATH, coverFileName)
+    const coverSavePath = path.join(IMAGE_PATH, getSafePath(coverFileName))
     if (!fs.existsSync(coverSavePath)) {
       await fs.writeFile(coverSavePath, coverBuffer, "binary")
     }
@@ -85,7 +86,7 @@ const getLyricFile = (lyricFileList, filename, options = {}) => {
 const saveLyricFile = (filename, lyric, options = {}) => {
   filename = getLyricFilename(filename, options) + '.lrc'
 
-  const savePath = path.join(MUSIC_LYRICS_PATH, filename)
+  const savePath = getLyricsPath(filename)
   console.log('Save lyric', savePath)
   fs.writeFileSync(savePath, lyric, {encoding: 'utf8'})
   return {

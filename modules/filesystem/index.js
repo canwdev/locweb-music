@@ -1,5 +1,6 @@
 const {
-  downloadMusic
+  downloadFile,
+  uploadFile
 } = require('./transfer')
 const {
   saveLyric,
@@ -28,6 +29,8 @@ router.post('/action', userAuth, handleAction)
 
 router.post('/save-lyric', userAuth, saveLyric)
 
-router.get('/download', downloadMusic)
+router.get('/download', downloadFile)
+
+router.post('/upload', uploadFile)
 
 module.exports = router

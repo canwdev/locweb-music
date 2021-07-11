@@ -4,13 +4,14 @@ const {
 const {
   getMusicExactPath,
   getMusicPath
-} = require('./utils')
+} = require('../../utils/fs-tool')
 const {
   saveLyricFile
 } = require('../../utils/music-tool')
 const fs = require('fs-extra');
 const path = require('path');
 const sanitize = require("sanitize-filename");
+const {getSafePath} = require("../../utils/fs-tool")
 const {MUSIC_LIBRARY_PATH} = require('../../config')
 
 
@@ -60,7 +61,7 @@ const handleAction = async (req, res, next) => {
 
     if (action === FileAction.CREATE_FOLDER) {
       const curPath = getMusicPath(musicPath)
-      const dir = path.join(curPath, sanitize(actionValue, {replacement: '_'}))
+      const dir = path.join(curPath, getSafePath(sanitize(actionValue, {replacement: '_'})))
       await fs.mkdirp(dir)
       return res.sendData()
     }
@@ -81,7 +82,7 @@ const handleAction = async (req, res, next) => {
         return res.sendError({message: 'Rename: Filename cannot be empty'})
       }
       const newName = sanitize(actionValue, {replacement: '_'})
-      const newPath = getMusicPath(path.join(musicPath, newName))
+      const newPath = getMusicPath(path.join(musicPath, getSafePath(newName)))
 
       try {
         await fs.move(filePath, newPath)

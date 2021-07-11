@@ -13,6 +13,7 @@ time=1604864803658
 const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
+const {getSafePath} = require("./fs-tool")
 
 const filename = '.music_folder_player.properties'
 const generateComment = (date = new Date()) => `#This file was created by Music Folder Player.\n#${date.toString()}\n`
@@ -43,7 +44,7 @@ const parseFile = async (filePath) => {
   return result
 }
 
-const parseFromFolder = folderPath => parseFile(path.join(folderPath, filename))
+const parseFromFolder = folderPath => parseFile(path.join(folderPath, getSafePath(filename)))
 
 const stringify = (obj, date = new Date()) => {
   obj.time = date.getTime()
@@ -62,7 +63,7 @@ const writeFile = (filePath, obj, date) => {
   fs.writeFileSync(filePath, str, {encoding: 'utf8'})
 }
 
-const writeToFolder = (folderPath, obj, date) => writeFile(path.join(folderPath, filename), obj, date)
+const writeToFolder = (folderPath, obj, date) => writeFile(path.join(folderPath, getSafePath(filename)), obj, date)
 
 module.exports = {
   filename,
