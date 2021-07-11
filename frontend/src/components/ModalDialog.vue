@@ -1,9 +1,9 @@
 <template>
   <transition name="fade">
     <div v-show="mVisible" class="modal-dialog-wrap">
-      <div class="dialog-shadow" @click="mVisible = false"></div>
+      <div class="dialog-shadow" @click="clickOutside"></div>
       <div class="dialog-main" :class="{dark, 'no-radius': noRadius}">
-        <button v-if="isShowClose" class="btn-no-style btn-close" @click="mVisible = false">
+        <button v-if="isShowClose" class="btn-no-style btn-close" @click="closeDialog">
           <i class="material-icons">clear</i>
         </button>
         <div class="dialog-inner" :class="{'limited-size': !unlimitedSize}">
@@ -40,12 +40,34 @@ export default defineComponent({
     noRadius: {
       type: Boolean,
       default: false
+    },
+    persistent: {
+      type: Boolean,
+      default: false
+    },
+    preventClose: {
+      type: Boolean,
+      default: false
     }
   },
   setup(props, context) {
-    const {visible} = toRefs(props)
+    const {visible, persistent, preventClose} = toRefs(props)
+    const {mVisible} = useMVisible(visible, context)
+
+    const clickOutside = () => {
+      if (!persistent.value) {
+        mVisible.value = false
+      }
+    }
+    const closeDialog = () => {
+      if (!preventClose.value) {
+        mVisible.value = false
+      }
+    }
     return {
-      ...useMVisible(visible, context)
+      mVisible,
+      clickOutside,
+      closeDialog
     }
   }
 })
@@ -69,8 +91,9 @@ export default defineComponent({
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.5);
+    background: rgba(0, 0, 0, 0.5);
   }
+
   .dialog-main {
     border-radius: $generic-border-radius;
     position: relative;
@@ -83,11 +106,11 @@ export default defineComponent({
     }
 
     &.dark {
-      background: rgba(0,0,0,0.8);
+      background: rgba(0, 0, 0, 0.8);
       color: white;
       box-shadow: 0 0 8px 2px $primary;
 
-      &>.btn-close {
+      & > .btn-close {
         background: $primary;
         color: white;
       }
@@ -102,7 +125,8 @@ export default defineComponent({
       color: $primary;
       width: 28px;
       height: 28px;
-      border-radius: $generic-border-radius;
+      //border-radius: $generic-border-radius;
+      border-radius: 50%;
       border: 2px solid;
       box-shadow: 0 1px 2px rgba(0, 0, 0, .2);
       @media screen and (max-width: $mobile_min_width) {

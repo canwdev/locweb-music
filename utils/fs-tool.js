@@ -1,4 +1,5 @@
 const fs = require('fs-extra');
+const sanitize = require("sanitize-filename");
 
 const getMusicExactPath = (musicPath, filename) => {
   if (!filename) {
@@ -31,9 +32,14 @@ const getSafePath = (p) => {
   return path.normalize(p).replace(/^(\.\.(\/|\\|$))+/, '')
 }
 
+const getSafeFilename = (n) => {
+  return sanitize(n, {replacement: '_'})
+}
+
 module.exports = {
   getMusicExactPath,
   getMusicPath,
   getLyricsPath,
-  getSafePath
+  getSafePath,
+  getSafeFilename
 }

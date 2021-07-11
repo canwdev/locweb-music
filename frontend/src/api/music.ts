@@ -66,3 +66,23 @@ export function saveLyric(params) {
 export function getDownloadUrl(params) {
   return HOST_URL + '/api/music/download?' + qs.stringify(params)
 }
+
+export function uploadFile(params, config = {}) {
+  const {
+    file,
+    filename,
+    path,
+  } = params
+  const uploadUrl = HOST_URL + '/api/music/upload'
+
+  const formData = new FormData();
+  formData.append('sampleFile', file);
+  formData.append('filename', filename);
+  formData.append('path', path);
+  return service.post(uploadUrl, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    },
+    ...config
+  })
+}

@@ -20,6 +20,17 @@
         auto-close
         :list="folderMenuList"
     />
+    <ModalDialog
+        v-model:visible="isShowUploadModal"
+        is-show-close
+        persistent
+    >
+      <FileUpload
+          @uploaded="handleUploaded"
+          :upload-config="uploadConfig"
+          :ref="setFileUploadRef"
+      />
+    </ModalDialog>
   </MainList>
 </template>
 
@@ -33,26 +44,39 @@ import {FileAction} from "@/enum/service"
 import {
   fileAction,
   getList,
-  getDownloadUrl
+  getDownloadUrl,
 } from "@/api/music"
 import {isSupportedMusicFormat} from "@/utils/is";
 import bus, {ACTION_PLAY_START,} from "@/utils/bus";
 import {downLoadFile} from "@/utils";
 import MainList from "@/components/MainList/index.vue";
 import DialogMenu from "@/components/DialogMenu.vue";
+import FileUpload from "@/components/FileUpload.vue";
+import ModalDialog from '@/components/ModalDialog.vue'
 
 export default defineComponent({
   name: "ListFilesystem",
   components: {
     MainList,
-    DialogMenu
+    DialogMenu,
+    FileUpload,
+    ModalDialog
   },
   setup() {
     const route = useRoute()
     const isLoading = ref<boolean>(false)
+    const isShowUploadModal = ref<boolean>(false)
     const lastPlayIndex = ref(-1)
     const directories = ref<Array<any>>([])
     const fileList = ref<Array<MusicItem>>([])
+
+    const getCurrentPath = () => {
+      let path = ''
+      directories.value.forEach((item: any) => {
+        path += (item.filename + '/')
+      })
+      return path
+    }
 
     const getFileList = async () => {
       if (isLoading.value) {
@@ -62,10 +86,7 @@ export default defineComponent({
         isLoading.value = true
         lastPlayIndex.value = -1
 
-        let path = ''
-        directories.value.forEach((item: any) => {
-          path += (item.filename + '/')
-        })
+        const path = getCurrentPath()
 
         const {list, playStat, message} = await getList({
           path,
@@ -92,6 +113,7 @@ export default defineComponent({
 
     }
 
+    // watch route change
     watch(() => route.query, (val) => {
       const dir = val.dir
       if (dir) {
@@ -106,6 +128,7 @@ export default defineComponent({
       immediate: true
     })
 
+    // watch dir change
     watch(directories, (val) => {
       // console.log('directories changed', {val, router, route})
 
@@ -171,6 +194,7 @@ export default defineComponent({
       }
     })
 
+    // remove local list item
     const spliceLocalItem = (item, newItem?: MusicItem) => {
       // @ts-ignore
       const index = fileList.value.findIndex(v => v.id === item.id)
@@ -278,11 +302,40 @@ export default defineComponent({
         action: FileAction.CREATE_FOLDER,
         actionValue: name
       })
+      getFileList()
+    }
+
+    const uploadConfig = ref({
+      path: '',
+      filename: ''
+    })
+    let fileUpload
+    const setFileUploadRef = (ref) => {
+      fileUpload = ref
+    }
+    // upload files
+    const showUploadDialog = async () => {
+      const path = getCurrentPath()
+
+      uploadConfig.value = {
+        path,
+        filename: ''
+      }
+      fileUpload.clearFileInput()
+      isShowUploadModal.value = true
+    }
+    const handleUploaded = () => {
+      setTimeout(() => {
+        isShowUploadModal.value = false
+        fileUpload.clearFileInput()
+        window.$notify.success(`File Uploaded`)
+      }, 500)
+      getFileList()
     }
 
     const folderMenuList = [
       {label: 'Create Folder', action: createFolder},
-      {label: 'Upload Files...', disabled: true},
+      {label: 'Upload Files...', action: showUploadDialog},
       {label: 'Upload Folder...', disabled: true}
     ]
 
@@ -303,7 +356,11 @@ export default defineComponent({
       fileMenuList,
       showFolderMenu,
       isShowFolderMenu,
-      folderMenuList
+      folderMenuList,
+      isShowUploadModal,
+      handleUploaded,
+      setFileUploadRef,
+      uploadConfig
     }
   }
 })

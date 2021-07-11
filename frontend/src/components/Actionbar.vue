@@ -35,10 +35,11 @@
       </ButtonCover>
       <button
           @click="showDetailDialog"
-          class="btn-no-style btn-song"
+          class="btn-no-style btn-song-info"
       >
         <span class="title text-overflow">{{ musicItem.titleDisplay }}</span>
         <span v-show="musicItem.artist" class="artist text-overflow">{{ musicItem.artist }}</span>
+        <span v-show="musicItem.album" class="album text-overflow">{{ musicItem.album }}</span>
       </button>
       <div class="buttons-scroll flex items-center">
         <button
@@ -368,20 +369,23 @@ export default defineComponent({
     border-radius: 0;
   }
 
-  .btn-song {
+  .btn-song-info {
     width: 45%;
     height: 100%;
     border-right: 1px solid $border-color;
     text-align: left;
-    font-size: 12px;
     padding-left: 5px;
+    line-height: 1.1;
 
     .title {
       font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 2px;
     }
 
-    .artist {
-      margin-top: 5px;
+    .artist, .album {
+      opacity: .8;
+      font-size: 10px;
     }
 
     & > span {
