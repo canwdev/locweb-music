@@ -5,7 +5,11 @@
         <span class="title"> About</span>
         <button class="btn-styled" @click="backHome">Back</button>
       </div>
-      <textarea readonly :value="JSON.stringify(message, null, 2)"></textarea>
+      <textarea readonly :value="pkgInfo"></textarea>
+      <div class="title-wrap flex items-center justify-between">
+        <span class="title"> Changelog</span>
+      </div>
+      <textarea readonly :value="changelog"></textarea>
     </div>
   </div>
 </template>
@@ -18,15 +22,22 @@ import store from "@/store";
 export default defineComponent({
   name: 'Home',
   setup() {
-    const message = ref<string|object>({})
+    const pkgInfo = ref('')
+    const changelog = ref('')
+
+
     onMounted(() => {
       getInfo().then(res=> {
         console.log('res',res)
-        message.value = res
+        // @ts-ignore
+        pkgInfo.value = JSON.stringify(res.package, null, 2)
+        // @ts-ignore
+        changelog.value = res.changelog
       })
     })
     return {
-      message,
+      pkgInfo,
+      changelog,
       themeClass: computed(() => store.getters.themeClass)
     }
   },
@@ -46,14 +57,14 @@ export default defineComponent({
   height: 100%;
 
   .title-wrap {
-    margin-bottom: 10px;
+    margin: 10px 0;
   }
   .title {
     font-size: 30px;
   }
   textarea {
     width: 98%;
-    height: 300px;
+    min-height: 200px;
     resize: none;
     font-size: 12px;
     font-family: monospace;

@@ -164,18 +164,11 @@ export default defineComponent({
       if (!virtualScroll) {
         return;
       }
-      // @ts-ignore: TS2339
-      // console.log('wrapEl', virtualScroll.$el)
 
-      // @ts-ignore: TS2339
+      // @ts-ignore
       const el = virtualScroll.$el
       if (el) {
-        // @ts-ignore: TS2339
-        // const item = virtualScroll.querySelector(`a[data-index="${activeId.value}"]`)
-        // if (!item) {
-        //   return
-        // }
-
+        // @ts-ignore
         const index = filteredList.value.findIndex(item => item.id === activeId.value)
 
         if (index > -1) {
@@ -218,7 +211,7 @@ export default defineComponent({
   .virtual-scroller {
     overflow: auto;
     flex: 1;
-    scroll-behavior: smooth;
+    //scroll-behavior: smooth;
 
     //::v-deep .vue-recycle-scroller__item-view {
     //  & + .vue-recycle-scroller__item-view {

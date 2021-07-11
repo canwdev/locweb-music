@@ -1,6 +1,6 @@
 {
   "name": "locweb-music",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "A web music player for playing local music",
   "main": "index.js",
   "repository": "https://github.com/canwdev/locweb-music.git",

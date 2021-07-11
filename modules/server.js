@@ -1,4 +1,6 @@
 const pkg = require('../package.json')
+const fs = require('fs-extra')
+const path = require('path')
 const router = require('express').Router()
 const {enableAuth, authUsers} = require('../config')
 const jwt = require('jsonwebtoken')
@@ -7,13 +9,23 @@ const {
   jwtTokenExpire
 } = require('../config')
 
+let changelogTxt = ''
+try {
+  changelogTxt = fs.readFileSync(path.join(__dirname, '../CHANGELOG.md'), {encoding: 'utf8'})
+} catch (e) {
+  console.warn('Changelog not found', e.message)
+}
+
 router.get('/', async (req, res, next) => {
   try {
     res.sendData({
-      name: pkg.name,
-      version: pkg.version,
-      author: pkg.author,
-      repository: pkg.repository,
+      package: {
+        name: pkg.name,
+        version: pkg.version,
+        author: pkg.author,
+        repository: pkg.repository,
+      },
+      changelog: changelogTxt
     })
   } catch (error) {
     next(error)
