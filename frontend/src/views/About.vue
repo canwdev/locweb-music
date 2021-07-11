@@ -5,11 +5,11 @@
         <span class="title"> About</span>
         <button class="btn-styled" @click="backHome">Back</button>
       </div>
-      <textarea readonly :value="pkgInfo"></textarea>
+      <textarea class="input-styled" readonly :value="pkgInfo"></textarea>
       <div class="title-wrap flex items-center justify-between">
         <span class="title"> Changelog</span>
       </div>
-      <textarea readonly :value="changelog"></textarea>
+      <textarea class="input-styled" readonly :value="changelog"></textarea>
     </div>
   </div>
 </template>
@@ -63,13 +63,15 @@ export default defineComponent({
     font-size: 30px;
   }
   textarea {
-    width: 98%;
+    width: 100%;
     min-height: 200px;
     resize: none;
-    font-size: 12px;
-    font-family: monospace;
+    font-size: 14px;
+    font-family: 'Consolas', monospace;
     color: inherit;
-    background: inherit;
+    background: $dark;
+    padding: 10px;
+    overflow: hidden;
   }
   .container {
     max-width: 500px;

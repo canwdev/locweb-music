@@ -50,7 +50,7 @@ export default defineComponent({
         password: form.value.password
       })
       store.commit('setToken', token)
-      context.emit('submitted')
+      context.emit('loginSuccess')
     }
 
     return {

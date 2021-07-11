@@ -52,7 +52,7 @@
         is-show-close
     >
       <LoginPrompt
-          @submitted="isShowLogin = false"
+          @loginSuccess="handleLoginSuccess"
       />
     </ModalDialog>
   </div>
@@ -111,7 +111,12 @@ export default defineComponent({
         }
       } : {
         name: 'Logout', icon: 'logout', action: () => {
-          store.commit('setToken', null)
+          const confirmed = confirm('Confirm logout?')
+          if (confirmed) {
+            store.commit('setToken', null)
+            window.$notify.success(`Logout completed`)
+            mVisible.value = false
+          }
         }
       }
 
@@ -139,6 +144,12 @@ export default defineComponent({
 
     const isDarkTheme = computed(() => store.getters.isDarkTheme)
 
+    const handleLoginSuccess = () => {
+      window.$notify.success(`Login Success!`)
+      isShowLogin.value = false
+      mVisible.value = false
+    }
+
     return {
       menuList,
       mVisible,
@@ -152,6 +163,7 @@ export default defineComponent({
         })
       },
       themeClass: computed(() => store.getters.themeClass),
+      handleLoginSuccess
     }
   }
 })
