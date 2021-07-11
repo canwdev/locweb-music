@@ -74,8 +74,10 @@ const getLyricFile = (lyricFileList, filename, options = {}) => {
 
   for (let i = 0; i < lyricFileList.length; i++) {
     const lyric = lyricFileList[i]
-    if (new RegExp(`^${filename}`, 'ig').test(lyric)) {
-      console.log('<<< Lyric found:', lyric)
+    // 此处文件可能有特殊字符，不能用正则表达式
+    const mLyric = lyric.slice(0, lyric.lastIndexOf('.'))
+    if (filename === mLyric) {
+      console.log('lyric found:', lyric)
       return lyric
     }
   }
