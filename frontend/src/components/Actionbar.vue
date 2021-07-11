@@ -81,6 +81,7 @@
 
     <!--Music Detail Dialog-->
     <ModalDialog
+        fixed
         class="music-detail-dialog"
         :dark="isDarkTheme"
         is-show-close

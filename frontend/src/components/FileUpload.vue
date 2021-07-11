@@ -1,5 +1,5 @@
 <template>
-  <div class="file-upload-wrap">
+  <div class="file-upload-wrap" :class="themeClass">
     <div class="title-box">
       <b>Upload to:</b> {{ (uploadConfig.path + uploadConfig.filename) || 'Root dir' }}
     </div>
@@ -28,9 +28,10 @@
 </template>
 
 <script>
-import {defineComponent, ref, toRefs} from 'vue'
+import {computed, defineComponent, ref, toRefs} from 'vue'
 import {uploadFile} from "@/api/music"
 import ProgressBar from "@/components/ProgressBar"
+import store from "@/store"
 
 export default defineComponent({
   name: 'FileUpload',
@@ -92,7 +93,8 @@ export default defineComponent({
       handleSubmit,
       progress,
       clearFileInput,
-      isUploading
+      isUploading,
+      themeClass: computed(() => store.getters.themeClass)
     }
   }
 })

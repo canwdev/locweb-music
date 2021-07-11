@@ -47,6 +47,7 @@
     </transition>
 
     <ModalDialog
+        fixed
         v-model:visible="isShowLogin"
         :dark="isDarkTheme"
         is-show-close

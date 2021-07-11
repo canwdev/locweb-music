@@ -1,7 +1,7 @@
 <template>
   <div class="music-detail">
 
-    <AutoRatioBox class="cover-wrap-box">
+    <AutoRatioBox class="cover-wrap-box" :class="{'dark': isDarkTheme}">
       <div class="cover-wrap">
         <CoverDisplay
             class="big-cover"
@@ -79,6 +79,7 @@
     </div>
 
     <ModalDialog
+        fixed
         v-model:visible="isShowLyricSearch"
         :dark="isDarkTheme"
         is-show-close
@@ -257,6 +258,10 @@ export default defineComponent({
     max-width: 500px;
     border-radius: $generic-border-radius;
     box-shadow: 0 2px 5px rgba(0, 0, 0, .5);
+
+    &.dark {
+      box-shadow: 0 0 8px 2px $primary;
+    }
   }
 
   .cover-wrap {

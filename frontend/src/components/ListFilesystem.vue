@@ -70,6 +70,15 @@ export default defineComponent({
     const directories = ref<Array<any>>([])
     const fileList = ref<Array<MusicItem>>([])
 
+    const uploadConfig = ref({
+      path: '',
+      filename: ''
+    })
+    let fileUpload
+    const setFileUploadRef = (ref) => {
+      fileUpload = ref
+    }
+
     const getCurrentPath = () => {
       let path = ''
       directories.value.forEach((item: any) => {
@@ -318,18 +327,9 @@ export default defineComponent({
       getFileList()
     }
 
-    const uploadConfig = ref({
-      path: '',
-      filename: ''
-    })
-    let fileUpload
-    const setFileUploadRef = (ref) => {
-      fileUpload = ref
-    }
     // upload files
     const showUploadDialog = async () => {
       const path = getCurrentPath()
-
       uploadConfig.value = {
         path,
         filename: ''

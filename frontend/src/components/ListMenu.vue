@@ -1,13 +1,18 @@
 <template>
   <div class="list-menu" :class="themeClass">
-    <button
+    <div
+        class="list-item"
         v-for="(item, index) in list"
         :key="index"
-        class="btn-no-style"
-        @click="item.action"
-        :disabled="item.disabled"
-    >{{ item.label }}
-    </button>
+    >
+      <button
+          class="btn-no-style"
+          @click="item.action"
+          :disabled="item.disabled"
+      >{{ item.label }}
+      </button>
+    </div>
+
   </div>
 </template>
 
@@ -44,12 +49,15 @@ export default defineComponent({
     border-radius: $generic-border-radius;
   }
 
-  & > button {
-    width: 100%;
+  & > .list-item {
     display: block;
-    height: 40px;
 
-    & + button {
+    button {
+      width: 100%;
+      height: 40px;
+    }
+
+    & + .list-item {
       border-top: 1px solid $border-color;
     }
   }

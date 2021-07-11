@@ -1,6 +1,6 @@
 <template>
   <transition name="fade">
-    <div v-show="mVisible" class="modal-dialog-wrap">
+    <div v-show="mVisible" class="modal-dialog-wrap" :class="{fixed}">
       <div class="dialog-shadow" @click="clickOutside"></div>
       <div class="dialog-main" :class="{dark, 'no-radius': noRadius}">
         <button v-if="isShowClose" class="btn-no-style btn-close" @click="closeDialog">
@@ -48,6 +48,10 @@ export default defineComponent({
     preventClose: {
       type: Boolean,
       default: false
+    },
+    fixed: {
+      type: Boolean,
+      default: false
     }
   },
   setup(props, context) {
@@ -75,7 +79,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .modal-dialog-wrap {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
@@ -84,6 +88,10 @@ export default defineComponent({
   align-items: center;
   justify-content: center;
   z-index: 999;
+
+  &.fixed {
+    position: fixed;
+  }
 
   .dialog-shadow {
     position: absolute;
@@ -111,8 +119,8 @@ export default defineComponent({
       box-shadow: 0 0 8px 2px $primary;
 
       & > .btn-close {
-        background: $primary;
-        color: white;
+        background: $dark;
+        color: $primary;
       }
     }
 
