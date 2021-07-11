@@ -14,7 +14,7 @@
     >
       <input class="input-styled input-upload" :disabled="isUploading" :ref="setInputRef" type="file"
              name="sampleFile"/>
-      <button class="btn-styled" :disabled="isUploading" @click="clearFileInput">Clear</button>
+      <button class="btn-styled" type="button" :disabled="isUploading" @click="clearFileInput">Clear</button>
       <button class="btn-styled" type='submit'>Upload</button>
     </form>
 
@@ -104,6 +104,7 @@ export default defineComponent({
 .file-upload-wrap {
   padding: 20px;
   max-width: 500px;
+  border-radius: $generic-border-radius;
 
   .title-box {
     margin-bottom: 10px;

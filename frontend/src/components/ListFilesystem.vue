@@ -24,6 +24,7 @@
         v-model:visible="isShowUploadModal"
         is-show-close
         persistent
+        :dark="isDarkTheme"
     >
       <FileUpload
           @uploaded="handleUploaded"
@@ -373,7 +374,8 @@ export default defineComponent({
       isShowUploadModal,
       handleUploaded,
       setFileUploadRef,
-      uploadConfig
+      uploadConfig,
+      isDarkTheme: computed(() => store.getters.isDarkTheme),
     }
   }
 })

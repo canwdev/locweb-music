@@ -121,6 +121,7 @@ export default defineComponent({
       & > .btn-close {
         background: $dark;
         color: $primary;
+        box-shadow: 0 0 8px 2px $primary;
       }
     }
 
