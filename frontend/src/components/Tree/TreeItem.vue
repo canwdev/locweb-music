@@ -152,7 +152,7 @@ export default {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border-radius: 4px;
+      border-radius: $generic-border-radius;
       padding: 0 2px;
       margin-right: 4px;
       height: 32px;

@@ -36,7 +36,7 @@ export default defineComponent({
   background: $primary;
   color: white;
   font-size: 28px;
-  border-radius: 4px;
+  border-radius: $generic-border-radius;
   overflow: hidden;
   .cover-display {
     width: 100%;
