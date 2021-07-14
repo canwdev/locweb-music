@@ -3,6 +3,7 @@
       class="btn-no-style list-item-wrap"
       :class="{grey: !isSupport && !item.isDirectory, active}"
       :href="item.getSource()"
+      @contextmenu="handleContextMenu"
   >
     <div
         v-if="!isBigItem"
@@ -72,9 +73,9 @@ export default defineComponent({
       default: false
     }
   },
-  setup(props) {
+  setup(props, context) {
 
-    const {item, active, isBigItem, isPaused} = toRefs(props)
+    const {item, active, isBigItem, isPaused, isShowAction} = toRefs(props)
 
     const coverImage = computed(() => {
       return item.value.cover
@@ -110,11 +111,17 @@ export default defineComponent({
       return [title, artist, album].join(' - ')
     })
 
+    const handleContextMenu = (event) => {
+      event.preventDefault()
+      isShowAction.value && context.emit('onAction', item.value)
+    }
+
     return {
       coverImage,
       isSupport,
       iconName,
-      displayTitle
+      displayTitle,
+      handleContextMenu
     }
   }
 })
