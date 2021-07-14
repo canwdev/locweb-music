@@ -217,9 +217,8 @@ export default defineComponent({
       }
     }
 
-    const fileRename = async () => {
-      if (!selectedItem.value) return
-      const sItem = selectedItem.value
+    const actionRenameFile = async (sItem) => {
+      if (!sItem) return
       isShowFileMenu.value = false
 
       const name = prompt(`Rename 《${sItem.filename}》`, sItem.filename) || ''
@@ -242,9 +241,8 @@ export default defineComponent({
       }
 
     }
-    const fileDelete = async () => {
-      if (!selectedItem.value) return
-      const sItem = selectedItem.value
+    const actionDeleteFile = async (sItem) => {
+      if (!sItem) return
       isShowFileMenu.value = false
 
       const flag = confirm(`WARNING!! Delete 《${sItem.filename}》?\nThis operation cannot be undone.`)
@@ -266,9 +264,8 @@ export default defineComponent({
         isLoading.value = false
       }
     }
-    const fileDownload = async () => {
-      if (!selectedItem.value) return
-      const sItem = selectedItem.value
+    const actionDownloadFile = async (sItem) => {
+      if (!sItem) return
       isLoading.value = true
       try {
         downLoadFile(getDownloadUrl({
@@ -281,9 +278,8 @@ export default defineComponent({
         isLoading.value = false
       }
     }
-    const fileReplace = async () => {
-      if (!selectedItem.value) return
-      const sItem = selectedItem.value
+    const actionReplaceFile = async (sItem) => {
+      if (!sItem) return
       const path = getCurrentPath()
 
       uploadConfig.value = {
@@ -299,13 +295,13 @@ export default defineComponent({
       if (!selectedItem.value) return
       const sItem = selectedItem.value
       const list = [
-        {label: 'Rename', action: fileRename},
-        {label: 'Delete', action: fileDelete},
-        !sItem.isDirectory ? {label: 'Download', action: fileDownload} :
+        {label: 'Rename', action: () => actionRenameFile(sItem)},
+        {label: 'Delete', action: () => actionDeleteFile(sItem)},
+        !sItem.isDirectory ? {label: 'Download', action: () => actionDownloadFile(sItem)} :
             {label: 'Download Archive', disabled: true},
       ]
       if (!sItem.isDirectory) {
-        list.push({label: 'Replace...', action: fileReplace})
+        list.push({label: 'Replace...', action: () => actionReplaceFile(sItem)})
       }
       return list
     })
