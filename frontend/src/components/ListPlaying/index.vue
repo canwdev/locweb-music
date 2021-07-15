@@ -33,7 +33,7 @@ import bus, {
   ACTION_NEXT,
   ACTION_PLAY_ENDED
 } from "@/utils/bus";
-import {LoopModeType, MusicItem, NavbarTabsType} from "@/enum";
+import {LoopModeType, MusicItem, NavBarIndex, NavbarTabsType} from "@/enum";
 import DialogMenu from "@/components/DialogMenu.vue";
 import useDialogMenu from "./useDialogMenu";
 
@@ -68,7 +68,7 @@ export default defineComponent({
       nextTick(() => {
         // jump to playing list
         setTimeout(() => {
-          store.commit('setNavbarIndex', 1)
+          store.commit('setNavbarIndex', NavBarIndex.RIGHT)
         }, 30)
         bus.emit(ACTION_TOGGLE_PLAY, {isPlay: true})
       })

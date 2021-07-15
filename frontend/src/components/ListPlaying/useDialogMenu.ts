@@ -1,6 +1,7 @@
 import {computed, ref, watch} from 'vue'
 import {MusicItem} from "@/enum";
 import {addPlaylistMusic} from "@/api/playlist";
+import bus, {ACTION_LOCATE_FILE} from "@/utils/bus";
 
 export default function (isLoading) {
   const isShowFileMenu = ref<boolean>(false)
@@ -39,12 +40,23 @@ export default function (isLoading) {
     }
   }
 
+  const locateFile = (item) => {
+    if (!item) {
+      return
+    }
+    bus.emit(ACTION_LOCATE_FILE, item)
+    isShowFileMenu.value = false
+  }
+
   const fileMenuList = computed(() => {
     if (!selectedItem.value) return
     const sItem = selectedItem.value
     return [
       {
         label: 'Add To Playlist...', action: () => addMusic(sItem)
+      },
+      {
+        label: 'Locate File', action: () => locateFile(sItem)
       }
     ]
   })

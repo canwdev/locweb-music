@@ -87,6 +87,11 @@ export enum LoopModeType {
   LOOP_SINGLE = 4, // Single cycle
 }
 
+export enum NavBarIndex {
+  LEFT = 0,
+  RIGHT = 1
+}
+
 // single song data
 export class MusicItem {
   id: number;

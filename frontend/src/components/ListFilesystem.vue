@@ -36,11 +36,11 @@
 </template>
 
 <script lang="ts">
-import {computed, defineComponent, onMounted, ref, watch} from 'vue';
+import {computed, defineComponent, onMounted, onBeforeUnmount, ref, watch} from 'vue';
 import store from '@/store'
 import {useRoute} from 'vue-router'
 import router from '@/router'
-import {MusicItem} from "@/enum"
+import {MusicItem, NavBarIndex} from "@/enum"
 import {FileAction} from "@/enum/service"
 import {
   fileAction,
@@ -48,7 +48,7 @@ import {
   getDownloadUrl,
 } from "@/api/music"
 import {isSupportedMusicFormat} from "@/utils/is";
-import bus, {ACTION_PLAY_START,} from "@/utils/bus";
+import bus, {ACTION_PLAY_START, ACTION_LOCATE_FILE} from "@/utils/bus";
 import {downLoadFile} from "@/utils";
 import MainList from "@/components/MainList/index.vue";
 import DialogMenu from "@/components/DialogMenu.vue";
@@ -349,8 +349,21 @@ export default defineComponent({
       {label: 'Upload Folder...', disabled: true}
     ]
 
+    const handleLocateFile = (item) => {
+      console.log(item)
+      setTimeout(() => {
+        store.commit('setNavbarIndex', NavBarIndex.LEFT)
+      }, 30)
+      // directories.value = item.path.split('/').filter(i=>i)
+    }
+
     onMounted(() => {
       getFileList()
+      bus.on(ACTION_LOCATE_FILE, handleLocateFile)
+    })
+
+    onBeforeUnmount(() => {
+      bus.off(ACTION_LOCATE_FILE, handleLocateFile)
     })
 
     return {

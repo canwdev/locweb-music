@@ -4,7 +4,7 @@
 
     <div
         class="panel-item left-panel"
-        @click="navbarIndex=0"
+        @click="navbarIndex=NavBarIndex.LEFT"
         v-show="isLeftPanel"
     >
       <component
@@ -16,7 +16,7 @@
     </div>
     <div
         class="panel-item right-panel"
-        @click="navbarIndex=1"
+        @click="navbarIndex=NavBarIndex.RIGHT"
         v-show="!isLeftPanel"
     >
       <ListPlaying
@@ -30,11 +30,7 @@
 </template>
 
 <script lang="ts">
-import {
-  defineComponent,
-  defineAsyncComponent,
-  computed,
-} from 'vue';
+import {computed, defineAsyncComponent, defineComponent,} from 'vue';
 import store from '@/store'
 
 import Navbar from '@/components/Navbar.vue';
@@ -42,10 +38,7 @@ import Actionbar from '@/components/Actionbar.vue';
 import ListPlaying from "@/components/ListPlaying/index.vue";
 // import ListPlaylist from "@/components/ListPlaylist.vue";
 // import ListFilesystem from "@/components/ListFilesystem.vue";
-import {
-  NavbarTabsType,
-  NavbarTabs
-} from "@/enum";
+import {NavBarIndex, NavbarTabs, NavbarTabsType} from "@/enum";
 
 // Dynamic child components
 const dynamicImportComponents = {}
@@ -82,7 +75,7 @@ export default defineComponent({
       }
     })
 
-    const isLeftPanel = computed(() => navbarIndex.value === 0)
+    const isLeftPanel = computed(() => navbarIndex.value === NavBarIndex.LEFT)
 
     return {
       navbarTab,
@@ -90,6 +83,7 @@ export default defineComponent({
       NavbarTabs,
       navbarIndex,
       isLeftPanel,
+      NavBarIndex,
       themeClass: computed(() => store.getters.themeClass)
     }
   },
