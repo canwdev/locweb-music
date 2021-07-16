@@ -1,3 +1,8 @@
+:root {
+  --primary-rgb: 41, 182, 246;
+  --primary: rgb(var(--primary-rgb));
+}
+
 html, body {
   height: 100%;
 }

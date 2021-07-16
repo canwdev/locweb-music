@@ -29,6 +29,7 @@ export default defineComponent({
     width: 160px;
     height: auto;
     border-radius: $generic-border-radius;
+    opacity: .2;
   }
 
   .text {
