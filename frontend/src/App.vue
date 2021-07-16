@@ -20,7 +20,7 @@ export default defineComponent({
   },
   setup() {
     const themeColor = computed(() => store.getters.themeColor)
-    console.log('themeColor', themeColor.value)
+    // console.log('themeColor', themeColor.value)
     if (themeColor.value) {
 
       const colorHex = themeColor.value

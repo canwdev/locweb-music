@@ -43,10 +43,10 @@
           </span>
         </button>
 
-        <button class="btn-no-style menu-item flex items-center">
+        <button class="btn-no-style menu-item flex items-center cursor-default">
           <span class="material-icons">color_lens</span>
           <span class="menu-item-title">Theme Color
-            <input class="input-styled color-input" type="color" :value="themeColor" @change="handleThemeColorChange">
+            <input class="btn-no-style color-input" type="color" :value="themeColor" @change="handleThemeColorChange">
           </span>
 
         </button>

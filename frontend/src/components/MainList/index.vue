@@ -6,7 +6,8 @@
           <input
               class="input-styled"
               v-model="searchInput"
-              type="text" placeholder="Filter Text"
+              type="text"
+              :placeholder="filterPlaceholder"
           >
           <button
               type="submit"
@@ -114,6 +115,10 @@ export default defineComponent({
     activeId: {
       type: Number,
       default: null
+    },
+    filterPlaceholder: {
+      type: String,
+      default: 'Filter Text'
     },
     list: {
       type: Array

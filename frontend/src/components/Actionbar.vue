@@ -324,7 +324,7 @@ export default defineComponent({
       volumeChange,
       showDetailDialog() {
         detailDialogVisible.value = !detailDialogVisible.value
-        console.log(musicItem.value)
+        // console.log(musicItem.value)
       },
       handleCoverClick,
       isDarkTheme: computed(() => store.getters.isDarkTheme),

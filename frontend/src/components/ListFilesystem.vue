@@ -1,14 +1,16 @@
 <template>
   <MainList
+      :ref="setMainListRef"
       :is-loading="isLoading"
       :list="fileList"
       :show-up="directories.length > 0"
-      :active-id="lastPlayIndex"
+      :active-id="lastPlayId"
       :min-item-size="40"
+      :filter-placeholder="`Filter in ${currentPath || '/'}`"
       @onItemClick="handleItemClick"
       @onItemAction="handleItemAction"
       @goUpDir="goUpDir"
-      @refresh="getFileList"
+      @refresh="handleRefresh"
       @openMenu="showFolderMenu"
   >
     <DialogMenu
@@ -36,7 +38,7 @@
 </template>
 
 <script lang="ts">
-import {computed, defineComponent, onMounted, onBeforeUnmount, ref, watch} from 'vue';
+import {computed, defineComponent, onMounted, onBeforeUnmount, ref, watch, nextTick} from 'vue';
 import store from '@/store'
 import {useRoute} from 'vue-router'
 import router from '@/router'
@@ -67,9 +69,29 @@ export default defineComponent({
     const route = useRoute()
     const isLoading = ref<boolean>(false)
     const isShowUploadModal = ref<boolean>(false)
-    const lastPlayIndex = ref(-1)
+    const lastPlayId = ref(-1)
     const directories = ref<Array<any>>([])
     const fileList = ref<Array<MusicItem>>([])
+    let mainListRef
+    const setMainListRef = (ref) => {
+      mainListRef = ref
+    }
+
+    const setDirectories = (arr) => {
+      return directories.value = arr.map(item => new MusicItem({
+        filename: item,
+        isDirectory: true
+      }))
+    }
+
+    const setLastPlayId = (id?) => {
+      return router.push({
+        query: {
+          ...route.query,
+          id: id || ''
+        }
+      })
+    }
 
     const uploadConfig = ref({
       path: '',
@@ -80,13 +102,17 @@ export default defineComponent({
       fileUpload = ref
     }
 
-    const getCurrentPath = () => {
+    const getCurrentPath = (directories) => {
       let path = ''
-      directories.value.forEach((item: any) => {
+      directories.forEach((item: any) => {
         path += (item.filename + '/')
       })
       return path
     }
+
+    const currentPath = computed(() => {
+      return getCurrentPath(directories.value)
+    })
 
     const getFileList = async () => {
       if (isLoading.value) {
@@ -94,9 +120,8 @@ export default defineComponent({
       }
       try {
         isLoading.value = true
-        lastPlayIndex.value = -1
 
-        const path = getCurrentPath()
+        const path = currentPath.value
 
         const {list, playStat, message} = await getList({
           path,
@@ -105,14 +130,15 @@ export default defineComponent({
         if (message) {
           window.$notify.warning(message)
         }
-        const lastFilename = playStat && playStat.file
-        fileList.value = list.map((file, index) => {
-          if (lastFilename && (file.filename === lastFilename)) {
-            lastPlayIndex.value = index
-          }
+        fileList.value = list.map((file) => {
           return new MusicItem(file)
         })
 
+        const lastFilename = playStat && playStat.file
+        if (lastFilename && !route.query.id) {
+          lastPlayId.value = list.find(file => file.filename === lastFilename).id || -1
+        }
+        mainListRef.locateItem()
       } catch (e) {
         fileList.value = []
         // window.$notify.error(e.message)
@@ -123,22 +149,33 @@ export default defineComponent({
 
     }
 
+    const handleRefresh = async () => {
+      await setLastPlayId()
+      return getFileList()
+    }
+
     // watch route change
-    watch(() => route.query, (val) => {
-      const dir = val.dir
+    watch(() => route.query.id, (id) => {
+      if (id) {
+        lastPlayId.value = Number(id) || -1
+      }
+      nextTick(() => {
+        mainListRef.locateItem()
+      })
+    }, {
+      immediate: true
+    })
+    watch(() => route.query.dir, (dir) => {
       if (dir) {
         // @ts-ignore
-        directories.value = JSON.parse(dir).map(item => new MusicItem({
-          filename: item,
-          isDirectory: true
-        }))
+        setDirectories(JSON.parse(dir))
         // console.log('router.query.dir change', val)
       }
     }, {
       immediate: true
     })
 
-    // watch dir change
+    // watch directories change
     watch(directories, (val) => {
       // console.log('directories changed', {val, router, route})
 
@@ -174,7 +211,8 @@ export default defineComponent({
         // set current playing
         // playMusicFromList(list, item)
         bus.emit(ACTION_PLAY_START, {list, item})
-        lastPlayIndex.value = item.id
+        lastPlayId.value = item.id
+        setLastPlayId()
       } else {
         window.$swal.fire({
           toast: true,
@@ -280,7 +318,7 @@ export default defineComponent({
     }
     const actionReplaceFile = async (sItem) => {
       if (!sItem) return
-      const path = getCurrentPath()
+      const path = currentPath.value
 
       uploadConfig.value = {
         path,
@@ -326,7 +364,7 @@ export default defineComponent({
 
     // upload files
     const showUploadDialog = async () => {
-      const path = getCurrentPath()
+      const path = currentPath.value
       uploadConfig.value = {
         path,
         filename: ''
@@ -349,12 +387,16 @@ export default defineComponent({
       {label: 'Upload Folder...', disabled: true}
     ]
 
-    const handleLocateFile = (item) => {
-      console.log(item)
+    const handleLocateFile = async (item) => {
       setTimeout(() => {
         store.commit('setNavbarIndex', NavBarIndex.LEFT)
       }, 30)
-      // directories.value = item.path.split('/').filter(i=>i)
+      // console.log(item)
+
+      await setLastPlayId(item.id)
+      if (item.path !== currentPath.value) {
+        setDirectories(item.path.split('/').filter(i => i))
+      }
     }
 
     onMounted(() => {
@@ -367,11 +409,13 @@ export default defineComponent({
     })
 
     return {
+      setMainListRef,
       isLoading,
       fileList,
-      lastPlayIndex,
+      lastPlayId,
       directories,
       getFileList,
+      handleRefresh,
       goUpDir,
       handleItemClick,
       handleItemAction,
@@ -385,6 +429,7 @@ export default defineComponent({
       setFileUploadRef,
       uploadConfig,
       isDarkTheme: computed(() => store.getters.isDarkTheme),
+      currentPath
     }
   }
 })
