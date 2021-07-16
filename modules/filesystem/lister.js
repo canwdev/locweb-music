@@ -38,6 +38,10 @@ const listFiles = async (req, res, next) => {
         return res.sendData({message: 'You are not authorized', list: []})
       }
     }
+
+    if (!fs.existsSync(dir)) {
+      return res.sendError({message: 'Dir not found', code: 404})
+    }
     console.log('dir',dir)
     let files = await fs.readdir(dir)
 
