@@ -55,6 +55,7 @@ export default defineComponent({
   padding: 10px;
   color: $primary;
   height: 100%;
+  overflow: auto;
 
   .title-wrap {
     margin: 10px 0;
@@ -71,7 +72,7 @@ export default defineComponent({
     color: $secondary;
     background: $dark;
     padding: 10px;
-    overflow: hidden;
+    overflow: auto;
   }
   .container {
     max-width: 500px;

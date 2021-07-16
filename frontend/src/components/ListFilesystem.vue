@@ -138,7 +138,9 @@ export default defineComponent({
         if (lastFilename && !route.query.id) {
           lastPlayId.value = list.find(file => file.filename === lastFilename).id || -1
         }
-        mainListRef.locateItem()
+        nextTick(() => {
+          mainListRef.locateItem()
+        })
       } catch (e) {
         fileList.value = []
         // window.$notify.error(e.message)

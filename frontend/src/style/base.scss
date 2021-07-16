@@ -21,8 +21,9 @@ body {
 
 //滚动条样式
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 5px;
+  height: 5px;
+  overflow: overlay;
 }
 
 $scrollbar-fg: $primary; //rgba(0, 0, 0, .3);
@@ -31,13 +32,16 @@ $scrollbar-bg: rgba(0, 0, 0, .1);
 $scrollbar-bg-dark: rgba(255, 255, 255, .1);
 
 ::-webkit-scrollbar-thumb {
-  box-shadow: 0 0 1px 0 $border-color inset;
+  box-shadow: 0 0 1px 0 $dark inset;
   background: $scrollbar-fg;
+  border-radius: $generic-border-radius;
+  cursor: pointer;
 }
 
 ::-webkit-scrollbar-track {
-  box-shadow: 0 0 1px 0 $border-color inset;
+  box-shadow: 0 0 1px 0 $dark inset;
   background: $scrollbar-bg;
+  border-radius: $generic-border-radius;
 }
 
 //黑色风格滚动条
@@ -48,7 +52,7 @@ $scrollbar-bg-dark: rgba(255, 255, 255, .1);
   }
 
   ::-webkit-scrollbar-thumb {
-    background: $scrollbar-fg-dark
+    background: $scrollbar-fg-dark;
   }
 
   ::-webkit-scrollbar-track {
