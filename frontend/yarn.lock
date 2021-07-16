@@ -987,6 +987,11 @@
   resolved "https://registry.npm.taobao.org/@soda/get-current-script/download/@soda/get-current-script-1.0.2.tgz#a53515db25d8038374381b73af20bb4f2e508d87"
   integrity sha1-pTUV2yXYA4N0OBtzryC7Ty5QjYc=
 
+"@sweetalert2/theme-minimal@^5.0.1":
+  version "5.0.1"
+  resolved "https://registry.nlark.com/@sweetalert2/theme-minimal/download/@sweetalert2/theme-minimal-5.0.1.tgz#f88bfb2107dca24db2d06727cff44a07962a46f1"
+  integrity sha1-+Iv7IQfcok2y0Gcnz/RKB5YqRvE=
+
 "@tokenizer/token@^0.1.1":
   version "0.1.1"
   resolved "https://registry.npm.taobao.org/@tokenizer/token/download/@tokenizer/token-0.1.1.tgz?cache=0&sync_timestamp=1614563327850&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40tokenizer%2Ftoken%2Fdownload%2F%40tokenizer%2Ftoken-0.1.1.tgz#f0d92c12f87079ddfd1b29f614758b9696bc29e3"

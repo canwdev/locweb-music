@@ -9,6 +9,7 @@
     "lintfix": "eslint --fix --ext .js,.vue ."
   },
   "dependencies": {
+    "@sweetalert2/theme-minimal": "^5.0.1",
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
     "hotkeys-js": "^3.8.3",

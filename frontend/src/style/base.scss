@@ -1,3 +1,8 @@
+@import '~@sweetalert2/theme-minimal/minimal.scss';
+.swal2-popup.swal2-toast {
+  border-radius: $generic-border-radius;
+  min-width: 320px;
+}
 :root {
   --primary-rgb: 41, 182, 246;
   --primary: rgb(var(--primary-rgb));
