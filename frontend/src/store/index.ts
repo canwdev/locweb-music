@@ -34,7 +34,8 @@ export default createStore({
   getters: {
     isDarkTheme: state => state.settings.isDarkTheme,
     navbarTab: state => state.settings.navbarTab,
-    themeClass: state => state.settings.isDarkTheme ? 'bg-dark' : 'bg-light'
+    themeClass: state => state.settings.isDarkTheme ? 'bg-dark' : 'bg-light',
+    themeColor: state => state.settings.themeColor
   },
   mutations: {
     setMusicItem: (state, payload: MusicItem) => {

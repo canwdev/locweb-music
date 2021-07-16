@@ -5,7 +5,8 @@ const LS_KEY = 'LS_KEY_LOCWEB_SETTINGS'
 const defaultSettings = {
   isDarkTheme: true,
   ncmApi: null,
-  navbarTab: NavbarTabsType.MAIN
+  navbarTab: NavbarTabsType.MAIN,
+  themeColor: null
 }
 
 export function loadSettings() {

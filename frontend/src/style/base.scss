@@ -3,9 +3,10 @@
   border-radius: $generic-border-radius;
   min-width: 320px;
 }
+
 :root {
-  --primary-rgb: 41, 182, 246;
-  --primary: rgb(var(--primary-rgb));
+  --primary-rgb:114, 187, 141;
+  --primary:rgb(var(--primary-rgb));
 }
 
 html, body {

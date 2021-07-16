@@ -43,6 +43,16 @@
           </span>
         </button>
 
+        <button class="btn-no-style menu-item flex items-center">
+          <span class="material-icons">color_lens</span>
+          <span class="menu-item-title">Theme Color
+            <input class="input-styled color-input" type="color" :value="themeColor" @change="handleThemeColorChange">
+          </span>
+
+        </button>
+
+
+
       </div>
     </transition>
 
@@ -67,6 +77,7 @@ import store from "@/store";
 import ModalDialog from '@/components/ModalDialog.vue'
 import LoginPrompt from '@/components/LoginPrompt.vue'
 import {DrawerMenuTabItems} from "@/enum";
+import {hexToRgb} from '@/utils/color'
 
 export default defineComponent({
   name: 'DrawerMenu',
@@ -151,6 +162,21 @@ export default defineComponent({
       mVisible.value = false
     }
 
+    const themeColor = computed(() => store.getters.themeColor)
+
+    const handleThemeColorChange = (event) => {
+      const colorHex = event.target.value
+      const {r, g, b} = hexToRgb(colorHex)
+      console.log(colorHex)
+
+      const root = document.documentElement;
+      root.style.setProperty('--primary-rgb', `${r}, ${g}, ${b}`);
+      store.commit('updateSettings', {
+        key: 'themeColor',
+        value: colorHex
+      })
+    }
+
     return {
       menuList,
       mVisible,
@@ -164,7 +190,9 @@ export default defineComponent({
         })
       },
       themeClass: computed(() => store.getters.themeClass),
-      handleLoginSuccess
+      handleLoginSuccess,
+      themeColor,
+      handleThemeColorChange
     }
   }
 })
@@ -274,6 +302,12 @@ export default defineComponent({
         align-items: center;
         justify-content: space-between;
       }
+    }
+
+    .color-input {
+      width: 30px;
+      height: 30px;
+      padding: 0;
     }
   }
 }
