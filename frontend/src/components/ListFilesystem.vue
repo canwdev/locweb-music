@@ -85,7 +85,7 @@ export default defineComponent({
     }
 
     const setLastPlayId = (id?) => {
-      return router.push({
+      return router.replace({
         query: {
           ...route.query,
           id: id || ''
@@ -197,9 +197,10 @@ export default defineComponent({
       directories.value.pop()
     }
 
-    const handleItemClick = (item: MusicItem) => {
+    const handleItemClick = async (item: MusicItem) => {
       // jump folder
       if (item.isDirectory) {
+        await setLastPlayId()
         directories.value.push(item)
         return
       }
