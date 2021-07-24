@@ -26,7 +26,7 @@ async function run() {
     `docker save -o ${distFilePath} ${dockerImageName}`,
   ], '构建 Docker 镜像...')
 
-  automate.exec(`scp ${distFilePath} nas:${productionDir}`, 'scp send...')
+  automate.exec(`scp ${distFilePath} nas:${productionDir}`, 'scp 发送镜像中...')
 
   automate.exec(`ssh -T nas <<'EOL'
 cd ${productionDir} &&

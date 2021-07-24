@@ -136,7 +136,8 @@ export default defineComponent({
 
         const lastFilename = playStat && playStat.file
         if (lastFilename && !route.query.id) {
-          lastPlayId.value = list.find(file => file.filename === lastFilename).id || -1
+          const item = list.find(file => file.filename === lastFilename) || {}
+          lastPlayId.value = item.id || -1
         }
         nextTick(() => {
           mainListRef.locateItem()
