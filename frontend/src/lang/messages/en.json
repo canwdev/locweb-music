@@ -79,5 +79,7 @@
   "albums": "Albums",
   "recent": "Recent",
   "rated": "Rated",
-  "file-system": "File System"
+  "file-system": "File System",
+  "progress": "Progress",
+  "upload": "Upload"
 }
