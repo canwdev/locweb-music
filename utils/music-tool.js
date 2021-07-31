@@ -15,6 +15,7 @@ const {IMAGE_PATH} = require('../config')
 const getMetadata = async (filePath) => {
   const metadata = await mm.parseFile(filePath)
   const {common} = metadata
+  delete metadata.quality
   // console.log(util.inspect(metadata, {showHidden: false, depth: null}));
 
   // Extract cover
@@ -30,7 +31,6 @@ const getMetadata = async (filePath) => {
 
     delete common.picture
     delete common.comment
-    delete metadata.quality
 
     return {
       metadata,

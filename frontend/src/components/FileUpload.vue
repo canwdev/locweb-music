@@ -1,7 +1,7 @@
 <template>
   <div class="file-upload-wrap" :class="themeClass">
     <div class="title-box">
-      <b>Upload to:</b> {{ (uploadConfig.path + uploadConfig.filename) || 'Root dir' }}
+      <b>{{ $t('upload-to') }}:</b> {{ (uploadConfig.path + uploadConfig.filename) || 'Root dir' }}
     </div>
 
     <form
@@ -14,13 +14,13 @@
     >
       <input class="input-styled input-upload" :disabled="isUploading" :ref="setInputRef" type="file"
              name="sampleFile"/>
-      <button class="btn-styled" type="button" :disabled="isUploading" @click="clearFileInput">Clear</button>
-      <button class="btn-styled" type='submit'>Upload</button>
+      <button class="btn-styled" type="button" :disabled="isUploading" @click="clearFileInput">{{ $t('clear') }}</button>
+      <button class="btn-styled" type='submit'>{{ $t('upload') }}</button>
     </form>
 
     <div class="progress-box">
       <div class="progress-text">
-        Progress: {{ progress }}%
+        {{ $t('progress') }}: {{ progress }}%
       </div>
       <ProgressBar :progress="progress"></ProgressBar>
     </div>

@@ -9,6 +9,7 @@
 
 <script lang="ts">
 import {computed, defineComponent, onBeforeUnmount, onMounted, watch} from 'vue'
+import {useI18n} from "vue-i18n";
 import {MusicItem} from "@/enum";
 import bus, {
   ACTION_CHANGE_CURRENT_TIME,
@@ -24,6 +25,7 @@ import {getDetail} from "@/api/music.ts";
 export default defineComponent({
   name: "PlayerCore",
   setup() {
+    const {t} = useI18n()
     let audio
     const setAudioRef = (el) => {
       audio = el
@@ -163,7 +165,7 @@ export default defineComponent({
       })
 
       audio.addEventListener('error', (error) => {
-        window.$notify.error('Load fail or no supported source')
+        window.$notify.error(t('msg.load-fail-or-no-supported-source'))
         console.error(error)
       })
     }

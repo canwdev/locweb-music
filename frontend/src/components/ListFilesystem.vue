@@ -6,7 +6,7 @@
       :show-up="directories.length > 0"
       :active-id="lastPlayId"
       :min-item-size="40"
-      :filter-placeholder="`Filter in ${currentPath || '/'}`"
+      :filter-placeholder="`${$t('filter-in')} ${currentPath || '/'}`"
       @onItemClick="handleItemClick"
       @onItemAction="handleItemAction"
       @goUpDir="goUpDir"
@@ -39,6 +39,7 @@
 
 <script lang="ts">
 import {computed, defineComponent, onMounted, onBeforeUnmount, ref, watch, nextTick} from 'vue';
+import {useI18n} from "vue-i18n";
 import store from '@/store'
 import {useRoute} from 'vue-router'
 import router from '@/router'
@@ -66,6 +67,7 @@ export default defineComponent({
     ModalDialog
   },
   setup() {
+    const {t} = useI18n()
     const route = useRoute()
     const isLoading = ref<boolean>(false)
     const isShowUploadModal = ref<boolean>(false)
@@ -223,7 +225,7 @@ export default defineComponent({
           width: 300,
           timer: 2500,
           icon: 'warning',
-          title: 'Format not support.',
+          title: t('msg.format-not-support'),
           showConfirmButton: true,
           confirmButtonText: 'Try'
         }).then((result) => {
@@ -263,7 +265,7 @@ export default defineComponent({
       if (!sItem) return
       isShowFileMenu.value = false
 
-      const name = prompt(`Rename 《${sItem.filename}》`, sItem.filename) || ''
+      const name = prompt(`${ t('rename') } 《${sItem.filename}》`, sItem.filename) || ''
       if (!name) {
         return
       }
@@ -287,7 +289,7 @@ export default defineComponent({
       if (!sItem) return
       isShowFileMenu.value = false
 
-      const flag = confirm(`WARNING!! Delete 《${sItem.filename}》?\nThis operation cannot be undone.`)
+      const flag = confirm(`${ t('warning') }!! ${ t('delete') } 《${sItem.filename}》?\n${ t('msg.this-operation-cannot-be-undone') }`)
       if (!flag) {
         return
       }
@@ -337,13 +339,13 @@ export default defineComponent({
       if (!selectedItem.value) return
       const sItem = selectedItem.value
       const list = [
-        {label: 'Rename', action: () => actionRenameFile(sItem)},
-        {label: 'Delete', action: () => actionDeleteFile(sItem)},
-        !sItem.isDirectory ? {label: 'Download', action: () => actionDownloadFile(sItem)} :
-            {label: 'Download Archive', disabled: true},
+        {label: t('rename'), action: () => actionRenameFile(sItem)},
+        {label: t('delete'), action: () => actionDeleteFile(sItem)},
+        !sItem.isDirectory ? {label: t('download'), action: () => actionDownloadFile(sItem)} :
+            {label: t('download-archive'), disabled: true},
       ]
       if (!sItem.isDirectory) {
-        list.push({label: 'Replace...', action: () => actionReplaceFile(sItem)})
+        list.push({label: t('replace') + '...', action: () => actionReplaceFile(sItem)})
       }
       return list
     })
@@ -353,7 +355,7 @@ export default defineComponent({
       isShowFolderMenu.value = true
     }
     const createFolder = async () => {
-      const name = prompt(`Create Folder`) || ''
+      const name = prompt(t('create-folder')) || ''
       if (!name) {
         return
       }
@@ -380,15 +382,15 @@ export default defineComponent({
       setTimeout(() => {
         isShowUploadModal.value = false
         fileUpload.clearFileInput()
-        window.$notify.success(`File Uploaded`)
+        window.$notify.success(t('msg.file-uploaded'))
       }, 500)
       getFileList()
     }
 
     const folderMenuList = [
-      {label: 'Create Folder', action: createFolder},
-      {label: 'Upload Files...', action: showUploadDialog},
-      {label: 'Upload Folder...', disabled: true}
+      {label: t('create-folder'), action: createFolder},
+      {label: t('upload-files')+'...', action: showUploadDialog},
+      {label: t('upload-folder')+'...', disabled: true}
     ]
 
     const handleLocateFile = async (item) => {

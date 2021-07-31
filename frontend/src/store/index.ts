@@ -29,7 +29,7 @@ export default createStore({
     currentTime: 0,
     duration: 0,
     token: getToken(), // Authorization token
-    settings: loadSettings()
+    settings: loadSettings(),
   },
   getters: {
     isDarkTheme: state => state.settings.isDarkTheme,

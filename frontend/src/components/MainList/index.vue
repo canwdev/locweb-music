@@ -13,7 +13,7 @@
               type="submit"
               class="btn-no-style"
               @click="handleSearch"
-              title="Search"
+              :title="$t('search')"
           ><i class="material-icons">search</i>
           </button>
         </form>
@@ -21,20 +21,20 @@
             v-if="!isPlayList"
             class="btn-no-style"
             @click="$emit('refresh')"
-            title="Refresh List"
+            :title="$t('refresh-list')"
         ><i class="material-icons">refresh</i>
         </button>
         <button
             class="btn-no-style"
             @click="locateItem"
-            title="Locate"
+            :title="$t('locate')"
         ><i class="material-icons">my_location</i>
         </button>
         <button
             v-if="!isPlayList"
             class="btn-no-style"
             @click="$emit('openMenu')"
-            title="Menu"
+            :title="$t('menu')"
         ><i class="material-icons">more_vert</i>
         </button>
       </div>

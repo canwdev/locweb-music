@@ -1,9 +1,9 @@
 <template>
   <div class="login-wrap">
     <form ref="form" @submit.stop.prevent="submitLogin">
-      <div class="form-title">Login</div>
+      <div class="form-title">{{ $t('user.login') }}</div>
       <div class="form-row">
-        <div class="form-row-title">Username</div>
+        <div class="form-row-title">{{ $t('user.username') }}</div>
         <input
             id="name-input"
             v-model="form.username"
@@ -13,7 +13,7 @@
       </div>
 
       <div class="form-row">
-        <div class="form-row-title">Password</div>
+        <div class="form-row-title">{{ $t('user.password') }}</div>
         <input
             id="password-input"
             type="password"
@@ -23,7 +23,7 @@
         >
       </div>
       <div class="form-row text-center">
-        <button type="submit" class="btn-styled">Submit</button>
+        <button type="submit" class="btn-styled">{{ $t('submit') }}</button>
       </div>
     </form>
   </div>

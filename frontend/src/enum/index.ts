@@ -1,4 +1,7 @@
 import {IAudioMetadata, ICommonTagsResult} from 'music-metadata/lib/type'
+import VueI18n from '../lang/i18n'
+
+const {t} = VueI18n.global
 
 // server api url
 export const HOST_URL = process.env.VUE_APP_API_HOST || '';
@@ -22,49 +25,49 @@ export enum NavbarTabsType {
 export const NavbarTabs = {
   [NavbarTabsType.MAIN]: {
     icon: 'storage',
-    name: 'Files',
+    name: t('file-system'),
     value: NavbarTabsType.MAIN,
     componentName: 'ListFilesystem',
   },
   [NavbarTabsType.PLAYING]: {
     icon: 'audiotrack',
-    name: 'Playing',
+    name: t('playing'),
     value: NavbarTabsType.PLAYING,
     // componentName: 'ListPlaying',
   },
   [NavbarTabsType.PLAYLIST]: {
     icon: 'queue_music',
-    name: 'Playlist',
+    name: t('playlist'),
     value: NavbarTabsType.PLAYLIST,
     componentName: 'ListPlaylist',
   },
   [NavbarTabsType.ALBUMS]: {
-    name: 'Albums',
     icon: 'album',
+    name: t('albums'),
     value: NavbarTabsType.ALBUMS,
     disabled: true
   },
   [NavbarTabsType.ARTISTS]: {
-    name: 'Artists',
     icon: 'mic',
+    name: t('artists'),
     value: NavbarTabsType.ARTISTS,
     disabled: true
   },
   [NavbarTabsType.RECENT]: {
-    name: 'Recent',
     icon: 'history',
+    name: t('recent'),
     value: NavbarTabsType.RECENT,
     disabled: true
   },
   [NavbarTabsType.RATED]: {
-    name: 'Rated',
     icon: 'stars',
+    name: t('rated'),
     value: NavbarTabsType.RATED,
     disabled: true
   },
   [NavbarTabsType.SEARCH]: {
-    name: 'Search',
     icon: 'search',
+    name: t('search'),
     value: NavbarTabsType.SEARCH,
     disabled: true
   },
@@ -85,6 +88,7 @@ export enum LoopModeType {
   LOOP_SEQUENCE = 2, // Sequence play
   LOOP_REVERSE = 3,  // Reverse play
   LOOP_SINGLE = 4, // Single cycle
+  SHUFFLE = 5, // Shuffle next
 }
 
 export enum NavBarIndex {

@@ -1,7 +1,7 @@
 <template>
   <div class="no-data">
     <img class="no-data-img" src="@/assets/images/Transparent_Akkarin.webp" alt="No data!">
-    <div class="text">{{ text || 'No Data' }}</div>
+    <div class="text">{{ text || $t('msg.no-data') }}</div>
   </div>
 </template>
 

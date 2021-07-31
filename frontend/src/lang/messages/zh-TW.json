@@ -1,0 +1,19 @@
+{
+  "drawer": {
+    "menu": "菜單",
+    "music": "音樂",
+    "rescan-media": "重新掃描媒體",
+    "settings": "設置",
+    "system": "系統"
+  },
+  "msg": {
+    "confirm-logout": "確認退出？",
+    "login-success": "登錄成功！",
+    "logout-completed": "註銷完成"
+  },
+  "settings": {
+    "dark-theme": "黑暗主題",
+    "theme-color": "主題色",
+    "language": "語言"
+  }
+}

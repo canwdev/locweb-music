@@ -1,0 +1,19 @@
+{
+  "drawer": {
+    "menu": "メニュー",
+    "music": "音楽",
+    "rescan-media": "メディアの再スキャン",
+    "settings": "設定",
+    "system": "システム"
+  },
+  "msg": {
+    "confirm-logout": "ログアウトを確認しますか？",
+    "login-success": "ログイン成功！",
+    "logout-completed": "ログアウトが完了しました"
+  },
+  "settings": {
+    "dark-theme": "暗いテーマ",
+    "theme-color": "テーマカラー",
+    "language": "言語"
+  }
+}

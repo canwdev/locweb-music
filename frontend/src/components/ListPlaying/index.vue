@@ -8,6 +8,7 @@
       :min-item-size="55"
       @onItemClick="handleItemClick"
       @onItemAction="handleItemAction"
+      :filter-placeholder="$t('filter-by-name')"
   >
     <DialogMenu
         v-model:visible="isShowFileMenu"

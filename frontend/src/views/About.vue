@@ -2,12 +2,12 @@
   <div class="about" :class="themeClass">
     <div class="container">
       <div class="title-wrap flex items-center justify-between">
-        <span class="title"> About</span>
-        <button class="btn-styled" @click="backHome">Back</button>
+        <span class="title"> {{ $t('page.about') }}</span>
+        <button class="btn-styled" @click="backHome">{{ $t('back') }}</button>
       </div>
       <textarea class="input-styled" readonly :value="pkgInfo"></textarea>
       <div class="title-wrap flex items-center justify-between">
-        <span class="title"> Changelog</span>
+        <span class="title"> {{ $t('changelog') }}</span>
       </div>
       <textarea class="input-styled" readonly :value="changelog"></textarea>
     </div>

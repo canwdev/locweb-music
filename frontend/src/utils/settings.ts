@@ -1,6 +1,6 @@
 import {NavbarTabsType} from "@/enum";
 
-const LS_KEY = 'LS_KEY_LOCWEB_SETTINGS'
+const LS_KEY_LOCWEB_SETTINGS = 'LS_KEY_LOCWEB_SETTINGS'
 
 const defaultSettings = {
   isDarkTheme: true,
@@ -10,10 +10,10 @@ const defaultSettings = {
 }
 
 export function loadSettings() {
-  const settings = JSON.parse(localStorage.getItem(LS_KEY) || '{}')
+  const settings = JSON.parse(localStorage.getItem(LS_KEY_LOCWEB_SETTINGS) || '{}')
   return {...defaultSettings, ...settings}
 }
 
 export function saveSettings(obj = {}) {
-  localStorage.setItem(LS_KEY, JSON.stringify(obj))
+  localStorage.setItem(LS_KEY_LOCWEB_SETTINGS, JSON.stringify(obj))
 }

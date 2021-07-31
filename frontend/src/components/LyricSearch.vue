@@ -10,10 +10,10 @@
             class="input-styled"
             required
             type="text"
-            placeholder="Search song name"
+            :placeholder="$t('msg.search-song-name')"
             v-model="searchText"
         >
-        <button type="submit" class="btn-styled">Search</button>
+        <button type="submit" class="btn-styled">{{ $t('search') }}</button>
       </form>
 
       <div class="result-list">
@@ -21,7 +21,7 @@
             class="btn-styled list-item"
             @click="chooseMusic()"
         >
-          <div class="title">Edit Current Lyric</div>
+          <div class="title">{{ $t('edit-current-lyric') }}</div>
         </button>
         <button
             v-for="(item, index) in resultList"
@@ -30,8 +30,8 @@
             @click="chooseMusic(item)"
         >
           <div class="title">{{ item.name }}</div>
-          <div class="subtitle">Artists: {{ item.artists.map(v => v.name).join(', ') }}</div>
-          <div class="subtitle">Album: {{ item.album.name }}</div>
+          <div class="subtitle">{{ $t('artists') }}: {{ item.artists.map(v => v.name).join(', ') }}</div>
+          <div class="subtitle">{{ $t('album') }}: {{ item.album.name }}</div>
         </button>
       </div>
     </div>
@@ -40,11 +40,11 @@
       <textarea
           v-model="lyric"
           rows="20"
-          placeholder="Type Lyrics Here (.lrc)"
+          :placeholder="$t('msg.type-lyrics-here-lrc')"
       ></textarea>
       <div class="flex justify-between">
-        <button class="btn-styled" @click="isDetail = false">Back</button>
-        <button class="btn-styled" @click="saveLyric">Save</button>
+        <button class="btn-styled" @click="isDetail = false">{{ $t('back') }}</button>
+        <button class="btn-styled" @click="saveLyric">{{ $t('save') }}</button>
       </div>
     </div>
 

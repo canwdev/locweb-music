@@ -30,11 +30,11 @@
                 v-show="currentDetailTab === DetailTabEnum.LYRIC"
             >
               <div class="lyric-lock">
-                <button class="btn-no-style" title="Search Lyric" @click="isShowLyricSearch = true">
+                <button class="btn-no-style" :title="$t('search-lyric')" @click="isShowLyricSearch = true">
                   <i class="material-icons">search</i>
                 </button>
 
-                <button class="btn-no-style" title="Lock Lyric" @click="isLyricLock = !isLyricLock">
+                <button class="btn-no-style" :title="$t('lock-lyric')" @click="isLyricLock = !isLyricLock">
                   <i class="material-icons">
                     {{ isLyricLock ? 'lock' : 'lock_open' }}
                   </i>
@@ -55,13 +55,15 @@
 
               </div>
               <div v-else class="lrc-main no-lyric" @click="isShowDetail = false">
-                没有歌词，请欣赏
+                {{ $t('msg.no-lyric') }}
               </div>
             </div>
             <textarea
                 v-show="currentDetailTab === DetailTabEnum.METADATA"
                 class="metadata" cols="30" rows="15" readonly
-                :value="JSON.stringify(musicItem.metadata, null, 2)"></textarea>
+                :value="JSON.stringify(musicItem.metadata, null, 2)"
+                :placeholder="$t('msg.no-data')"
+                ></textarea>
           </div>
         </transition>
       </div>
@@ -95,6 +97,7 @@
 
 <script lang="ts">
 import {computed, defineComponent, ref, watch, nextTick, onMounted, onBeforeUnmount, toRefs} from 'vue';
+import {useI18n} from "vue-i18n";
 import CoverDisplay from "@/components/CoverDisplay.vue"
 import {MusicItem} from "@/enum";
 import store from "@/store";
@@ -113,10 +116,6 @@ const DetailTabEnum = {
   LYRIC: 'LYRIC',
   METADATA: 'METADATA',
 }
-const detailTabList = [
-  {label: 'Lyric', value: DetailTabEnum.LYRIC},
-  {label: 'Metadata', value: DetailTabEnum.METADATA},
-]
 
 export default defineComponent({
   name: 'MusicDetail',
@@ -133,11 +132,17 @@ export default defineComponent({
     }
   },
   setup(props) {
+    const {t} = useI18n()
     const {isParentVisible} = toRefs(props)
     const currentDetailTab = ref(DetailTabEnum.LYRIC)
     const isShowDetail = ref(false)
     const isShowLyricSearch = ref(false)
     const currentPlayTime = ref(0) // ms
+
+    const detailTabList = [
+      {label: t('lyric'), value: DetailTabEnum.LYRIC},
+      {label: t('metadata'), value: DetailTabEnum.METADATA},
+    ]
 
     const musicItem = computed((): MusicItem => {
       return store.state.musicItem

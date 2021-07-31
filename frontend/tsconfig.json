@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "noImplicitThis": true,
+    "resolveJsonModule": true,
     "noImplicitAny": false,
     "target": "esnext",
     "module": "esnext",

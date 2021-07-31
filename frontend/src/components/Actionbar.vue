@@ -46,22 +46,22 @@
             :disabled="actionDisabled"
             @click="previous"
             class="btn-no-style btn-action">
-          <i class="material-icons" title="Previous">skip_previous</i>
+          <i class="material-icons" :title="$t('previous')">skip_previous</i>
         </button>
 
         <button
             :disabled="actionDisabled"
             @click="togglePlay"
             class="btn-no-style btn-action">
-          <i v-show="paused" class="material-icons" title="Play">play_arrow</i>
-          <i v-show="!paused" class="material-icons" title="Pause">pause</i>
+          <i v-show="paused" class="material-icons" :title="$t('play')">play_arrow</i>
+          <i v-show="!paused" class="material-icons" :title="$t('pause')">pause</i>
         </button>
 
         <button
             :disabled="actionDisabled"
             @click="next"
             class="btn-no-style btn-action">
-          <i class="material-icons" title="Next">skip_next</i>
+          <i class="material-icons" :title="$t('next')">skip_next</i>
         </button>
 
         <button
@@ -70,11 +70,11 @@
             :class="{active: isRandom}"
             @click="toggleRandom"
         >
-          <i class="material-icons" title="Shuffle">shuffle</i>
+          <i class="material-icons" :title="$t('random')">casino</i>
         </button>
 
-        <button class="btn-no-style btn-action" @click="switchLoopMode">
-          <i class="material-icons" :class="loopIcon.className" title="Loop">{{ loopIcon.name }}</i>
+        <button class="btn-no-style btn-action" @click="switchLoopMode" :title="loopIcon.name">
+          <i class="material-icons" :class="loopIcon.className">{{ loopIcon.name }}</i>
         </button>
       </div>
     </div>
@@ -99,6 +99,7 @@
 
 <script lang="ts">
 import {computed, defineComponent, ref, watch, nextTick, onMounted, onBeforeUnmount} from 'vue';
+import {useI18n} from "vue-i18n";
 import store from '@/store'
 import {LoopModeType, MusicItem} from "@/enum";
 import bus, {
@@ -124,6 +125,7 @@ export default defineComponent({
     MusicDetail
   },
   setup() {
+    const {t} = useI18n()
     const mCurrentTime = ref(0)
     const isSeeking = ref(false)
     const detailDialogVisible = ref(false)
@@ -173,6 +175,8 @@ export default defineComponent({
       switch (loopMode.value) {
         case LoopModeType.NONE:
           return {name: 'arrow_forward'}
+        case LoopModeType.SHUFFLE:
+          return {name: 'shuffle'}
         case LoopModeType.LOOP_SEQUENCE:
           return {name: 'repeat'}
         case LoopModeType.LOOP_REVERSE:
@@ -203,10 +207,10 @@ export default defineComponent({
     }
 
     const loopText = {
-      1: 'Play in order',
-      2: 'Sequential loop',
-      3: 'Reverse loop',
-      4: 'Single cycle',
+      1: t('msg.play-in-order'),
+      2: t('msg.sequential-loop'),
+      3: t('msg.reverse-loop'),
+      4: t('msg.single-cycle'),
     }
     const showTip = (text) => {
       window.$notify.info(text, {
@@ -234,7 +238,7 @@ export default defineComponent({
       } else {
         store.commit('setShuffleRestore')
       }
-      showTip('Shuffle: ' + (flag ? 'ON' : 'OFF'))
+      showTip(t('shuffle')+': ' + (flag ? t('on') : t('off')))
     }
     const switchLoopMode = () => {
       let index = loopMode.value

@@ -4,8 +4,8 @@ import './registerServiceWorker'
 import router from './router'
 import store from './store'
 import VueVirtualScroller from 'vue3-virtual-scroller'
+import VueI18n from './lang/i18n'
 import './utils/notify'
-
 import 'vue3-virtual-scroller/dist/vue3-virtual-scroller.css'
 import 'material-design-icons-iconfont/dist/material-design-icons.css';
 import 'normalize.css'
@@ -15,6 +15,7 @@ import './style/base.scss'
 import TkTree from './components/Tree'
 
 createApp(App)
+  .use(VueI18n)
   .use(store)
   .use(router)
   .use(VueVirtualScroller)

@@ -7,7 +7,7 @@
       <div class="menu" :class="themeClass" v-show="mVisible">
         <div class="menu-title flex items-center justify-between">
           <span class="flex items-center">
-            Menu
+            {{ $t('drawer.menu') }}
           </span>
           <button class="btn-no-style" @click="mVisible=false">
             <i class="material-icons">clear</i>
@@ -36,7 +36,7 @@
             @click="toggleDarkTheme"
         >
           <span class="material-icons">brightness_4</span>
-          <span class="menu-item-title">Dark Theme
+          <span class="menu-item-title">{{ $t('settings.dark-theme') }}
           <input type="checkbox"
                  :checked="isDarkTheme"
                  readonly>
@@ -45,12 +45,24 @@
 
         <button class="btn-no-style menu-item flex items-center cursor-default">
           <span class="material-icons">color_lens</span>
-          <span class="menu-item-title">Theme Color
+          <span class="menu-item-title">{{ $t('settings.theme-color') }}
             <input class="btn-no-style color-input" type="color" :value="themeColor" @change="handleThemeColorChange">
           </span>
 
         </button>
 
+        <button class="btn-no-style menu-item flex items-center cursor-default">
+          <span class="material-icons">translate</span>
+          <span class="menu-item-title">{{ $t('settings.language') }}
+            <select v-model="$i18n.locale" class="btn-styled" @change="saveLocateChange">
+              <option
+                  v-for="item in languages"
+                  :key="item.locate"
+                  :value="item.locate"
+              >{{ item.name }}</option>
+            </select>
+          </span>
+        </button>
 
 
       </div>
@@ -70,7 +82,9 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, toRefs, computed, ref} from 'vue';
+import {defineComponent, toRefs, computed, ref, watch} from 'vue';
+import {useI18n} from "vue-i18n";
+import {LS_KEY_LOCWEB_LOCATE} from "@/lang/i18n";
 import useMVisible from "@/composables/useMVisible";
 import router from '@/router'
 import store from "@/store";
@@ -78,6 +92,7 @@ import ModalDialog from '@/components/ModalDialog.vue'
 import LoginPrompt from '@/components/LoginPrompt.vue'
 import {DrawerMenuTabItems} from "@/enum";
 import {hexToRgb} from '@/utils/color'
+import languages from "@/lang/languages"
 
 export default defineComponent({
   name: 'DrawerMenu',
@@ -92,6 +107,7 @@ export default defineComponent({
     },
   },
   setup(props, context) {
+    const {t} = useI18n()
     const {visible} = toRefs(props)
     const {mVisible} = useMVisible(visible, context)
     const isShowLogin = ref(false)
@@ -110,7 +126,7 @@ export default defineComponent({
     })
 
     const itemAbout = {
-      name: 'About', icon: 'info', action: () => {
+      name: t('page.about'), icon: 'info', action: () => {
         router.push({
           name: 'About'
         })
@@ -118,15 +134,15 @@ export default defineComponent({
     }
     const menuList = computed(() => {
       const itemLogin = !token.value ? {
-        name: 'Login', icon: 'account_circle', action: () => {
+        name: t('user.login'), icon: 'account_circle', action: () => {
           isShowLogin.value = true
         }
       } : {
-        name: 'Logout', icon: 'logout', action: () => {
-          const confirmed = confirm('Confirm logout?')
+        name: t('user.logout'), icon: 'logout', action: () => {
+          const confirmed = confirm(t('msg.confirm-logout'))
           if (confirmed) {
             store.commit('setToken', null)
-            window.$notify.success(`Logout completed`)
+            window.$notify.success(t('msg.logout-completed'))
             mVisible.value = false
           }
         }
@@ -144,20 +160,20 @@ export default defineComponent({
       })
 
       return [
-        {name: 'Music', subtitle: true},
+        {name: t('drawer.music'), subtitle: true},
         ...tabItems,
-        {name: 'System', subtitle: true},
-        {name: 'Settings', icon: 'settings', disabled: true},
-        {name: 'Rescan Media', icon: 'loop', disabled: true},
+        {name: t('drawer.system'), subtitle: true},
+        {name: t('drawer.rescan-media'), icon: 'loop', disabled: true},
         itemLogin,
         itemAbout,
+        {name: t('drawer.settings'), icon: 'settings', subtitle: true},
       ]
     })
 
     const isDarkTheme = computed(() => store.getters.isDarkTheme)
 
     const handleLoginSuccess = () => {
-      window.$notify.success(`Login Success!`)
+      window.$notify.success(t('msg.login-success'))
       isShowLogin.value = false
       mVisible.value = false
     }
@@ -177,7 +193,13 @@ export default defineComponent({
       })
     }
 
+    const saveLocateChange = (event) => {
+      localStorage.setItem('LS_KEY_LOCWEB_LOCATE', event.target.value)
+    }
+
     return {
+      languages,
+      saveLocateChange,
       menuList,
       mVisible,
       token,
