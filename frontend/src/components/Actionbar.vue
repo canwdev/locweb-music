@@ -15,23 +15,10 @@
     </div>
     <div class="actionbar flex items-center" :class="themeClass">
       <ButtonCover
-          @click="handleCoverClick"
+          @click="detailDialogVisible = !detailDialogVisible"
           :src="musicItem.cover"
-          :icon-name="volumeIcon"
+          icon-name="audiotrack"
       >
-        <div
-            v-show="isShowVolumeSlider"
-            @click.stop
-            class="volume-slider-wrap bg-dark"
-        >
-          <SeekBar
-              vertical
-              :value="audioVolume"
-              @input="volumeSeeking"
-              @change="volumeChange"
-          />
-          <div class="tip">{{ audioVolume }}%</div>
-        </div>
       </ButtonCover>
       <button
           @click="showDetailDialog"
@@ -45,36 +32,51 @@
         <button
             :disabled="actionDisabled"
             @click="previous"
-            class="btn-no-style btn-action">
-          <i class="material-icons" :title="$t('previous')">skip_previous</i>
+            class="btn-no-style btn-action"
+            :title="$t('previous')"
+        >
+          <i class="material-icons">skip_previous</i>
         </button>
 
         <button
             :disabled="actionDisabled"
             @click="togglePlay"
-            class="btn-no-style btn-action">
-          <i v-show="paused" class="material-icons" :title="$t('play')">play_arrow</i>
-          <i v-show="!paused" class="material-icons" :title="$t('pause')">pause</i>
+            class="btn-no-style btn-action"
+            :title="paused ? $t('play') : $t('pause')"
+        >
+          <i v-show="paused" class="material-icons">play_arrow</i>
+          <i v-show="!paused" class="material-icons">pause</i>
         </button>
 
         <button
             :disabled="actionDisabled"
             @click="next"
-            class="btn-no-style btn-action">
-          <i class="material-icons" :title="$t('next')">skip_next</i>
+            class="btn-no-style btn-action"
+            :title="$t('next')"
+        >
+          <i class="material-icons">skip_next</i>
         </button>
 
         <button
             :disabled="actionDisabled"
             class="btn-no-style btn-action"
             :class="{active: isRandom}"
+            :title="$t('random')"
             @click="toggleRandom"
         >
-          <i class="material-icons" :title="$t('random')">casino</i>
+          <i class="material-icons">casino</i>
         </button>
 
-        <button class="btn-no-style btn-action" @click="switchLoopMode" :title="loopIcon.name">
-          <i class="material-icons" :class="loopIcon.className">{{ loopIcon.name }}</i>
+        <button class="btn-no-style btn-action" @click="switchLoopMode" :title="currentLoopMode.label">
+          <i class="material-icons" :class="currentLoopMode.className">{{ currentLoopMode.icon }}</i>
+        </button>
+
+        <button
+            class="btn-no-style btn-action"
+            :title="$t('volume')"
+            @click="isShowVolumeSlider = !isShowVolumeSlider"
+        >
+          <i class="material-icons">{{ volumeIcon }}</i>
         </button>
       </div>
     </div>
@@ -92,6 +94,26 @@
       <MusicDetail
           :is-parent-visible="detailDialogVisible"
       />
+    </ModalDialog>
+
+    <ModalDialog
+        fixed
+        v-model:visible="isShowVolumeSlider"
+        :dark="isDarkTheme"
+    >
+      <div
+          @click.stop
+          class="volume-slider-wrap"
+      >
+        <div class="tip">{{ $t('volume') }}</div>
+        <SeekBar
+            vertical
+            :value="audioVolume"
+            @input="volumeSeeking"
+            @change="volumeChange"
+        />
+        <div class="tip">{{ audioVolume }}%</div>
+      </div>
     </ModalDialog>
 
   </div>
@@ -114,7 +136,6 @@ import SeekBar from '@/components/SeekBar.vue'
 import MusicDetail from '@/components/MusicDetail.vue'
 import useAudioVolume from "@/composables/useAudioVolume"
 import hotkeys from 'hotkeys-js';
-import is from 'is_js'
 
 export default defineComponent({
   name: 'Actionbar',
@@ -165,27 +186,37 @@ export default defineComponent({
     })
     const loopMode = computed({
       get(): number {
-        return store.state.loopMode
+        return store.getters.loopMode
       },
       set(val: number) {
         store.commit('setLoopMode', val)
       }
     })
-    const loopIcon = computed((): object => {
-      switch (loopMode.value) {
-        case LoopModeType.NONE:
-          return {name: 'arrow_forward'}
-        case LoopModeType.SHUFFLE:
-          return {name: 'shuffle'}
-        case LoopModeType.LOOP_SEQUENCE:
-          return {name: 'repeat'}
-        case LoopModeType.LOOP_REVERSE:
-          return {name: 'repeat', className: 'reverse-x'}
-        case LoopModeType.LOOP_SINGLE:
-          return {name: 'repeat_one'}
-        default:
-          return {name: 'help'}
-      }
+
+    const loopModeMap = {
+      [LoopModeType.NONE]: {
+        icon: 'arrow_forward',
+        label: t('msg.play-in-order'),
+      },
+      [LoopModeType.SHUFFLE]: {
+        icon: 'shuffle',
+        label: t('shuffle'),
+      },
+      [LoopModeType.LOOP_SEQUENCE]: {
+        icon: 'repeat',
+        label: t('msg.sequential-loop'),
+      },
+      [LoopModeType.LOOP_REVERSE]: {
+        icon: 'repeat', className: 'reverse-x',
+        label: t('msg.reverse-loop'),
+      },
+      [LoopModeType.LOOP_SINGLE]: {
+        icon: 'repeat_one',
+        label: t('msg.single-cycle'),
+      },
+    }
+    const currentLoopMode = computed((): object => {
+      return loopModeMap[loopMode.value]
     })
 
     const {
@@ -206,15 +237,9 @@ export default defineComponent({
       volumeDown()
     }
 
-    const loopText = {
-      1: t('msg.play-in-order'),
-      2: t('msg.sequential-loop'),
-      3: t('msg.reverse-loop'),
-      4: t('msg.single-cycle'),
-    }
     const showTip = (text) => {
       window.$notify.info(text, {
-        position: 'bottom',
+        position: 'center',
       })
     }
 
@@ -238,25 +263,24 @@ export default defineComponent({
       } else {
         store.commit('setShuffleRestore')
       }
-      showTip(t('shuffle')+': ' + (flag ? t('on') : t('off')))
+      showTip(t('random') + ': ' + (flag ? t('on') : t('off')))
     }
+    const loopModeList = [
+      LoopModeType.LOOP_SEQUENCE,
+      LoopModeType.LOOP_SINGLE,
+      LoopModeType.SHUFFLE,
+      LoopModeType.LOOP_REVERSE,
+      LoopModeType.NONE,
+    ]
     const switchLoopMode = () => {
-      let index = loopMode.value
+      let index = loopModeList.findIndex(i => i === loopMode.value)
       ++index
-      if (index > LoopModeType.LOOP_SINGLE) {
-        index = LoopModeType.NONE
+      if (index > loopModeList.length - 1) {
+        index = 0
       }
-      loopMode.value = index
-      showTip(loopText[index])
-    }
-
-    const handleCoverClick = () => {
-      if (is.ios()) {
-        // window.$notify.warning('iOS may not support this function')
-        detailDialogVisible.value = !detailDialogVisible.value
-        return
-      }
-      isShowVolumeSlider.value = !isShowVolumeSlider.value
+      loopMode.value = loopModeList[index]
+      // @ts-ignore
+      showTip(currentLoopMode.value.label)
     }
 
     const keySpace = 'space'
@@ -302,7 +326,7 @@ export default defineComponent({
       paused,
       isRandom,
       loopMode,
-      loopIcon,
+      currentLoopMode,
       actionDisabled,
       // methods
       previous,
@@ -330,7 +354,6 @@ export default defineComponent({
         detailDialogVisible.value = !detailDialogVisible.value
         // console.log(musicItem.value)
       },
-      handleCoverClick,
       isDarkTheme: computed(() => store.getters.isDarkTheme),
       themeClass: computed(() => store.getters.themeClass)
     }
@@ -399,25 +422,6 @@ export default defineComponent({
     }
   }
 
-  .volume-slider-wrap {
-    position: absolute;
-    bottom: 100%;
-    left: 0;
-    width: 50px;
-    height: 150px;
-    z-index: 10;
-    border-radius: 0 $generic-border-radius 0 0;
-    padding: 10px 0 0 0;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-
-    .tip {
-      font-size: 12px;
-      margin: 5px 10px;
-    }
-  }
-
   .buttons-scroll {
     overflow: auto;
     height: 100%;
@@ -434,7 +438,7 @@ export default defineComponent({
       justify-content: center;
 
       .reverse-x {
-        color: $red;
+        text-shadow: 0 0 5px $red;
         transform: rotateX(-180deg);
       }
 
@@ -466,6 +470,23 @@ export default defineComponent({
       display: flex;
       align-items: center;
     }
+  }
+}
+
+.volume-slider-wrap {
+  text-align: center;
+  width: 80px;
+  height: 180px;
+  padding: 10px 0 0 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+
+  .tip {
+    max-width: 100%;
+    overflow: hidden;
+    font-size: 12px;
+    margin: 5px 10px;
   }
 }
 </style>

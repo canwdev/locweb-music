@@ -1,4 +1,4 @@
-import {NavbarTabsType} from "@/enum";
+import {LoopModeType, NavbarTabsType} from "@/enum";
 
 const LS_KEY_LOCWEB_SETTINGS = 'LS_KEY_LOCWEB_SETTINGS'
 
@@ -6,7 +6,8 @@ const defaultSettings = {
   isDarkTheme: true,
   ncmApi: null,
   navbarTab: NavbarTabsType.MAIN,
-  themeColor: null
+  themeColor: null,
+  loopMode: LoopModeType.LOOP_SEQUENCE, // music playing loop mode
 }
 
 export function loadSettings() {

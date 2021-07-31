@@ -38,6 +38,12 @@ import {LoopModeType, MusicItem, NavBarIndex, NavbarTabsType} from "@/enum";
 import DialogMenu from "@/components/DialogMenu.vue";
 import useDialogMenu from "./useDialogMenu";
 
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 export default defineComponent({
   name: "ListPlaying",
   components: {
@@ -48,7 +54,7 @@ export default defineComponent({
     const isLoading = ref<boolean>(false)
     const playingList = computed(() => store.state.playingList)
     const isRandom = computed(() => store.state.isRandom)
-    const loopMode = computed(() => store.state.loopMode)
+    const loopMode = computed(() => store.getters.loopMode)
     const paused = computed(() => store.state.paused)
     const playingId = computed(() => store.state.musicItem.id)
     const playingIndex = computed<number>({
@@ -82,8 +88,8 @@ export default defineComponent({
       // play a song
       playMusicFromList(playingList.value, item)
     }
-    const playMusicIndexed = (index: number) => {
-      // console.log('playMusicIndexed', index)
+    const playByIndex = (index: number) => {
+      // console.log('playByIndex', index)
       store.commit('setMusicItem', playingList.value[index])
       playingIndex.value = index
       nextTick(() => {
@@ -91,13 +97,20 @@ export default defineComponent({
       })
     }
     const playPrev = () => {
-      const index = playingIndex.value - 1
+      let index = playingIndex.value - 1
       if (index < 0) {
-        return
+        index = playingList.value.length - 1
       }
-      playMusicIndexed(index)
+      playByIndex(index)
+    }
+    const playShuffle = () => {
+      playByIndex(getRandomInt(0, playingList.value.length - 1))
     }
     const playNext = () => {
+      if (loopMode.value === LoopModeType.SHUFFLE) {
+        playShuffle()
+        return
+      }
       let index = playingIndex.value + 1
       if (index > playingList.value.length - 1) {
         if (loopMode.value === LoopModeType.LOOP_SEQUENCE) {
@@ -108,7 +121,7 @@ export default defineComponent({
           return
         }
       }
-      playMusicIndexed(index)
+      playByIndex(index)
     }
     const handlePlayEnded = () => {
       // console.log('handlePlayEnded', loopMode.value)
@@ -120,6 +133,10 @@ export default defineComponent({
       if (loopMode.value === LoopModeType.LOOP_REVERSE) {
         // reverse play
         playPrev()
+        return
+      }
+      if (loopMode.value === LoopModeType.SHUFFLE) {
+        playShuffle()
         return
       }
       playNext()
@@ -156,7 +173,7 @@ export default defineComponent({
       paused,
       playMusicFromList,
       handleItemClick,
-      playMusicIndexed,
+      playByIndex,
       playPrev,
       playNext,
       handlePlayEnded,

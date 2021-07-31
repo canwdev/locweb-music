@@ -81,5 +81,6 @@
   "playlist": "播放列表",
   "rated": "已评分",
   "recent": "最近使用",
-  "file-system": "文件系统"
+  "file-system": "文件系统",
+  "volume": "音量"
 }

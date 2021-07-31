@@ -25,7 +25,6 @@ export default createStore({
     playingIndexBackup: 0, // backup original index from random mode
     paused: true, // is current playing paused
     isRandom: false, // is random choose next song to play
-    loopMode: LoopModeType.LOOP_SEQUENCE, // music playing loop mode
     currentTime: 0,
     duration: 0,
     token: getToken(), // Authorization token
@@ -35,7 +34,8 @@ export default createStore({
     isDarkTheme: state => state.settings.isDarkTheme,
     navbarTab: state => state.settings.navbarTab,
     themeClass: state => state.settings.isDarkTheme ? 'bg-dark' : 'bg-light',
-    themeColor: state => state.settings.themeColor
+    themeColor: state => state.settings.themeColor,
+    loopMode: state => state.settings.loopMode
   },
   mutations: {
     setMusicItem: (state, payload: MusicItem) => {
@@ -97,8 +97,12 @@ export default createStore({
     setIsRandom(state, payload: boolean) {
       state.isRandom = payload
     },
-    setLoopMode: (state, payload: number) => {
-      state.loopMode = payload
+    setLoopMode(state, payload: number) {
+      // @ts-ignore
+      this.commit('updateSettings', {
+        key: 'loopMode',
+        value: payload
+      })
     },
     setCurrentTime: (state, payload: number) => {
       state.currentTime = payload
