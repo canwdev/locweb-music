@@ -23,17 +23,21 @@
         >
           <div class="title">{{ $t('edit-current-lyric') }}</div>
         </button>
-        <button
-            v-for="(item, index) in resultList"
-            :key="index"
-            class="btn-no-style list-item"
-            @click="chooseMusic(item)"
-        >
-          <div class="title">{{ item.name }}</div>
-          <div class="subtitle">{{ $t('artists') }}: {{ item.artists.map(v => v.name).join(', ') }}</div>
-          <div class="subtitle">{{ $t('album') }}: {{ item.album.name }}</div>
-        </button>
+        <template v-if="resultList.length">
+          <button
+              v-for="(item, index) in resultList"
+              :key="index"
+              class="btn-no-style list-item"
+              @click="chooseMusic(item)"
+          >
+            <div class="title">{{ item.name }}</div>
+            <div class="subtitle">{{ $t('artists') }}: {{ item.artists.map(v => v.name).join(', ') }}</div>
+            <div class="subtitle">{{ $t('album') }}: {{ item.album.name }}</div>
+          </button>
+        </template>
+        <NoData v-else/>
       </div>
+
     </div>
 
     <div v-show="isDetail" class="search-detail">
@@ -58,11 +62,13 @@ import {
   getLyric
 } from '@/api/ncm'
 import Loading from '@/components/Loading.vue'
+import NoData from "./NoData.vue";
 
 export default defineComponent({
   name: "LyricSearch",
   components: {
     Loading,
+    NoData
   },
   props: {
     search: {

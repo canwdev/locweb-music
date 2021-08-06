@@ -4,10 +4,10 @@ import VueI18n from '../lang/i18n'
 const {t} = VueI18n.global
 
 // server api url
-export const HOST_URL = process.env.VUE_APP_API_HOST || '';
+export const HOST_URL = localStorage.getItem('LOCWEB_API_HOST') || process.env.VUE_APP_API_HOST || '';
 
 // https://github.com/Binaryify/NeteaseCloudMusicApi
-export const NCM_API_URL = process.env.NCM_API_URL || 'https://konsole.top:9001'
+export const NCM_API_URL = localStorage.getItem('LOCWEB_NCM_API_URL') || process.env.NCM_API_URL || 'https://konsole.top:9001'
 
 export enum NavbarTabsType {
   MAIN = 1, // file list
@@ -20,6 +20,7 @@ export enum NavbarTabsType {
   SEARCH = 8,
   SETTINGS = 9,
   RESCAN = 10,
+  DOWNLOAD = 10,
 }
 
 export const NavbarTabs = {
@@ -71,6 +72,12 @@ export const NavbarTabs = {
     value: NavbarTabsType.SEARCH,
     disabled: true
   },
+  [NavbarTabsType.DOWNLOAD]: {
+    icon: 'cloud_download',
+    name: 'DOWNLOAD',
+    value: NavbarTabsType.DOWNLOAD,
+    componentName: 'DownloadView/index',
+  },
 }
 
 export const DrawerMenuTabItems = [
@@ -81,6 +88,7 @@ export const DrawerMenuTabItems = [
   NavbarTabs[NavbarTabsType.RECENT],
   NavbarTabs[NavbarTabsType.RATED],
   NavbarTabs[NavbarTabsType.SEARCH],
+  NavbarTabs[NavbarTabsType.DOWNLOAD],
 ]
 
 export enum LoopModeType {
