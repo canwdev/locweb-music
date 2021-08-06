@@ -121,6 +121,8 @@ export class MusicItem {
   coverOrigin?: string;
   isDetailLoaded: boolean;
   lyric?: string;
+  isOutSource: boolean;
+  src?: string;
 
   constructor(item: any = {}) {
     this.id = item.id
@@ -135,6 +137,8 @@ export class MusicItem {
     this.metadata = item.metadata
     this.coverOrigin = item.cover
     this.isDetailLoaded = false
+    this.isOutSource = item.isOutSource
+    this.src = item.src
   }
 
   get artist() {
@@ -164,6 +168,9 @@ export class MusicItem {
   }
 
   getSource(): string {
+    if (this.src) {
+      return this.src
+    }
     if (!this.filepath) {
       return ''
     }

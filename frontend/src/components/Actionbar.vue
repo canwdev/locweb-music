@@ -379,7 +379,8 @@ export default defineComponent({
   z-index: 1000;
 
   .time {
-    width: 68px;
+    font-size: 12px;
+    width: 62px;
     text-align: center;
   }
 

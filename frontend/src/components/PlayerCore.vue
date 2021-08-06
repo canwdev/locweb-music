@@ -44,36 +44,39 @@ export default defineComponent({
 
       updateTitle(val)
 
-      const params = {
-        path: val.path,
-        filename: val.filename,
-        updatePlayStat: true
-      }
-      if (!val.isDetailLoaded) {
-        const detail = await getDetail(params)
-        // console.log('detail', detail)
+      if (!val.isOutSource) {
+        const params = {
+          path: val.path,
+          filename: val.filename,
+          updatePlayStat: true
+        }
+        if (!val.isDetailLoaded) {
+          const detail = await getDetail(params)
+          // console.log('detail', detail)
 
-        const {
-          metadata,
-          cover,
-          lyric
-        } = detail
-        val.setMetadata(metadata, cover, lyric)
-        updateTitle(val)
-      } else {
-        // only update play status
-        await getDetail({
-          ...params,
-          updateStatOnly: true
-        })
+          const {
+            metadata,
+            cover,
+            lyric
+          } = detail
+          val.setMetadata(metadata, cover, lyric)
+          updateTitle(val)
+        } else {
+          // only update play status
+          await getDetail({
+            ...params,
+            updateStatOnly: true
+          })
+        }
       }
+
 
       // https://developers.google.com/web/updates/2017/02/media-session
       if ('mediaSession' in navigator) {
-        let artwork: Array<any> = [{ src: require('@/assets/images/no-image.jpg'), sizes: '512x512' }]
+        let artwork: Array<any> = [{src: require('@/assets/images/no-image.jpg'), sizes: '512x512'}]
         if (val.cover) {
           artwork = [
-            { src: val.cover, sizes: '512x512' },
+            {src: val.cover, sizes: '512x512'},
           ]
         }
 
@@ -174,7 +177,7 @@ export default defineComponent({
     }
 
     const changeVolume = (val) => {
-      audio && (audio.volume = val/100)
+      audio && (audio.volume = val / 100)
     }
 
     onMounted(() => {

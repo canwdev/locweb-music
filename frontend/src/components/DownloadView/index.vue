@@ -22,8 +22,8 @@
             >
               <div class="_title">{{ item.name }}</div>
               <div class="_content">
-                <div v-if="item.alias.length > 0" class="content-row _pink">
-                  <strong>别名</strong> {{ item.alias.join(' / ') }}
+                <div v-if="item.alias.length > 0" class="content-row ">
+                  <strong>别名</strong> <span class="_pink">{{ item.alias.join(' / ') }}</span>
                 </div>
 
                 <div class="content-row">
@@ -43,14 +43,14 @@
                   </div>
                 </div>
 
-                <div class="content-row type-2">
-                  <button class="content-col btn-styled">
+                <div class="content-row type-3">
+                  <button @click="playMusic(item)" class="content-col btn-styled">
                     Play
                   </button>
-                  <button @click="getMusicUrl(item, true)" class="content-col btn-styled">
-                    直接下载
+                  <button @click="handleDownMusic(item, true)" class="content-col btn-styled">
+                    直接Open
                   </button>
-                  <button @click="getMusicUrl(item, false)" class="content-col btn-styled">
+                  <button @click="handleDownMusic(item, false)" class="content-col btn-styled">
                     下载+Meta
                   </button>
                 </div>
@@ -67,10 +67,7 @@
 <script lang="ts">
 import {
   defineComponent,
-  computed,
-  nextTick,
-  onMounted,
-  onBeforeUnmount, ref
+  ref
 } from 'vue';
 import NoData from "../NoData.vue";
 import {
@@ -84,6 +81,9 @@ import {formatTimeHMS} from "@/utils";
 import axios from "axios";
 import { saveAs } from 'file-saver';
 import ID3Writer from 'browser-id3-writer';
+import store from "@/store";
+import bus, {ACTION_PLAY_START} from "@/utils/bus";
+import {MusicItem} from "@/enum";
 
 export default defineComponent({
   name: "DownloadView",
@@ -179,7 +179,6 @@ export default defineComponent({
     }
 
     const getMusicUrl = async (music, direct = false) => {
-
       try {
         isLoading.value = true
         const id = music.id
@@ -204,20 +203,15 @@ export default defineComponent({
 
         if (!available.success) {
           window.$notify.error(available.message)
-          return
+          throw new Error(available.message)
         }
         if (!musicUrl.url) {
           window.$notify.error('版权限制，无法下载')
-          return
+          throw new Error('版权限制')
         }
 
-        // 直接打开
-        if (direct) {
-          window.open(musicUrl.url)
-          return
-        }
+        return musicUrl.url
 
-        await downloadMusic(musicUrl.url, music)
 
       } catch (err) {
         console.error(err)
@@ -227,6 +221,34 @@ export default defineComponent({
       }
     }
 
+    const handleDownMusic = async (music, direct) => {
+      const url = await getMusicUrl(music, direct)
+      // 直接打开
+      if (direct) {
+        window.open(url)
+        return
+      }
+      await downloadMusic(url, music)
+    }
+
+    const playMusic = async (item) => {
+      const url = await getMusicUrl(item, true)
+      item = new MusicItem({
+        id: item.id,
+        album: item.album.name,
+        artists: item.artists.map(v => {
+          return v.name
+        }),
+        filename: item.name,
+        title: item.name,
+        src: url,
+        isOutSource: true
+      })
+      const list = [item]
+      store.commit('setPlayingList', list)
+      bus.emit(ACTION_PLAY_START, {list, item})
+    }
+
     return {
       formatTimeHMS,
       searchText,
@@ -234,7 +256,9 @@ export default defineComponent({
       isLoading,
       handleSearch,
       formatArtist,
-      getMusicUrl
+      getMusicUrl,
+      playMusic,
+      handleDownMusic
     }
   }
 })
@@ -338,7 +362,7 @@ export default defineComponent({
           padding: 15px 15px;
 
           .content-row {
-            &._pink {
+            ._pink {
               color: $pink;
             }
 
@@ -347,6 +371,15 @@ export default defineComponent({
             }
 
             &.type-2 {
+              display: flex;
+              justify-content: space-between;
+
+              .content-col {
+                width: 49%;
+              }
+            }
+
+            &.type-3 {
               display: flex;
               justify-content: space-between;
 

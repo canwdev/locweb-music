@@ -90,7 +90,7 @@ import router from '@/router'
 import store from "@/store";
 import ModalDialog from '@/components/ModalDialog.vue'
 import LoginPrompt from '@/components/LoginPrompt.vue'
-import {DrawerMenuTabItems} from "@/enum";
+import {DrawerMenuTabItems, NavBarIndex} from "@/enum";
 import {hexToRgb} from '@/utils/color'
 import languages from "@/lang/languages"
 
@@ -155,6 +155,8 @@ export default defineComponent({
           action: () => {
             navbarTab.value = item.value
             mVisible.value = false
+
+            store.commit('setNavbarIndex', NavBarIndex.LEFT)
           }
         }
       })
