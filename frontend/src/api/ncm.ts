@@ -18,3 +18,21 @@ export function getLyric(params) {
     params
   })
 }
+
+export function checkMusic(params) {
+  return service.get('/check/music', {
+    params
+  })
+}
+
+export function getMusicData(params) {
+  return service.get('/song/url', {
+    params
+  })
+}
+
+export function getSongDetail(params) {
+  return service.get('/song/detail', {
+    params
+  })
+}

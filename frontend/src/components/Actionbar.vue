@@ -1,7 +1,7 @@
 <template>
   <div class="actionbar-wrapper">
     <div class="progressbar flex items-center justify-between" :class="themeClass">
-      <span class="time text-overflow">{{ formatTimeMS(mCurrentTime) }}</span>
+      <span class="time text-overflow">{{ formatTimeHMS(mCurrentTime) }}</span>
 
       <SeekBar
           :max="duration"
@@ -11,7 +11,7 @@
       />
 
 
-      <span class="time text-overflow">{{ formatTimeMS(duration) }}</span>
+      <span class="time text-overflow">{{ formatTimeHMS(duration) }}</span>
     </div>
     <div class="actionbar flex items-center" :class="themeClass">
       <ButtonCover
@@ -129,7 +129,7 @@ import bus, {
   ACTION_NEXT, ACTION_PREV,
   ACTION_TOGGLE_PLAY,
 } from "@/utils/bus";
-import {formatTimeMS} from "@/utils";
+import {formatTimeHMS} from "@/utils";
 import ButtonCover from "@/components/ButtonCover.vue"
 import ModalDialog from '@/components/ModalDialog.vue'
 import SeekBar from '@/components/SeekBar.vue'
@@ -334,7 +334,7 @@ export default defineComponent({
       togglePlay,
       toggleRandom,
       switchLoopMode,
-      formatTimeMS,
+      formatTimeHMS,
       progressSeeking(evt) {
         // console.log('progressSeeking', evt.target.value)
         isSeeking.value = true
@@ -379,7 +379,7 @@ export default defineComponent({
   z-index: 1000;
 
   .time {
-    width: 50px;
+    width: 68px;
     text-align: center;
   }
 

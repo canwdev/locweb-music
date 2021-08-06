@@ -16,11 +16,11 @@ export class IncreaseNumber {
   }
 }
 
-export const formatTimeMS = (ms: number): string => {
-  ms = Math.floor(ms)
-  const minute = Math.floor(ms / 60)
-  const second = (ms % 60).toString().padStart(2, '0')
-  return minute + ':' + second
+export const formatTimeHMS = (ms: number): string => {
+  const h = Math.round(ms / (60 * 60)).toString().padStart(2, '0') //精确小时，用去余
+  const m = Math.round((ms / 60) % 60).toString().padStart(2, '0') //剩余分钟就是用1小时等于60分钟进行趣余
+  const s = Math.round(ms % 60).toString().padStart(2, '0')
+  return h + ':' + m + ':' + s
 }
 
 /**

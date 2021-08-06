@@ -2339,6 +2339,11 @@ brorand@^1.0.1, brorand@^1.1.0:
   resolved "https://registry.nlark.com/brorand/download/brorand-1.1.0.tgz#12c25efe40a45e3c323eb8675a0a0ce57b22371f"
   integrity sha1-EsJe/kCkXjwyPrhnWgoM5XsiNx8=
 
+browser-id3-writer@^4.4.0:
+  version "4.4.0"
+  resolved "https://registry.nlark.com/browser-id3-writer/download/browser-id3-writer-4.4.0.tgz#1810e86c214da30a1682f8fdf827bf47f7b23372"
+  integrity sha1-GBDobCFNowoWgvj9+Ce/R/eyM3I=
+
 browserify-aes@^1.0.0, browserify-aes@^1.0.4:
   version "1.2.0"
   resolved "https://registry.nlark.com/browserify-aes/download/browserify-aes-1.2.0.tgz#326734642f403dabc3003209853bb70ad428ef48"
@@ -4114,6 +4119,11 @@ file-loader@^4.2.0:
   dependencies:
     loader-utils "^1.2.3"
     schema-utils "^2.5.0"
+
+file-saver@^2.0.5:
+  version "2.0.5"
+  resolved "https://registry.npm.taobao.org/file-saver/download/file-saver-2.0.5.tgz#d61cfe2ce059f414d899e9dd6d4107ee25670c38"
+  integrity sha1-1hz+LOBZ9BTYmendbUEH7iVnDDg=
 
 file-type@^16.3.0:
   version "16.4.0"
