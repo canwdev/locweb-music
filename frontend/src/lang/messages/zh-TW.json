@@ -21,7 +21,18 @@
     "sequential-loop": "順序循環",
     "single-cycle": "單曲循環",
     "this-operation-cannot-be-undone": "此操作無法撤消。",
-    "type-lyrics-here-lrc": "在此處輸入歌詞（.lrc格式）"
+    "type-lyrics-here-lrc": "在此處輸入歌詞（.lrc格式）",
+    "add-to-playlist": "添加至播放列表",
+    "copyright-restrictions": "版權限制，無法下載",
+    "locate-file": "定位文件",
+    "music-added": "音樂已添加",
+    "playlist-deleted": "播放列表已刪除",
+    "please-select-a-file-to-upload": "請選擇一個文件上傳",
+    "direct-open": "直接打開",
+    "download-with-meta": "下載 Meta",
+    "netease-music-down": "Netease Music Down",
+    "netease-music-search-placeholder": "歌曲/歌手/專輯/ID/...",
+    "kong-kong-ru-ye": "空空如也"
   },
   "settings": {
     "dark-theme": "黑暗主題",
@@ -82,5 +93,7 @@
     "username": "用戶名"
   },
   "warning": "警告",
-  "volume": "音量"
+  "volume": "音量",
+  "alias": "別名",
+  "duration": "時長"
 }

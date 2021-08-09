@@ -29,6 +29,7 @@
 
 <script>
 import {computed, defineComponent, ref, toRefs} from 'vue'
+import {useI18n} from "vue-i18n";
 import {uploadFile} from "@/api/music"
 import ProgressBar from "@/components/ProgressBar"
 import store from "@/store"
@@ -50,6 +51,7 @@ export default defineComponent({
     }
   },
   setup(props, context) {
+    const {t} = useI18n()
     let input
     const setInputRef = (el) => {
       input = el
@@ -60,7 +62,7 @@ export default defineComponent({
     const handleSubmit = async () => {
       const {files} = input
       if (!files.length) {
-        window.$notify.error(`Please select a file to upload`)
+        window.$notify.error(t('msg.please-select-a-file-to-upload'))
         return
       }
 

@@ -7,11 +7,11 @@
     <div class="music-download-wrap">
       <div class="wrap-inner-box">
         <div class="main-title">
-          Netease Music Down
+          {{ $t('msg.netease-music-down') }}
         </div>
         <form @submit.prevent="handleSearch" class="search-wrap">
-          <input v-model="searchText" class="input-styled search-input" type="text" placeholder="歌曲/歌手/专辑/ID/...">
-          <button class="search-submit btn-styled" type="submit">Search</button>
+          <input v-model="searchText" required class="input-styled search-input" type="text" :placeholder="$t('msg.netease-music-search-placeholder')">
+          <button class="search-submit btn-styled" type="submit">{{ $t('search') }}</button>
         </form>
         <div class="search-result">
           <div v-if="resultList.length" class="result-list">
@@ -23,20 +23,20 @@
               <div class="_title">{{ item.name }}</div>
               <div class="_content">
                 <div v-if="item.alias.length > 0" class="content-row ">
-                  <strong>别名</strong> <span class="_pink">{{ item.alias.join(' / ') }}</span>
+                  <strong>{{ $t('alias') }}</strong> <span class="_pink">{{ item.alias.join(' / ') }}</span>
                 </div>
 
                 <div class="content-row">
-                  <strong>歌手</strong> {{ formatArtist(item.artists) }}
+                  <strong>{{ $t('artists') }}</strong> {{ formatArtist(item.artists) }}
                 </div>
 
                 <div class="content-row">
-                  <strong>专辑</strong> {{ item.album.name }}
+                  <strong>{{ $t('album') }}</strong> {{ item.album.name }}
                 </div>
 
                 <div class="content-row type-2">
                   <div class="content-col">
-                    <strong>时长</strong> {{ formatTimeHMS(item.duration / 1000) }}
+                    <strong>{{ $t('duration') }}</strong> {{ formatTimeHMS(item.duration / 1000) }}
                   </div>
                   <div class="content-col">
                     <strong>ID</strong> {{ item.id }}
@@ -45,19 +45,19 @@
 
                 <div class="content-row type-3">
                   <button @click="playMusic(item)" class="content-col btn-styled">
-                    Play
+                    {{ $t('play') }}
                   </button>
                   <button @click="handleDownMusic(item, true)" class="content-col btn-styled">
-                    直接Open
+                    {{ $t('msg.direct-open') }}
                   </button>
                   <button @click="handleDownMusic(item, false)" class="content-col btn-styled">
-                    下载+Meta
+                    {{ $t('msg.download-with-meta') }}
                   </button>
                 </div>
               </div>
             </div>
           </div>
-          <NoData v-else text="空空如也"/>
+          <NoData v-else :text="$t('msg.kong-kong-ru-ye')"/>
         </div>
       </div>
     </div>
@@ -69,6 +69,7 @@ import {
   defineComponent,
   ref
 } from 'vue';
+import {useI18n} from "vue-i18n";
 import NoData from "../NoData.vue";
 import {
   searchMusic,
@@ -92,7 +93,8 @@ export default defineComponent({
     Loading
   },
   setup() {
-    const searchText = ref('Lemon')
+    const {t} = useI18n()
+    const searchText = ref('')
     const resultList = ref([])
     const isLoading = ref(false)
 
@@ -206,8 +208,10 @@ export default defineComponent({
           throw new Error(available.message)
         }
         if (!musicUrl.url) {
-          window.$notify.error('版权限制，无法下载')
-          throw new Error('版权限制')
+          // 版权限制，无法下载
+          const errMsg = t('msg.copyright-restrictions')
+          window.$notify.error(errMsg)
+          throw new Error(errMsg)
         }
 
         return musicUrl.url
@@ -269,7 +273,7 @@ export default defineComponent({
   .music-download-wrap {
     width: 425px;
     position: relative;
-    margin: 10px auto;
+    margin: 0 auto;
   }
   .music-download-wrap::before {
     content: " ";
@@ -317,6 +321,7 @@ export default defineComponent({
 
 .download-view {
   height: 100%;
+  width: 100%;
   overflow: auto;
 
   .main-title {

@@ -26,6 +26,7 @@
 
 <script lang="ts">
 import {defineComponent, ref} from "vue";
+import {useI18n} from "vue-i18n";
 import TreeNode from '@/components/Tree/tree-node.js'
 import {
   getPlaylist,
@@ -36,6 +37,7 @@ import {
 export default defineComponent({
   name: 'ListPlaylist',
   setup() {
+    const {t} = useI18n()
     const root = new TreeNode({
       isLazy: true,
       data: {
@@ -113,7 +115,7 @@ export default defineComponent({
           id: item.data.id
         })
         item.parent.removeChild(item)
-        window.$notify.success(`Playlist deleted (${count})`)
+        window.$notify.success(t('msg.playlist-deleted') + ` (${count})`)
       } catch (e) {
         console.error(e)
       } finally {

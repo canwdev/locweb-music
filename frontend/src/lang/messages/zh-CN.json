@@ -21,7 +21,18 @@
     "play-in-order": "顺序播放",
     "reverse-loop": "倒序循环",
     "sequential-loop": "顺序循环",
-    "single-cycle": "单曲循环"
+    "single-cycle": "单曲循环",
+    "copyright-restrictions": "版权限制，无法下载",
+    "add-to-playlist": "添加至播放列表",
+    "locate-file": "定位文件",
+    "music-added": "音乐已添加",
+    "playlist-deleted": "播放列表已删除",
+    "please-select-a-file-to-upload": "请选择一个文件上传",
+    "netease-music-down": "网易☁️音乐下载",
+    "netease-music-search-placeholder": "歌曲/歌手/专辑/ID/...",
+    "direct-open": "直接打开",
+    "download-with-meta": "下载+Meta",
+    "kong-kong-ru-ye": "空空如也"
   },
   "settings": {
     "dark-theme": "黑暗主题",
@@ -82,5 +93,7 @@
   "rated": "已评分",
   "recent": "最近使用",
   "file-system": "文件系统",
-  "volume": "音量"
+  "volume": "音量",
+  "alias": "别名",
+  "duration": "时长"
 }

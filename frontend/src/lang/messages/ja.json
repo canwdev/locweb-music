@@ -21,7 +21,18 @@
     "sequential-loop": "シーケンシャルループ",
     "single-cycle": "シングルサイクル",
     "this-operation-cannot-be-undone": "この操作は元に戻せません。",
-    "type-lyrics-here-lrc": "ここに歌詞を入力（.lrc）"
+    "type-lyrics-here-lrc": "ここに歌詞を入力（.lrc）",
+    "add-to-playlist": "プレイリストに追加する",
+    "copyright-restrictions": "著作権の制限、ダウンロードできません",
+    "locate-file": "ファイルを見つけます",
+    "music-added": "音楽が追加されました",
+    "playlist-deleted": "プレイリストが削除されました",
+    "please-select-a-file-to-upload": "アップロードするファイルを選択してください",
+    "direct-open": "直接開く",
+    "download-with-meta": "メタをダウンロード",
+    "netease-music-down": "網易雲音楽",
+    "netease-music-search-placeholder": "曲/アーティスト/アルバム/ ID /...",
+    "kong-kong-ru-ye": "空"
   },
   "settings": {
     "dark-theme": "暗いテーマ",
@@ -33,7 +44,7 @@
   "artists": "アーティスト",
   "back": "戻る",
   "changelog": "変更ログ",
-  "clear": "晴れ",
+  "clear": "クリア",
   "create-folder": "フォルダーを作る",
   "delete": "消去",
   "download": "ダウンロード",
@@ -82,5 +93,7 @@
     "username": "ユーザー名"
   },
   "warning": "警告",
-  "volume": "音量"
+  "volume": "音量",
+  "alias": "エイリアス",
+  "duration": "間隔"
 }

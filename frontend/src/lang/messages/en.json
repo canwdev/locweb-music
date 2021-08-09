@@ -26,7 +26,18 @@
     "play-in-order": "Play in order",
     "sequential-loop": "Sequential loop",
     "reverse-loop": "Reverse loop",
-    "single-cycle": "Single cycle"
+    "single-cycle": "Single cycle",
+    "add-to-playlist": "Add To Playlist",
+    "locate-file": "Locate File",
+    "music-added": "Music Added",
+    "please-select-a-file-to-upload": "Please select a file to upload",
+    "playlist-deleted": "Playlist deleted",
+    "copyright-restrictions": "Copyright restrictions, unable to download",
+    "direct-open": "Open Directly",
+    "download-with-meta": "Download+Meta",
+    "netease-music-down": "Netease Music Down",
+    "netease-music-search-placeholder": "Song/Artist/Album/ID/...",
+    "kong-kong-ru-ye": "Empty"
   },
   "user": {
     "login": "Login",
@@ -82,5 +93,7 @@
   "file-system": "File System",
   "progress": "Progress",
   "upload": "Upload",
-  "volume": "Volume"
+  "volume": "Volume",
+  "alias": "Alias",
+  "duration": "Duration"
 }
