@@ -29,6 +29,8 @@ export default function (isLoading) {
         //   desc,
         album: item.album,
         //   tags,
+        path: item.path,
+        filename: item.filename,
         file: item.filepath
         //   sort,
         //   rank,

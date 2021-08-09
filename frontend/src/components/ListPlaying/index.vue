@@ -77,7 +77,7 @@ export default defineComponent({
         setTimeout(() => {
           store.commit('setNavbarIndex', NavBarIndex.RIGHT)
         }, 30)
-        bus.emit(ACTION_TOGGLE_PLAY)
+        bus.emit(ACTION_TOGGLE_PLAY) // {isPlay: true}
       })
     }
     const handleItemClick = (item: MusicItem) => {
@@ -93,7 +93,7 @@ export default defineComponent({
       store.commit('setMusicItem', playingList.value[index])
       playingIndex.value = index
       nextTick(() => {
-        bus.emit(ACTION_TOGGLE_PLAY)
+        bus.emit(ACTION_TOGGLE_PLAY, {isPlay: true})
       })
     }
     const playPrev = () => {
@@ -127,7 +127,7 @@ export default defineComponent({
       // console.log('handlePlayEnded', loopMode.value)
       if (loopMode.value === LoopModeType.LOOP_SINGLE) {
         // single loop
-        bus.emit(ACTION_TOGGLE_PLAY)
+        bus.emit(ACTION_TOGGLE_PLAY, {isPlay: true})
         return
       }
       if (loopMode.value === LoopModeType.LOOP_REVERSE) {

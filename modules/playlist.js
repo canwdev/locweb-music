@@ -155,9 +155,10 @@ router.post('/add-music', userAuth, async (req, res, next) => {
 })
 
 const deleteMusics = (ids) => {
+  console.log('deleteMusics', ids)
   return Music.destroy({
     where: {
-      id: [id, ...ids]
+      id: [...ids]
     }
   })
 }

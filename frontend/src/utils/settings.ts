@@ -2,8 +2,10 @@ import {LoopModeType, NavbarTabsType} from "@/enum";
 
 const LS_KEY_LOCWEB_SETTINGS = 'LS_KEY_LOCWEB_SETTINGS'
 
+const isSystemDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+
 const defaultSettings = {
-  isDarkTheme: true,
+  isDarkTheme: isSystemDarkMode,
   ncmApi: null,
   navbarTab: NavbarTabsType.MAIN,
   themeColor: null,

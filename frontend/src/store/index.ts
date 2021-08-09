@@ -73,7 +73,7 @@ export default createStore({
       state.playingIndex = 0
       state.musicItem = state.playingList[0]
       setTimeout(() => {
-        bus.emit(ACTION_TOGGLE_PLAY)
+        bus.emit(ACTION_TOGGLE_PLAY, {isPlay: true})
       }, 0)
       state.isRandom = true
     },
@@ -84,7 +84,7 @@ export default createStore({
       state.playingIndex = state.playingIndexBackup
       state.musicItem = state.playingList[state.playingIndex]
       setTimeout(() => {
-        bus.emit(ACTION_TOGGLE_PLAY)
+        bus.emit(ACTION_TOGGLE_PLAY, {isPlay: true})
 
       }, 0)
       state.isRandom = false

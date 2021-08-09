@@ -34,7 +34,8 @@ import TreeNode from '@/components/Tree/tree-node.js'
 import {
   getPlaylist,
   addPlaylist,
-  deletePlaylist
+  deletePlaylist,
+  removePlaylistMusic
 } from "@/api/playlist";
 import store from "@/store";
 import bus, {ACTION_PLAY_START} from "@/utils/bus";
@@ -112,17 +113,28 @@ export default defineComponent({
       if (!item.parent) {
         return
       }
-      const flag = confirm(`WARNING!! Delete 《${item.data.title}》 and its sub?\nThis operation cannot be undone.`)
+      let confirmMsg = `WARNING!! Delete Playlist《${item.data.title}》 and its sub?`
+      if (item.isMusic) {
+        confirmMsg = `WARNING!! Remove《${item.data.title}》?`
+      }
+      const flag = confirm(confirmMsg)
       if (!flag) {
         return
       }
       isLoading.value = true
       try {
-        const count = await deletePlaylist({
-          id: item.data.id
-        })
+        if (item.isMusic) {
+          await removePlaylistMusic({
+            ids: [item.data.id]
+          })
+        } else {
+          await deletePlaylist({
+            id: item.data.id
+          })
+        }
+
         item.parent.removeChild(item)
-        window.$notify.success(t('msg.playlist-deleted') + ` (${count})`)
+        window.$notify.success(t('msg.playlist-deleted'))
       } catch (e) {
         console.error(e)
       } finally {
@@ -142,7 +154,7 @@ export default defineComponent({
         }
         return new MusicItem({
           ...data,
-          filename: data.file,
+          filename: data.filename || data.file,
         })
       })
 
