@@ -74,7 +74,7 @@ export const NavbarTabs = {
   },
   [NavbarTabsType.DOWNLOAD]: {
     icon: 'cloud_download',
-    name: 'DOWNLOAD',
+    name: t('download'),
     value: NavbarTabsType.DOWNLOAD,
     componentName: 'DownloadView/index',
   },

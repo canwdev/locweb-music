@@ -92,15 +92,27 @@ export default defineComponent({
     border-radius: 2px;
     box-shadow: none;
 
-    &::-webkit-slider-thumb {
+    @mixin mixin-thumb {
       position: relative;
       appearance: none;
       width: 18px;
       height: 18px;
       border-radius: 50%;
       background: $primary;
-      z-index: 1;
-      border: 1px solid rgba(0, 0, 0, 0.2);
+      z-index: 10;
+      border: none;
+      box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.2);
+      cursor: grab;
+      &:active {
+        cursor: grabbing;
+      }
+    }
+
+    &::-webkit-slider-thumb {
+      @include mixin-thumb;
+    }
+    &::-moz-range-thumb {
+      @include mixin-thumb;
     }
   }
 }

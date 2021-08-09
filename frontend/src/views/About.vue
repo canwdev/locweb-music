@@ -5,11 +5,11 @@
         <span class="title"> {{ $t('page.about') }}</span>
         <button class="btn-styled" @click="backHome">{{ $t('back') }}</button>
       </div>
-      <textarea class="input-styled" readonly :value="pkgInfo"></textarea>
+      <textarea style="height: 130px" class="input-styled" readonly :value="pkgInfo"></textarea>
       <div class="title-wrap flex items-center justify-between">
         <span class="title"> {{ $t('changelog') }}</span>
       </div>
-      <textarea class="input-styled" readonly :value="changelog"></textarea>
+      <textarea style="height: 300px" class="input-styled" readonly :value="changelog"></textarea>
     </div>
   </div>
 </template>
@@ -65,7 +65,7 @@ export default defineComponent({
   }
   textarea {
     width: 100%;
-    min-height: 200px;
+    min-height: 100px;
     resize: none;
     font-size: 14px;
     font-family: 'Consolas', monospace;
