@@ -17,7 +17,8 @@ async function run() {
 
   automate.cd(projectDir)
   automate.exec('pwd')
-
+  automate.exec('git pull')
+  // automate.exec(`su -c ./build.sh can`, '构建中...')
   automate.exec(`./build.sh`, '构建中...')
   // automate.exec(`su -c ./build.sh can`, '构建中...')
 
