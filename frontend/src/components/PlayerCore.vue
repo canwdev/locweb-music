@@ -73,7 +73,7 @@ export default defineComponent({
 
       // https://developers.google.com/web/updates/2017/02/media-session
       if ('mediaSession' in navigator) {
-        let artwork: Array<any> = [{src: require('@/assets/images/no-image.jpg'), sizes: '512x512'}]
+        let artwork: Array<any> = [{src: require('@/assets/images/default-cover.jpg'), sizes: '512x512'}]
         if (val.cover) {
           artwork = [
             {src: val.cover, sizes: '512x512'},

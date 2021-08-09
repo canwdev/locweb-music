@@ -9,7 +9,7 @@
       <div class="title-wrap flex items-center justify-between">
         <span class="title"> {{ $t('changelog') }}</span>
       </div>
-      <textarea style="height: 300px" class="input-styled" readonly :value="changelog"></textarea>
+      <div class="changelog-content" v-html="changelog"></div>
     </div>
   </div>
 </template>
@@ -18,6 +18,7 @@
 import {defineComponent, ref, onMounted, computed} from 'vue';
 import {getInfo} from "@/api/service";
 import store from "@/store";
+import snarkdown from 'snarkdown'
 
 export default defineComponent({
   name: 'Home',
@@ -32,7 +33,7 @@ export default defineComponent({
         // @ts-ignore
         pkgInfo.value = JSON.stringify(res.package, null, 2)
         // @ts-ignore
-        changelog.value = res.changelog
+        changelog.value = snarkdown(res.changelog)
       })
     })
     return {
@@ -77,6 +78,9 @@ export default defineComponent({
   .container {
     max-width: 500px;
     margin: 0 auto;
+  }
+  .changelog-content {
+    user-select: text;
   }
 }
 </style>

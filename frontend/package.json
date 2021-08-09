@@ -21,6 +21,7 @@
     "normalize.css": "^8.0.1",
     "qs": "^6.10.1",
     "register-service-worker": "^1.7.1",
+    "snarkdown": "^2.0.0",
     "sweetalert2": "^10.12.6",
     "vue": "^3.0.0",
     "vue-i18n": "^9.1.7",
