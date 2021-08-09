@@ -19,14 +19,15 @@
     <div
         v-else
         class="list-item-big flex"
+        :title="item.filename"
     >
       <ButtonCover
           :icon-name="iconName"
           :src="coverImage"
       />
       <div class="middle">
-        <div class="text-overflow filename">{{ item.filename }}</div>
-        <div class="text-overflow display-title">{{ displayTitle }}</div>
+        <div class="text-overflow filename">{{ item.title || item.filename }}</div>
+        <div class="text-overflow display-title">{{ artistsAlbum }}</div>
       </div>
       <button
           v-if="isShowAction"
@@ -44,7 +45,6 @@
 import {defineComponent, toRefs, computed} from 'vue';
 import {isSupportedMusicFormat} from "@/utils/is";
 import ButtonCover from "@/components/ButtonCover.vue"
-import store from "@/store";
 
 export default defineComponent({
   name: "ListItem",
@@ -98,17 +98,16 @@ export default defineComponent({
       return 'insert_drive_file'
     })
 
-    const displayTitle = computed(() => {
+    const artistsAlbum = computed(() => {
       const musicItem = item.value
       if (!isBigItem.value || !musicItem) {
         return ''
       }
       const {
-        title,
         artist,
         album
       } = musicItem
-      return [title, artist, album].join(' - ')
+      return [artist, album].join(' - ')
     })
 
     const handleContextMenu = (event) => {
@@ -120,7 +119,7 @@ export default defineComponent({
       coverImage,
       isSupport,
       iconName,
-      displayTitle,
+      artistsAlbum,
       handleContextMenu
     }
   }

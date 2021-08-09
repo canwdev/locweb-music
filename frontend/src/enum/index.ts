@@ -38,9 +38,9 @@ export const NavbarTabs = {
   },
   [NavbarTabsType.PLAYLIST]: {
     icon: 'queue_music',
-    name: t('playlist'),
+    name: t('playlist') + ' (Beta)',
     value: NavbarTabsType.PLAYLIST,
-    componentName: 'ListPlaylist',
+    componentName: 'ListTreePlaylist/index',
   },
   [NavbarTabsType.ALBUMS]: {
     icon: 'album',
@@ -130,9 +130,9 @@ export class MusicItem {
     this.artists = item.artists || []
     this.album = item.album
     this.rating = item.rating
-    this.filename = item.filename
+    this.filename = item.filename || ''
     this.isDirectory = item.isDirectory
-    this.path = item.path
+    this.path = item.path || ''
     this.size = item.size
     this.metadata = item.metadata
     this.coverOrigin = item.cover

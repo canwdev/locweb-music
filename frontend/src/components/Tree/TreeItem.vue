@@ -5,7 +5,7 @@
         :class="{'is-last': isLast, 'is-selected': isSelected}"
         :title="item.name"
         @click="handleClick"
-        @dblclick="handleToggleOpen"
+        @dblclick="handleDbClick"
     >
       <img v-if="item.isLoading" src="./images/loading.gif" class="loading-img">
       <div
@@ -41,6 +41,7 @@
           :selected-id="selectedId"
           :is-last="index === item.children.length - 1"
           @onItemClick="$emit('onItemClick', $event)"
+          @onItemDbClick="$emit('onItemDbClick', $event)"
           @onItemLazyLoad="$emit('onItemLazyLoad', $event)"
       >
         <template v-slot:icon="{data}">
@@ -58,8 +59,6 @@
 </template>
 
 <script>
-import {reactive} from 'vue'
-
 export default {
   name: 'TkTreeItem',
   props: {
@@ -95,6 +94,7 @@ export default {
   },
   created() {
     this.item.$click = this.handleClick
+    this.item.$doLazyLoad = this.doLazyLoad
   },
   methods: {
     /**
@@ -104,6 +104,10 @@ export default {
       this.$emit('onItemClick', this.item)
       this.handleToggleOpen({isOpen: true})
     },
+    handleDbClick() {
+      this.$emit('onItemDbClick', this.item)
+      this.handleToggleOpen()
+    },
     /**
      * 开关节点
      * isOpen boolean 强制打开或关闭
@@ -111,10 +115,14 @@ export default {
     handleToggleOpen({isOpen} = {}) {
       if (this.item.isLazy && !this.item.isLoading) {
         this.item.isLoading = true
-        this.$emit('onItemLazyLoad', this.item.lazyLoad())
+        this.doLazyLoad()
       } else if (this.item.children) {
         this.item.isOpen = isOpen !== undefined ? isOpen : !this.item.isOpen
       }
+    },
+    doLazyLoad() {
+      this.item.children = []
+      this.$emit('onItemLazyLoad', this.item.lazyLoad())
     }
   }
 }
@@ -165,7 +173,7 @@ export default {
 
     &.is-selected {
       .title-inner {
-        background-color: rgba(134, 134, 134, 0.36);
+        background-color: $primary; //rgba(134, 134, 134, 0.36);
       }
     }
 

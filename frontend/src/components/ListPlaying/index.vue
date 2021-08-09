@@ -77,7 +77,7 @@ export default defineComponent({
         setTimeout(() => {
           store.commit('setNavbarIndex', NavBarIndex.RIGHT)
         }, 30)
-        bus.emit(ACTION_TOGGLE_PLAY, {isPlay: true})
+        bus.emit(ACTION_TOGGLE_PLAY)
       })
     }
     const handleItemClick = (item: MusicItem) => {

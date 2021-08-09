@@ -1,6 +1,6 @@
 {
   "drawer": {
-    "menu": "メニュー",
+    "main-menu": "メニュー",
     "music": "音楽",
     "rescan-media": "メディアの再スキャン",
     "settings": "設定",
@@ -95,5 +95,7 @@
   "warning": "警告",
   "volume": "音量",
   "alias": "エイリアス",
-  "duration": "間隔"
+  "duration": "間隔",
+  "add": "追加",
+  "refresh": "更新"
 }

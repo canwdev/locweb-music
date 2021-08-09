@@ -7,7 +7,7 @@
       <div class="menu" :class="themeClass" v-show="mVisible">
         <div class="menu-title flex items-center justify-between">
           <span class="flex items-center">
-            {{ $t('drawer.menu') }}
+            {{ $t('drawer.main-menu') }}
           </span>
           <button class="btn-no-style" @click="mVisible=false">
             <i class="material-icons">clear</i>

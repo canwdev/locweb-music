@@ -1,6 +1,6 @@
 {
   "drawer": {
-    "menu": "菜單",
+    "main-menu": "菜單",
     "music": "音樂",
     "rescan-media": "重新掃描媒體",
     "settings": "設置",
@@ -95,5 +95,7 @@
   "warning": "警告",
   "volume": "音量",
   "alias": "別名",
-  "duration": "時長"
+  "duration": "時長",
+  "add": "新增",
+  "refresh": "刷新"
 }

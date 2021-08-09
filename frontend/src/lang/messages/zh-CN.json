@@ -1,6 +1,6 @@
 {
   "drawer": {
-    "menu": "主菜单",
+    "main-menu": "主菜单",
     "music": "音乐",
     "rescan-media": "重新扫描媒体",
     "settings": "设置",
@@ -95,5 +95,7 @@
   "file-system": "文件系统",
   "volume": "音量",
   "alias": "别名",
-  "duration": "时长"
+  "duration": "时长",
+  "add": "新增",
+  "refresh": "刷新"
 }

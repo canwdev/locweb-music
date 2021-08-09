@@ -5,6 +5,7 @@
       :item="nodes"
       :selected-id="selectedId"
       @onItemClick="$emit('onItemClick', $event)"
+      @onItemDbClick="$emit('onItemDbClick', $event)"
       @onItemLazyLoad="$emit('onItemLazyLoad', $event)"
     >
       <template v-slot:icon="{data}">

@@ -17,6 +17,7 @@ export default class TreeNode {
     this.isLazy = params.isLazy || false
     this.isOpen = params.isOpen || false
     this.isLoading = params.isLoading || false
+    this.isMusic = params.isMusic || false
     this.children = null // []
     this.parent = null // TreeNode
     this.data = params.data || {} // Custom data

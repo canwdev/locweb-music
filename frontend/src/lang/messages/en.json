@@ -1,6 +1,6 @@
 {
   "drawer": {
-    "menu": "Menu",
+    "main-menu": "Menu",
     "music": "Music",
     "system": "System",
     "settings": "Settings",
@@ -95,5 +95,7 @@
   "upload": "Upload",
   "volume": "Volume",
   "alias": "Alias",
-  "duration": "Duration"
+  "duration": "Duration",
+  "add": "Add",
+  "refresh": "Refresh"
 }

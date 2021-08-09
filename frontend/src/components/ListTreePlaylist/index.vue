@@ -4,6 +4,7 @@
         :nodes="treeData"
         :selected-id="selected && selected.id"
         @onItemClick="handleNodeClick"
+        @onItemDbClick="playItem"
         @onItemLazyLoad="handleLazyLoad"
     >
       <template v-slot:icon="{data}">
@@ -11,13 +12,15 @@
         <span v-else class="material-icons">audiotrack</span>
       </template>
       <template v-slot:title="{item}">
-        {{ item.data.title }} | {{ item.id }} |
-        <button class="btn-no-style" @click="logNode(item)">{{ item.data.id }}</button>
+        {{ item.data.title }}
       </template>
       <template v-slot:append="{item}">
-        <button class="btn-no-style" @click="handleAdd(item)" title="Add"><i class="material-icons">add</i></button>
-        <button v-if="item.parent" class="btn-no-style" @click="handleDel(item)" title="Delete"><i
+        <button v-if="!item.isMusic" class="btn-no-style" @click="handleAdd(item)" :title="$t('add')"><i class="material-icons">add</i></button>
+        <button v-else class="btn-no-style" @click="playItem(item)" :title="$t('play')"><i class="material-icons">play_arrow</i></button>
+        <button v-if="item.parent" class="btn-no-style" @click="handleDel(item)" :title="$t('delete')"><i
             class="material-icons">delete</i></button>
+        <button v-if="!item.isMusic" class="btn-no-style" @click="item.$doLazyLoad()" :title="$t('refresh')"><i class="material-icons">refresh</i></button>
+        <button class="btn-no-style" @click="logNode(item)" :title="`id: ${item.id}\ndata-id: ${item.data.id}\n`"><i class="material-icons">bug_report</i></button>
       </template>
     </TkTree>
 
@@ -33,6 +36,9 @@ import {
   addPlaylist,
   deletePlaylist
 } from "@/api/playlist";
+import store from "@/store";
+import bus, {ACTION_PLAY_START} from "@/utils/bus";
+import {MusicItem} from "@/enum";
 
 export default defineComponent({
   name: 'ListPlaylist',
@@ -65,6 +71,7 @@ export default defineComponent({
             data: i
           })),
           ...musics.map(i => new TreeNode({
+            isMusic: true,
             data: i
           }))
         ]
@@ -123,6 +130,26 @@ export default defineComponent({
       }
     }
 
+    const playItem = async (item) => {
+      if (!item || !item.isMusic) {
+        return
+      }
+      let playIndex = 0
+      const list = item.parent.children.filter(i => i.isMusic).map((i, index) => {
+        const {data} = i
+        if (data.id === item.data.id) {
+          playIndex = index
+        }
+        return new MusicItem({
+          ...data,
+          filename: data.file,
+        })
+      })
+
+      store.commit('setPlayingList', list)
+      bus.emit(ACTION_PLAY_START, {list, item: list[playIndex]})
+    }
+
     return {
       selected,
       treeData,
@@ -132,7 +159,8 @@ export default defineComponent({
       handleDel,
       logNode(n) {
         console.log(n)
-      }
+      },
+      playItem
     }
   }
 })
@@ -143,5 +171,22 @@ export default defineComponent({
   width: 100%;
   height: 100%;
   overflow: auto;
+  padding: 5px 0;
+  .tk-tree-item {
+    .append {
+      button {
+        width: 20px;
+        height: 20px;
+        margin-right: 5px;
+        .material-icons {
+          font-size: 20px;
+        }
+        &:hover {
+          background: $secondary;
+          border-radius: $generic-border-radius;
+        }
+      }
+    }
+  }
 }
 </style>
