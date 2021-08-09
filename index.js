@@ -4,6 +4,7 @@ const app = express()
 const bodyParser = require('body-parser')
 const errorhandler = require('errorhandler')
 const fileUpload = require('express-fileupload')
+const fallback = require('express-history-api-fallback')
 const {
   PORT,
   MUSIC_LIBRARY_PATH,
@@ -28,7 +29,8 @@ if (!isProduction) {
 
 app.use(express.static(path.join(__dirname, 'public')))
 // Vue dist directory
-app.use('/', express.static(path.join(__dirname, 'frontend-dist')))
+const frontendRoot = path.join(__dirname, 'frontend-dist')
+app.use('/', express.static(frontendRoot))
 // Cover images
 app.use('/images', express.static(IMAGE_PATH))
 // Expose library filesystem
@@ -47,6 +49,7 @@ app.use('/lrc', express.static(MUSIC_LYRICS_PATH))
 
 // Create Router
 app.use('/', require('./routes/index'))
+app.use(fallback('index.html', {root: frontendRoot}))
 
 // Start server
 const port = normalizePort(process.env.PORT || PORT)
