@@ -34,6 +34,7 @@
           :ref="setFileUploadRef"
       />
     </ModalDialog>
+
   </MainList>
 </template>
 
@@ -64,7 +65,7 @@ export default defineComponent({
     MainList,
     DialogMenu,
     FileUpload,
-    ModalDialog
+    ModalDialog,
   },
   setup() {
     const {t} = useI18n()

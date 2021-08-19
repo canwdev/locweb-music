@@ -1,12 +1,13 @@
 @import '~@sweetalert2/theme-minimal/minimal.scss';
+
 .swal2-popup.swal2-toast {
   border-radius: $generic-border-radius;
   min-width: 320px;
 }
 
 :root {
-  --primary-rgb:114, 187, 141;
-  --primary:rgb(var(--primary-rgb));
+  --primary-rgb: 114, 187, 141;
+  --primary: rgb(var(--primary-rgb));
 }
 
 html, body {
@@ -204,4 +205,12 @@ button, input, textarea, a, {
 
 .cursor-pointer {
   cursor: pointer !important;
+}
+
+.block-gap-1 {
+  & > * {
+    & + * {
+      margin-left: 5px;
+    }
+  }
 }
