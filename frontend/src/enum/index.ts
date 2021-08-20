@@ -110,7 +110,7 @@ export class MusicItem {
   title?: string;
   artists: string[];
   album?: string;
-  // track?: object;
+  // track?: any;
   rating: number;
   // below are data for filesystem or directories
   filename: string;

@@ -42,7 +42,7 @@ export default createStore({
       state.musicItem = payload
     },
     setNavbarTab(state, payload: number) {
-      // @ts-ignore
+
       this.commit('updateSettings', {
         key: 'navbarTab',
         value: payload
@@ -66,7 +66,7 @@ export default createStore({
       state.paused = payload
     },
     setShuffle(state) {
-      // @ts-ignore
+
       this.commit('setPlayingList', shuffleArray(state.playingList))
 
       state.playingIndexBackup = state.playingIndex
@@ -78,7 +78,7 @@ export default createStore({
       state.isRandom = true
     },
     setShuffleRestore(state) {
-      // @ts-ignore
+
       this.commit('restorePlayingList')
 
       state.playingIndex = state.playingIndexBackup
@@ -98,7 +98,7 @@ export default createStore({
       state.isRandom = payload
     },
     setLoopMode(state, payload: number) {
-      // @ts-ignore
+
       this.commit('updateSettings', {
         key: 'loopMode',
         value: payload
@@ -118,7 +118,7 @@ export default createStore({
       }
       state.token = val
     },
-    setSettings: (state, val: object) => {
+    setSettings: (state, val: any) => {
       state.settings = val
       saveSettings(state.settings)
     },

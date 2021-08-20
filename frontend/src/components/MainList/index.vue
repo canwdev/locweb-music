@@ -155,7 +155,6 @@ export default defineComponent({
 
       const reg = new RegExp(searchText.value, 'ig')
       return list.value.filter((item) => {
-        // @ts-ignore: TS2571
         const title = item.filename || item.title
         return reg.test(title)
       })
@@ -170,14 +169,14 @@ export default defineComponent({
         return;
       }
 
-      // @ts-ignore
+
       const el = virtualScroll.$el
       if (el) {
-        // @ts-ignore
+
         const index = filteredList.value.findIndex(item => item.id === activeId.value)
 
         if (index > -1) {
-          // @ts-ignore
+
           // window.$notify.info(filteredList.value[index].filename, {
           //   position: 'top',
           // })

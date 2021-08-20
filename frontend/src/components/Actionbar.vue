@@ -120,7 +120,7 @@
 </template>
 
 <script lang="ts">
-import {computed, defineComponent, ref, watch, nextTick, onMounted, onBeforeUnmount} from 'vue';
+import {computed, defineComponent, ref, watch, onMounted, onBeforeUnmount} from 'vue';
 import {useI18n} from "vue-i18n";
 import store from '@/store'
 import {LoopModeType, MusicItem} from "@/enum";
@@ -215,7 +215,7 @@ export default defineComponent({
         label: t('msg.single-cycle'),
       },
     }
-    const currentLoopMode = computed((): object => {
+    const currentLoopMode = computed((): any => {
       return loopModeMap[loopMode.value]
     })
 
@@ -279,7 +279,7 @@ export default defineComponent({
         index = 0
       }
       loopMode.value = loopModeList[index]
-      // @ts-ignore
+
       showTip(currentLoopMode.value.label)
     }
 

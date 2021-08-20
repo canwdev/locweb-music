@@ -30,9 +30,9 @@ export default defineComponent({
     onMounted(() => {
       getInfo().then(res=> {
         console.log('res',res)
-        // @ts-ignore
+
         pkgInfo.value = JSON.stringify(res.package, null, 2)
-        // @ts-ignore
+
         changelog.value = snarkdown(res.changelog)
       })
     })

@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, toRefs} from 'vue';
+import {defineComponent} from 'vue';
 import useMVisible from "@/composables/useMVisible"
 import ModalDialog from '@/components/ModalDialog.vue'
 import ListMenu from '@/components/ListMenu.vue'
@@ -38,10 +38,9 @@ export default defineComponent({
     }
   },
   setup(props, context) {
-    // @ts-ignore
-    const {visible} = toRefs(props)
+
     return {
-      ...useMVisible(visible, context)
+      ...useMVisible(props.visible, context)
     }
   }
 })

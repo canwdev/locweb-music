@@ -37,9 +37,9 @@ export default function (config: any = {}) {
       if (!lrcScrollWrap) {
         return
       }
-      // @ts-ignore
+
       const halfTop = lrcScrollWrap.clientHeight / 2
-      // @ts-ignore
+
       lrcScrollWrap.scrollTop = lrcScrollWrap.querySelector(`p[data-index="${lineNum}"]`).offsetTop - halfTop + 9
     }
   }
@@ -58,7 +58,7 @@ export default function (config: any = {}) {
   const destroyLyric = () => {
     // console.log('destroyLyric', lyricObj.value)
     if (lyricObj.value) {
-      // @ts-ignore
+
       lyricObj.value.destroy()
       lyricObj.value = null
     }
@@ -76,7 +76,7 @@ export default function (config: any = {}) {
     // console.log('new lrc', lyricObj.value)
 
     if (!paused.value) {
-      // @ts-ignore
+
       lyricObj.value.play()
     }
   })

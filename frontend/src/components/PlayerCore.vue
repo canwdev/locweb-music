@@ -81,7 +81,7 @@ export default defineComponent({
         }
 
         /* eslint-disable no-undef */
-        // @ts-ignore
+
         navigator.mediaSession.metadata = new MediaMetadata({
           /* eslint-enable no-undef */
           title: val.title,
@@ -133,15 +133,15 @@ export default defineComponent({
     }
     const registerAudioEvents = (audio) => {
       if ('mediaSession' in navigator) {
-        // @ts-ignore
+
         navigator.mediaSession.setActionHandler('play', play);
-        // @ts-ignore
+
         navigator.mediaSession.setActionHandler('pause', pause);
         // navigator.mediaSession.setActionHandler('seekbackward', function() {});
         // navigator.mediaSession.setActionHandler('seekforward', function() {});
-        // @ts-ignore
+
         navigator.mediaSession.setActionHandler('previoustrack', previous);
-        // @ts-ignore
+
         navigator.mediaSession.setActionHandler('nexttrack', next);
       }
 

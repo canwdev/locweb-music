@@ -55,7 +55,7 @@ export default defineComponent({
 
     const tabs = computed(() => {
       return [
-        // @ts-ignore
+
         NavbarTabs[navbarTab.value],
         NavbarTabs[NavbarTabsType.PLAYING],
       ]

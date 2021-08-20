@@ -173,7 +173,7 @@ export default defineComponent({
     })
     watch(() => route.query.dir, (dir) => {
       if (dir) {
-        // @ts-ignore
+
         setDirectories(JSON.parse(dir))
         // console.log('router.query.dir change', val)
       }
@@ -251,7 +251,7 @@ export default defineComponent({
 
     // remove local list item
     const spliceLocalItem = (item, newItem?: MusicItem) => {
-      // @ts-ignore
+
       const index = fileList.value.findIndex(v => v.id === item.id)
       if (index !== -1) {
         if (newItem) {

@@ -5,24 +5,24 @@ const service = Service({
   baseURL: HOST_URL + '/api/playlist'
 })
 
-export function getPlaylist(params?: object) {
+export function getPlaylist(params?: any) {
   return service.get('/list', {
     params
   })
 }
 
-export function addPlaylist(params?: object) {
+export function addPlaylist(params?: any) {
   return service.post('/add', params)
 }
 
-export function deletePlaylist(params?: object) {
+export function deletePlaylist(params?: any) {
   return service.post('/delete', params)
 }
 
-export function addPlaylistMusic(params?: object) {
+export function addPlaylistMusic(params?: any) {
   return service.post('/add-music', params)
 }
 
-export function removePlaylistMusic(params?: object) {
+export function removePlaylistMusic(params?: any) {
   return service.post('/remove-music', params)
 }

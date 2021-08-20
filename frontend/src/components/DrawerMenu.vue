@@ -108,8 +108,7 @@ export default defineComponent({
   },
   setup(props, context) {
     const {t} = useI18n()
-    const {visible} = toRefs(props)
-    const {mVisible} = useMVisible(visible, context)
+    const {mVisible} = useMVisible(props.visible, context)
     const isShowLogin = ref(false)
 
     const token = computed(() => {

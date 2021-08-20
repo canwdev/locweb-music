@@ -21,7 +21,7 @@ export default class LyricParser {
   lrc: string;
   tags: Record<string, any>;
   lines: Array<LineTimeObj>;
-  handler: Function | undefined;
+  handler: () => void | undefined;
   state: number;
   curLine: number;
   curNum: number;
@@ -29,7 +29,7 @@ export default class LyricParser {
   timer: NodeJS.Timeout | undefined;
   pauseStamp: number;
 
-  constructor(lrc, handler?: Function) {
+  constructor(lrc, handler?: () => void) {
     this.lrc = lrc
     this.tags = {}
     this.lines = []
@@ -65,7 +65,7 @@ export default class LyricParser {
         const txt = line.replace(timeExp, '').trim()
         if (txt) {
           this.lines.push({
-            // @ts-ignore
+
             time: result[1] * 60 * 1000 + result[2] * 1000 + (result[3] || 0) * 1 + offset,
             txt
           })
