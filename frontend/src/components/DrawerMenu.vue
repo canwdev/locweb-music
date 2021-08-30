@@ -295,14 +295,15 @@ export default defineComponent({
     }
 
     .menu-item {
-      & + .menu-item {
-        border-top: 1px solid $border-color;
-      }
-
       width: 100%;
       line-height: 40px;
       text-align: left;
       padding: 0 10px;
+      box-sizing: border-box;
+      & + .menu-item {
+        border-top: 1px solid $border-color;
+      }
+
 
       &.active {
         background: $primary;
