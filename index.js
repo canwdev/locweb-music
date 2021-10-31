@@ -15,7 +15,7 @@ const {normalizePort} = require('./utils')
 const isProduction = process.env.NODE_ENV === 'production'
 
 // HTTP request logger middleware
-app.use(require('morgan')('dev'))
+// app.use(require('morgan')('dev'))
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({extended: false}))
 // parse application/json

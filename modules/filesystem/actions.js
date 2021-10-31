@@ -30,7 +30,9 @@ const saveLyric = async (req, res, next) => {
 
     const {
       filename: saveFilename
-    } = saveLyricFile(filename, lyric)
+    } = await saveLyricFile(filename, lyric)
+
+    console.log('>>> saveLyricFile', saveFilename)
 
     return res.sendData({
       saveFilename

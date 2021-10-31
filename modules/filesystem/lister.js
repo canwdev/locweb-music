@@ -139,22 +139,25 @@ const getDetail = async (req, res, next) => {
       const sName = filterLyricFilename(filename)
       let lyricPath = getLyricsPath(sName + '.lrc') // O(1)
 
-      if (!await fs.exists(lyricPath)) {
-        // O(n)
-        lyricPath = traverseLyrics(lyricFileCache, sName)
-        lyricPath = getLyricsPath(lyricPath)
-      }
-
-      if (!await fs.exists(lyricPath)) {
+      if (await fs.exists(lyricPath)) {
+        console.log('>>> O(1) Lyric found', lyricPath)
         lyricText = await fs.readFile(lyricPath, {encoding: 'utf-8'})
       } else {
-        const lyricFile = filename.substring(0, filename.lastIndexOf('.')) + '.lrc'
-        const lyricPath = path.join(currentMusicDir, getSafePath(lyricFile))
-        console.log('Try load lyric from same folder', lyricPath)
-        if (await fs.exists(lyricPath)) {
+        // O(n)
+        lyricPath = traverseLyrics(lyricFileCache, sName)
+
+        if (lyricPath) {
+          lyricPath = getLyricsPath(lyricPath)
           lyricText = await fs.readFile(lyricPath, {encoding: 'utf-8'})
         } else {
-          console.log('lyric not found')
+          const lyricFile = filename.substring(0, filename.lastIndexOf('.')) + '.lrc'
+          const lyricPath = path.join(currentMusicDir, getSafePath(lyricFile))
+          console.log('>>> Try load lyric from same folder', lyricPath)
+          if (await fs.exists(lyricPath)) {
+            lyricText = await fs.readFile(lyricPath, {encoding: 'utf-8'})
+          } else {
+            console.log('<<< Lyric not found')
+          }
         }
       }
     } catch (e) {

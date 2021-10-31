@@ -13,6 +13,18 @@
         />
         <transition name="fade">
           <div v-show="isShowDetail" class="detail-content bg-dark">
+            <div class="tab-wrap">
+              <TkButton
+                v-for="item in detailTabList"
+                :key="item.value"
+                size="no-style"
+                :class="{active: currentDetailTab === item.value}"
+                @click="currentDetailTab = item.value"
+              >
+                {{ item.label }}
+              </TkButton>
+            </div>
+
             <div
               v-show="currentDetailTab === DetailTabEnum.LYRIC"
               class="lyric-content"
@@ -55,17 +67,7 @@
               :placeholder="$t('msg.no-data')"
             ></textarea>
 
-            <div class="tab-wrap">
-              <TkButton
-                v-for="item in detailTabList"
-                :key="item.value"
-                size="no-style"
-                :class="{active: currentDetailTab === item.value}"
-                @click="currentDetailTab = item.value"
-              >
-                {{ item.label }}
-              </TkButton>
-            </div>
+
           </div>
         </transition>
       </div>
@@ -275,12 +277,12 @@ export default {
         flex: 1;
         padding: 10px 0;
         font-weight: bold;
-        border-top: 3px solid rgba(255, 255, 255, 0.2);
+        border-bottom: 3px solid rgba(255, 255, 255, 0.2);
         border-radius: 0;
 
         &.active {
           color: $primary;
-          border-top-color: $primary;
+          border-bottom-color: $primary;
         }
       }
     }

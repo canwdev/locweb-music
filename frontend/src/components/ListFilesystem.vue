@@ -135,7 +135,7 @@ export default {
             ...this.$route.query,
             dir: JSON.stringify(val.map(item => item.filename))
           }
-        }).catch(e => console.warn(e))
+        }).catch(e => {})
         this.getFileList()
       },
       deep: true

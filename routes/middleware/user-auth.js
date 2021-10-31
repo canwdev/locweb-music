@@ -17,10 +17,10 @@ const checkAuth = (token) => {
 
   const hasUser = Boolean(authUsers[id])
 
-  console.log({
-    hasUser,
-    id
-  })
+  // console.log({
+  //   hasUser,
+  //   id
+  // })
 
   return {
     hasUser,

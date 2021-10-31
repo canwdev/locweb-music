@@ -1,11 +1,11 @@
 <template>
-  <TkButton
-    class="btn-cover flex items-center justify-center"
+  <button
+    class="tk-button-no-style btn-cover flex items-center justify-center"
   >
     <slot></slot>
     <CoverDisplay v-if="src" :src="src"/>
     <i v-else class="material-icons">{{ iconName }}</i>
-  </TkButton>
+  </button>
 </template>
 
 <script>
