@@ -2,10 +2,10 @@ const mm = require('music-metadata')
 const {calcBufferHash} = require('./index')
 const {getLyricsPath,getSafePath} = require('./fs-tool')
 const mime = require('mime-types')
-const util = require('util')
 const path = require('path');
 const fs = require('fs-extra');
 const {IMAGE_PATH} = require('../config')
+const {nodeBus, BUS_UPDATE_LYRIC_CACHE} = require('./node-bus')
 
 /**
  * Get music metadata and extract cover
@@ -84,12 +84,13 @@ const getLyricFile = (lyricFileList, filename, options = {}) => {
   console.log('<<< Lyric not found')
 }
 
-const saveLyricFile = (filename, lyric, options = {}) => {
+const saveLyricFile = async (filename, lyric, options = {}) => {
   filename = getLyricFilename(filename, options) + '.lrc'
 
   const savePath = getLyricsPath(filename)
-  console.log('Save lyric', savePath)
-  fs.writeFileSync(savePath, lyric, {encoding: 'utf8'})
+  // console.log('Save lyric', savePath)
+  await fs.writeFile(savePath, lyric, {encoding: 'utf8'})
+  nodeBus.emit(BUS_UPDATE_LYRIC_CACHE, savePath)
   return {
     savePath,
     filename
