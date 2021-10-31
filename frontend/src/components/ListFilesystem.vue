@@ -13,13 +13,12 @@
     @refresh="handleRefresh"
     @openMenu="showFolderMenu"
   >
-    <DialogMenu
-      :visible.sync="isShowFileMenu"
-      :list="fileMenuList"
+    <ContextMenuCommon
+      ref="fileMenuRef"
+      :list-fn="getFileMenuList"
     />
-    <DialogMenu
-      :visible.sync="isShowFolderMenu"
-      auto-close
+    <ContextMenuCommon
+      ref="folderMenuRef"
       :list="folderMenuList"
     />
     <TkModalDialog
@@ -48,15 +47,15 @@ import {isSupportedMusicFormat} from '@/utils/is'
 import bus, {ACTION_PLAY_START, ACTION_LOCATE_FILE} from '@/utils/bus'
 import {downLoadFile} from '@/utils'
 import MainList from '@/components/MainList/index.vue'
-import DialogMenu from '@/components/DialogMenu.vue'
 import FileUpload from '@/components/FileUpload.vue'
+import ContextMenuCommon from '@/components/ContextMenuCommon.vue'
 
 export default {
   name: 'ListFilesystem',
   components: {
     MainList,
-    DialogMenu,
     FileUpload,
+    ContextMenuCommon
   },
   data() {
     return {
@@ -69,13 +68,11 @@ export default {
         path: '',
         filename: ''
       },
-      isShowFileMenu: false,
       selectedItem: null,
-      isShowFolderMenu: false,
       folderMenuList: [
-        {label: this.$t('create-folder'), action: this.createFolder},
-        {label: this.$t('upload-files') + '...', action: this.showUploadDialog},
-        {label: this.$t('upload-folder') + '...', disabled: true}
+        {icon: 'create_new_folder', label: this.$t('create-folder'), action: this.createFolder},
+        {icon: 'upload_file', label: this.$t('upload-files') + '...', action: this.showUploadDialog},
+        {icon: 'drive_folder_upload', label: this.$t('upload-folder') + '...', disabled: true}
       ]
     }
   },
@@ -83,21 +80,6 @@ export default {
     currentPath() {
       return this.getCurrentPath(this.directories)
     },
-
-    fileMenuList() {
-      if (!this.selectedItem) return
-      const sItem = this.selectedItem
-      const list = [
-        {label: this.$t('rename'), action: () => this.actionRenameFile(sItem)},
-        {label: this.$t('delete'), action: () => this.actionDeleteFile(sItem)},
-        !sItem.isDirectory ? {label: this.$t('download'), action: () => this.actionDownloadFile(sItem)}
-          : {label: this.$t('download-archive'), disabled: true},
-      ]
-      if (!sItem.isDirectory) {
-        list.push({label: this.$t('replace') + '...', action: () => this.actionReplaceFile(sItem)})
-      }
-      return list
-    }
   },
   mounted() {
     this.getFileList()
@@ -135,18 +117,27 @@ export default {
             ...this.$route.query,
             dir: JSON.stringify(val.map(item => item.filename))
           }
-        }).catch(e => {})
+        }).catch(e => {
+        })
         this.getFileList()
       },
       deep: true
     },
-    isShowFileMenu(val) {
-      if (!val) {
-        this.selectedItem = null
-      }
-    },
   },
   methods: {
+    getFileMenuList(sItem) {
+      const list = [
+        {icon: 'space_bar', label: this.$t('rename'), action: () => this.actionRenameFile(sItem)},
+        {icon: 'delete', label: this.$t('delete'), action: () => this.actionDeleteFile(sItem)},
+        !sItem.isDirectory
+          ? {icon: 'file_download', label: this.$t('download'), action: () => this.actionDownloadFile(sItem)}
+          : {icon: 'archive', label: this.$t('download-archive'), disabled: true},
+      ]
+      if (!sItem.isDirectory) {
+        list.push({icon: 'upgrade', label: this.$t('replace') + '...', action: () => this.actionReplaceFile(sItem)})
+      }
+      return list
+    },
     setDirectories(arr) {
       this.directories = arr.map(item => new MusicItem({
         filename: item,
@@ -154,7 +145,7 @@ export default {
       }))
     },
     setLastPlayId(id) {
-      if (!this.$route.query.id) {
+      if (!id && !this.$route.query.id) {
         return
       }
       return this.$router.replace({
@@ -185,7 +176,7 @@ export default {
           getPlayStat: true
         })
         if (message) {
-          window.$notify.warning(message)
+          this.$toast.warning(message)
         }
         this.fileList = list.map((file) => {
           return new MusicItem(file)
@@ -201,7 +192,7 @@ export default {
         })
       } catch (e) {
         this.fileList = []
-        // window.$notify.error(e.message)
+        // this.$toast.error(e.message)
         console.error(e)
       } finally {
         this.isLoading = false
@@ -247,8 +238,7 @@ export default {
       }
     },
     handleItemAction(item) {
-      this.isShowFileMenu = true
-      this.selectedItem = item
+      this.$refs.fileMenuRef.open(item)
     },
     spliceLocalItem(item, newItem) {
       const index = this.fileList.findIndex(v => v.id === item.id)
@@ -262,49 +252,62 @@ export default {
     },
     async actionRenameFile(sItem) {
       if (!sItem) return
-      this.isShowFileMenu = false
 
-      const name = prompt(`${this.$t('rename')} 《${sItem.filename}》`, sItem.filename) || ''
-      if (!name) {
-        return
-      }
-      this.isLoading = true
-      try {
-        const {newName} = await fileAction({
-          path: sItem.path,
-          filename: sItem.filename,
-          action: FileAction.RENAME,
-          actionValue: name
-        })
-        sItem.filename = newName
-      } catch (e) {
-        console.error(e)
-      } finally {
-        this.isLoading = false
-      }
+      this.$prompt.create({
+        propsData: {
+          title: `${this.$t('rename')}`,
+          input: {
+            value: sItem.filename,
+            required: true,
+            placeholder: sItem.filename,
+          }
+        },
+        parentEl: this.$el
+      }).onConfirm(async (context) => {
+        const name = context.inputValue
+        if (!name || name === sItem.filename) {
+          return
+        }
+        this.isLoading = true
+        try {
+          const {newName} = await fileAction({
+            path: sItem.path,
+            filename: sItem.filename,
+            action: FileAction.RENAME,
+            actionValue: name
+          })
+          sItem.filename = newName
+        } catch (e) {
+          console.error(e)
+        } finally {
+          this.isLoading = false
+        }
+      })
     },
     async actionDeleteFile(sItem) {
       if (!sItem) return
-      this.isShowFileMenu = false
 
-      const flag = confirm(`${this.$t('warning')}!! ${this.$t('delete')} 《${sItem.filename}》?\n${this.$t('msg.this-operation-cannot-be-undone')}`)
-      if (!flag) {
-        return
-      }
-
-      this.isLoading = true
-      try {
-        await fileAction({
-          path: sItem.path,
-          filename: sItem.filename,
-          action: FileAction.DELETE
-        })
-        this.spliceLocalItem(sItem)
-      } catch (e) {
-        console.error(e)
-      } finally {
-        this.isLoading = false
-      }
+      this.$prompt.create({
+        propsData: {
+          title: `${this.$t('warning')}!!`,
+          content: `${this.$t('delete')} 《${sItem.filename}》?\n${this.$t('msg.this-operation-cannot-be-undone')}`
+        },
+        parentEl: this.$el
+      }).onConfirm(async () => {
+        this.isLoading = true
+        try {
+          await fileAction({
+            path: sItem.path,
+            filename: sItem.filename,
+            action: FileAction.DELETE
+          })
+          this.spliceLocalItem(sItem)
+        } catch (e) {
+          console.error(e)
+        } finally {
+          this.isLoading = false
+        }
+      })
     },
     async actionDownloadFile(sItem) {
       if (!sItem) return
@@ -330,23 +333,33 @@ export default {
       }
       this.$refs.fileUpload.clearFileInput()
       this.isShowUploadModal = true
-      this.isShowFileMenu = false
     },
     showFolderMenu() {
-      this.isShowFolderMenu = true
+      this.$refs.folderMenuRef.open()
     },
     async createFolder() {
-      const name = prompt(this.$t('create-folder')) || ''
-      if (!name) {
-        return
-      }
-
-      await fileAction({
-        path: this.directories.map(item => item.filename).join('/'),
-        action: FileAction.CREATE_FOLDER,
-        actionValue: name
+      this.$prompt.create({
+        propsData: {
+          title: this.$t('create-folder'),
+          input: {
+            value: '',
+            required: true,
+            placeholder: this.$t('create-folder'),
+          }
+        },
+        parentEl: this.$el
+      }).onConfirm(async (context) => {
+        const name = context.inputValue
+        if (!name) {
+          return
+        }
+        await fileAction({
+          path: this.directories.map(item => item.filename).join('/'),
+          action: FileAction.CREATE_FOLDER,
+          actionValue: name
+        })
+        await this.getFileList()
       })
-      await this.getFileList()
     },
     async showUploadDialog() {
       const path = this.currentPath

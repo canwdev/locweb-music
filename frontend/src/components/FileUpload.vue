@@ -19,8 +19,8 @@
         type="file"
         name="sampleFile"
       />
-      <button class="" type="button" :disabled="isUploading" @click="clearFileInput">{{ $t('clear') }}</button>
-      <button class="" type="submit">{{ $t('upload') }}</button>
+      <TkButton type="button" :disabled="isUploading" @click="clearFileInput">{{ $t('clear') }}</TkButton>
+      <TkButton type="submit">{{ $t('upload') }}</TkButton>
     </form>
 
     <div class="progress-box">

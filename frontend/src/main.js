@@ -20,7 +20,7 @@ if (isProd) {
 }
 Vue.use(tankUI)
 
-new Vue({
+export default new Vue({
   i18n,
   router,
   store,

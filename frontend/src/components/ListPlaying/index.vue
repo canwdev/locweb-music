@@ -10,9 +10,9 @@
     @onItemClick="handleItemClick"
     @onItemAction="handleItemAction"
   >
-    <DialogMenu
-      :visible.sync="isShowFileMenu"
-      :list="fileMenuList"
+    <ContextMenuCommon
+      ref="fileMenuRef"
+      :list-fn="getFileMenuList"
     />
   </MainList>
 </template>
@@ -28,8 +28,8 @@ import bus, {
 } from '@/utils/bus'
 import {LoopModeType, NavBarIndex} from '@/enum'
 import {mapGetters, mapState} from 'vuex'
-import DialogMenu from '@/components/DialogMenu.vue'
-import dialogMenuMixin from '@/mixins/dialog-menu'
+import dialogMenuMixin from './dialog-menu'
+import ContextMenuCommon from '@/components/ContextMenuCommon'
 
 function getRandomInt(min, max) {
   min = Math.ceil(min)
@@ -42,7 +42,7 @@ export default {
   mixins: [dialogMenuMixin],
   components: {
     MainList,
-    DialogMenu
+    ContextMenuCommon
   },
   data() {
     return {

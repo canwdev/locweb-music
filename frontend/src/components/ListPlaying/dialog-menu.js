@@ -3,37 +3,17 @@ import bus, {ACTION_LOCATE_FILE} from '@/utils/bus'
 
 export default {
   data() {
-    return {
-      isShowFileMenu: false,
-      selectedItem: null,
-      isLoading: false,
-    }
-  },
-  computed: {
-    fileMenuList() {
-      if (!this.selectedItem) return
-      const sItem = this.selectedItem
-      return [
-        {
-          label: this.$t('msg.add-to-playlist') + '...', action: () => this.addMusic(sItem)
-        },
-        {
-          label: this.$t('msg.locate-file'), action: () => this.locateFile(sItem)
-        }
-      ]
-    }
-  },
-  watch: {
-    isShowFileMenu(val) {
-      if (!val) {
-        this.selectedItem = null
-      }
-    }
+    return {}
   },
   methods: {
+    getFileMenuList(sItem) {
+      return [
+        {icon: 'my_location', label: this.$t('msg.locate-file'), action: () => this.locateFile(sItem)},
+        {icon: 'playlist_add', label: this.$t('msg.add-to-playlist') + '...', action: () => this.addMusic(sItem)},
+      ]
+    },
     handleItemAction(item) {
-      this.isShowFileMenu = true
-      this.selectedItem = item
+      this.$refs.fileMenuRef.open(item)
     },
     async addMusic(item) {
       try {
@@ -53,7 +33,6 @@ export default {
           //   rank,
         })
         this.$toast.success(this.$t('msg.music-added'))
-        this.isShowFileMenu = false
       } catch (e) {
         console.error(e)
       } finally {
@@ -65,7 +44,6 @@ export default {
         return
       }
       bus.$emit(ACTION_LOCATE_FILE, item)
-      this.isShowFileMenu = false
     }
   }
 }

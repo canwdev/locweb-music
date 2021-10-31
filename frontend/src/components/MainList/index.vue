@@ -41,6 +41,7 @@
       <ListItem
         v-if="showUp"
         :item="rootItem"
+        @contextmenu.native="$emit('openMenu')"
         @click.native.prevent="$emit('goUpDir')"
       />
     </div>
@@ -174,7 +175,7 @@ export default {
         const index = this.filteredList.findIndex(item => item.id === this.activeId)
 
         if (index > -1) {
-          // window.$notify.info(filteredList.value[index].filename, {
+          // this.$toast.info(filteredList.value[index].filename, {
           //   position: 'top',
           // })
 

@@ -1,5 +1,6 @@
 import axios from 'axios'
 import {getToken} from './auth'
+import main from '../main'
 
 function Service(config) {
   const {
@@ -49,7 +50,7 @@ function Service(config) {
           message = msg
         }
       }
-      window.$notify.error(message)
+      main.$toast.error(message)
       return Promise.reject(error)
     }
   )

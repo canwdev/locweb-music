@@ -1,17 +1,23 @@
 <template>
   <div class="list-menu">
-    <div
-      v-for="(item, index) in list"
-      :key="index"
-      class="list-item"
-    >
+    <template v-for="(item, index) in list">
+      <hr
+        v-if="item.isSeparator"
+        :key="index"
+      />
       <TkButton
+        v-else-if="!item.hidden"
+        :key="index"
         size="no-style"
+        class="menu-item"
         :disabled="item.disabled"
         @click="item.action ? item.action() : () => {}"
-      >{{ item.label }}
+        @contextmenu.prevent="item.action"
+      >
+        <i v-if="item.icon" class="material-icons text-primary">{{ item.icon }}</i>
+        {{ item.label }}
       </TkButton>
-    </div>
+    </template>
 
   </div>
 </template>
@@ -32,23 +38,8 @@ export default {
 
 <style lang="scss" scoped>
 .list-menu {
-  width: 200px;
-
-  &.bg-light {
-    border-radius: $border-radius;
-  }
-
-  & > .list-item {
-    display: block;
-
-    button {
-      width: 100%;
-      height: 40px;
-    }
-
-    & + .list-item {
-      border-top: 1px solid $border-color;
-    }
+  button {
+    min-width: 200px;
   }
 }
 </style>

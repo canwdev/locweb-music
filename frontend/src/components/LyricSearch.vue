@@ -130,7 +130,7 @@ export default {
           this.lyric = lrc
         }
       } catch (e) {
-        window.$notify.error(e.message)
+        this.$toast.error(e.message)
         console.error(e)
 
         this.lyric = ''
