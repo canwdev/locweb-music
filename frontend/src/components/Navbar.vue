@@ -1,74 +1,69 @@
 <template>
-  <DrawerMenu
-      v-model:visible="isShowMenu"
-  />
+  <div class="navbar-component">
+    <DrawerMenu
+      :visible.sync="isShowMenu"
+    />
 
-  <div class="navbar flex">
-    <button class="btn-no-style btn-menu" @click="isShowMenu = true"><i class="material-icons">menu</i></button>
-    <button
+    <div class="navbar flex">
+      <TkButton size="no-style" class="btn-menu" @click="isShowMenu = true"><i class="material-icons">menu</i></TkButton>
+      <TkButton
         v-for="(item, index) in tabs"
         :key="item.value"
-        @click="navbarIndex = index"
+        size="no-style"
         :class="{active: index === navbarIndex}"
-        class="btn-no-style btn-tab">
-      <span v-if="item.icon" class="material-icons">{{ item.icon }}</span>
-      {{ item.name }}
-    </button>
+        class="btn-tab"
+        @click="navbarIndex = index"
+      >
+        <span v-if="item.icon" class="material-icons">{{ item.icon }}</span>
+        {{ item.name }}
+      </TkButton>
+    </div>
   </div>
 </template>
 
-<script lang="ts">
-import {defineComponent, ref, computed} from 'vue';
-import store from '@/store'
-
-import DrawerMenu from "@/components/DrawerMenu.vue";
+<script>
+import DrawerMenu from '@/components/DrawerMenu.vue'
 import {
   NavbarTabsType,
   NavbarTabs
-} from "@/enum";
+} from '@/enum'
 
-export default defineComponent({
-  name: 'NavBar',
+export default {
+  name: 'Navbar',
   components: {
     DrawerMenu
   },
-  setup() {
-    const isShowMenu = ref(false)
+  data() {
+    return {
+      isShowMenu: false
 
-    const navbarTab = computed({
+    }
+  },
+  computed: {
+    navbarTab: {
       get() {
-        return store.getters.navbarTab
+        return this.$store.getters.navbarTab
       },
       set(val) {
-        store.commit('setNavbarTab', val)
-      }
-    })
-
-    const navbarIndex = computed({
+        this.$store.commit('setNavbarTab', val)
+      },
+    },
+    navbarIndex: {
       get() {
-        return store.state.navbarIndex
+        return this.$store.state.navbarIndex
       },
       set(val) {
-        store.commit('setNavbarIndex', val)
-      }
-    })
-
-    const tabs = computed(() => {
+        this.$store.commit('setNavbarIndex', val)
+      },
+    },
+    tabs() {
       return [
-        // @ts-ignore
-        NavbarTabs[navbarTab.value],
+        NavbarTabs[this.navbarTab],
         NavbarTabs[NavbarTabsType.PLAYING],
       ]
-    })
-
-    return {
-      isShowMenu,
-      tabs,
-      navbarTab,
-      navbarIndex
     }
   }
-});
+}
 </script>
 
 <style lang="scss" scoped>
@@ -85,6 +80,7 @@ export default defineComponent({
   .btn-menu {
     width: 44px;
     font-size: 22px;
+    border-radius: 0;
   }
 
   .btn-tab {
@@ -100,6 +96,7 @@ export default defineComponent({
     display: flex;
     align-items: center;
     justify-content: center;
+    border-radius: 0;
 
     & + button {
       border-left: 1px solid $border-color;
@@ -117,7 +114,6 @@ export default defineComponent({
         height: 6%;
         background: $primary;
         opacity: 0;
-        transition: $generic-hover-transition;
       }
 
       &.active {
@@ -130,7 +126,7 @@ export default defineComponent({
       }
     }
 
-
   }
 }
 </style>
+

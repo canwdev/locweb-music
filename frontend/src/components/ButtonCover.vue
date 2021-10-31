@@ -1,32 +1,32 @@
 <template>
-  <button
-      class="btn-no-style btn-cover flex items-center justify-center">
+  <TkButton
+    class="btn-cover flex items-center justify-center"
+  >
     <slot></slot>
     <CoverDisplay v-if="src" :src="src"/>
     <i v-else class="material-icons">{{ iconName }}</i>
-  </button>
+  </TkButton>
 </template>
 
-<script lang="ts">
-import {defineComponent} from 'vue';
+<script>
 import CoverDisplay from '@/components/CoverDisplay.vue'
 
-export default defineComponent({
-  name: "ButtonCover",
+export default {
+  name: 'ButtonCover',
   components: {
     CoverDisplay
   },
   props: {
     iconName: {
       type: String,
-      default: "audiotrack" // headset
+      default: 'audiotrack' // headset
     },
     src: {
       type: String,
       default: null
     }
   }
-})
+}
 </script>
 
 <style lang="scss" scoped>
@@ -36,7 +36,7 @@ export default defineComponent({
   background: $primary;
   color: white;
   font-size: 28px;
-  border-radius: $generic-border-radius;
+  border-radius: $border-radius;
   overflow: hidden;
   .cover-display {
     width: 100%;

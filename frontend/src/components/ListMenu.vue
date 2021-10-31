@@ -1,30 +1,24 @@
 <template>
-  <div class="list-menu" :class="themeClass">
+  <div class="list-menu">
     <div
-        class="list-item"
-        v-for="(item, index) in list"
-        :key="index"
+      v-for="(item, index) in list"
+      :key="index"
+      class="list-item"
     >
-      <button
-          class="btn-no-style"
-          @click="item.action"
-          :disabled="item.disabled"
+      <TkButton
+        size="no-style"
+        :disabled="item.disabled"
+        @click="item.action ? item.action() : () => {}"
       >{{ item.label }}
-      </button>
+      </TkButton>
     </div>
 
   </div>
 </template>
 
-<script lang="ts">
-import {
-  computed,
-  defineComponent,
-} from 'vue';
-import store from "@/store";
-
-export default defineComponent({
-  name: "ListMenu",
+<script >
+export default {
+  name: 'ListMenu',
   props: {
     list: {
       type: Array,
@@ -33,12 +27,7 @@ export default defineComponent({
       }
     }
   },
-  setup() {
-    return {
-      themeClass: computed(() => store.getters.themeClass)
-    }
-  }
-})
+}
 </script>
 
 <style lang="scss" scoped>
@@ -46,7 +35,7 @@ export default defineComponent({
   width: 200px;
 
   &.bg-light {
-    border-radius: $generic-border-radius;
+    border-radius: $border-radius;
   }
 
   & > .list-item {

@@ -7,7 +7,7 @@
 
 <script>
 export default {
-name: "CoverDisplay",
+name: 'CoverDisplay',
   props: {
     src: {
       type: String,

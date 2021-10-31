@@ -1,43 +1,45 @@
 <template>
-  <PlayerCore/>
-  <router-view v-slot="{ Component }">
+  <div id="app" class="tk-scroll" :class="[isDarkTheme ? 'tk-dark-theme' : 'tk-light-theme']">
+    <PlayerCore/>
     <keep-alive>
-      <component :is="Component" />
+      <router-view/>
     </keep-alive>
-  </router-view>
+  </div>
 </template>
 
-<script lang="ts">
-import {computed, defineComponent} from 'vue';
-import PlayerCore from '@/components/PlayerCore.vue';
-import store from "@/store";
+<script>
+import store from '@/store'
 import {hexToRgb} from '@/utils/color'
+import PlayerCore from '@/components/PlayerCore.vue'
 
-export default defineComponent({
-  name: 'App',
+export default {
   components: {
     PlayerCore
   },
-  setup() {
-    const themeColor = computed(() => store.getters.themeColor)
+  computed: {
+    isDarkTheme: {
+      get: () => store.getters.isDarkTheme
+    },
+  },
+  created() {
+    const themeColor = this.$store.getters.themeColor
     // console.log('themeColor', themeColor.value)
-    if (themeColor.value) {
-
-      const colorHex = themeColor.value
-      const {r, g, b} = hexToRgb(colorHex)
-
-      const root = document.documentElement;
-      root.style.setProperty('--primary-rgb', `${r}, ${g}, ${b}`);
+    if (themeColor) {
+      const {r, g, b} = hexToRgb(themeColor)
+      const root = document.documentElement
+      root.style.setProperty('--primary-rgb', `${r}, ${g}, ${b}`)
     }
+  },
+  mounted() {
   }
-})
+}
 </script>
 
 <style lang="scss">
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   height: 100%;
+  //border-radius: 8px;
+  overflow: hidden;
+  //user-select: none
 }
 </style>

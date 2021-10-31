@@ -1,54 +1,55 @@
 <template>
   <div class="lyric-search">
-    <Loading
-        absolute
-        :visible="isLoading"
+    <TkLoading
+      absolute
+      :visible="isLoading"
     />
     <div v-show="!isDetail" class="search-index">
-      <form @submit.prevent="handleSearch" class="flex items-center search-form">
-        <input
-            class="input-styled"
-            required
-            type="text"
-            :placeholder="$t('msg.search-song-name')"
-            v-model="searchText"
-        >
-        <button type="submit" class="btn-styled">{{ $t('search') }}</button>
+      <form class="flex items-center search-form" @submit.prevent="handleSearch">
+        <TkInput
+          v-model="searchText"
+          class=""
+          required
+          type="text"
+          :placeholder="$t('msg.search-song-name')"
+        />
+        <TkButton type="submit" class="">{{ $t('search') }}</TkButton>
       </form>
 
       <div class="result-list">
-        <button
-            class="btn-styled list-item"
-            @click="chooseMusic()"
+        <TkButton
+          class=" list-item"
+          @click="chooseMusic()"
         >
           <div class="title">{{ $t('edit-current-lyric') }}</div>
-        </button>
+        </TkButton>
         <template v-if="resultList.length">
-          <button
-              v-for="(item, index) in resultList"
-              :key="index"
-              class="btn-no-style list-item"
-              @click="chooseMusic(item)"
+          <TkButton
+            v-for="(item, index) in resultList"
+            :key="index"
+            size="no-style"
+            class="list-item"
+            @click="chooseMusic(item)"
           >
             <div class="title">{{ item.name }}</div>
             <div class="subtitle">{{ $t('artists') }}: {{ item.artists.map(v => v.name).join(', ') }}</div>
             <div class="subtitle">{{ $t('album') }}: {{ item.album.name }}</div>
-          </button>
+          </TkButton>
         </template>
-        <NoData v-else/>
+        <TkEmpty v-else/>
       </div>
 
     </div>
 
     <div v-show="isDetail" class="search-detail">
       <textarea
-          v-model="lyric"
-          rows="20"
-          :placeholder="$t('msg.type-lyrics-here-lrc')"
+        v-model="lyric"
+        rows="20"
+        :placeholder="$t('msg.type-lyrics-here-lrc')"
       ></textarea>
       <div class="flex justify-between">
-        <button class="btn-styled" @click="isDetail = false">{{ $t('back') }}</button>
-        <button class="btn-styled" @click="saveLyric">{{ $t('save') }}</button>
+        <TkButton class="" @click="isDetail = false">{{ $t('back') }}</TkButton>
+        <TkButton class="" @click="saveLyric">{{ $t('save') }}</TkButton>
       </div>
     </div>
 
@@ -56,20 +57,14 @@
 </template>
 
 <script>
-import {defineComponent, ref, toRefs, watch} from 'vue'
 import {
   searchMusic,
   getLyric
 } from '@/api/ncm'
-import Loading from '@/components/Loading.vue'
-import NoData from "./NoData.vue";
 
-export default defineComponent({
-  name: "LyricSearch",
-  components: {
-    Loading,
-    NoData
-  },
+export default {
+  name: 'LyricSearch',
+  components: {},
   props: {
     search: {
       type: String,
@@ -80,43 +75,46 @@ export default defineComponent({
       default: ''
     }
   },
-  setup(props, context) {
-    const {search, currentLyric} = toRefs(props)
-    const searchText = ref('')
-    const resultList = ref([])
-    const isLoading = ref(false)
-    const isDetail = ref(false)
-    const lyric = ref('')
-
-    watch(search, (val) => {
-      searchText.value = val
-    }, {
+  data() {
+    return {
+      searchText: '',
+      resultList: [],
+      isLoading: false,
+      isDetail: false,
+      lyric: '',
+    }
+  },
+  watch: {
+    search: {
+      handler(val) {
+        this.searchText = val
+      },
       immediate: true
-    })
-
-    const handleSearch = async () => {
+    }
+  },
+  methods: {
+    async handleSearch() {
       try {
-        isLoading.value = true
+        this.isLoading = true
 
         const {result} = await searchMusic({
-          keywords: searchText.value,
+          keywords: this.searchText,
           limit: 20
         })
         // console.log(result)
-        resultList.value = result.songs
+        this.resultList = result.songs
       } finally {
-        isLoading.value = false
+        this.isLoading = false
       }
-    }
-
-    const chooseMusic = async (item) => {
+    },
+    async chooseMusic(item) {
       if (!item) {
-        lyric.value = currentLyric.value
-        isDetail.value = true
+        this.lyric = this.currentLyric
+        this.isDetail = true
         return
       }
       try {
-        isLoading.value = true
+        this.isLoading = true
         // console.log(item)
         const res = await getLyric({
           id: item.id
@@ -127,40 +125,28 @@ export default defineComponent({
         const lrc = res.lrc.lyric || ''
 
         if (tlyric) {
-          lyric.value = tlyric + '\n\n\n' + lrc
+          this.lyric = tlyric + '\n\n\n' + lrc
         } else {
-          lyric.value = lrc
+          this.lyric = lrc
         }
       } catch (e) {
         window.$notify.error(e.message)
         console.error(e)
 
-        lyric.value = ''
+        this.lyric = ''
       } finally {
-        isLoading.value = false
-        isDetail.value = true
+        this.isLoading = false
+        this.isDetail = true
       }
-    }
-
-    const saveLyric = async () => {
-      context.emit('saveLyric', lyric.value)
-      resultList.value = []
-      lyric.value = ''
-      isDetail.value = false
-    }
-
-    return {
-      isLoading,
-      searchText,
-      handleSearch,
-      resultList,
-      chooseMusic,
-      isDetail,
-      lyric,
-      saveLyric
+    },
+    async saveLyric() {
+      this.$emit('saveLyric', this.lyric)
+      this.resultList = []
+      this.lyric = ''
+      this.isDetail = false
     }
   }
-})
+}
 </script>
 
 <style lang="scss" scoped>
@@ -169,7 +155,6 @@ export default defineComponent({
   min-height: 200px;
   padding: 10px;
   position: relative;
-
 
   .search-form {
     input {

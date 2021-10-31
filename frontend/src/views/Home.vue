@@ -1,46 +1,38 @@
 <template>
-  <div class="home" :class="themeClass">
+  <div class="home">
     <Navbar/>
 
     <div
-        class="panel-item left-panel"
-        @click="navbarIndex=NavBarIndex.LEFT"
-        v-show="isLeftPanel"
+      v-show="isLeftPanel"
+      class="panel-item left-panel"
+      @click="navbarIndex=NavBarIndex.LEFT"
     >
       <component
-          :is="NavbarTabs[navbarTab].componentName"
+        :is="NavbarTabs[navbarTab].componentName"
       ></component>
 
-<!--      <ListFilesystem v-if="navbarTab === NavbarTabsType.MAIN"/>
-      <ListPlaylist v-if="navbarTab === NavbarTabsType.PLAYLIST"/>-->
     </div>
     <div
-        class="panel-item right-panel"
-        @click="navbarIndex=NavBarIndex.RIGHT"
-        v-show="!isLeftPanel"
+      v-show="!isLeftPanel"
+      class="panel-item right-panel"
+      @click="navbarIndex=NavBarIndex.RIGHT"
     >
-      <ListPlaying
-      />
+      <ListPlaying/>
     </div>
 
     <Actionbar/>
 
-
   </div>
 </template>
 
-<script lang="ts">
-import {computed, defineAsyncComponent, defineComponent,} from 'vue';
-import store from '@/store'
+<script>
+import {mapGetters} from 'vuex'
+import Navbar from '@/components/Navbar.vue'
+import Actionbar from '@/components/Actionbar.vue'
+import ListPlaying from '@/components/ListPlaying/index.vue'
+import {NavBarIndex, NavbarTabs, NavbarTabsType} from '@/enum'
 
-import Navbar from '@/components/Navbar.vue';
-import Actionbar from '@/components/Actionbar.vue';
-import ListPlaying from "@/components/ListPlaying/index.vue";
-// import ListPlaylist from "@/components/ListPlaylist.vue";
-// import ListFilesystem from "@/components/ListFilesystem.vue";
-import {NavBarIndex, NavbarTabs, NavbarTabsType} from "@/enum";
-
-// Dynamic child components
+// 动态引入子组件
 const dynamicImportComponents = {}
 
 for (const key in NavbarTabs) {
@@ -48,46 +40,41 @@ for (const key in NavbarTabs) {
   if (!item.componentName) {
     continue
   }
-  dynamicImportComponents[item.componentName] = defineAsyncComponent(() =>
-      import(`@/components/${item.componentName}.vue`)
-  )
+  dynamicImportComponents[item.componentName] = resolve => require([`@/components/${item.componentName}.vue`], resolve)
 }
 
-export default defineComponent({
+export default {
   name: 'Home',
   components: {
     Navbar,
     Actionbar,
     ListPlaying,
-    // ListFilesystem,
-    // ListPlaylist,
     ...dynamicImportComponents
   },
-  setup() {
-    const navbarTab = computed(() => store.getters.navbarTab)
-
-    const navbarIndex = computed({
-      get() {
-        return store.state.navbarIndex
-      },
-      set(val) {
-        store.commit('setNavbarIndex', val)
-      }
-    })
-
-    const isLeftPanel = computed(() => navbarIndex.value === NavBarIndex.LEFT)
-
+  data() {
     return {
-      navbarTab,
       NavbarTabsType,
       NavbarTabs,
-      navbarIndex,
-      isLeftPanel,
-      NavBarIndex,
-      themeClass: computed(() => store.getters.themeClass)
+      NavBarIndex
     }
   },
-});
+  computed: {
+    ...mapGetters([
+      'navbarTab'
+    ]),
+    navbarIndex: {
+      get() {
+        return this.$store.state.navbarIndex
+      },
+      set(val) {
+        return this.$store.commit('setNavbarIndex', val)
+      }
+    },
+    isLeftPanel() {
+      return this.navbarIndex === NavBarIndex.LEFT
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>
@@ -104,10 +91,11 @@ export default defineComponent({
     //padding: 45px 0 80px;
     //box-sizing: border-box;
   }
-  @media screen and (max-width: $mobile_width) {
+
+  @media screen and (max-width: $mq_mobile_width) {
     //background: linear-gradient(to bottom, rgba(0, 0, 0, .5), rgba(0, 0, 0, .5)), url('~@/assets/images/bg.jpg') no-repeat center/cover;
   }
-  @media screen and (min-width: $tablet_width) {
+  @media screen and (min-width: $mq_tablet_width) {
     .panel-item {
       display: flex !important;
       width: 50%;

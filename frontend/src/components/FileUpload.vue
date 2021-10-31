@@ -1,44 +1,42 @@
 <template>
-  <div class="file-upload-wrap" :class="themeClass">
+  <div class="file-upload-wrap">
     <div class="title-box">
       <b>{{ $t('upload-to') }}:</b> {{ (uploadConfig.path + uploadConfig.filename) || 'Root dir' }}
     </div>
 
     <form
-        class="upload-form"
-        id='uploadForm'
-        action='javascript:'
-        method='post'
-        encType="multipart/form-data"
-        @submit="handleSubmit"
+      id="uploadForm"
+      class="upload-form"
+      action="javascript:"
+      method="post"
+      encType="multipart/form-data"
+      @submit="handleSubmit"
     >
-      <input class="input-styled input-upload" :disabled="isUploading" :ref="setInputRef" type="file"
-             name="sampleFile"/>
-      <button class="btn-styled" type="button" :disabled="isUploading" @click="clearFileInput">{{ $t('clear') }}</button>
-      <button class="btn-styled" type='submit'>{{ $t('upload') }}</button>
+      <input
+        ref="inputRef"
+        class=" input-upload"
+        :disabled="isUploading"
+        type="file"
+        name="sampleFile"
+      />
+      <button class="" type="button" :disabled="isUploading" @click="clearFileInput">{{ $t('clear') }}</button>
+      <button class="" type="submit">{{ $t('upload') }}</button>
     </form>
 
     <div class="progress-box">
       <div class="progress-text">
         {{ $t('progress') }}: {{ progress }}%
       </div>
-      <ProgressBar :progress="progress"></ProgressBar>
+      <TkProgress :value="progress"></TkProgress>
     </div>
   </div>
 </template>
 
 <script>
-import {computed, defineComponent, ref, toRefs} from 'vue'
-import {useI18n} from "vue-i18n";
-import {uploadFile} from "@/api/music"
-import ProgressBar from "@/components/ProgressBar"
-import store from "@/store"
+import {uploadFile} from '@/api/music'
 
-export default defineComponent({
+export default {
   name: 'FileUpload',
-  components: {
-    ProgressBar
-  },
   props: {
     uploadConfig: {
       type: Object,
@@ -50,63 +48,55 @@ export default defineComponent({
       }
     }
   },
-  setup(props, context) {
-    const {t} = useI18n()
-    let input
-    const setInputRef = (el) => {
-      input = el
+  data() {
+    return {
+      progress: 0,
+      isUploading: false,
+
     }
-    const progress = ref(0)
-    const isUploading = ref(false)
-    const {uploadConfig} = toRefs(props)
-    const handleSubmit = async () => {
-      const {files} = input
+  },
+  methods: {
+    async handleSubmit() {
+      const input = this.$refs.inputRef
+      const files = input.files
       if (!files.length) {
-        window.$notify.error(t('msg.please-select-a-file-to-upload'))
+        this.$toast.error(this.$t('msg.please-select-a-file-to-upload'))
         return
       }
 
       try {
-        isUploading.value = true
-        progress.value = 0
+        this.isUploading = true
+        this.progress = 0
         const result = await uploadFile({
           file: files[0],
-          ...uploadConfig.value
+          ...this.uploadConfig
         }, {
           onUploadProgress: (event) => {
-            progress.value = Math.round((event.loaded * 100) / event.total)
+            this.progress = Math.round((event.loaded * 100) / event.total)
           }
         })
         console.log('ok', result)
-        context.emit('uploaded', result)
+        this.$emit('uploaded', result)
       } catch (e) {
         console.error(e)
-        window.$notify.error(e)
+        this.$toast.error(e)
       } finally {
-        isUploading.value = false
+        this.isUploading = false
       }
+    },
+    clearFileInput() {
+      this.$refs.inputRef.files = new DataTransfer().files
+      this.progress = 0
     }
-    const clearFileInput = () => {
-      input.value = ''
-      progress.value = 0
-    }
-    return {
-      setInputRef,
-      handleSubmit,
-      progress,
-      clearFileInput,
-      isUploading,
-      themeClass: computed(() => store.getters.themeClass)
-    }
-  }
-})
+  },
+}
 </script>
 
 <style lang="scss" scoped>
 .file-upload-wrap {
   padding: 20px;
   max-width: 500px;
-  border-radius: $generic-border-radius;
+  border-radius: $border-radius;
 
   .title-box {
     margin-bottom: 10px;

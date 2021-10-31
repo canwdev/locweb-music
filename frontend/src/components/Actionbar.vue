@@ -1,364 +1,317 @@
 <template>
   <div class="actionbar-wrapper">
-    <div class="progressbar flex items-center justify-between" :class="themeClass">
+    <div class="progressbar flex items-center justify-between">
       <span class="time text-overflow">{{ formatTimeHMS(mCurrentTime) }}</span>
 
-      <SeekBar
-          :max="duration"
-          :value="mCurrentTime"
-          @input="progressSeeking"
-          @change="progressChange"
+      <TkSeekbar
+        :max="duration"
+        :value="mCurrentTime"
+        @input="progressSeeking"
+        @change="progressChange"
       />
-
 
       <span class="time text-overflow">{{ formatTimeHMS(duration) }}</span>
     </div>
-    <div class="actionbar flex items-center" :class="themeClass">
+    <div class="actionbar flex items-center">
       <ButtonCover
-          @click="detailDialogVisible = !detailDialogVisible"
-          :src="musicItem.cover"
-          icon-name="audiotrack"
+        :src="musicItem.cover"
+        icon-name="audiotrack"
+        @click.native="detailDialogVisible = !detailDialogVisible"
       >
       </ButtonCover>
-      <button
-          @click="showDetailDialog"
-          class="btn-no-style btn-song-info"
+      <TkButton
+        size="no-style"
+        class="btn-song-info"
+        @click="showDetailDialog"
       >
         <span class="title text-overflow">{{ musicItem.titleDisplay }}</span>
         <span v-show="musicItem.artist" class="artist text-overflow">{{ musicItem.artist }}</span>
         <span v-show="musicItem.album" class="album text-overflow">{{ musicItem.album }}</span>
-      </button>
+      </TkButton>
       <div class="buttons-scroll flex items-center">
-        <button
-            :disabled="actionDisabled"
-            @click="previous"
-            class="btn-no-style btn-action"
-            :title="$t('previous')"
+        <TkButton
+          size="no-style"
+          :disabled="actionDisabled"
+          class="btn-action"
+          :title="$t('previous')"
+          @click="previous"
         >
           <i class="material-icons">skip_previous</i>
-        </button>
+        </TkButton>
 
-        <button
-            :disabled="actionDisabled"
-            @click="togglePlay"
-            class="btn-no-style btn-action"
-            :title="paused ? $t('play') : $t('pause')"
+        <TkButton
+          size="no-style"
+          :disabled="actionDisabled"
+          class="btn-action"
+          :title="paused ? $t('play') : $t('pause')"
+          @click="togglePlay"
         >
           <i v-show="paused" class="material-icons">play_arrow</i>
           <i v-show="!paused" class="material-icons">pause</i>
-        </button>
+        </TkButton>
 
-        <button
-            :disabled="actionDisabled"
-            @click="next"
-            class="btn-no-style btn-action"
-            :title="$t('next')"
+        <TkButton
+          size="no-style"
+          :disabled="actionDisabled"
+          class="btn-action"
+          :title="$t('next')"
+          @click="next"
         >
           <i class="material-icons">skip_next</i>
-        </button>
+        </TkButton>
 
-        <button
-            :disabled="actionDisabled"
-            class="btn-no-style btn-action"
-            :class="{active: isRandom}"
-            :title="$t('random')"
-            @click="toggleRandom"
+        <TkButton
+          size="no-style"
+          :disabled="actionDisabled"
+          class="btn-action"
+          :class="{active: isRandom}"
+          :title="$t('random')"
+          @click="toggleRandom"
         >
           <i class="material-icons">casino</i>
-        </button>
+        </TkButton>
 
-        <button class="btn-no-style btn-action" @click="switchLoopMode" :title="currentLoopMode.label">
+        <TkButton
+          size="no-style"
+          class="btn-action"
+          :title="currentLoopMode.label"
+          @click="switchLoopMode"
+        >
           <i class="material-icons" :class="currentLoopMode.className">{{ currentLoopMode.icon }}</i>
-        </button>
+        </TkButton>
 
-        <button
-            class="btn-no-style btn-action"
-            :title="$t('volume')"
-            @click="isShowVolumeSlider = !isShowVolumeSlider"
+        <TkButton
+          size="no-style"
+          class="btn-action"
+          :title="$t('volume')"
+          @click="isShowVolumeSlider = !isShowVolumeSlider"
         >
           <i class="material-icons">{{ volumeIcon }}</i>
-        </button>
+        </TkButton>
       </div>
     </div>
 
     <!--Music Detail Dialog-->
-    <ModalDialog
-        fixed
-        class="music-detail-dialog"
-        :dark="isDarkTheme"
-        is-show-close
-        no-radius
-        unlimited-size
-        v-model:visible="detailDialogVisible"
+    <TkModalDialog
+      v-model="detailDialogVisible"
+      fixed
+      class="music-detail-dialog"
+      show-close
+      no-radius
+      unlimited-size
     >
       <MusicDetail
-          :is-parent-visible="detailDialogVisible"
+        :is-parent-visible="detailDialogVisible"
       />
-    </ModalDialog>
+    </TkModalDialog>
 
-    <ModalDialog
-        fixed
-        v-model:visible="isShowVolumeSlider"
-        :dark="isDarkTheme"
+    <TkModalDialog
+      v-model="isShowVolumeSlider"
+      fixed
     >
       <div
-          @click.stop
-          class="volume-slider-wrap"
+        class="volume-slider-wrap"
+        @click.stop
       >
         <div class="tip">{{ $t('volume') }}</div>
-        <SeekBar
-            vertical
-            :value="audioVolume"
-            @input="volumeSeeking"
-            @change="volumeChange"
+        <TkSeekbar
+          vertical
+          :value="audioVolume"
+          @input="volumeSeeking"
+          @change="volumeChange"
         />
         <div class="tip">{{ audioVolume }}%</div>
       </div>
-    </ModalDialog>
+    </TkModalDialog>
 
   </div>
 </template>
 
-<script lang="ts">
-import {computed, defineComponent, ref, watch, nextTick, onMounted, onBeforeUnmount} from 'vue';
-import {useI18n} from "vue-i18n";
-import store from '@/store'
-import {LoopModeType, MusicItem} from "@/enum";
+<script>
+import {LoopModeType,} from '@/enum'
 import bus, {
   ACTION_CHANGE_CURRENT_TIME,
   ACTION_NEXT, ACTION_PREV,
   ACTION_TOGGLE_PLAY,
-} from "@/utils/bus";
-import {formatTimeHMS} from "@/utils";
-import ButtonCover from "@/components/ButtonCover.vue"
-import ModalDialog from '@/components/ModalDialog.vue'
-import SeekBar from '@/components/SeekBar.vue'
+} from '@/utils/bus'
+import {formatTimeHMS} from '@/utils'
+import ButtonCover from '@/components/ButtonCover.vue'
 import MusicDetail from '@/components/MusicDetail.vue'
-import useAudioVolume from "@/composables/useAudioVolume"
-import hotkeys from 'hotkeys-js';
+import hotkeys from 'hotkeys-js'
+import {mapGetters, mapState} from 'vuex'
+import audioVolumeMixin from '@/mixins/audio-volume'
 
-export default defineComponent({
+const loopModeList = [
+  LoopModeType.LOOP_SEQUENCE,
+  LoopModeType.LOOP_SINGLE,
+  LoopModeType.SHUFFLE,
+  LoopModeType.LOOP_REVERSE,
+  LoopModeType.NONE,
+]
+const keySpace = 'space'
+const keyPrevious = 'left,pageup,k,l'
+const keyNext = 'right,pagedown,h,j'
+const keyUp = 'up'
+const keyDown = 'down'
+
+export default {
   name: 'Actionbar',
+  mixins: [audioVolumeMixin],
   components: {
     ButtonCover,
-    ModalDialog,
-    SeekBar,
     MusicDetail
   },
-  setup() {
-    const {t} = useI18n()
-    const mCurrentTime = ref(0)
-    const isSeeking = ref(false)
-    const detailDialogVisible = ref(false)
-    const isShowVolumeSlider = ref(false)
-
-    const currentTime = computed(() => {
-      return store.state.currentTime
-    })
-    watch(currentTime, (val) => {
-      if (!isSeeking.value) {
-        mCurrentTime.value = Number(val)
-      }
-    })
-    const duration = computed(() => {
-      return store.state.duration
-    })
-
-    const musicItem = computed((): MusicItem => {
-      return store.state.musicItem
-    })
-    const paused = computed((): boolean => {
-      return store.state.paused
-    })
-    const playingList = computed((): Array<MusicItem> => {
-      return store.state.playingList
-    })
-    const actionDisabled = computed((): boolean => {
-      return playingList.value.length === 0
-    })
-    const isRandom = computed({
+  data() {
+    return {
+      mCurrentTime: 0,
+      isSeeking: false,
+      detailDialogVisible: false,
+      isShowVolumeSlider: false,
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'isDarkTheme'
+    ]),
+    ...mapState([
+      'currentTime',
+      'duration',
+      'musicItem',
+      'paused',
+      'playingList',
+    ]),
+    actionDisabled() {
+      return this.playingList.length === 0
+    },
+    isRandom: {
       get() {
-        return store.state.isRandom
+        return this.$store.state.isRandom
       },
       set(val) {
-        store.commit('setIsRandom', val)
+        this.$store.commit('setIsRandom', val)
       }
-    })
-    const loopMode = computed({
-      get(): number {
-        return store.getters.loopMode
+    },
+    loopMode: {
+      get() {
+        return this.$store.getters.loopMode
       },
-      set(val: number) {
-        store.commit('setLoopMode', val)
+      set(val) {
+        this.$store.commit('setLoopMode', val)
       }
-    })
-
-    const loopModeMap = {
-      [LoopModeType.NONE]: {
-        icon: 'arrow_forward',
-        label: t('msg.play-in-order'),
-      },
-      [LoopModeType.SHUFFLE]: {
-        icon: 'shuffle',
-        label: t('shuffle'),
-      },
-      [LoopModeType.LOOP_SEQUENCE]: {
-        icon: 'repeat',
-        label: t('msg.sequential-loop'),
-      },
-      [LoopModeType.LOOP_REVERSE]: {
-        icon: 'repeat', className: 'reverse-x',
-        label: t('msg.reverse-loop'),
-      },
-      [LoopModeType.LOOP_SINGLE]: {
-        icon: 'repeat_one',
-        label: t('msg.single-cycle'),
-      },
+    },
+    currentLoopMode() {
+      const loopModeMap = {
+        [LoopModeType.NONE]: {
+          icon: 'arrow_forward',
+          label: this.$t('msg.play-in-order'),
+        },
+        [LoopModeType.SHUFFLE]: {
+          icon: 'shuffle',
+          label: this.$t('shuffle'),
+        },
+        [LoopModeType.LOOP_SEQUENCE]: {
+          icon: 'repeat',
+          label: this.$t('msg.sequential-loop'),
+        },
+        [LoopModeType.LOOP_REVERSE]: {
+          icon: 'repeat', className: 'reverse-x',
+          label: this.$t('msg.reverse-loop'),
+        },
+        [LoopModeType.LOOP_SINGLE]: {
+          icon: 'repeat_one',
+          label: this.$t('msg.single-cycle'),
+        },
+      }
+      return loopModeMap[this.loopMode]
     }
-    const currentLoopMode = computed((): object => {
-      return loopModeMap[loopMode.value]
-    })
+  },
+  watch: {
+    currentTime(val) {
+      if (!this.isSeeking) {
+        this.mCurrentTime = Number(val)
+      }
+    }
+  },
+  mounted() {
+    hotkeys(keySpace, this.togglePlay)
+    hotkeys(keyPrevious, this.previous)
+    hotkeys(keyNext, this.next)
+    hotkeys('z', this.toggleRandom)
+    hotkeys('x', this.switchLoopMode)
 
-    const {
-      audioVolume,
-      volumeIcon,
-      volumeSeeking,
-      volumeChange,
-      volumeUp,
-      volumeDown,
-    } = useAudioVolume()
+    hotkeys(keyUp, this.volumeUpFn)
+    hotkeys(keyDown, this.volumeDownFn)
+  },
+  beforeDestroy() {
+    hotkeys.unbind(keySpace, this.togglePlay)
+    hotkeys.unbind(keyPrevious, this.previous)
+    hotkeys.unbind(keyNext, this.next)
+    hotkeys.unbind('z', this.toggleRandom)
+    hotkeys.unbind('x', this.switchLoopMode)
 
-    const volumeUpFn = (e) => {
+    hotkeys.unbind(keyUp, this.volumeUpFn)
+    hotkeys.unbind(keyDown, this.volumeDownFn)
+  },
+  methods: {
+    formatTimeHMS,
+    volumeUpFn(e) {
       e.preventDefault()
-      volumeUp()
-    }
-    const volumeDownFn = (e) => {
+      this.volumeUp()
+    },
+    volumeDownFn(e) {
       e.preventDefault()
-      volumeDown()
-    }
-
-    const showTip = (text) => {
-      window.$notify.info(text, {
-        position: 'center',
-      })
-    }
-
-    const previous = () => {
-      bus.emit(ACTION_PREV)
-    }
-    const next = () => {
-      bus.emit(ACTION_NEXT)
-    }
-    const togglePlay = (e) => {
+      this.volumeDown()
+    },
+    previous() {
+      bus.$emit(ACTION_PREV)
+    },
+    next() {
+      bus.$emit(ACTION_NEXT)
+    },
+    togglePlay(e) {
       e.preventDefault()
-      bus.emit(ACTION_TOGGLE_PLAY)
-    }
-    const toggleRandom = () => {
-      if (playingList.value.length === 0) {
+      bus.$emit(ACTION_TOGGLE_PLAY)
+    },
+    toggleRandom() {
+      if (this.playingList.length === 0) {
         return
       }
-      const flag = !isRandom.value
+      const flag = !this.isRandom
       if (flag) {
-        store.commit('setShuffle')
+        this.$store.commit('setShuffle')
       } else {
-        store.commit('setShuffleRestore')
+        this.$store.commit('setShuffleRestore')
       }
-      showTip(t('random') + ': ' + (flag ? t('on') : t('off')))
-    }
-    const loopModeList = [
-      LoopModeType.LOOP_SEQUENCE,
-      LoopModeType.LOOP_SINGLE,
-      LoopModeType.SHUFFLE,
-      LoopModeType.LOOP_REVERSE,
-      LoopModeType.NONE,
-    ]
-    const switchLoopMode = () => {
-      let index = loopModeList.findIndex(i => i === loopMode.value)
+      this.$toast.info(this.$t('random') + ': ' + (flag ? this.$t('on') : this.$t('off')))
+    },
+    switchLoopMode() {
+      let index = loopModeList.findIndex(i => i === this.loopMode)
       ++index
       if (index > loopModeList.length - 1) {
         index = 0
       }
-      loopMode.value = loopModeList[index]
+      this.loopMode = loopModeList[index]
       // @ts-ignore
-      showTip(currentLoopMode.value.label)
-    }
+      this.$toast.info(this.currentLoopMode.label)
+    },
+    progressSeeking(value) {
+      // console.log('progressSeeking', evt.target.value)
+      this.isSeeking = true
+      this.mCurrentTime = Number(value)
+    },
+    progressChange(value) {
+      value = Number(value)
+      // console.log('progressChange', value)
 
-    const keySpace = 'space'
-    const keyPrevious = 'left,pageup,k,l'
-    const keyNext = 'right,pagedown,h,j'
-    const keyUp = 'up'
-    const keyDown = 'down'
-
-    onMounted(() => {
-      hotkeys(keySpace, togglePlay)
-      hotkeys(keyPrevious, previous)
-      hotkeys(keyNext, next)
-      hotkeys('z', toggleRandom)
-      hotkeys('x', switchLoopMode)
-
-      hotkeys(keyUp, volumeUpFn)
-      hotkeys(keyDown, volumeDownFn)
-    })
-    onBeforeUnmount(() => {
-      hotkeys.unbind(keySpace, togglePlay)
-      hotkeys.unbind(keyPrevious, previous)
-      hotkeys.unbind(keyNext, next)
-      hotkeys.unbind('z', toggleRandom)
-      hotkeys.unbind('x', switchLoopMode)
-
-      hotkeys.unbind(keyUp, volumeUpFn)
-      hotkeys.unbind(keyDown, volumeDownFn)
-    })
-
-    return {
-      // data
-      LoopModeType,
-      mCurrentTime,
-      isSeeking,
-      detailDialogVisible,
-      isShowVolumeSlider,
-      audioVolume,
-      volumeIcon,
-      // computed
-      currentTime,
-      duration,
-      musicItem,
-      paused,
-      isRandom,
-      loopMode,
-      currentLoopMode,
-      actionDisabled,
-      // methods
-      previous,
-      next,
-      togglePlay,
-      toggleRandom,
-      switchLoopMode,
-      formatTimeHMS,
-      progressSeeking(evt) {
-        // console.log('progressSeeking', evt.target.value)
-        isSeeking.value = true
-        mCurrentTime.value = Number(evt.target.value)
-      },
-      progressChange(evt) {
-        const value = Number(evt.target.value)
-        // console.log('progressChange', value)
-
-        bus.emit(ACTION_CHANGE_CURRENT_TIME, value)
-        isSeeking.value = false
-
-      },
-      volumeSeeking,
-      volumeChange,
-      showDetailDialog() {
-        detailDialogVisible.value = !detailDialogVisible.value
-        // console.log(musicItem.value)
-      },
-      isDarkTheme: computed(() => store.getters.isDarkTheme),
-      themeClass: computed(() => store.getters.themeClass)
-    }
+      bus.$emit(ACTION_CHANGE_CURRENT_TIME, value)
+      this.isSeeking = false
+    },
+    showDetailDialog() {
+      this.detailDialogVisible = !this.detailDialogVisible
+      // console.log(musicItem.value)
+    },
   }
-});
+}
 </script>
 
 <style lang="scss" scoped>
@@ -369,6 +322,8 @@ export default defineComponent({
   width: 100%;
 }
 
+$bottomZIndex: 2100;
+
 .progressbar {
   height: 25px;
   width: 100%;
@@ -376,7 +331,8 @@ export default defineComponent({
   border-top: 1px solid $border-color;
   border-bottom: 1px solid $border-color;
   position: relative;
-  z-index: 1000;
+  z-index: $bottomZIndex;
+  background: $color-white;
 
   .time {
     font-size: 12px;
@@ -388,10 +344,14 @@ export default defineComponent({
 
 .actionbar {
   height: 50px;
-  box-shadow: $shadow-1;
   user-select: none;
   position: relative;
-  z-index: 1000;
+  z-index: $bottomZIndex;
+  background: $color-white;
+
+  button {
+    border-radius: 0;
+  }
 
   .btn-cover {
     background-color: $primary;
@@ -439,7 +399,7 @@ export default defineComponent({
       justify-content: center;
 
       .reverse-x {
-        text-shadow: 0 0 5px $red;
+        text-shadow: 0 0 5px red;
         transform: rotateX(-180deg);
       }
 
@@ -454,15 +414,23 @@ export default defineComponent({
   }
 }
 
+.tk-dark-theme {
+  .progressbar {
+    background: $dark;
+  }
+  .actionbar {
+    background: $dark;
+  }
+}
+
 .music-detail-dialog {
   align-items: start;
 
   ::v-deep & > .dialog-main {
     width: 100%;
     height: calc(100% - 75px);
-    background: rgba(255, 255, 255, .85);
 
-    & > .btn-no-style {
+    & > .btn-close {
       top: 10px;
       right: 10px;
     }
@@ -470,6 +438,7 @@ export default defineComponent({
     & > .dialog-inner {
       display: flex;
       align-items: center;
+      justify-content: center;
     }
   }
 }

@@ -4,61 +4,55 @@
       <div class="form-title">{{ $t('user.login') }}</div>
       <div class="form-row">
         <div class="form-row-title">{{ $t('user.username') }}</div>
-        <input
-            id="name-input"
-            v-model="form.username"
-            required
-            class="input-styled"
-        >
+        <TkInput
+          id="name-input"
+          v-model="form.username"
+          required
+        />
       </div>
 
       <div class="form-row">
         <div class="form-row-title">{{ $t('user.password') }}</div>
-        <input
-            id="password-input"
-            type="password"
-            v-model="form.password"
-            required
-            class="input-styled"
-        >
+        <TkInput
+          id="password-input"
+          v-model="form.password"
+          type="password"
+          required
+        />
       </div>
       <div class="form-row text-center">
-        <button type="submit" class="btn-styled">{{ $t('submit') }}</button>
+        <TkButton type="submit">{{ $t('submit') }}</TkButton>
       </div>
     </form>
   </div>
 </template>
 
-<script lang="ts">
-import {defineComponent, ref} from 'vue';
-import store from "@/store";
-import {getAuth} from "@/api/service";
+<script >
+import {getAuth} from '@/api/service'
 
-export default defineComponent({
-  name: "LoginPrompt",
-  setup(props, context) {
-    const form = ref({
-      username: '',
-      password: ''
-    })
-
-    const submitLogin = async () => {
+export default {
+  name: 'LoginPrompt',
+  data() {
+    return {
+      form: {
+        username: '',
+        password: ''
+      }
+    }
+  },
+  methods: {
+    async submitLogin() {
       const {
         token
       } = await getAuth({
-        username: form.value.username,
-        password: form.value.password
+        username: this.form.username,
+        password: this.form.password
       })
-      store.commit('setToken', token)
-      context.emit('loginSuccess')
-    }
-
-    return {
-      form,
-      submitLogin
+      this.$store.commit('setToken', token)
+      this.$emit('loginSuccess')
     }
   }
-})
+}
 </script>
 
 <style lang="scss" scoped>
@@ -76,7 +70,6 @@ export default defineComponent({
 
     .form-row-title {
       font-size: 12px;
-      color: $grey;
     }
   }
 }

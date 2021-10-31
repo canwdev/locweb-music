@@ -1,119 +1,137 @@
 <template>
   <MainList
-      :is-loading="isLoading"
-      :list="playingList"
-      :active-id="playingId"
-      is-play-list
-      :is-paused="paused"
-      :min-item-size="55"
-      @onItemClick="handleItemClick"
-      @onItemAction="handleItemAction"
-      :filter-placeholder="$t('filter-by-name')"
+    :is-loading="isLoading"
+    :list="playingList"
+    :active-id="playingId"
+    is-play-list
+    :is-paused="paused"
+    :min-item-size="55"
+    :filter-placeholder="$t('filter-by-name')"
+    @onItemClick="handleItemClick"
+    @onItemAction="handleItemAction"
   >
     <DialogMenu
-        v-model:visible="isShowFileMenu"
-        :list="fileMenuList"
+      :visible.sync="isShowFileMenu"
+      :list="fileMenuList"
     />
   </MainList>
 </template>
 
-<script lang="ts">
-import {
-  defineComponent,
-  computed,
-  nextTick,
-  onMounted,
-  onBeforeUnmount, ref
-} from 'vue';
-import store from '@/store'
-import MainList from '@/components/MainList/index.vue';
+<script>
+import MainList from '@/components/MainList/index.vue'
 import bus, {
   ACTION_PLAY_START,
   ACTION_TOGGLE_PLAY,
   ACTION_PREV,
   ACTION_NEXT,
   ACTION_PLAY_ENDED
-} from "@/utils/bus";
-import {LoopModeType, MusicItem, NavBarIndex, NavbarTabsType} from "@/enum";
-import DialogMenu from "@/components/DialogMenu.vue";
-import useDialogMenu from "./useDialogMenu";
+} from '@/utils/bus'
+import {LoopModeType, NavBarIndex} from '@/enum'
+import {mapGetters, mapState} from 'vuex'
+import DialogMenu from '@/components/DialogMenu.vue'
+import dialogMenuMixin from '@/mixins/dialog-menu'
 
 function getRandomInt(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+  min = Math.ceil(min)
+  max = Math.floor(max)
+  return Math.floor(Math.random() * (max - min + 1)) + min
 }
 
-export default defineComponent({
-  name: "ListPlaying",
+export default {
+  name: 'ListPlaying',
+  mixins: [dialogMenuMixin],
   components: {
     MainList,
     DialogMenu
   },
-  setup() {
-    const isLoading = ref<boolean>(false)
-    const playingList = computed(() => store.state.playingList)
-    const isRandom = computed(() => store.state.isRandom)
-    const loopMode = computed(() => store.getters.loopMode)
-    const paused = computed(() => store.state.paused)
-    const playingId = computed(() => store.state.musicItem.id)
-    const playingIndex = computed<number>({
+  data() {
+    return {
+      isLoading: false
+    }
+  },
+  computed: {
+    ...mapState([
+      'playingList',
+      'isRandom',
+      'paused',
+      'musicItem',
+    ]),
+    ...mapGetters([
+      'loopMode'
+    ]),
+    playingId() {
+      return this.musicItem.id
+    },
+    playingIndex: {
       get() {
-        return store.state.playingIndex
+        return this.$store.state.playingIndex
       },
       set(val) {
-        store.commit('setPlayingIndex', val)
+        this.$store.commit('setPlayingIndex', val)
       }
-    })
-
-    const playMusicFromList = (list: Array<MusicItem>, item: MusicItem): void => {
-      store.commit('setMusicItem', item)
-      playingIndex.value = list.findIndex((val: any) => {
+    }
+  },
+  mounted() {
+    bus.$on(ACTION_PLAY_START, this.handlePlayStart)
+    bus.$on(ACTION_PREV, this.playPrev)
+    bus.$on(ACTION_NEXT, this.playNext)
+    bus.$on(ACTION_PLAY_ENDED, this.handlePlayEnded)
+  },
+  beforeDestroy() {
+    bus.$off(ACTION_PLAY_START, this.handlePlayStart)
+    bus.$off(ACTION_PREV, this.playPrev)
+    bus.$off(ACTION_NEXT, this.playNext)
+    bus.$off(ACTION_PLAY_ENDED, this.handlePlayEnded)
+  },
+  methods: {
+    playMusicFromList(list, item) {
+      this.$store.commit('setMusicItem', item)
+      this.playingIndex = list.findIndex((val) => {
         return val.filename === item.filename
       })
 
-      nextTick(() => {
+      this.$nextTick(() => {
         // jump to playing list
         setTimeout(() => {
-          store.commit('setNavbarIndex', NavBarIndex.RIGHT)
+          this.$store.commit('setNavbarIndex', NavBarIndex.RIGHT)
         }, 30)
-        bus.emit(ACTION_TOGGLE_PLAY) // {isPlay: true}
+        bus.$emit(ACTION_TOGGLE_PLAY) // {isPlay: true}
       })
-    }
-    const handleItemClick = (item: MusicItem) => {
+    },
+    handleItemClick(item) {
       if (item.isDirectory) {
         return
       }
 
       // play a song
-      playMusicFromList(playingList.value, item)
-    }
-    const playByIndex = (index: number) => {
+      this.playMusicFromList(this.playingList, item)
+    },
+    playByIndex(index) {
       // console.log('playByIndex', index)
-      store.commit('setMusicItem', playingList.value[index])
-      playingIndex.value = index
-      nextTick(() => {
-        bus.emit(ACTION_TOGGLE_PLAY, {isPlay: true})
+      this.$store.commit('setMusicItem', this.playingList[index])
+      this.playingIndex = index
+      this.$nextTick(() => {
+        bus.$emit(ACTION_TOGGLE_PLAY, {isPlay: true})
       })
-    }
-    const playPrev = () => {
-      let index = playingIndex.value - 1
+    },
+    playPrev() {
+      let index = this.playingIndex - 1
       if (index < 0) {
-        index = playingList.value.length - 1
+        index = this.playingList.length - 1
       }
-      playByIndex(index)
-    }
-    const playShuffle = () => {
-      playByIndex(getRandomInt(0, playingList.value.length - 1))
-    }
-    const playNext = () => {
-      if (loopMode.value === LoopModeType.SHUFFLE) {
-        playShuffle()
+      this.playByIndex(index)
+    },
+    playShuffle() {
+      this.playByIndex(getRandomInt(0, this.playingList.length - 1))
+    },
+    playNext() {
+      if (this.loopMode === LoopModeType.SHUFFLE) {
+        this.playShuffle()
         return
       }
-      let index = playingIndex.value + 1
-      if (index > playingList.value.length - 1) {
-        if (loopMode.value === LoopModeType.LOOP_SEQUENCE) {
+      let index = this.playingIndex + 1
+      if (index > this.playingList.length - 1) {
+        if (this.loopMode === LoopModeType.LOOP_SEQUENCE) {
           // loop list from first
           index = 0
         } else {
@@ -121,66 +139,35 @@ export default defineComponent({
           return
         }
       }
-      playByIndex(index)
-    }
-    const handlePlayEnded = () => {
-      // console.log('handlePlayEnded', loopMode.value)
-      if (loopMode.value === LoopModeType.LOOP_SINGLE) {
+      this.playByIndex(index)
+    },
+    handlePlayEnded() {
+      // console.log('handlePlayEnded', this.loopMode)
+      if (this.loopMode === LoopModeType.LOOP_SINGLE) {
         // single loop
-        bus.emit(ACTION_TOGGLE_PLAY, {isPlay: true})
+        bus.$emit(ACTION_TOGGLE_PLAY, {isPlay: true})
         return
       }
-      if (loopMode.value === LoopModeType.LOOP_REVERSE) {
+      if (this.loopMode === LoopModeType.LOOP_REVERSE) {
         // reverse play
-        playPrev()
+        this.playPrev()
         return
       }
-      if (loopMode.value === LoopModeType.SHUFFLE) {
-        playShuffle()
+      if (this.loopMode === LoopModeType.SHUFFLE) {
+        this.playShuffle()
         return
       }
-      playNext()
-    }
-
-    const handlePlayStart = (event) => {
+      this.playNext()
+    },
+    handlePlayStart(event) {
       const {
         list,
         item
       } = event
-      playMusicFromList(list, item)
-    }
-
-    onMounted(() => {
-      bus.on(ACTION_PLAY_START, handlePlayStart)
-      bus.on(ACTION_PREV, playPrev)
-      bus.on(ACTION_NEXT, playNext)
-      bus.on(ACTION_PLAY_ENDED, handlePlayEnded)
-    })
-    onBeforeUnmount(() => {
-      bus.off(ACTION_PLAY_START, handlePlayStart)
-      bus.off(ACTION_PREV, playPrev)
-      bus.off(ACTION_NEXT, playNext)
-      bus.off(ACTION_PLAY_ENDED, handlePlayEnded)
-    })
-
-    return {
-      isLoading,
-      playingList,
-      isRandom,
-      loopMode,
-      playingId,
-      playingIndex,
-      paused,
-      playMusicFromList,
-      handleItemClick,
-      playByIndex,
-      playPrev,
-      playNext,
-      handlePlayEnded,
-      ...useDialogMenu(isLoading)
-    }
+      this.playMusicFromList(list, item)
+    },
   }
-})
+}
 </script>
 
 <style scoped>

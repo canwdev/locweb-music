@@ -1,54 +1,41 @@
 <template>
   <div class="music-detail">
 
-    <AutoRatioBox class="cover-wrap-box" :class="{'dark': isDarkTheme}">
+    <AutoRatioBox class="cover-wrap-box">
       <div class="cover-wrap">
         <CoverDisplay
-            class="big-cover"
-            :src="musicItem.cover"
-            :is-rotating="false"
-            :is-rounded="false"
-            :is-show-icon="!isShowDetail"
-            @click="isShowDetail = true"
+          class="big-cover"
+          :src="musicItem.cover"
+          :is-rotating="false"
+          :is-rounded="false"
+          :is-show-icon="!isShowDetail"
+          @click.native="isShowDetail = true"
         />
         <transition name="fade">
           <div v-show="isShowDetail" class="detail-content bg-dark">
-            <div class="tab-wrap">
-              <button
-                  v-for="item in detailTabList"
-                  :key="item.value"
-                  class="btn-no-style"
-                  :class="{active: currentDetailTab === item.value}"
-                  @click="currentDetailTab = item.value"
-              >
-                {{ item.label }}
-              </button>
-            </div>
-
             <div
-                class="lyric-content"
-                v-show="currentDetailTab === DetailTabEnum.LYRIC"
+              v-show="currentDetailTab === DetailTabEnum.LYRIC"
+              class="lyric-content"
             >
               <div class="lyric-lock">
-                <button class="btn-no-style" :title="$t('search-lyric')" @click="isShowLyricSearch = true">
+                <TkButton size="no-style" :title="$t('search-lyric')" @click="isShowLyricSearch = true">
                   <i class="material-icons">search</i>
-                </button>
+                </TkButton>
 
-                <button class="btn-no-style" :title="$t('lock-lyric')" @click="isLyricLock = !isLyricLock">
+                <TkButton size="no-style" :title="$t('lock-lyric')" @click="isLyricLock = !isLyricLock">
                   <i class="material-icons">
                     {{ isLyricLock ? 'lock' : 'lock_open' }}
                   </i>
-                </button>
+                </TkButton>
               </div>
-
 
               <div v-if="lyricObj && lyricObj.lines" class="lrc-main" :class="{unlocked: !isLyricLock}">
                 <div class="lrc-scroll-wrap">
                   <p
-                      v-for="(line, index) in lyricObj.lines"
-                      :class="{active: lyricCurrentLine===index}"
-                      :key="index"
-                      :data-index="index"
+                    v-for="(line, index) in lyricObj.lines"
+                    :key="index"
+                    :class="{active: lyricCurrentLine===index}"
+                    :data-index="index"
                   >{{ line.txt }}
                   </p>
                 </div>
@@ -59,71 +46,78 @@
               </div>
             </div>
             <textarea
-                v-show="currentDetailTab === DetailTabEnum.METADATA"
-                class="metadata" cols="30" rows="15" readonly
-                :value="JSON.stringify(musicItem.metadata, null, 2)"
-                :placeholder="$t('msg.no-data')"
-                ></textarea>
+              v-show="currentDetailTab === DetailTabEnum.METADATA"
+              class="metadata"
+              cols="30"
+              rows="15"
+              readonly
+              :value="JSON.stringify(musicItem.metadata, null, 2)"
+              :placeholder="$t('msg.no-data')"
+            ></textarea>
+
+            <div class="tab-wrap">
+              <TkButton
+                v-for="item in detailTabList"
+                :key="item.value"
+                size="no-style"
+                :class="{active: currentDetailTab === item.value}"
+                @click="currentDetailTab = item.value"
+              >
+                {{ item.label }}
+              </TkButton>
+            </div>
           </div>
         </transition>
       </div>
     </AutoRatioBox>
 
-
     <div
-        class="titles-wrap"
-        :class="{opacity: isShowDetail}"
-        @click="isShowDetail = !isShowDetail"
+      class="titles-wrap"
+      :class="{opacity: isShowDetail}"
+      @click="isShowDetail = !isShowDetail"
     >
       <div class="title">{{ musicItem.titleDisplay }}</div>
       <div class="subtitle">{{ musicItem.artist }}</div>
       <div class="subtitle">{{ musicItem.album }}</div>
     </div>
 
-    <ModalDialog
-        fixed
-        v-model:visible="isShowLyricSearch"
-        :dark="isDarkTheme"
-        is-show-close
+    <TkModalDialog
+      v-model="isShowLyricSearch"
+      fixed
+      show-close
     >
       <LyricSearch
-          :search="musicItem.filenameDisplay"
-          :current-lyric="musicItem.lyric"
-          @saveLyric="handleSaveLyric"
+        :search="musicItem.filenameDisplay"
+        :current-lyric="musicItem.lyric"
+        @saveLyric="handleSaveLyric"
       />
-    </ModalDialog>
+    </TkModalDialog>
   </div>
 </template>
 
-<script lang="ts">
-import {computed, defineComponent, ref, watch, nextTick, onMounted, onBeforeUnmount, toRefs} from 'vue';
-import {useI18n} from "vue-i18n";
-import CoverDisplay from "@/components/CoverDisplay.vue"
-import {MusicItem} from "@/enum";
-import store from "@/store";
-import useLyricObj from "@/composables/useLyricObj";
+<script>
+import CoverDisplay from '@/components/CoverDisplay.vue'
 import bus, {
   ACTION_CHANGE_CURRENT_TIME
-} from "@/utils/bus";
-import LyricSearch from "@/components/LyricSearch.vue";
-import ModalDialog from "@/components/ModalDialog.vue";
+} from '@/utils/bus'
+import LyricSearch from '@/components/LyricSearch.vue'
 import {
   saveLyric
-} from "@/api/music";
-import AutoRatioBox from '@/components/AutoRatioBox.vue'
+} from '@/api/music'
+import {mapState} from 'vuex'
+import lyricMixin from '@/mixins/lyric'
 
 const DetailTabEnum = {
   LYRIC: 'LYRIC',
   METADATA: 'METADATA',
 }
 
-export default defineComponent({
+export default {
   name: 'MusicDetail',
+  mixins: [lyricMixin],
   components: {
     CoverDisplay,
     LyricSearch,
-    ModalDialog,
-    AutoRatioBox
   },
   props: {
     isParentVisible: {
@@ -131,104 +125,78 @@ export default defineComponent({
       default: false
     }
   },
-  setup(props) {
-    const {t} = useI18n()
-    const {isParentVisible} = toRefs(props)
-    const currentDetailTab = ref(DetailTabEnum.LYRIC)
-    const isShowDetail = ref(false)
-    const isShowLyricSearch = ref(false)
-    const currentPlayTime = ref(0) // ms
-
-    const detailTabList = [
-      {label: t('lyric'), value: DetailTabEnum.LYRIC},
-      {label: t('metadata'), value: DetailTabEnum.METADATA},
-    ]
-
-    const musicItem = computed((): MusicItem => {
-      return store.state.musicItem
-    })
-    const currentTime = computed(() => {
-      return store.state.currentTime
-    })
-
-    const {
-      lyricObj,
-      lyricCurrentLine,
-      isLyricLock,
-    } = useLyricObj({
-      checkAllowUpdate() {
-        return isParentVisible.value && isShowDetail.value
-      }
-    })
-    watch(isShowDetail, (val) => {
+  data() {
+    return {
+      DetailTabEnum,
+      currentDetailTab: DetailTabEnum.LYRIC,
+      isShowDetail: false,
+      isShowLyricSearch: false,
+      currentPlayTime: 0,
+      detailTabList: [
+        {label: this.$t('lyric'), value: DetailTabEnum.LYRIC},
+        {label: this.$t('metadata'), value: DetailTabEnum.METADATA},
+      ]
+    }
+  },
+  computed: {
+    ...mapState([
+      'musicItem',
+      'currentTime',
+    ]),
+  },
+  watch: {
+    isShowDetail(val) {
       if (val) {
         // console.log('isShowDetail', val)
-        nextTick(() => {
-          if (lyricObj.value) {
-            lyricObj.value.callHandler()
+        this.$nextTick(() => {
+          if (this.lyricObj) {
+            this.lyricObj.callHandler()
           }
         })
       }
-    })
-    watch(currentPlayTime, (val, oldVal) => {
-      // console.log('currentPlayTime', val, oldVal)
-      if (lyricObj.value) {
-        lyricObj.value.seek(val)
+    },
+    currentPlayTime(val) {
+      if (this.lyricObj) {
+        this.lyricObj.seek(val)
       }
-    })
-
-    const changeCurrentTime = (newTime) => {
-      currentPlayTime.value = newTime * 1000
     }
-
-    const handleSaveLyric = async (lyric) => {
+  },
+  mounted() {
+    bus.$on(ACTION_CHANGE_CURRENT_TIME, this.changeCurrentTime)
+  },
+  beforeDestroy() {
+    bus.$off(ACTION_CHANGE_CURRENT_TIME, this.changeCurrentTime)
+  },
+  methods: {
+    changeCurrentTime(nt) {
+      this.currentPlayTime = nt * 1000
+    },
+    async handleSaveLyric(lyric) {
       // console.log(lyric)
-      isShowLyricSearch.value = false
-      musicItem.value.lyric = lyric
+      this.isShowLyricSearch = false
+      this.musicItem.lyric = lyric
       // fix lyric progress bug
-      const curTime = currentTime.value
-      bus.emit(ACTION_CHANGE_CURRENT_TIME, 0)
+      const curTime = this.currentTime
+      bus.$emit(ACTION_CHANGE_CURRENT_TIME, 0)
       setTimeout(() => {
-        bus.emit(ACTION_CHANGE_CURRENT_TIME, curTime)
+        bus.$emit(ACTION_CHANGE_CURRENT_TIME, curTime)
       }, 200)
 
-      isShowDetail.value = true
-      currentDetailTab.value = DetailTabEnum.LYRIC
-
-
+      this.isShowDetail = true
+      this.currentDetailTab = DetailTabEnum.LYRIC
 
       const {saveFilename} = await saveLyric({
-        filename: musicItem.value.filename,
+        filename: this.musicItem.filename,
         lyric
       })
 
-      window.$notify.info(saveFilename, {
-        position: 'top',
-      })
+      this.$toast.info(saveFilename)
+    },
+    checkAllowUpdate() {
+      return this.isParentVisible && this.isShowDetail
     }
-
-    onMounted(() => {
-      bus.on(ACTION_CHANGE_CURRENT_TIME, changeCurrentTime)
-    })
-    onBeforeUnmount(() => {
-      bus.off(ACTION_CHANGE_CURRENT_TIME, changeCurrentTime)
-    })
-
-    return {
-      DetailTabEnum,
-      detailTabList,
-      musicItem,
-      currentDetailTab,
-      lyricObj,
-      lyricCurrentLine,
-      isLyricLock,
-      isShowDetail,
-      isShowLyricSearch,
-      handleSaveLyric,
-      isDarkTheme: computed(() => store.getters.isDarkTheme),
-    }
-  }
-})
+  },
+}
 </script>
 
 <style lang="scss" scoped>
@@ -240,6 +208,7 @@ export default defineComponent({
   box-sizing: border-box;
 
   .titles-wrap {
+    height: 100px;
     &.opacity {
       opacity: .8;
       cursor: pointer;
@@ -261,18 +230,16 @@ export default defineComponent({
   .cover-wrap-box {
     margin: 0 auto 20px;
     max-width: 500px;
-    border-radius: $generic-border-radius;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, .5);
 
-    &.dark {
-      box-shadow: 0 0 8px 2px $primary;
-    }
   }
 
   .cover-wrap {
     position: relative;
     width: 100%;
     height: 100%;
+    border-radius: 8px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, .5);
+    overflow: hidden;
 
     .big-cover {
       width: 100%;
@@ -280,6 +247,11 @@ export default defineComponent({
       cursor: pointer;
       border-radius: inherit;
       overflow: hidden;
+    }
+
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
     }
   }
 
@@ -297,17 +269,18 @@ export default defineComponent({
 
     .tab-wrap {
       display: flex;
-      font-size: 14px;
+      font-size: 12px;
 
       button {
         flex: 1;
         padding: 10px 0;
         font-weight: bold;
-        border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+        border-top: 3px solid rgba(255, 255, 255, 0.2);
+        border-radius: 0;
 
         &.active {
           color: $primary;
-          border-bottom-color: $primary;
+          border-top-color: $primary;
         }
       }
     }

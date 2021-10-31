@@ -3,74 +3,74 @@
     <div class="list-action-wrap">
       <div class="list-actions">
         <form action="javascript:">
-          <input
-              class="input-styled"
-              v-model="searchInput"
-              type="text"
-              :placeholder="filterPlaceholder"
-          >
-          <button
-              type="submit"
-              class="btn-no-style"
-              @click="handleSearch"
-              :title="$t('search')"
+          <TkInput
+            v-model="searchInput"
+            class=""
+            type="text"
+            :placeholder="filterPlaceholder"
+          />
+          <TkButton
+            type="submit"
+            size="no-style"
+            :title="$t('search')"
+            @click="handleSearch"
           ><i class="material-icons">search</i>
-          </button>
+          </TkButton>
         </form>
-        <button
-            v-if="!isPlayList"
-            class="btn-no-style"
-            @click="$emit('refresh')"
-            :title="$t('refresh-list')"
+        <TkButton
+          v-if="!isPlayList"
+          size="no-style"
+          :title="$t('refresh-list')"
+          @click="$emit('refresh')"
         ><i class="material-icons">refresh</i>
-        </button>
-        <button
-            class="btn-no-style"
-            @click="locateItem"
-            :title="$t('locate')"
+        </TkButton>
+        <TkButton
+          size="no-style"
+          :title="$t('locate')"
+          @click="locateItem"
         ><i class="material-icons">my_location</i>
-        </button>
-        <button
-            v-if="!isPlayList"
-            class="btn-no-style"
-            @click="$emit('openMenu')"
-            :title="$t('menu')"
+        </TkButton>
+        <TkButton
+          v-if="!isPlayList"
+          size="no-style"
+          :title="$t('menu')"
+          @click="$emit('openMenu')"
         ><i class="material-icons">more_vert</i>
-        </button>
+        </TkButton>
       </div>
       <ListItem
-          :item="rootItem"
-          v-if="showUp"
-          @click.prevent="$emit('goUpDir')"
+        v-if="showUp"
+        :item="rootItem"
+        @click.native.prevent="$emit('goUpDir')"
       />
     </div>
 
-    <Loading absolute :visible="isLoading"/>
+    <TkLoading absolute :visible="isLoading"/>
 
-    <NoData
-        v-if="!isLoading && filteredList.length === 0"
+    <TkEmpty
+      v-if="!isLoading && filteredList.length === 0"
     />
 
     <DynamicScroller
-        ref="mainListEl"
-        class="virtual-scroller"
-        :items="filteredList"
-        :min-item-size="minItemSize"
+      ref="mainListEl"
+      class="virtual-scroller"
+      :items="filteredList"
+      :min-item-size="minItemSize"
     >
       <template v-slot="{ item, index, active }">
         <DynamicScrollerItem
-            :item="item"
-            :active="active"
-            :data-index="index"
+          :item="item"
+          :active="active"
+          :data-index="index"
         >
           <ListItem
-              :item="item"
-              :active="activeId === item.id"
-              :is-big-item="isPlayList"
-              :is-paused="isPaused"
-              :is-show-action="true"
-              @onAction="i => $emit('onItemAction', i)"
-              @click.prevent="$emit('onItemClick', item)"
+            :item="item"
+            :active="activeId === item.id"
+            :is-big-item="isPlayList"
+            :is-paused="isPaused"
+            :is-show-action="true"
+            @onAction="i => $emit('onItemAction', i)"
+            @click.native.prevent="$emit('onItemClick', item)"
           />
         </DynamicScrollerItem>
 
@@ -81,19 +81,14 @@
   </div>
 </template>
 
-<script lang="ts">
-import {computed, defineComponent, ref, toRefs, watch} from 'vue';
-import Loading from '@/components/Loading.vue'
+<script >
 import ListItem from './ListItem.vue'
-import NoData from '@/components/NoData.vue'
-import {MusicItem} from "@/enum";
+import {MusicItem} from '@/enum'
 
-export default defineComponent({
+export default {
   name: 'MainList',
   components: {
-    Loading,
     ListItem,
-    NoData,
   },
   props: {
     isLoading: {
@@ -125,7 +120,33 @@ export default defineComponent({
     },
     minItemSize: {
       type: Number,
-      default: 40
+      default: 54
+    }
+  },
+  data() {
+    return {
+      rootItem: new MusicItem({
+        isDirectory: true,
+        filename: '..'
+      }),
+      searchInput: '',
+      searchText: '',
+    }
+  },
+  computed: {
+    filteredList() {
+      if (!this.list) {
+        return []
+      }
+      if (!this.searchText) {
+        return this.list
+      }
+
+      const reg = new RegExp(this.searchText, 'ig')
+      return this.list.filter((item) => {
+        const title = item.filename || item.title
+        return reg.test(title)
+      })
     }
   },
   watch: {
@@ -138,71 +159,32 @@ export default defineComponent({
       }
     }
   },
-  setup(props) {
-    const {list, activeId, isPlayList} = toRefs(props)
-    const searchInput = ref('')
-    const searchText = ref('')
-
-    const mainListEl = ref(null)
-
-    const filteredList = computed(() => {
-      if (!list || !list.value) {
-        return []
-      }
-      if (!searchText.value) {
-        return list.value
-      }
-
-      const reg = new RegExp(searchText.value, 'ig')
-      return list.value.filter((item) => {
-        // @ts-ignore: TS2571
-        const title = item.filename || item.title
-        return reg.test(title)
-      })
-    })
-    const handleSearch = () => {
-      searchText.value = searchInput.value
-    }
-
-    const locateItem = () => {
-      const virtualScroll = mainListEl.value
+  methods: {
+    handleSearch() {
+      this.searchText = this.searchInput
+    },
+    locateItem() {
+      const virtualScroll = this.$refs.mainListEl
       if (!virtualScroll) {
-        return;
+        return
       }
 
-      // @ts-ignore
       const el = virtualScroll.$el
       if (el) {
-        // @ts-ignore
-        const index = filteredList.value.findIndex(item => item.id === activeId.value)
+        const index = this.filteredList.findIndex(item => item.id === this.activeId)
 
         if (index > -1) {
-          // @ts-ignore
           // window.$notify.info(filteredList.value[index].filename, {
           //   position: 'top',
           // })
 
-          const itemHeight = el.scrollHeight / filteredList.value.length
+          const itemHeight = el.scrollHeight / this.filteredList.length
           el.scrollTop = index * itemHeight
         }
-
       }
     }
-
-    return {
-      rootItem: new MusicItem({
-        isDirectory: true,
-        filename: '..'
-      }),
-      searchInput,
-      handleSearch,
-      filteredList,
-      mainListEl,
-      locateItem,
-      searchText
-    }
   }
-})
+}
 </script>
 
 <style lang="scss" scoped>

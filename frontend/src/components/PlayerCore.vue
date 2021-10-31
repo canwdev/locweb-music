@@ -1,16 +1,14 @@
 <template>
   <div class="player-core">
     <audio
-        v-show="false"
-        :ref="setAudioRef"
-        :src="source" controls></audio>
+      v-show="false"
+      ref="audioRef"
+      :src="source"
+    ></audio>
   </div>
 </template>
 
-<script lang="ts">
-import {computed, defineComponent, onBeforeUnmount, onMounted, watch} from 'vue'
-import {useI18n} from "vue-i18n";
-import {MusicItem} from "@/enum";
+<script>
 import bus, {
   ACTION_CHANGE_CURRENT_TIME,
   ACTION_NEXT,
@@ -18,32 +16,36 @@ import bus, {
   ACTION_PREV,
   ACTION_TOGGLE_PLAY,
   ACTION_CHANGE_VOLUME
-} from "@/utils/bus";
+} from '@/utils/bus'
 import store from '@/store'
-import {getDetail} from "@/api/music.ts";
+import {getDetail} from '@/api/music'
+import {mapState} from 'vuex'
 
-export default defineComponent({
-  name: "PlayerCore",
-  setup() {
-    const {t} = useI18n()
-    let audio
-    const setAudioRef = (el) => {
-      audio = el
+const updateTitle = (musicItem, isPaused) => {
+  document.title = `${isPaused ? '⏸️' : '▶️'} ${musicItem.filenameDisplay}`
+}
+
+export default {
+  name: 'PlayerCore',
+  computed: {
+    ...mapState([
+      'musicItem'
+    ]),
+    source() {
+      return this.musicItem.getSource() || null
+    },
+    paused: {
+      get() {
+        return this.$store.state.paused
+      },
+      set(val) {
+        return this.$store.commit('setPaused', val)
+      }
     }
-
-    const musicItem = computed((): MusicItem => {
-      return store.state.musicItem
-    })
-
-    const updateTitle = (musicItem: MusicItem, isPaused?: boolean) => {
-      document.title = `${isPaused ? '⏸️' : '▶️'} ${musicItem.filenameDisplay}`
-    }
-
-    watch(musicItem, async (val) => {
-      // console.log('musicItem changed', val)
-
+  },
+  watch: {
+    async musicItem(val) {
       updateTitle(val)
-
       if (!val.isOutSource) {
         const params = {
           path: val.path,
@@ -69,11 +71,9 @@ export default defineComponent({
           })
         }
       }
-
-
       // https://developers.google.com/web/updates/2017/02/media-session
       if ('mediaSession' in navigator) {
-        let artwork: Array<any> = [{src: require('@/assets/images/default-cover.jpg'), sizes: '512x512'}]
+        let artwork = [{src: require('@/assets/images/default-cover.jpg'), sizes: '512x512'}]
         if (val.cover) {
           artwork = [
             {src: val.cover, sizes: '512x512'},
@@ -90,71 +90,71 @@ export default defineComponent({
           artwork
         })
       }
-
-    })
-    const source = computed((): string | null => {
-      return musicItem.value.getSource() || null
-    })
-
-    const paused = computed({
-      get(): boolean {
-        return store.state.paused
-      },
-      set(value: boolean) {
-        store.commit('setPaused', value)
-      }
-    })
-
-    watch(paused, (val) => {
-      updateTitle(musicItem.value, val)
-    })
-
-    const play = () => {
-      audio.play()
+    },
+    paused(val) {
+      updateTitle(this.musicItem, val)
     }
-    const pause = () => {
-      audio.pause()
-    }
-    const previous = () => {
-      bus.emit(ACTION_PREV)
-    }
-    const next = () => {
-      bus.emit(ACTION_NEXT)
-    }
-    const togglePlay = ({isPlay = false} = {}) => {
-      if (!audio || !audio.src) {
+  },
+  mounted() {
+    this.audio = this.$refs.audioRef
+
+    bus.$on(ACTION_TOGGLE_PLAY, this.togglePlay)
+    bus.$on(ACTION_CHANGE_CURRENT_TIME, this.changeCurrentTime)
+    bus.$on(ACTION_CHANGE_VOLUME, this.changeVolume)
+    this.registerAudioEvents(this.audio)
+  },
+  beforeDestroy() {
+    bus.$off(ACTION_TOGGLE_PLAY, this.togglePlay)
+    bus.$off(ACTION_CHANGE_CURRENT_TIME, this.changeCurrentTime)
+    bus.$off(ACTION_CHANGE_VOLUME, this.changeVolume)
+  },
+  methods: {
+    play() {
+      this.audio.play()
+    },
+    pause() {
+      this.audio.pause()
+    },
+    previous() {
+      bus.$emit(ACTION_PREV)
+    },
+    next() {
+      bus.$emit(ACTION_NEXT)
+    },
+    togglePlay({isPlay = false} = {}) {
+      if (!this.audio || !this.audio.src) {
         return
       }
-      if (audio.paused || isPlay) {
-        play()
+      if (this.audio.paused || isPlay) {
+        this.play()
       } else {
-        pause()
+        this.pause()
       }
-    }
-    const registerAudioEvents = (audio) => {
+    },
+    registerAudioEvents(audio) {
       if ('mediaSession' in navigator) {
         // @ts-ignore
-        navigator.mediaSession.setActionHandler('play', play);
+        navigator.mediaSession.setActionHandler('play', this.play)
         // @ts-ignore
-        navigator.mediaSession.setActionHandler('pause', pause);
+        navigator.mediaSession.setActionHandler('pause', this.pause)
         // navigator.mediaSession.setActionHandler('seekbackward', function() {});
         // navigator.mediaSession.setActionHandler('seekforward', function() {});
         // @ts-ignore
-        navigator.mediaSession.setActionHandler('previoustrack', previous);
+        navigator.mediaSession.setActionHandler('previoustrack', this.previous)
         // @ts-ignore
-        navigator.mediaSession.setActionHandler('nexttrack', next);
+        navigator.mediaSession.setActionHandler('nexttrack', this.next)
       }
 
       audio.addEventListener('play', () => {
-        paused.value = false
+        this.paused = false
       })
 
       audio.addEventListener('pause', () => {
-        paused.value = true
+        this.paused = true
       })
 
       audio.addEventListener('ended', () => {
-        bus.emit(ACTION_PLAY_ENDED)
+        bus.$emit(ACTION_PLAY_ENDED)
       })
 
       audio.addEventListener('canplay', (evt) => {
@@ -168,43 +168,18 @@ export default defineComponent({
       })
 
       audio.addEventListener('error', (error) => {
-        window.$notify.error(t('msg.load-fail-or-no-supported-source'))
+        this.$toast.error(this.$t('msg.load-fail-or-no-supported-source'))
         console.error(error)
       })
-    }
-    const changeCurrentTime = (newTime) => {
-      audio && (audio.currentTime = newTime)
-    }
-
-    const changeVolume = (val) => {
-      audio && (audio.volume = val / 100)
-    }
-
-    onMounted(() => {
-      bus.on(ACTION_TOGGLE_PLAY, togglePlay)
-      bus.on(ACTION_CHANGE_CURRENT_TIME, changeCurrentTime)
-      bus.on(ACTION_CHANGE_VOLUME, changeVolume)
-
-      registerAudioEvents(audio)
-    })
-    onBeforeUnmount(() => {
-      bus.off(ACTION_TOGGLE_PLAY, togglePlay)
-      bus.off(ACTION_CHANGE_CURRENT_TIME, changeCurrentTime)
-      bus.off(ACTION_CHANGE_VOLUME, changeVolume)
-    })
-
-    return {
-      audio,
-      musicItem,
-      source,
-      paused,
-      setAudioRef,
-      togglePlay,
-      play,
-      pause
-    }
+    },
+    changeCurrentTime(newTime) {
+      this.audio && (this.audio.currentTime = newTime)
+    },
+    changeVolume(val) {
+      this.audio && (this.audio.volume = val / 100)
+    },
   }
-})
+}
 </script>
 
 <style lang="scss" scoped>

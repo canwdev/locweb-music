@@ -1,129 +1,186 @@
 <template>
   <MainList
-      :ref="setMainListRef"
-      :is-loading="isLoading"
-      :list="fileList"
-      :show-up="directories.length > 0"
-      :active-id="lastPlayId"
-      :min-item-size="40"
-      :filter-placeholder="`${$t('filter-in')} ${currentPath || '/'}`"
-      @onItemClick="handleItemClick"
-      @onItemAction="handleItemAction"
-      @goUpDir="goUpDir"
-      @refresh="handleRefresh"
-      @openMenu="showFolderMenu"
+    ref="mainListRef"
+    :is-loading="isLoading"
+    :list="fileList"
+    :show-up="directories.length > 0"
+    :active-id="lastPlayId"
+    :min-item-size="40"
+    :filter-placeholder="`${$t('filter-in')} ${currentPath || '/'}`"
+    @onItemClick="handleItemClick"
+    @onItemAction="handleItemAction"
+    @goUpDir="goUpDir"
+    @refresh="handleRefresh"
+    @openMenu="showFolderMenu"
   >
     <DialogMenu
-        v-model:visible="isShowFileMenu"
-        :list="fileMenuList"
+      :visible.sync="isShowFileMenu"
+      :list="fileMenuList"
     />
     <DialogMenu
-        v-model:visible="isShowFolderMenu"
-        auto-close
-        :list="folderMenuList"
+      :visible.sync="isShowFolderMenu"
+      auto-close
+      :list="folderMenuList"
     />
-    <ModalDialog
-        v-model:visible="isShowUploadModal"
-        is-show-close
-        persistent
-        :dark="isDarkTheme"
+    <TkModalDialog
+      v-model="isShowUploadModal"
+      show-close
+      persistent
     >
       <FileUpload
-          @uploaded="handleUploaded"
-          :upload-config="uploadConfig"
-          :ref="setFileUploadRef"
+        ref="fileUpload"
+        :upload-config="uploadConfig"
+        @uploaded="handleUploaded"
       />
-    </ModalDialog>
+    </TkModalDialog>
   </MainList>
 </template>
 
-<script lang="ts">
-import {computed, defineComponent, onMounted, onBeforeUnmount, ref, watch, nextTick} from 'vue';
-import {useI18n} from "vue-i18n";
-import store from '@/store'
-import {useRoute} from 'vue-router'
-import router from '@/router'
-import {MusicItem, NavBarIndex} from "@/enum"
-import {FileAction} from "@/enum/service"
+<script>
+import {MusicItem, NavBarIndex} from '@/enum'
+import {FileAction} from '@/enum/service'
 import {
   fileAction,
   getList,
   getDownloadUrl,
-} from "@/api/music"
-import {isSupportedMusicFormat} from "@/utils/is";
-import bus, {ACTION_PLAY_START, ACTION_LOCATE_FILE} from "@/utils/bus";
-import {downLoadFile} from "@/utils";
-import MainList from "@/components/MainList/index.vue";
-import DialogMenu from "@/components/DialogMenu.vue";
-import FileUpload from "@/components/FileUpload.vue";
-import ModalDialog from '@/components/ModalDialog.vue'
+} from '@/api/music'
+import {isSupportedMusicFormat} from '@/utils/is'
+import bus, {ACTION_PLAY_START, ACTION_LOCATE_FILE} from '@/utils/bus'
+import {downLoadFile} from '@/utils'
+import MainList from '@/components/MainList/index.vue'
+import DialogMenu from '@/components/DialogMenu.vue'
+import FileUpload from '@/components/FileUpload.vue'
 
-export default defineComponent({
-  name: "ListFilesystem",
+export default {
+  name: 'ListFilesystem',
   components: {
     MainList,
     DialogMenu,
     FileUpload,
-    ModalDialog
   },
-  setup() {
-    const {t} = useI18n()
-    const route = useRoute()
-    const isLoading = ref<boolean>(false)
-    const isShowUploadModal = ref<boolean>(false)
-    const lastPlayId = ref(-1)
-    const directories = ref<Array<any>>([])
-    const fileList = ref<Array<MusicItem>>([])
-    let mainListRef
-    const setMainListRef = (ref) => {
-      mainListRef = ref
+  data() {
+    return {
+      isLoading: false,
+      isShowUploadModal: false,
+      lastPlayId: -1,
+      directories: [],
+      fileList: [],
+      uploadConfig: {
+        path: '',
+        filename: ''
+      },
+      isShowFileMenu: false,
+      selectedItem: null,
+      isShowFolderMenu: false,
+      folderMenuList: [
+        {label: this.$t('create-folder'), action: this.createFolder},
+        {label: this.$t('upload-files') + '...', action: this.showUploadDialog},
+        {label: this.$t('upload-folder') + '...', disabled: true}
+      ]
     }
+  },
+  computed: {
+    currentPath() {
+      return this.getCurrentPath(this.directories)
+    },
 
-    const setDirectories = (arr) => {
-      return directories.value = arr.map(item => new MusicItem({
+    fileMenuList() {
+      if (!this.selectedItem) return
+      const sItem = this.selectedItem
+      const list = [
+        {label: this.$t('rename'), action: () => this.actionRenameFile(sItem)},
+        {label: this.$t('delete'), action: () => this.actionDeleteFile(sItem)},
+        !sItem.isDirectory ? {label: this.$t('download'), action: () => this.actionDownloadFile(sItem)}
+          : {label: this.$t('download-archive'), disabled: true},
+      ]
+      if (!sItem.isDirectory) {
+        list.push({label: this.$t('replace') + '...', action: () => this.actionReplaceFile(sItem)})
+      }
+      return list
+    }
+  },
+  mounted() {
+    this.getFileList()
+    bus.$on(ACTION_LOCATE_FILE, this.handleLocateFile)
+  },
+  beforeDestroy() {
+    bus.$off(ACTION_LOCATE_FILE, this.handleLocateFile)
+  },
+  watch: {
+    '$route.query.id': {
+      handler(id) {
+        this.lastPlayId = Number(id) || -1
+
+        if (!id) {
+          return
+        }
+        this.$nextTick(() => {
+          this.$refs.mainListRef.locateItem()
+        })
+      },
+      immediate: true
+    },
+    '$route.query.dir': {
+      handler(dir) {
+        if (dir) {
+          this.setDirectories(JSON.parse(dir))
+        }
+      },
+      immediate: true
+    },
+    directories: {
+      handler(val) {
+        this.$router.push({
+          query: {
+            ...this.$route.query,
+            dir: JSON.stringify(val.map(item => item.filename))
+          }
+        }).catch(e => console.warn(e))
+        this.getFileList()
+      },
+      deep: true
+    },
+    isShowFileMenu(val) {
+      if (!val) {
+        this.selectedItem = null
+      }
+    },
+  },
+  methods: {
+    setDirectories(arr) {
+      this.directories = arr.map(item => new MusicItem({
         filename: item,
         isDirectory: true
       }))
-    }
-
-    const setLastPlayId = (id?) => {
-      return router.replace({
+    },
+    setLastPlayId(id) {
+      if (!this.$route.query.id) {
+        return
+      }
+      return this.$router.replace({
         query: {
-          ...route.query,
+          ...this.$route.query,
           id: id || ''
         }
       })
-    }
-
-    const uploadConfig = ref({
-      path: '',
-      filename: ''
-    })
-    let fileUpload
-    const setFileUploadRef = (ref) => {
-      fileUpload = ref
-    }
-
-    const getCurrentPath = (directories) => {
+    },
+    getCurrentPath(directories) {
+      console.log('directories',directories)
       let path = ''
-      directories.forEach((item: any) => {
+      directories.forEach((item) => {
         path += (item.filename + '/')
       })
       return path
-    }
-
-    const currentPath = computed(() => {
-      return getCurrentPath(directories.value)
-    })
-
-    const getFileList = async () => {
-      if (isLoading.value) {
+    },
+    async getFileList() {
+      if (this.isLoading) {
         return
       }
       try {
-        isLoading.value = true
+        this.isLoading = true
 
-        const path = currentPath.value
+        const path = this.currentPath
+        console.log('pathpath',path)
 
         const {list, playStat, message} = await getList({
           path,
@@ -132,144 +189,88 @@ export default defineComponent({
         if (message) {
           window.$notify.warning(message)
         }
-        fileList.value = list.map((file) => {
+        this.fileList = list.map((file) => {
           return new MusicItem(file)
         })
 
         const lastFilename = playStat && playStat.file
-        if (lastFilename && !route.query.id) {
+        if (lastFilename && !this.$route.query.id) {
           const item = list.find(file => file.filename === lastFilename) || {}
-          lastPlayId.value = item.id || -1
+          this.lastPlayId = item.id || -1
         }
-        nextTick(() => {
-          mainListRef.locateItem()
+        this.$nextTick(() => {
+          this.$refs.mainListRef.locateItem()
         })
       } catch (e) {
-        fileList.value = []
+        this.fileList = []
         // window.$notify.error(e.message)
         console.error(e)
       } finally {
-        isLoading.value = false
+        this.isLoading = false
       }
-
-    }
-
-    const handleRefresh = async () => {
-      await setLastPlayId()
-      return getFileList()
-    }
-
-    // watch route change
-    watch(() => route.query.id, (id) => {
-      if (id) {
-        lastPlayId.value = Number(id) || -1
-      }
-      nextTick(() => {
-        mainListRef.locateItem()
-      })
-    }, {
-      immediate: true
-    })
-    watch(() => route.query.dir, (dir) => {
-      if (dir) {
-        // @ts-ignore
-        setDirectories(JSON.parse(dir))
-        // console.log('router.query.dir change', val)
-      }
-    }, {
-      immediate: true
-    })
-
-    // watch directories change
-    watch(directories, (val) => {
-      // console.log('directories changed', {val, router, route})
-
-      router.push({
-        query: {
-          ...route.query,
-          dir: JSON.stringify(val.map(item => item.filename))
-        }
-      })
-      getFileList()
-    }, {
-      deep: true
-    })
-
-    const goUpDir = () => {
-      directories.value.pop()
-    }
-
-    const handleItemClick = async (item: MusicItem) => {
+    },
+    async handleRefresh() {
+      await this.setLastPlayId()
+      return this.getFileList()
+    },
+    goUpDir() {
+      this.directories.pop()
+    },
+    async handleItemClick(item) {
       // jump folder
       if (item.isDirectory) {
-        await setLastPlayId()
-        directories.value.push(item)
+        await this.setLastPlayId()
+        this.directories.push(item)
         return
       }
 
       if (isSupportedMusicFormat(item.filename)) {
-        store.commit('clearShuffle')
+        this.$store.commit('clearShuffle')
         // format data
-        const list = fileList.value.filter((val: any) => {
+        const list = this.fileList.filter((val) => {
           return isSupportedMusicFormat(val.filename)
         })
-        store.commit('setPlayingList', list)
+        this.$store.commit('setPlayingList', list)
         // set current playing
         // playMusicFromList(list, item)
-        bus.emit(ACTION_PLAY_START, {list, item})
-        lastPlayId.value = item.id
-        setLastPlayId()
+        bus.$emit(ACTION_PLAY_START, {list, item})
+        this.lastPlayId = item.id
+        this.setLastPlayId()
       } else {
-        window.$swal.fire({
-          toast: true,
-          width: 300,
-          timer: 2500,
-          icon: 'warning',
-          title: t('msg.format-not-support'),
-          showConfirmButton: true,
-          confirmButtonText: 'Try'
-        }).then((result) => {
-          if (result.isConfirmed) {
-            window.open(item.getSource(), '_blank')
-          }
+        this.$prompt.create({
+          propsData: {
+            title: this.$t('msg.format-not-support'),
+            btnConfirm: 'Try'
+          },
+          parentEl: this.$el
+        }).onConfirm(async () => {
+          window.open(item.getSource(), '_blank')
         })
       }
-    }
-
-    const isShowFileMenu = ref<boolean>(false)
-    const selectedItem = ref<MusicItem | null>(null)
-    const handleItemAction = (item: MusicItem) => {
-      isShowFileMenu.value = true
-      selectedItem.value = item
-    }
-    watch(isShowFileMenu, (val) => {
-      if (!val) {
-        selectedItem.value = null
-      }
-    })
-
-    // remove local list item
-    const spliceLocalItem = (item, newItem?: MusicItem) => {
-      // @ts-ignore
-      const index = fileList.value.findIndex(v => v.id === item.id)
+    },
+    handleItemAction(item) {
+      this.isShowFileMenu = true
+      this.selectedItem = item
+    },
+    spliceLocalItem(item, newItem) {
+      const index = this.fileList.findIndex(v => v.id === item.id)
       if (index !== -1) {
         if (newItem) {
-          fileList.value.splice(index, 1, newItem)
+          this.fileList.splice(index, 1, newItem)
         } else {
-          fileList.value.splice(index, 1)
+          this.fileList.splice(index, 1)
         }
       }
-    }
-
-    const actionRenameFile = async (sItem) => {
+    },
+    async actionRenameFile(sItem) {
       if (!sItem) return
-      isShowFileMenu.value = false
+      this.isShowFileMenu = false
 
-      const name = prompt(`${ t('rename') } 《${sItem.filename}》`, sItem.filename) || ''
+      const name = prompt(`${this.$t('rename')} 《${sItem.filename}》`, sItem.filename) || ''
       if (!name) {
         return
       }
-      isLoading.value = true
+      this.isLoading = true
       try {
         const {newName} = await fileAction({
           path: sItem.path,
@@ -281,36 +282,35 @@ export default defineComponent({
       } catch (e) {
         console.error(e)
       } finally {
-        isLoading.value = false
+        this.isLoading = false
       }
-
-    }
-    const actionDeleteFile = async (sItem) => {
+    },
+    async actionDeleteFile(sItem) {
       if (!sItem) return
-      isShowFileMenu.value = false
+      this.isShowFileMenu = false
 
-      const flag = confirm(`${ t('warning') }!! ${ t('delete') } 《${sItem.filename}》?\n${ t('msg.this-operation-cannot-be-undone') }`)
+      const flag = confirm(`${this.$t('warning')}!! ${this.$t('delete')} 《${sItem.filename}》?\n${this.$t('msg.this-operation-cannot-be-undone')}`)
       if (!flag) {
         return
       }
 
-      isLoading.value = true
+      this.isLoading = true
       try {
         await fileAction({
           path: sItem.path,
           filename: sItem.filename,
           action: FileAction.DELETE
         })
-        spliceLocalItem(sItem)
+        this.spliceLocalItem(sItem)
       } catch (e) {
         console.error(e)
       } finally {
-        isLoading.value = false
+        this.isLoading = false
       }
-    }
-    const actionDownloadFile = async (sItem) => {
+    },
+    async actionDownloadFile(sItem) {
       if (!sItem) return
-      isLoading.value = true
+      this.isLoading = true
       try {
         downLoadFile(getDownloadUrl({
           path: sItem.path,
@@ -319,126 +319,67 @@ export default defineComponent({
       } catch (e) {
         console.error(e)
       } finally {
-        isLoading.value = false
+        this.isLoading = false
       }
-    }
-    const actionReplaceFile = async (sItem) => {
+    },
+    async actionReplaceFile(sItem) {
       if (!sItem) return
-      const path = currentPath.value
+      const path = this.currentPath
 
-      uploadConfig.value = {
+      this.uploadConfig = {
         path,
         filename: sItem.filename
       }
-      fileUpload.clearFileInput()
-      isShowUploadModal.value = true
-      isShowFileMenu.value = false
-    }
-
-    const fileMenuList = computed(() => {
-      if (!selectedItem.value) return
-      const sItem = selectedItem.value
-      const list = [
-        {label: t('rename'), action: () => actionRenameFile(sItem)},
-        {label: t('delete'), action: () => actionDeleteFile(sItem)},
-        !sItem.isDirectory ? {label: t('download'), action: () => actionDownloadFile(sItem)} :
-            {label: t('download-archive'), disabled: true},
-      ]
-      if (!sItem.isDirectory) {
-        list.push({label: t('replace') + '...', action: () => actionReplaceFile(sItem)})
-      }
-      return list
-    })
-
-    const isShowFolderMenu = ref(false)
-    const showFolderMenu = () => {
-      isShowFolderMenu.value = true
-    }
-    const createFolder = async () => {
-      const name = prompt(t('create-folder')) || ''
+      this.$refs.fileUpload.clearFileInput()
+      this.isShowUploadModal = true
+      this.isShowFileMenu = false
+    },
+    showFolderMenu() {
+      this.isShowFolderMenu = true
+    },
+    async createFolder() {
+      const name = prompt(this.$t('create-folder')) || ''
       if (!name) {
         return
       }
 
       await fileAction({
-        path: directories.value.map(item => item.filename).join('/'),
+        path: this.directories.map(item => item.filename).join('/'),
         action: FileAction.CREATE_FOLDER,
         actionValue: name
       })
-      getFileList()
-    }
-
-    // upload files
-    const showUploadDialog = async () => {
-      const path = currentPath.value
-      uploadConfig.value = {
+      await this.getFileList()
+    },
+    async showUploadDialog() {
+      const path = this.currentPath
+      this.uploadConfig = {
         path,
         filename: ''
       }
-      fileUpload.clearFileInput()
-      isShowUploadModal.value = true
-    }
-    const handleUploaded = () => {
+      this.$refs.fileUpload.clearFileInput()
+      this.isShowUploadModal = true
+    },
+    handleUploaded() {
       setTimeout(() => {
-        isShowUploadModal.value = false
-        fileUpload.clearFileInput()
-        window.$notify.success(t('msg.file-uploaded'))
+        this.isShowUploadModal = false
+        this.$refs.fileUpload.clearFileInput()
+        this.$toast.success(this.$t('msg.file-uploaded'))
       }, 500)
-      getFileList()
-    }
-
-    const folderMenuList = [
-      {label: t('create-folder'), action: createFolder},
-      {label: t('upload-files')+'...', action: showUploadDialog},
-      {label: t('upload-folder')+'...', disabled: true}
-    ]
-
-    const handleLocateFile = async (item) => {
+      this.getFileList()
+    },
+    async handleLocateFile(item) {
       setTimeout(() => {
-        store.commit('setNavbarIndex', NavBarIndex.LEFT)
+        this.$store.commit('setNavbarIndex', NavBarIndex.LEFT)
       }, 30)
       // console.log(item)
 
-      await setLastPlayId(item.id)
-      if (item.path !== currentPath.value) {
-        setDirectories(item.path.split('/').filter(i => i))
+      await this.setLastPlayId(item.id)
+      if (item.path !== this.currentPath) {
+        this.setDirectories(item.path.split('/').filter(i => i))
       }
     }
-
-    onMounted(() => {
-      getFileList()
-      bus.on(ACTION_LOCATE_FILE, handleLocateFile)
-    })
-
-    onBeforeUnmount(() => {
-      bus.off(ACTION_LOCATE_FILE, handleLocateFile)
-    })
-
-    return {
-      setMainListRef,
-      isLoading,
-      fileList,
-      lastPlayId,
-      directories,
-      getFileList,
-      handleRefresh,
-      goUpDir,
-      handleItemClick,
-      handleItemAction,
-      isShowFileMenu,
-      fileMenuList,
-      showFolderMenu,
-      isShowFolderMenu,
-      folderMenuList,
-      isShowUploadModal,
-      handleUploaded,
-      setFileUploadRef,
-      uploadConfig,
-      isDarkTheme: computed(() => store.getters.isDarkTheme),
-      currentPath
-    }
   }
-})
+}
 </script>
 
 <style scoped>

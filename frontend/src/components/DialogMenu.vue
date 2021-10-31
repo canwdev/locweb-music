@@ -1,24 +1,22 @@
 <template>
-  <ModalDialog
-      v-model:visible="mVisible"
+  <TkModalDialog
+    v-model="mVisible"
   >
     <ListMenu
-        :list="list"
-        @click="autoClose && (mVisible = false)"
+      :list="list"
+      @click="autoClose && (mVisible = false)"
     />
-  </ModalDialog>
+  </TkModalDialog>
 </template>
 
-<script lang="ts">
-import {defineComponent, toRefs} from 'vue';
-import useMVisible from "@/composables/useMVisible"
-import ModalDialog from '@/components/ModalDialog.vue'
+<script >
+import visibleMixin from '@/mixins/visible'
 import ListMenu from '@/components/ListMenu.vue'
 
-export default defineComponent({
-  name: "DialogMenu",
+export default {
+  name: 'DialogMenu',
+  mixins: [visibleMixin],
   components: {
-    ModalDialog,
     ListMenu
   },
   props: {
@@ -36,15 +34,8 @@ export default defineComponent({
         return []
       }
     }
-  },
-  setup(props, context) {
-    // @ts-ignore
-    const {visible} = toRefs(props)
-    return {
-      ...useMVisible(visible, context)
-    }
   }
-})
+}
 </script>
 
 <style scoped>

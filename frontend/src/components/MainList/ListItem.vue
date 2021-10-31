@@ -1,53 +1,56 @@
 <template>
   <a
-      class="btn-no-style list-item-wrap"
-      :class="{grey: !isSupport && !item.isDirectory, active}"
-      :href="item.getSource()"
-      @contextmenu="handleContextMenu"
+    class="list-item-wrap"
+    :class="{grey: !isSupport && !item.isDirectory, active}"
+    :href="item.getSource()"
+    @contextmenu="handleContextMenu"
+    @click.prevent
   >
     <div
-        v-if="!isBigItem"
-        class="list-item"
+      v-if="!isBigItem"
+      class="list-item"
     >
       <i class="left material-icons">{{ iconName }}</i>
       <span class="middle text-overflow">{{ item.filename }}</span>
-      <button v-if="isShowAction"
-            class="right btn-no-style"
-            @click.stop.prevent="$emit('onAction', item)"
-      ><i class="material-icons">more_vert</i></button>
+      <TkButton
+        size="no-style"
+        v-if="isShowAction"
+        class="right"
+        @click.stop.prevent="$emit('onAction', item)"
+      ><i class="material-icons">more_vert</i></TkButton>
     </div>
     <div
-        v-else
-        class="list-item-big flex"
-        :title="item.filename"
+      v-else
+      class="list-item-big flex"
+      :title="item.filename"
     >
       <ButtonCover
-          :icon-name="iconName"
-          :src="coverImage"
+        :icon-name="iconName"
+        :src="coverImage"
       />
       <div class="middle">
         <div class="text-overflow filename">{{ item.title || item.filename }}</div>
         <div class="text-overflow display-title">{{ artistsAlbum }}</div>
       </div>
-      <button
-          v-if="isShowAction"
-          class="right btn-no-style"
-          @click.stop.prevent="$emit('onAction', item)"
+      <TkButton
+        size="no-style"
+        v-if="isShowAction"
+        class="right"
+        @click.stop.prevent="$emit('onAction', item)"
       >
         <i class="material-icons">more_vert</i>
-      </button>
+      </TkButton>
     </div>
 
   </a>
 </template>
 
-<script lang="ts">
-import {defineComponent, toRefs, computed} from 'vue';
-import {isSupportedMusicFormat} from "@/utils/is";
-import ButtonCover from "@/components/ButtonCover.vue"
+<script>
+import {isSupportedMusicFormat} from '@/utils/is'
+import ButtonCover from '@/components/ButtonCover.vue'
 
-export default defineComponent({
-  name: "ListItem",
+export default {
+  name: 'ListItem',
   components: {
     ButtonCover
   },
@@ -73,34 +76,33 @@ export default defineComponent({
       default: false
     }
   },
-  setup(props, context) {
+  data() {
+    return {
 
-    const {item, active, isBigItem, isPaused, isShowAction} = toRefs(props)
-
-    const coverImage = computed(() => {
-      return item.value.cover
-    })
-
-    const isSupport = computed(() => {
-      return isSupportedMusicFormat(item.value.filename)
-    })
-
-    const iconName = computed(() => {
-      if (isBigItem.value && active.value) {
-        return isPaused.value ? 'pause' : 'play_arrow'
+    }
+  },
+  computed: {
+    coverImage() {
+      return this.item.cover
+    },
+    isSupport() {
+      return isSupportedMusicFormat(this.item.filename)
+    },
+    iconName() {
+      if (this.isBigItem && this.active) {
+        return this.isPaused ? 'pause' : 'play_arrow'
       }
-      if (item.value.isDirectory) {
+      if (this.item.isDirectory) {
         return 'folder'
       }
-      if (isSupport.value) {
+      if (this.isSupport) {
         return 'audiotrack'
       }
       return 'insert_drive_file'
-    })
-
-    const artistsAlbum = computed(() => {
-      const musicItem = item.value
-      if (!isBigItem.value || !musicItem) {
+    },
+    artistsAlbum() {
+      const musicItem = this.item
+      if (!this.isBigItem || !musicItem) {
         return ''
       }
       const {
@@ -108,22 +110,15 @@ export default defineComponent({
         album
       } = musicItem
       return [artist, album].join(' - ')
-    })
-
-    const handleContextMenu = (event) => {
+    }
+  },
+  methods: {
+    handleContextMenu(event) {
       event.preventDefault()
-      isShowAction.value && context.emit('onAction', item.value)
+      this.isShowAction && this.$emit('onAction', this.item)
     }
-
-    return {
-      coverImage,
-      isSupport,
-      iconName,
-      artistsAlbum,
-      handleContextMenu
-    }
-  }
-})
+  },
+}
 </script>
 
 <style lang="scss" scoped>
@@ -131,6 +126,8 @@ $active-color: $primary;
 
 .list-item-wrap {
   display: block;
+  text-decoration: none;
+  color: inherit;
 
   //&:hover {
   //  background: rgba(0, 0, 0, 0.08);
@@ -161,9 +158,8 @@ $active-color: $primary;
   //  background: rgba(0, 0, 0, 0.05);
   //}
 
-
   &.grey {
-    color: $grey;
+    color: grey;
   }
 
   .list-item {
