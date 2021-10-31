@@ -11,6 +11,7 @@
 <script>
 import bus, {
   ACTION_CHANGE_CURRENT_TIME,
+  ACTION_CHANGE_SPEED,
   ACTION_NEXT,
   ACTION_PLAY_ENDED,
   ACTION_PREV,
@@ -101,12 +102,14 @@ export default {
     bus.$on(ACTION_TOGGLE_PLAY, this.togglePlay)
     bus.$on(ACTION_CHANGE_CURRENT_TIME, this.changeCurrentTime)
     bus.$on(ACTION_CHANGE_VOLUME, this.changeVolume)
+    bus.$on(ACTION_CHANGE_SPEED, this.changeSpeed)
     this.registerAudioEvents(this.audio)
   },
   beforeDestroy() {
     bus.$off(ACTION_TOGGLE_PLAY, this.togglePlay)
     bus.$off(ACTION_CHANGE_CURRENT_TIME, this.changeCurrentTime)
     bus.$off(ACTION_CHANGE_VOLUME, this.changeVolume)
+    bus.$off(ACTION_CHANGE_SPEED, this.changeSpeed)
   },
   methods: {
     play() {
@@ -177,6 +180,9 @@ export default {
     },
     changeVolume(val) {
       this.audio && (this.audio.volume = val / 100)
+    },
+    changeSpeed(val = 1) {
+      this.audio && (this.audio.playbackRate = val)
     },
   }
 }

@@ -88,6 +88,16 @@
         >
           <i class="material-icons">{{ volumeIcon }}</i>
         </TkButton>
+
+        <TkButton
+          :disabled="isShowPlayback"
+          size="no-style"
+          class="btn-action"
+          :title="$t('playback-speed')"
+          @click="showPlaybackSpeedConfig"
+        >
+          <i class="material-icons">speed</i>
+        </TkButton>
       </div>
     </div>
 
@@ -130,7 +140,7 @@
 <script>
 import {LoopModeType,} from '@/enum'
 import bus, {
-  ACTION_CHANGE_CURRENT_TIME,
+  ACTION_CHANGE_CURRENT_TIME, ACTION_CHANGE_SPEED,
   ACTION_NEXT, ACTION_PREV,
   ACTION_TOGGLE_PLAY,
 } from '@/utils/bus'
@@ -167,6 +177,7 @@ export default {
       isSeeking: false,
       detailDialogVisible: false,
       isShowVolumeSlider: false,
+      isShowPlayback: false,
     }
   },
   computed: {
@@ -310,6 +321,30 @@ export default {
       this.detailDialogVisible = !this.detailDialogVisible
       // console.log(musicItem.value)
     },
+    showPlaybackSpeedConfig() {
+      if (this.isShowPlayback) {
+        return
+      }
+      this.isShowPlayback = true
+      this.$prompt.create({
+        propsData: {
+          title: this.$t('playback-speed'),
+          input: {
+            value: 1,
+            required: true,
+            type: 'number',
+            step: '.1'
+          }
+        },
+        parentEl: this.$el.parentNode
+      }).onConfirm(async (context) => {
+        this.isShowPlayback = false
+        bus.$emit(ACTION_CHANGE_SPEED, context.inputValue)
+      }).onCancel(() => {
+        this.isShowPlayback = false
+      })
+
+    }
   }
 }
 </script>
@@ -418,6 +453,7 @@ $bottomZIndex: 2100;
   .progressbar {
     background: $dark;
   }
+
   .actionbar {
     background: $dark;
   }

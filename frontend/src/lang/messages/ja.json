@@ -97,5 +97,6 @@
   "alias": "エイリアス",
   "duration": "間隔",
   "add": "追加",
-  "refresh": "更新"
+  "refresh": "更新",
+  "playback-speed": "再生速度"
 }

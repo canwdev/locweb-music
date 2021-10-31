@@ -11,6 +11,7 @@
     "theme-color": "Theme Color",
     "language": "Language"
   },
+  "playback-speed": "Playback Speed",
   "msg": {
     "confirm-logout": "Confirm logout?",
     "logout-completed": "Logout completed",

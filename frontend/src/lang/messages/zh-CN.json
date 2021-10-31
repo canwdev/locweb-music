@@ -97,5 +97,6 @@
   "alias": "别名",
   "duration": "时长",
   "add": "新增",
-  "refresh": "刷新"
+  "refresh": "刷新",
+  "playback-speed": "播放速度"
 }
