@@ -1,14 +1,14 @@
-# LocwebMusic · 本地云音乐
-
-A web application for playing local music files
+# 本地云音乐 - LocwebMusic
 
 一款用来播放本地音乐文件的 Web 应用程序
 
-# Screenshot
+A web application for playing local music files
+
+# 截图 · Screenshot
 
 ![img](./preview.png)
 
-# Technologies
+# 技术栈 · Technologies
 
-- Backend: Node.js
-- Frontend: Vue 2
+- 后端: Node.js
+- 前端: Vue 2
