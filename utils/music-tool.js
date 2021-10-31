@@ -47,7 +47,7 @@ const getMetadata = async (filePath) => {
   }
 }
 
-const getLyricFilename = (filename, options = {}) => {
+const filterLyricFilename = (filename, options = {}) => {
   const {
     isExact = false,
   } = options
@@ -62,30 +62,28 @@ const getLyricFilename = (filename, options = {}) => {
 }
 
 /**
- * Get lyric file from list
+ * 遍历歌词数组获取歌词文件名
  * @param lyricFileList List contains lyric filenames
  * @param filename Music filename
  * @param options
  */
-const getLyricFile = (lyricFileList, filename, options = {}) => {
-  filename = getLyricFilename(filename, options)
-
-  console.log('>>> Search lyric:', filename)
+const traverseLyrics = (lyricFileList, filename) => {
+  console.log('>>> [traverseLyrics]', filename)
 
   for (let i = 0; i < lyricFileList.length; i++) {
     const lyric = lyricFileList[i]
     // 此处文件可能有特殊字符，不能用正则表达式
     const mLyric = lyric.slice(0, lyric.lastIndexOf('.'))
     if (filename === mLyric) {
-      console.log('lyric found:', lyric)
+      console.log('<<< [traverseLyrics] OK', lyric)
       return lyric
     }
   }
-  console.log('<<< Lyric not found')
+  console.log('<<< [traverseLyrics] not found')
 }
 
 const saveLyricFile = async (filename, lyric, options = {}) => {
-  filename = getLyricFilename(filename, options) + '.lrc'
+  filename = filterLyricFilename(filename, options) + '.lrc'
 
   const savePath = getLyricsPath(filename)
   // console.log('Save lyric', savePath)
@@ -99,7 +97,7 @@ const saveLyricFile = async (filename, lyric, options = {}) => {
 
 module.exports = {
   getMetadata,
-  getLyricFilename,
-  getLyricFile,
+  filterLyricFilename,
+  traverseLyrics,
   saveLyricFile,
 }

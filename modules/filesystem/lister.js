@@ -20,7 +20,8 @@ const {getSafePath} = require("../../utils/fs-tool")
 
 const {
   getMetadata,
-  getLyricFile,
+  traverseLyrics,
+  filterLyricFilename,
 } = require('../../utils/music-tool')
 
 /**
@@ -33,16 +34,16 @@ const listFiles = async (req, res, next) => {
       getPlayStat = false
     } = req.query
     const dir = getMusicPath(musicPath)
-    if (enableAuth && fs.existsSync(path.join(dir, loginOnlyFileName))) {
+    if (enableAuth && await fs.exists(path.join(dir, loginOnlyFileName))) {
       if (!req.__userid) {
         return res.sendData({message: 'You are not authorized', list: []})
       }
     }
 
-    if (!fs.existsSync(dir)) {
+    if (!await fs.exists(dir)) {
       return res.sendError({message: 'Dir not found', code: 404})
     }
-    console.log('dir',dir)
+    console.log('dir', dir)
     let files = await fs.readdir(dir)
 
     const _folders = [], _files = []
@@ -132,19 +133,28 @@ const getDetail = async (req, res, next) => {
 
     delete metadata.native
 
-    // get lyric
+    // 获取歌词
     let lyricText
     try {
-      const lyricFile = getLyricFile(lyricFileCache, filename)
-      if (lyricFile) {
-        lyricText = await fs.readFile(getLyricsPath(lyricFile), {encoding: 'utf-8'})
+      const sName = filterLyricFilename(filename)
+      let lyricPath = getLyricsPath(sName + '.lrc') // O(1)
+
+      if (!await fs.exists(lyricPath)) {
+        // O(n)
+        lyricPath = traverseLyrics(lyricFileCache, sName)
+        lyricPath = getLyricsPath(lyricPath)
+      }
+
+      if (!await fs.exists(lyricPath)) {
+        lyricText = await fs.readFile(lyricPath, {encoding: 'utf-8'})
       } else {
-        // try load lyric from same folder
         const lyricFile = filename.substring(0, filename.lastIndexOf('.')) + '.lrc'
         const lyricPath = path.join(currentMusicDir, getSafePath(lyricFile))
-        if (fs.existsSync(lyricPath)) {
+        console.log('Try load lyric from same folder', lyricPath)
+        if (await fs.exists(lyricPath)) {
           lyricText = await fs.readFile(lyricPath, {encoding: 'utf-8'})
-          console.log('Same dir lyric found')
+        } else {
+          console.log('lyric not found')
         }
       }
     } catch (e) {
@@ -161,7 +171,7 @@ const getDetail = async (req, res, next) => {
       sendData.cover = `/images/${coverFileName}`
     } else {
       const localCoverFilename = 'cover.jpg'
-      if (fs.existsSync(path.join(currentMusicDir, getSafePath(localCoverFilename)))) {
+      if (await fs.exists(path.join(currentMusicDir, getSafePath(localCoverFilename)))) {
         sendData.cover = `/mfs/${musicPath}${localCoverFilename}`
       }
     }

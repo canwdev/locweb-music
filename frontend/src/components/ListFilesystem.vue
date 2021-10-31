@@ -165,7 +165,6 @@ export default {
       })
     },
     getCurrentPath(directories) {
-      console.log('directories',directories)
       let path = ''
       directories.forEach((item) => {
         path += (item.filename + '/')
@@ -180,7 +179,6 @@ export default {
         this.isLoading = true
 
         const path = this.currentPath
-        console.log('pathpath',path)
 
         const {list, playStat, message} = await getList({
           path,
