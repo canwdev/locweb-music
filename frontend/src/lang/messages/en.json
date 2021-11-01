@@ -38,7 +38,9 @@
     "download-with-meta": "Download+Meta",
     "netease-music-down": "Netease Music Down",
     "netease-music-search-placeholder": "Song/Artist/Album/ID/...",
-    "kong-kong-ru-ye": "Empty"
+    "kong-kong-ru-ye": "Empty",
+    "countdown-will": "Will {playText} in {time} minutes",
+    "set-countdown-text": "Set countdown (minutes)"
   },
   "user": {
     "login": "Login",
@@ -98,5 +100,8 @@
   "alias": "Alias",
   "duration": "Duration",
   "add": "Add",
-  "refresh": "Refresh"
+  "refresh": "Refresh",
+  "countdown": "Countdown",
+  "start-play": "start play",
+  "stop-play": "stop play"
 }

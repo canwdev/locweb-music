@@ -31,6 +31,8 @@ export default new Vuex.Store({
     duration: 0,
     token: getToken(), // Authorization token
     settings: loadSettings(),
+    playbackRate: 1,
+    stopCountdown: null
   },
   getters: {
     isDarkTheme: state => state.settings.isDarkTheme,
@@ -128,6 +130,12 @@ export default new Vuex.Store({
       const {key, value} = payload
       state.settings[key] = value
       saveSettings(state.settings)
+    },
+    setPlaybackRate(state, payload) {
+      state.playbackRate = payload
+    },
+    setStopCountdown(state, payload) {
+      state.stopCountdown = payload
     }
   },
   actions: {},

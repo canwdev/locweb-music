@@ -42,6 +42,14 @@ export default {
       set(val) {
         return this.$store.commit('setPaused', val)
       }
+    },
+    playbackRate: {
+      get() {
+        return this.$store.state.playbackRate
+      },
+      set(val) {
+        this.$store.commit('setPlaybackRate', val)
+      }
     }
   },
   watch: {
@@ -182,7 +190,17 @@ export default {
       this.audio && (this.audio.volume = val / 100)
     },
     changeSpeed(val = 1) {
-      this.audio && (this.audio.playbackRate = val)
+      if (!this.audio) {
+        return
+      }
+      try {
+        this.audio.playbackRate = val
+        this.playbackRate = val
+      } catch (e) {
+        this.$toast.error({
+          message: e.message
+        })
+      }
     },
   }
 }

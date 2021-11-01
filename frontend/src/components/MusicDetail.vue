@@ -67,20 +67,52 @@
               :placeholder="$t('msg.no-data')"
             ></textarea>
 
-
           </div>
         </transition>
       </div>
     </AutoRatioBox>
 
     <div
-      class="titles-wrap"
-      :class="{opacity: isShowDetail}"
-      @click="isShowDetail = !isShowDetail"
+      class="below-wrap"
     >
-      <div class="title">{{ musicItem.titleDisplay }}</div>
-      <div class="subtitle">{{ musicItem.artist }}</div>
-      <div class="subtitle">{{ musicItem.album }}</div>
+      <div
+        class="titles-wrap"
+        :class="{opacity: isShowDetail}"
+        @click="isShowDetail = !isShowDetail"
+      >
+        <div class="title">{{ musicItem.titleDisplay }}</div>
+        <div class="subtitle">{{ musicItem.artist }}</div>
+        <div class="subtitle">{{ musicItem.album }}</div>
+      </div>
+
+      <div v-if="!isDisabled" class="actions-wrap">
+
+        <TkButton flat round @click="jumpBackward">
+          <i class="material-icons">replay_5</i>
+        </TkButton>
+
+        <TkButton
+          flat
+          round
+          :title="$t('playback-speed')"
+          @click="showPlaybackSpeedConfig"
+        >
+          <i class="material-icons">speed</i>
+        </TkButton>
+        <TkButton
+          flat
+          round
+          :class="{active: stopCountdown}"
+          :title="$t('countdown')"
+          @click="showStopCountdownConfig"
+        >
+          <i class="material-icons">timer</i>
+        </TkButton>
+        <TkButton flat round @click="jumpForward">
+          <i class="material-icons">forward_5</i>
+        </TkButton>
+
+      </div>
     </div>
 
     <TkModalDialog
@@ -100,7 +132,9 @@
 <script>
 import CoverDisplay from '@/components/CoverDisplay.vue'
 import bus, {
-  ACTION_CHANGE_CURRENT_TIME
+  ACTION_CHANGE_CURRENT_TIME,
+  ACTION_CHANGE_SPEED,
+  ACTION_TOGGLE_PLAY
 } from '@/utils/bus'
 import LyricSearch from '@/components/LyricSearch.vue'
 import {
@@ -112,6 +146,14 @@ import lyricMixin from '@/mixins/lyric'
 const DetailTabEnum = {
   LYRIC: 'LYRIC',
   METADATA: 'METADATA',
+}
+
+class TimerItem {
+  constructor(props) {
+    this.timer = props.timer
+    this.timeStart = props.timeStart || Date.now()
+    this.time = props.time
+  }
 }
 
 export default {
@@ -144,7 +186,20 @@ export default {
     ...mapState([
       'musicItem',
       'currentTime',
+      'playbackRate',
+      'playingList',
     ]),
+    isDisabled() {
+      return this.playingList.length === 0
+    },
+    stopCountdown: {
+      get() {
+        return this.$store.state.stopCountdown
+      },
+      set(val) {
+        this.$store.commit('setStopCountdown', val)
+      }
+    }
   },
   watch: {
     isShowDetail(val) {
@@ -196,6 +251,84 @@ export default {
     },
     checkAllowUpdate() {
       return this.isParentVisible && this.isShowDetail
+    },
+    showPlaybackSpeedConfig() {
+      this.$prompt.create({
+        propsData: {
+          title: this.$t('playback-speed'),
+          input: {
+            value: this.playbackRate,
+            required: true,
+            type: 'number',
+            step: '.1'
+          }
+        },
+        parentEl: this.$el.parentNode
+      }).onConfirm(async (context) => {
+        bus.$emit(ACTION_CHANGE_SPEED, context.inputValue)
+      })
+    },
+    jumpForward() {
+      bus.$emit(ACTION_CHANGE_CURRENT_TIME, this.currentTime += 5)
+    },
+    jumpBackward() {
+      bus.$emit(ACTION_CHANGE_CURRENT_TIME, this.currentTime -= 5)
+    },
+    showStopCountdownConfig() {
+      const cleanTimer = () => {
+        clearTimeout(this.stopCountdown.timer)
+        this.stopCountdown = null
+      }
+
+      let content
+      let targetTime = 30
+      const stopCountdown = this.stopCountdown
+      const playText = this.paused ? this.$t('start-play') : this.$t('stop-play')
+
+      if (stopCountdown) {
+        targetTime = stopCountdown.timeStart + stopCountdown.time
+        targetTime = ((targetTime - Date.now()) / 1000 / 60).toFixed(0)
+        content = this.$t('msg.countdown-will', { time: targetTime, playText })
+      }
+      this.$prompt.create({
+        propsData: {
+          title: this.$t('msg.set-countdown-text'),
+          content,
+          input: {
+            value: targetTime,
+            required: true,
+          },
+          multipleActions: stopCountdown ? [
+            {label: this.$t('clear'), value: 1},
+          ] : null
+        },
+        parentEl: this.$el.parentNode
+      }).onConfirm(async (context) => {
+        if (stopCountdown) {
+          cleanTimer()
+        }
+        const time = context.inputValue * 60 * 1000
+        this.$toast.info({
+          message: this.$t('msg.countdown-will', { time: context.inputValue, playText })
+        })
+        const timer = setTimeout(() => {
+          cleanTimer()
+          this.$toast.success({
+            message: playText,
+            center: true
+          })
+          bus.$emit(ACTION_TOGGLE_PLAY)
+        }, time)
+
+        this.stopCountdown = new TimerItem({
+          timer,
+          time
+        })
+      }).onAction((context, val) => {
+        if (val === 1) {
+          cleanTimer()
+        }
+      })
     }
   },
 }
@@ -208,9 +341,13 @@ export default {
   user-select: text;
   padding: 10px;
   box-sizing: border-box;
+  overflow: auto;
+
+  .below-wrap {
+    min-height: 100px;
+  }
 
   .titles-wrap {
-    height: 100px;
     &.opacity {
       opacity: .8;
       cursor: pointer;
@@ -226,6 +363,21 @@ export default {
     .subtitle {
       font-size: 14px;
       margin-bottom: 5px;
+    }
+  }
+
+  .actions-wrap {
+    user-select: none;
+    margin-top: 15px;
+
+    button {
+      &.active {
+        color: $color-pink;
+      }
+    }
+
+    button + button {
+      margin-left: 10px;
     }
   }
 

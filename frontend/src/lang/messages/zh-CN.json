@@ -32,7 +32,9 @@
     "netease-music-search-placeholder": "歌曲/歌手/专辑/ID/...",
     "direct-open": "直接打开",
     "download-with-meta": "下载+Meta",
-    "kong-kong-ru-ye": "空空如也"
+    "kong-kong-ru-ye": "空空如也",
+    "set-countdown-text": "设置倒计时（分钟）",
+    "countdown-will": "将在 {time} 分钟后{playText}"
   },
   "settings": {
     "dark-theme": "黑暗主题",
@@ -98,5 +100,8 @@
   "duration": "时长",
   "add": "新增",
   "refresh": "刷新",
-  "playback-speed": "播放速度"
+  "playback-speed": "播放速度",
+  "countdown": "倒计时",
+  "start-play": "开始播放",
+  "stop-play": "停止播放"
 }

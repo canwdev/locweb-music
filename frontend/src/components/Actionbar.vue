@@ -31,7 +31,7 @@
       <div class="buttons-scroll flex items-center">
         <TkButton
           size="no-style"
-          :disabled="actionDisabled"
+          :disabled="isDisabled"
           class="btn-action"
           :title="$t('previous')"
           @click="previous"
@@ -41,7 +41,7 @@
 
         <TkButton
           size="no-style"
-          :disabled="actionDisabled"
+          :disabled="isDisabled"
           class="btn-action"
           :title="paused ? $t('play') : $t('pause')"
           @click="togglePlay"
@@ -52,7 +52,7 @@
 
         <TkButton
           size="no-style"
-          :disabled="actionDisabled"
+          :disabled="isDisabled"
           class="btn-action"
           :title="$t('next')"
           @click="next"
@@ -62,7 +62,7 @@
 
         <TkButton
           size="no-style"
-          :disabled="actionDisabled"
+          :disabled="isDisabled"
           class="btn-action"
           :class="{active: isRandom}"
           :title="$t('random')"
@@ -87,16 +87,6 @@
           @click="isShowVolumeSlider = !isShowVolumeSlider"
         >
           <i class="material-icons">{{ volumeIcon }}</i>
-        </TkButton>
-
-        <TkButton
-          :disabled="isShowPlayback"
-          size="no-style"
-          class="btn-action"
-          :title="$t('playback-speed')"
-          @click="showPlaybackSpeedConfig"
-        >
-          <i class="material-icons">speed</i>
         </TkButton>
       </div>
     </div>
@@ -140,7 +130,7 @@
 <script>
 import {LoopModeType,} from '@/enum'
 import bus, {
-  ACTION_CHANGE_CURRENT_TIME, ACTION_CHANGE_SPEED,
+  ACTION_CHANGE_CURRENT_TIME,
   ACTION_NEXT, ACTION_PREV,
   ACTION_TOGGLE_PLAY,
 } from '@/utils/bus'
@@ -177,7 +167,6 @@ export default {
       isSeeking: false,
       detailDialogVisible: false,
       isShowVolumeSlider: false,
-      isShowPlayback: false,
     }
   },
   computed: {
@@ -191,7 +180,7 @@ export default {
       'paused',
       'playingList',
     ]),
-    actionDisabled() {
+    isDisabled() {
       return this.playingList.length === 0
     },
     isRandom: {
@@ -320,30 +309,6 @@ export default {
     showDetailDialog() {
       this.detailDialogVisible = !this.detailDialogVisible
       // console.log(musicItem.value)
-    },
-    showPlaybackSpeedConfig() {
-      if (this.isShowPlayback) {
-        return
-      }
-      this.isShowPlayback = true
-      this.$prompt.create({
-        propsData: {
-          title: this.$t('playback-speed'),
-          input: {
-            value: 1,
-            required: true,
-            type: 'number',
-            step: '.1'
-          }
-        },
-        parentEl: this.$el.parentNode
-      }).onConfirm(async (context) => {
-        this.isShowPlayback = false
-        bus.$emit(ACTION_CHANGE_SPEED, context.inputValue)
-      }).onCancel(() => {
-        this.isShowPlayback = false
-      })
-
     }
   }
 }
@@ -434,7 +399,8 @@ $bottomZIndex: 2100;
       justify-content: center;
 
       .reverse-x {
-        text-shadow: 0 0 5px red;
+        text-shadow: 0 0 5px $color-pink;
+        color:$color-pink;
         transform: rotateX(-180deg);
       }
 
