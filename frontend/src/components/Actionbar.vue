@@ -100,9 +100,15 @@
       no-radius
       unlimited-size
     >
-      <MusicDetail
-        :is-parent-visible="detailDialogVisible"
-      />
+      <div
+        class="detail-bg-layer"
+        :class="{blur: detailBgStyle, 'light-theme': !isDarkTheme}"
+        :style="detailBgStyle"
+      >
+        <MusicDetail
+          :is-parent-visible="detailDialogVisible"
+        />
+      </div>
     </TkModalDialog>
 
     <TkModalDialog
@@ -128,7 +134,7 @@
 </template>
 
 <script>
-import {LoopModeType,} from '@/enum'
+import {LoopModeType, } from '@/enum'
 import bus, {
   ACTION_CHANGE_CURRENT_TIME,
   ACTION_NEXT, ACTION_PREV,
@@ -182,6 +188,14 @@ export default {
     ]),
     isDisabled() {
       return this.playingList.length === 0
+    },
+    detailBgStyle() {
+      if (this.musicItem.cover) {
+        return {
+          backgroundImage: `url(${this.musicItem.cover})`
+        }
+      }
+      return null
     },
     isRandom: {
       get() {
@@ -431,6 +445,7 @@ $bottomZIndex: 2100;
   ::v-deep & > .dialog-main {
     width: 100%;
     height: calc(100% - 75px);
+    backdrop-filter: none;
 
     & > .btn-close {
       top: 10px;
@@ -438,9 +453,24 @@ $bottomZIndex: 2100;
     }
 
     & > .dialog-inner {
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    }
+
+    .detail-bg-layer {
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      &.blur .music-detail {
+        background: rgba(28, 28, 28, 0.77);
+        backdrop-filter: saturate(180%) blur(20px);
+      }
+
+      &.light-theme {
+        .music-detail {
+          background: rgba(254, 254, 254, 0.77);
+        }
+      }
     }
   }
 }

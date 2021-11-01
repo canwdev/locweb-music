@@ -337,11 +337,16 @@ export default {
 <style lang="scss" scoped>
 .music-detail {
   width: 100%;
+  height: 100%;
   text-align: center;
   user-select: text;
   padding: 10px;
   box-sizing: border-box;
   overflow: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
 
   .below-wrap {
     min-height: 100px;
