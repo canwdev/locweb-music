@@ -60,7 +60,7 @@ import LoginPrompt from '@/components/LoginPrompt.vue'
 import {DrawerMenuTabItems, NavBarIndex} from '@/enum'
 import {hexToRgb} from '@/utils/color'
 import languages from '@/lang/languages'
-import {LS_KEY_LOCWEB_LOCATE} from '@/lang/i18n'
+import {LS_KEY_LOCATE} from '@/lang/i18n'
 
 const iconClass = 'material-icons'
 
@@ -181,7 +181,7 @@ export default {
       })
     },
     saveLocateChange(val) {
-      localStorage.setItem(LS_KEY_LOCWEB_LOCATE, val)
+      localStorage.setItem(LS_KEY_LOCATE, val)
     },
     handleLoginSuccess() {
       this.$toast.success(this.$t('msg.login-success'))

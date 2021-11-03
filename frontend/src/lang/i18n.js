@@ -1,5 +1,3 @@
-import { createI18n } from 'vue-i18n'
-
 import languages from './languages'
 import en from './messages/en.json'
 import zhCN from './messages/zh-CN.json'
@@ -10,9 +8,9 @@ import VueI18n from 'vue-i18n'
 
 Vue.use(VueI18n)
 
-export const LS_KEY_LOCWEB_LOCATE = 'LS_KEY_LOCWEB_LOCATE'
+export const LS_KEY_LOCATE = 'LS_KEY_LOCWEB_LOCATE'
 
-const defaultLocale = localStorage.getItem(LS_KEY_LOCWEB_LOCATE) || languages[0].locate
+const defaultLocale = localStorage.getItem(LS_KEY_LOCATE) || languages[0].locate
 
 const i18n = new VueI18n({
   locale: defaultLocale,
