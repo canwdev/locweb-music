@@ -26,14 +26,14 @@
     />
     <TkModalDialog
       v-model="isShowUploadModal"
-      show-close
+      :show-close="false"
       persistent
     >
       <FileUpload
         ref="fileUpload"
         :upload-config="uploadConfig"
-        :upload-files="uploadFiles"
         @uploaded="handleUploaded"
+        @close="getFileList(), isShowUploadModal = false"
       />
     </TkModalDialog>
 
@@ -55,12 +55,12 @@ import {isSupportedMusicFormat} from '@/utils/is'
 import bus, {ACTION_PLAY_START, ACTION_LOCATE_FILE} from '@/utils/bus'
 import {downLoadFile} from '@/utils'
 import MainList from '@/components/MainList/index.vue'
-import FileUpload from '@/components/FileUpload.vue'
+import FileUpload from '@/components/FileUpload/index.vue'
 import ContextMenuCommon from '@/components/ContextMenuCommon.vue'
 import FileDropzone from './FileDropzone'
 
 export default {
-  name: 'ListFilesystem',
+  name: 'FilesystemList',
   components: {
     MainList,
     FileUpload,
@@ -82,15 +82,11 @@ export default {
       folderMenuList: [
         {icon: 'create_new_folder', label: this.$t('create-folder'), action: this.createFolder},
         {
-          icon: 'upload_file', label: this.$t('upload-files') + '...', action: () => {
-            this.uploadFiles = null
-            this.showUploadDialog()
-          }
+          icon: 'upload_file', label: this.$t('upload-files') + '...', action: this.showUploadDialog
         },
         {icon: 'drive_folder_upload', label: this.$t('upload-folder') + '...', disabled: true}
       ],
       showDropzone: false,
-      uploadFiles: null
     }
   },
   computed: {
@@ -348,7 +344,7 @@ export default {
         path,
         filename: sItem.filename
       }
-      this.$refs.fileUpload.clearFileInput()
+
       this.isShowUploadModal = true
     },
     showFolderMenu() {
@@ -378,36 +374,14 @@ export default {
         await this.getFileList()
       })
     },
-    async showUploadDialog(config) {
-      const {
-        isSubmit = false
-      } = config || {}
+    async showUploadDialog() {
       const path = this.currentPath
       this.uploadConfig = {
         path,
         filename: ''
       }
-      const fileUpload = this.$refs.fileUpload
-      if (!fileUpload) {
-        return
-      }
-      fileUpload.clearFileInput()
-      this.isShowUploadModal = true
-      if (isSubmit) {
-        this.$nextTick(() => {
-          fileUpload.handleSubmit()
-        })
-      }
 
-    },
-    handleUploaded() {
-      setTimeout(() => {
-        this.isShowUploadModal = false
-        this.$refs.fileUpload.clearFileInput()
-        this.$toast.success(this.$t('msg.file-uploaded'))
-      }, 500)
-      this.getFileList()
-      this.uploadFiles = []
+      this.isShowUploadModal = true
     },
     async handleLocateFile(item) {
       setTimeout(() => {
@@ -428,12 +402,10 @@ export default {
     fileDrop(e) {
       e.preventDefault()
       this.showDropzone = false
-      const files = e.dataTransfer.files
+      const files = Array.from(e.dataTransfer.files)
       // console.log('files', files)
-      this.uploadFiles = files
-      this.showUploadDialog({
-        isSubmit: true
-      })
+      this.$refs.fileUpload.addFiles(files)
+      this.showUploadDialog()
     },
   }
 }

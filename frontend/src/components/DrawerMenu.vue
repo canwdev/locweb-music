@@ -10,7 +10,7 @@
         </span>
       </TkButton>
 
-      <TkButton size="no-style cursor-default" class="menu-item">
+      <TkButton size="no-style" class="menu-item cursor-default">
         <span class="material-icons">color_lens</span>
         <span class="menu-item-title">
           {{ $t('settings.theme-color') }}
@@ -23,7 +23,7 @@
         </span>
       </TkButton>
 
-      <TkButton size="no-style cursor-default" class="menu-item">
+      <TkButton size="no-style" class="menu-item cursor-default">
         <span class="material-icons">translate</span>
         <span class="menu-item-title">
           {{ $t('settings.language') }}
@@ -199,5 +199,10 @@ export default {
       z-index: 1002;
     }
   }
+
+  .tk-button {
+    border-radius: 0;
+  }
+
 }
 </style>

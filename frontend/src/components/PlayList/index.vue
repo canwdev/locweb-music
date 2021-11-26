@@ -38,7 +38,7 @@ function getRandomInt(min, max) {
 }
 
 export default {
-  name: 'ListPlaying',
+  name: 'PlayList',
   mixins: [dialogMenuMixin],
   components: {
     MainList,

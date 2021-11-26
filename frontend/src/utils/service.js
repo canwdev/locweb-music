@@ -50,7 +50,9 @@ function Service(config) {
           message = msg
         }
       }
-      main.$toast.error(message)
+      if (message) {
+        main.$toast.error(message)
+      }
       return Promise.reject(error)
     }
   )

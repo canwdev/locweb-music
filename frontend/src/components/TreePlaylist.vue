@@ -58,7 +58,7 @@ const root = new TreeNode({
 })
 
 export default {
-  name: 'ListPlaylist',
+  name: 'TreePlaylist',
   data() {
     return {
       treeData: root,

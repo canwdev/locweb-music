@@ -83,7 +83,7 @@ export function uploadFile(params, config = {}) {
   }
 
   const formData = new FormData()
-  formData.append('sampleFile', file)
+  formData.append('file', file)
   formData.append('filename', filename)
   formData.append('path', path)
   return service.post('/music/upload', formData, {

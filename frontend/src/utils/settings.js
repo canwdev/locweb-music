@@ -8,7 +8,7 @@ const defaultSettings = {
   isDarkTheme: isSystemDarkMode,
   ncmApi: null,
   navbarTab: NavbarTabsType.MAIN,
-  themeColor: null,
+  themeColor: '#72bb8d',
   loopMode: LoopModeType.LOOP_SEQUENCE, // music playing loop mode
 }
 

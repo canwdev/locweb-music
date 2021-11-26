@@ -17,7 +17,7 @@
       class="panel-item right-panel"
       @click="navbarIndex=NavBarIndex.RIGHT"
     >
-      <ListPlaying/>
+      <PlayList/>
     </div>
 
     <Actionbar/>
@@ -29,7 +29,7 @@
 import {mapGetters} from 'vuex'
 import Navbar from '@/components/Navbar.vue'
 import Actionbar from '@/components/Actionbar.vue'
-import ListPlaying from '@/components/ListPlaying/index.vue'
+import PlayList from '@/components/PlayList/index.vue'
 import {NavBarIndex, NavbarTabs, NavbarTabsType} from '@/enum'
 
 // 动态引入子组件
@@ -48,7 +48,7 @@ export default {
   components: {
     Navbar,
     Actionbar,
-    ListPlaying,
+    PlayList,
     ...dynamicImportComponents
   },
   data() {

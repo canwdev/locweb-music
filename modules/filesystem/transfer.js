@@ -26,7 +26,7 @@ const downloadFile = async (req, res, next) => {
 
 const uploadFile = async (req, res, next) => {
   try {
-    let sampleFile
+    let file
     let uploadPath
 
     if (!req.files || Object.keys(req.files).length === 0) {
@@ -39,8 +39,8 @@ const uploadFile = async (req, res, next) => {
       path: musicPath = ''
     } = req.body
 
-    sampleFile = req.files.sampleFile
-    filename = getSafePath(getSafeFilename(filename) || sampleFile.name)
+    file = req.files.file
+    filename = getSafePath(getSafeFilename(filename) || file.name)
 
     console.log('>>> filename: ',filename)
 
@@ -49,7 +49,7 @@ const uploadFile = async (req, res, next) => {
 
     console.log('>>> uploadPath: ',uploadPath)
 
-    sampleFile.mv(uploadPath, (err) => {
+    file.mv(uploadPath, (err) => {
       if (err) {
         console.error(err)
         return res.status(500).send(err)

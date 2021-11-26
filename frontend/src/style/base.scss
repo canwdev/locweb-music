@@ -23,3 +23,112 @@ body {
     border-radius: 0 !important;
   }
 }
+
+
+// ---
+.action-btn-row {
+  text-align: right;
+  padding: 10px 15px;
+  border-top: 1px solid $border-color;
+
+  button + button {
+    margin-left: 8px;
+  }
+}
+
+.settings-form {
+  width: 400px;
+
+  @media screen and (max-width: $mq_mobile_width) {
+    width: 340px;
+  }
+  text-align: left;
+
+  .settings-title {
+    padding: 15px;
+    color: $primary;
+    font-weight: bold;
+    border-bottom: 1px solid;
+    font-size: 18px;
+  }
+
+  .settings-content {
+    padding: 10px;
+  }
+
+  .form-row {
+    padding: 10px 5px;
+
+    .row-title {
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+  }
+
+  .settings-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 5px;
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 0;
+
+    .s-label {
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+    }
+
+    .s-actions {
+      display: flex;
+      align-items: center;
+    }
+
+    & + .settings-row {
+      border-top: 1px solid rgba(204, 204, 204, 0.27);
+    }
+
+    &.multi-line {
+      flex-direction: column;
+      align-items: flex-start;
+
+      .s-label {
+        width: 100%;
+        margin-bottom: 5px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .s-actions {
+        display: flex;
+        width: 100%;
+
+        textarea {
+          width: 100%;
+          font-family: monospace;
+        }
+      }
+    }
+  }
+
+  .hover-tips {
+    width: 15px;
+    height: 15px;
+    font-size: 10px;
+    border: 1px solid $border-color;
+    border-radius: 50%;
+    display: inline-block;
+    line-height: 15px;
+    text-align: center;
+    overflow: hidden;
+    margin: 0 5px;
+  }
+
+  .color-input {
+    width: 40px;
+    height: 20px;
+    padding: 0;
+  }
+}
