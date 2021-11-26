@@ -12,15 +12,26 @@
       encType="multipart/form-data"
       @submit="handleSubmit"
     >
-      <input
-        ref="inputRef"
-        class=" input-upload"
+      <template v-if="uploadFiles">
+        <div class="input-upload">
+          {{ uploadFiles[0].name }}
+        </div>
+      </template>
+      <template v-else>
+        <input
+          ref="inputRef"
+          class="input-upload"
+          :disabled="isUploading"
+          type="file"
+          name="sampleFile"
+        />
+        <TkButton type="button" :disabled="isUploading" @click="clearFileInput">{{ $t('clear') }}</TkButton>
+      </template>
+
+      <TkButton
         :disabled="isUploading"
-        type="file"
-        name="sampleFile"
-      />
-      <TkButton type="button" :disabled="isUploading" @click="clearFileInput">{{ $t('clear') }}</TkButton>
-      <TkButton type="submit">{{ $t('upload') }}</TkButton>
+        type="submit">{{ $t('upload') }}
+      </TkButton>
     </form>
 
     <div class="progress-box">
@@ -38,6 +49,10 @@ import {uploadFile} from '@/api/music'
 export default {
   name: 'FileUpload',
   props: {
+    uploadFiles: {
+      type: [Array, FileList],
+      default: null
+    },
     uploadConfig: {
       type: Object,
       default() {
@@ -58,7 +73,7 @@ export default {
   methods: {
     async handleSubmit() {
       const input = this.$refs.inputRef
-      const files = input.files
+      const files = this.uploadFiles || input && input.files
       if (!files.length) {
         this.$toast.error(this.$t('msg.please-select-a-file-to-upload'))
         return
@@ -85,7 +100,9 @@ export default {
       }
     },
     clearFileInput() {
-      this.$refs.inputRef.files = new DataTransfer().files
+      if (this.$refs.inputRef) {
+        this.$refs.inputRef.files = new DataTransfer().files
+      }
       this.progress = 0
     }
   },
@@ -96,6 +113,7 @@ export default {
 .file-upload-wrap {
   padding: 20px;
   max-width: 500px;
+  min-width: 250px;
   border-radius: $border-radius;
 
   .title-box {

@@ -12,6 +12,9 @@
     @goUpDir="goUpDir"
     @refresh="handleRefresh"
     @openMenu="showFolderMenu"
+    @dragover.native="fileDragover"
+    @dragleave.native="showDropzone = false"
+    @drop.native="fileDrop"
   >
     <ContextMenuCommon
       ref="fileMenuRef"
@@ -29,9 +32,14 @@
       <FileUpload
         ref="fileUpload"
         :upload-config="uploadConfig"
+        :upload-files="uploadFiles"
         @uploaded="handleUploaded"
       />
     </TkModalDialog>
+
+    <transition name="fade">
+      <FileDropzone v-show="showDropzone"/>
+    </transition>
   </MainList>
 </template>
 
@@ -49,13 +57,15 @@ import {downLoadFile} from '@/utils'
 import MainList from '@/components/MainList/index.vue'
 import FileUpload from '@/components/FileUpload.vue'
 import ContextMenuCommon from '@/components/ContextMenuCommon.vue'
+import FileDropzone from './FileDropzone'
 
 export default {
   name: 'ListFilesystem',
   components: {
     MainList,
     FileUpload,
-    ContextMenuCommon
+    ContextMenuCommon,
+    FileDropzone,
   },
   data() {
     return {
@@ -71,9 +81,16 @@ export default {
       selectedItem: null,
       folderMenuList: [
         {icon: 'create_new_folder', label: this.$t('create-folder'), action: this.createFolder},
-        {icon: 'upload_file', label: this.$t('upload-files') + '...', action: this.showUploadDialog},
+        {
+          icon: 'upload_file', label: this.$t('upload-files') + '...', action: () => {
+            this.uploadFiles = null
+            this.showUploadDialog()
+          }
+        },
         {icon: 'drive_folder_upload', label: this.$t('upload-folder') + '...', disabled: true}
-      ]
+      ],
+      showDropzone: false,
+      uploadFiles: null
     }
   },
   computed: {
@@ -361,14 +378,27 @@ export default {
         await this.getFileList()
       })
     },
-    async showUploadDialog() {
+    async showUploadDialog(config) {
+      const {
+        isSubmit = false
+      } = config || {}
       const path = this.currentPath
       this.uploadConfig = {
         path,
         filename: ''
       }
-      this.$refs.fileUpload.clearFileInput()
+      const fileUpload = this.$refs.fileUpload
+      if (!fileUpload) {
+        return
+      }
+      fileUpload.clearFileInput()
       this.isShowUploadModal = true
+      if (isSubmit) {
+        this.$nextTick(() => {
+          fileUpload.handleSubmit()
+        })
+      }
+
     },
     handleUploaded() {
       setTimeout(() => {
@@ -377,6 +407,7 @@ export default {
         this.$toast.success(this.$t('msg.file-uploaded'))
       }, 500)
       this.getFileList()
+      this.uploadFiles = []
     },
     async handleLocateFile(item) {
       setTimeout(() => {
@@ -388,7 +419,22 @@ export default {
       if (item.path !== this.currentPath) {
         this.setDirectories(item.path.split('/').filter(i => i))
       }
-    }
+    },
+    // 拖拽上传
+    fileDragover(e) {
+      this.showDropzone = true
+      e.preventDefault()
+    },
+    fileDrop(e) {
+      e.preventDefault()
+      this.showDropzone = false
+      const files = e.dataTransfer.files
+      // console.log('files', files)
+      this.uploadFiles = files
+      this.showUploadDialog({
+        isSubmit: true
+      })
+    },
   }
 }
 </script>
