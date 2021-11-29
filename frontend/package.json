@@ -9,7 +9,7 @@
     "ic": "yarn add @canwdev/tank-ui --registry=https://registry.npmjs.com"
   },
   "dependencies": {
-    "@canwdev/tank-ui": "^0.2.27",
+    "@canwdev/tank-ui": "^0.2.28",
     "axios": "^0.21.1",
     "browser-id3-writer": "^4.4.0",
     "core-js": "^3.6.5",
