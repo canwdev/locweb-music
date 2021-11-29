@@ -157,7 +157,7 @@ export default {
         {icon: 'delete', label: this.$t('delete'), action: () => this.actionDeleteFile(sItem)},
         !sItem.isDirectory
           ? {icon: 'file_download', label: this.$t('download'), action: () => this.actionDownloadFile(sItem)}
-          : {icon: 'archive', label: this.$t('download-archive'), disabled: true},
+          : {icon: 'archive', label: this.$t('download-archive'), action: () => this.actionDownloadFile(sItem)},
       ]
       if (!sItem.isDirectory) {
         list.push({icon: 'upgrade', label: this.$t('replace') + '...', action: () => this.actionReplaceFile(sItem)})

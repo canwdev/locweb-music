@@ -6,6 +6,7 @@ const {
 const fs = require('fs-extra')
 const Path = require('path')
 const {getSafePath} = require("../../utils/fs-tool")
+const Archiver = require('archiver')
 
 const downloadFile = async (req, res, next) => {
   try {
@@ -15,6 +16,19 @@ const downloadFile = async (req, res, next) => {
     } = req.query
 
     const {filePath} = getMusicExactPath(musicPath, filename)
+
+    const stat = await fs.lstat(filePath)
+
+    if (stat.isDirectory()) {
+      const archive = Archiver('zip', {
+        zlib: { level: 9 }
+      })
+      archive.directory(filePath, filename);
+      res.header('Content-Disposition', `attachment; filename="${filename}.zip"`);
+      archive.pipe(res)
+      archive.finalize()
+      return
+    }
 
     return res.download(filePath, filename, {
       dotfiles: 'allow'
