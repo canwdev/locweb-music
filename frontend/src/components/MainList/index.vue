@@ -17,6 +17,9 @@
           ><i class="material-icons">search</i>
           </TkButton>
         </form>
+
+        <slot name="actions"></slot>
+
         <TkButton
           v-if="!isPlayList"
           size="no-style"
@@ -78,11 +81,12 @@
       </template>
     </DynamicScroller>
 
+
     <slot></slot>
   </div>
 </template>
 
-<script >
+<script>
 import ListItem from './ListItem.vue'
 import {MusicItem} from '@/enum'
 
@@ -248,6 +252,10 @@ export default {
       align-items: center;
       justify-content: center;
       width: 28px;
+
+      &.active {
+        color: $primary;
+      }
 
       .material-icons {
         font-size: 18px;

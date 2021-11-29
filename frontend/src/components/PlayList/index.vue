@@ -1,5 +1,6 @@
 <template>
   <MainList
+    ref="mainListRef"
     :is-loading="isLoading"
     :list="playingList"
     :active-id="playingId"
@@ -10,6 +11,16 @@
     @onItemClick="handleItemClick"
     @onItemAction="handleItemAction"
   >
+    <template v-slot:actions>
+      <TkButton
+        size="no-style"
+        :disabled="!playingList.length"
+        :class="{active: isRandom}"
+        :title="$t('random')"
+        @click="toggleRandom"
+      ><i class="material-icons">casino</i>
+      </TkButton>
+    </template>
     <ContextMenuCommon
       ref="fileMenuRef"
       :list-fn="getFileMenuList"
@@ -26,7 +37,7 @@ import bus, {
   ACTION_NEXT,
   ACTION_PLAY_ENDED
 } from '@/utils/bus'
-import {LoopModeType, NavBarIndex} from '@/enum'
+import {LoopModeType} from '@/enum'
 import {mapGetters, mapState} from 'vuex'
 import dialogMenuMixin from './dialog-menu'
 import ContextMenuCommon from '@/components/ContextMenuCommon'
@@ -52,13 +63,20 @@ export default {
   computed: {
     ...mapState([
       'playingList',
-      'isRandom',
       'paused',
       'musicItem',
     ]),
     ...mapGetters([
       'loopMode'
     ]),
+    isRandom: {
+      get() {
+        return this.$store.state.isRandom
+      },
+      set(val) {
+        this.$store.commit('setIsRandom', val)
+      }
+    },
     playingId() {
       return this.musicItem.id
     },
@@ -91,10 +109,6 @@ export default {
       })
 
       this.$nextTick(() => {
-        // jump to playing list
-        setTimeout(() => {
-          this.$store.commit('setNavbarIndex', NavBarIndex.RIGHT)
-        }, 30)
         bus.$emit(ACTION_TOGGLE_PLAY) // {isPlay: true}
       })
     },
@@ -166,6 +180,21 @@ export default {
       } = event
       this.playMusicFromList(list, item)
     },
+    toggleRandom() {
+      if (this.playingList.length === 0) {
+        return
+      }
+      const flag = !this.isRandom
+      if (flag) {
+        this.$store.commit('setShuffle')
+      } else {
+        this.$store.commit('setShuffleRestore')
+      }
+      this.$toast.info(this.$t('random') + ': ' + (flag ? this.$t('on') : this.$t('off')))
+    },
+    locateItem() {
+      this.$refs.mainListRef.locateItem()
+    }
   }
 }
 </script>

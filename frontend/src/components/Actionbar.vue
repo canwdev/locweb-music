@@ -16,7 +16,7 @@
       <ButtonCover
         :src="musicItem.cover"
         icon-name="audiotrack"
-        @click.native="detailDialogVisible = !detailDialogVisible"
+        @click.native="isShowDetail = !isShowDetail"
       >
       </ButtonCover>
       <TkButton
@@ -63,12 +63,11 @@
         <TkButton
           size="no-style"
           :disabled="isDisabled"
+          :class="{active: isShowPlayingList}"
           class="btn-action"
-          :class="{active: isRandom}"
-          :title="$t('random')"
-          @click="toggleRandom"
+          @click="isShowPlayingList = !isShowPlayingList"
         >
-          <i class="material-icons">casino</i>
+          <i class="material-icons">playlist_play</i>
         </TkButton>
 
         <TkButton
@@ -93,7 +92,7 @@
 
     <!--Music Detail Dialog-->
     <TkModalDialog
-      v-model="detailDialogVisible"
+      v-model="isShowDetail"
       fixed
       class="music-detail-dialog"
       show-close
@@ -106,9 +105,26 @@
         :style="detailBgStyle"
       >
         <MusicDetail
-          :is-parent-visible="detailDialogVisible"
+          :is-parent-visible="isShowDetail"
         />
       </div>
+    </TkModalDialog>
+
+    <!-- Playing List -->
+    <TkModalDialog
+      v-model="isShowPlayingList"
+      fixed
+      show-close
+      class="playing-list-dialog"
+      transition-name="slide-bottom"
+    >
+      <div class="playlist-wrap settings-form">
+        <div class="settings-title">
+          <i class="material-icons">playlist_play</i> 正在播放
+        </div>
+        <PlayList ref="playingListRef"/>
+      </div>
+
     </TkModalDialog>
 
     <TkModalDialog
@@ -134,7 +150,7 @@
 </template>
 
 <script>
-import {LoopModeType, } from '@/enum'
+import {LoopModeType,} from '@/enum'
 import bus, {
   ACTION_CHANGE_CURRENT_TIME,
   ACTION_NEXT, ACTION_PREV,
@@ -146,6 +162,7 @@ import MusicDetail from '@/components/MusicDetail.vue'
 import hotkeys from 'hotkeys-js'
 import {mapGetters, mapState} from 'vuex'
 import audioVolumeMixin from '@/mixins/audio-volume'
+import PlayList from '@/components/PlayList/index.vue'
 
 const loopModeList = [
   LoopModeType.LOOP_SEQUENCE,
@@ -165,13 +182,15 @@ export default {
   mixins: [audioVolumeMixin],
   components: {
     ButtonCover,
-    MusicDetail
+    MusicDetail,
+    PlayList,
   },
   data() {
     return {
       mCurrentTime: 0,
       isSeeking: false,
-      detailDialogVisible: false,
+      isShowDetail: false,
+      isShowPlayingList: false,
       isShowVolumeSlider: false,
     }
   },
@@ -196,14 +215,6 @@ export default {
         }
       }
       return null
-    },
-    isRandom: {
-      get() {
-        return this.$store.state.isRandom
-      },
-      set(val) {
-        this.$store.commit('setIsRandom', val)
-      }
     },
     loopMode: {
       get() {
@@ -244,13 +255,19 @@ export default {
       if (!this.isSeeking) {
         this.mCurrentTime = Number(val)
       }
+    },
+    isShowPlayingList(val) {
+      if (val) {
+        this.$nextTick(() => {
+          this.$refs.playingListRef.locateItem()
+        })
+      }
     }
   },
   mounted() {
     hotkeys(keySpace, this.togglePlay)
     hotkeys(keyPrevious, this.previous)
     hotkeys(keyNext, this.next)
-    hotkeys('z', this.toggleRandom)
     hotkeys('x', this.switchLoopMode)
 
     hotkeys(keyUp, this.volumeUpFn)
@@ -260,7 +277,6 @@ export default {
     hotkeys.unbind(keySpace, this.togglePlay)
     hotkeys.unbind(keyPrevious, this.previous)
     hotkeys.unbind(keyNext, this.next)
-    hotkeys.unbind('z', this.toggleRandom)
     hotkeys.unbind('x', this.switchLoopMode)
 
     hotkeys.unbind(keyUp, this.volumeUpFn)
@@ -286,18 +302,6 @@ export default {
       e.preventDefault()
       bus.$emit(ACTION_TOGGLE_PLAY)
     },
-    toggleRandom() {
-      if (this.playingList.length === 0) {
-        return
-      }
-      const flag = !this.isRandom
-      if (flag) {
-        this.$store.commit('setShuffle')
-      } else {
-        this.$store.commit('setShuffleRestore')
-      }
-      this.$toast.info(this.$t('random') + ': ' + (flag ? this.$t('on') : this.$t('off')))
-    },
     switchLoopMode() {
       let index = loopModeList.findIndex(i => i === this.loopMode)
       ++index
@@ -321,7 +325,7 @@ export default {
       this.isSeeking = false
     },
     showDetailDialog() {
-      this.detailDialogVisible = !this.detailDialogVisible
+      this.isShowDetail = !this.isShowDetail
       // console.log(musicItem.value)
     }
   }
@@ -414,7 +418,7 @@ $bottomZIndex: 2100;
 
       .reverse-x {
         text-shadow: 0 0 5px $color-pink;
-        color:$color-pink;
+        color: $color-pink;
         transform: rotateX(-180deg);
       }
 
@@ -461,6 +465,7 @@ $bottomZIndex: 2100;
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
+
       &.blur .music-detail {
         background: rgba(28, 28, 28, 0.77);
         backdrop-filter: saturate(180%) blur(20px);
@@ -471,6 +476,25 @@ $bottomZIndex: 2100;
           background: rgba(254, 254, 254, 0.77);
         }
       }
+    }
+  }
+}
+
+.playing-list-dialog {
+  align-items: flex-end;
+  padding-bottom: 75px;
+  box-sizing: border-box;
+
+  .main-list {
+    height: 50vh;
+    overflow: hidden;
+  }
+
+  ::v-deep .playlist-wrap {
+    .virtual-scroller {
+      padding: 5px 10px;
+      overflow-y: overlay; // 滚动条覆盖
+      box-sizing: border-box;
     }
   }
 }

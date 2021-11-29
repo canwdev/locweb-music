@@ -57,7 +57,7 @@ import {mapGetters, mapState} from 'vuex'
 
 import visibleMixin from '@/mixins/visible'
 import LoginPrompt from '@/components/LoginPrompt.vue'
-import {DrawerMenuTabItems, NavBarIndex} from '@/enum'
+import {DrawerMenuTabItems} from '@/enum'
 import {hexToRgb} from '@/utils/color'
 import languages from '@/lang/languages'
 import {LS_KEY_LOCATE} from '@/lang/i18n'
@@ -149,7 +149,6 @@ export default {
           action: () => {
             this.navbarTab = item.value
             this.mVisible = false
-            this.$store.commit('setNavbarIndex', NavBarIndex.LEFT)
           }
         }
       })

@@ -96,11 +96,6 @@ export const LoopModeType = {
   SHUFFLE: 5, // Shuffle next
 }
 
-export const NavBarIndex = {
-  LEFT: 0,
-  RIGHT: 1
-}
-
 // single song data
 export class MusicItem {
   constructor(item = {}) {

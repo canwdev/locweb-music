@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import {MusicItem, NavBarIndex} from '@/enum'
+import {MusicItem} from '@/enum'
 import {FileAction} from '@/enum/service'
 import {
   fileAction,
@@ -406,9 +406,6 @@ export default {
 
     },
     async handleLocateFile(item) {
-      setTimeout(() => {
-        this.$store.commit('setNavbarIndex', NavBarIndex.LEFT)
-      }, 30)
       // console.log(item)
 
       await this.setLastPlayId(item.id)

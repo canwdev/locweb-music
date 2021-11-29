@@ -53,7 +53,7 @@ const root = new TreeNode({
   isLazy: true,
   data: {
     id: -1,
-    title: 'Playlist',
+    title: '歌单',
   }
 })
 
@@ -72,9 +72,8 @@ export default {
     },
     async handleLazyLoad({node, done, fail}) {
       try {
-        const {list, musics} = await getPlaylist({
-          pid: node.data.id,
-          showMusic: true
+        const {list = [], musics = []} = await getPlaylist({
+          pid: node.data.id
         })
         const resList = [
           ...list.map(i => new TreeNode({

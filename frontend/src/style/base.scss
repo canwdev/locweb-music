@@ -40,7 +40,6 @@ button, input, textarea, a {
   }
 }
 
-
 // ---
 .action-btn-row {
   text-align: right;
@@ -66,6 +65,13 @@ button, input, textarea, a {
     font-weight: bold;
     border-bottom: 1px solid;
     font-size: 18px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    .material-icons {
+      height: 18px;
+      margin-top: -6px;
+    }
   }
 
   .settings-content {
