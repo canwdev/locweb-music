@@ -1,10 +1,14 @@
 <template>
-  <div class="lyric-search">
+  <div class="lyric-search settings-form">
     <TkLoading
       absolute
       :visible="isLoading"
     />
-    <div v-show="!isDetail" class="search-index">
+    <div class="settings-title">
+      Search Lyric
+    </div>
+
+    <div v-show="!isDetail" class="settings-content search-index">
       <form class="flex items-center search-form" @submit.prevent="handleSearch">
         <TkInput
           v-model="searchText"
@@ -41,16 +45,16 @@
 
     </div>
 
-    <div v-show="isDetail" class="search-detail">
+    <div v-show="isDetail" class="settings-content search-detail">
       <textarea
         v-model="lyric"
         rows="20"
         :placeholder="$t('msg.type-lyrics-here-lrc')"
       ></textarea>
-      <div class="flex justify-between">
-        <TkButton class="" @click="isDetail = false">{{ $t('back') }}</TkButton>
-        <TkButton class="" @click="saveLyric">{{ $t('save') }}</TkButton>
-      </div>
+    </div>
+    <div v-show="isDetail" class="action-btn-row">
+      <TkButton class="" @click="isDetail = false">{{ $t('back') }}</TkButton>
+      <TkButton class="" @click="saveLyric">{{ $t('save') }}</TkButton>
     </div>
 
   </div>
@@ -151,9 +155,7 @@ export default {
 
 <style lang="scss" scoped>
 .lyric-search {
-  width: 300px;
   min-height: 200px;
-  padding: 10px;
   position: relative;
 
   .search-form {
@@ -174,6 +176,7 @@ export default {
       text-align: left;
       font-size: 12px;
       padding: 5px;
+      border-radius: 0;
 
       & + .list-item {
         border-top: 1px solid $border-color;

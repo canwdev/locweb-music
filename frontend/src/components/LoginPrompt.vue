@@ -1,29 +1,40 @@
 <template>
-  <div class="login-wrap">
-    <form ref="form" @submit.stop.prevent="submitLogin">
-      <div class="form-title">{{ $t('user.login') }}</div>
-      <div class="form-row">
-        <div class="form-row-title">{{ $t('user.username') }}</div>
-        <TkInput
-          id="name-input"
-          v-model="form.username"
-          required
-        />
-      </div>
+  <div class="login-wrap settings-form">
+    <div class="settings-title">
+      {{ $t('user.login') }}
+    </div>
 
-      <div class="form-row">
-        <div class="form-row-title">{{ $t('user.password') }}</div>
-        <TkInput
-          id="password-input"
-          v-model="form.password"
-          type="password"
-          required
-        />
+    <form ref="form" @submit.stop.prevent="submitLogin">
+      <div class="settings-content">
+        <div class="settings-row multi-line">
+          <div class="s-label">{{ $t('user.username') }}</div>
+          <div class="s-actions">
+            <TkInput
+              id="name-input"
+              v-model="form.username"
+              required
+            />
+          </div>
+
+        </div>
+
+        <div class="settings-row multi-line">
+          <div class="s-label">{{ $t('user.password') }}</div>
+          <div class="s-actions">
+            <TkInput
+              id="password-input"
+              v-model="form.password"
+              type="password"
+              required
+            />
+          </div>
+        </div>
       </div>
-      <div class="form-row text-center">
+      <div class="action-btn-row">
         <TkButton type="submit">{{ $t('submit') }}</TkButton>
       </div>
     </form>
+
   </div>
 </template>
 
@@ -57,19 +68,10 @@ export default {
 
 <style lang="scss" scoped>
 .login-wrap {
-  padding: 10px;
-
-  .form-title {
-    font-size: 18px;
-    font-weight: bold;
-    text-align: center;
-  }
-
+  width: 300px;
   .form-row {
-    margin-top: 10px;
-
     .form-row-title {
-      font-size: 12px;
+      font-size: 14px;
     }
   }
 }
