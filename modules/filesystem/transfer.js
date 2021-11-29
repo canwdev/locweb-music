@@ -4,7 +4,7 @@ const {
   getSafeFilename
 } = require('../../utils/fs-tool')
 const fs = require('fs-extra')
-const path = require('path')
+const Path = require('path')
 const {getSafePath} = require("../../utils/fs-tool")
 
 const downloadFile = async (req, res, next) => {
@@ -45,7 +45,7 @@ const uploadFile = async (req, res, next) => {
     console.log('>>> filename: ',filename)
 
     uploadPath = getMusicPath(getSafePath(musicPath) + '/' + filename)
-    fs.ensureDirSync(path.dirname(uploadPath))
+    fs.ensureDirSync(Path.dirname(uploadPath))
 
     console.log('>>> uploadPath: ',uploadPath)
 

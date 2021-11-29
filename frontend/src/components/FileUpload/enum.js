@@ -18,6 +18,11 @@ export class FileUploadItem extends EventEmitter {
     this.filename = file.name
     this.progress = 0
     this.status = UploadStatus.WAITING
+    if (file.webkitRelativePath) {
+      const hierarchy = file.webkitRelativePath.replace(/\\/g, '/').split('/')
+      hierarchy.pop()
+      this.parentPath = hierarchy.join('/')
+    }
   }
 
   async upload(uploadConfig = {}) {
@@ -31,13 +36,19 @@ export class FileUploadItem extends EventEmitter {
       this.progress = 0
       this.status = UploadStatus.UPLOADING
 
-      const cancelTokenSource = axios.CancelToken.source();
+      const cancelTokenSource = axios.CancelToken.source()
       this.cancelTokenSource = cancelTokenSource
-      const result = await uploadFile({
+
+      const params = {
         file: this.file,
-        ...uploadConfig,
+        path: uploadConfig.path,
         filename: uploadConfig.filename || this.filename
-      }, {
+      }
+      if (this.parentPath) {
+        params.path = params.path + '/' + this.parentPath
+      }
+
+      const result = await uploadFile(params, {
         onUploadProgress: (event) => {
           this.progress = Math.round((event.loaded * 100) / event.total)
         },

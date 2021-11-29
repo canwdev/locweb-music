@@ -22,23 +22,26 @@ export default {
   bottom: 0;
   left: 0;
   background: rgba(0, 0, 0, 0.5);
-  padding: 30px;
+  padding: 20px;
   box-sizing: border-box;
+  z-index: 10;
+
   .border-dashed {
     height: 100%;
     width: 100%;
     color: $primary;
-    border: 5px dashed;
+    border: 3px dashed;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 3%;
-    font-size: 26px;
+    border-radius: 8px;
+    font-size: 18px;
     box-sizing: border-box;
     flex-direction: column;
+
     .material-icons {
-      font-size: 100px;
-      margin-bottom: 20px;
+      font-size: 50px;
+      margin-bottom: 15px;
     }
   }
 }

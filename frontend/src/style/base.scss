@@ -11,7 +11,23 @@ html, body {
 body {
   touch-action: manipulation; // disable ios double tap zoom
   user-select: none;
-  //-webkit-tap-highlight-color: $primary-tr;
+  -webkit-tap-highlight-color: $primary-opacity;
+  ::selection {
+    color: #fff;
+    background-color: $primary;
+  }
+}
+
+@mixin focusMixin() {
+  //outline: 1px solid $primary;
+  outline: none;
+  box-shadow: 0 0 0 1px $primary inset;
+}
+
+button, input, textarea, a {
+  &:focus {
+    @include focusMixin;
+  }
 }
 
 .tk-scroll {

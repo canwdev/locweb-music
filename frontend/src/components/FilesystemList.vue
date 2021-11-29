@@ -32,7 +32,6 @@
       <FileUpload
         ref="fileUpload"
         :upload-config="uploadConfig"
-        @uploaded="handleUploaded"
         @close="getFileList(), isShowUploadModal = false"
       />
     </TkModalDialog>
@@ -76,15 +75,29 @@ export default {
       fileList: [],
       uploadConfig: {
         path: '',
-        filename: ''
+        filename: '',
+        isUploadMultiple: true,
       },
       selectedItem: null,
       folderMenuList: [
         {icon: 'create_new_folder', label: this.$t('create-folder'), action: this.createFolder},
         {
-          icon: 'upload_file', label: this.$t('upload-files') + '...', action: this.showUploadDialog
+          icon: 'upload_file', label: this.$t('upload-files') + '...',
+          action: () => {
+            this.showUploadDialog({
+              isOpenChooseDialog: true
+            })
+          }
         },
-        {icon: 'drive_folder_upload', label: this.$t('upload-folder') + '...', disabled: true}
+        {
+          icon: 'drive_folder_upload', label: this.$t('upload-folder') + '...',
+          action: () => {
+            this.showUploadDialog({
+              isUploadFolder: true,
+              isOpenChooseDialog: true
+            })
+          }
+        }
       ],
       showDropzone: false,
     }
@@ -338,14 +351,10 @@ export default {
     },
     async actionReplaceFile(sItem) {
       if (!sItem) return
-      const path = this.currentPath
-
-      this.uploadConfig = {
-        path,
-        filename: sItem.filename
-      }
-
-      this.isShowUploadModal = true
+      this.showUploadDialog({
+        filename: sItem.filename,
+        isOpenChooseDialog: true
+      })
     },
     showFolderMenu() {
       this.$refs.folderMenuRef.open()
@@ -374,14 +383,27 @@ export default {
         await this.getFileList()
       })
     },
-    async showUploadDialog() {
+    showUploadDialog(options) {
+      const {
+        isUploadFolder = false,
+        isOpenChooseDialog = false,
+        filename = ''
+      } = options || {}
       const path = this.currentPath
       this.uploadConfig = {
         path,
-        filename: ''
+        filename,
+        isUploadMultiple: true,
+        isUploadFolder
       }
 
       this.isShowUploadModal = true
+      if (isOpenChooseDialog) {
+        this.$nextTick(() => {
+          this.$refs.fileUpload.chooseFiles()
+        })
+      }
+
     },
     async handleLocateFile(item) {
       setTimeout(() => {

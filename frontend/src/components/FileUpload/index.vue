@@ -1,13 +1,21 @@
 <template>
-  <div class="file-upload-wrap settings-form">
+  <div
+    class="file-upload-wrap settings-form"
+    @dragover.prevent.stop
+    @dragleave.prevent.stop
+    @drop.prevent.stop
+  >
     <div class="settings-title">
-      <div class="title-inner text-overflow"><b>{{ $t('upload-to') }}:</b> {{ (uploadConfig.path + uploadConfig.filename) || 'Root dir' }}</div>
+      <div class="title-inner text-overflow">
+        {{ $t('upload-to') }}: {{ (uploadConfig.path + uploadConfig.filename) || 'Root dir' }}
+      </div>
       <TkButton
         round
         flat
         :disabled="isUploading"
+        class="material-icons"
         @click="handleClose"
-      ><i class="material-icons">close</i></TkButton>
+      >close</TkButton>
     </div>
     <input
       ref="inputRef"
@@ -16,26 +24,60 @@
       :disabled="isUploading"
       accept="audio/*"
       type="file"
-      :webkitdirectory="isUploadFolder"
-      :directory="isUploadFolder"
-      multiple
+      :webkitdirectory="uploadConfig.isUploadFolder"
+      :directory="uploadConfig.isUploadFolder"
+      :multiple="uploadConfig.isUploadMultiple"
       @change="handleInputFileChange($event)"
     />
 
-    <div class="settings-content">
+    <div
+      class="settings-content"
+    >
       <div
         class="upload-actions"
       >
-        <TkButton @click="chooseFiles">添加文件</TkButton>
-        <TkButton v-show="uploadList.length" @click="clearFiles">{{ $t('clear') }} All</TkButton>
+        <TkButton
+          :title="uploadConfig.isUploadFolder ? '选择文件夹' : '添加文件'"
+          class="material-icons"
+          @click="chooseFiles"
+        >
+          {{ uploadConfig.isUploadFolder ? 'create_new_folder' : 'note_add' }}
+        </TkButton>
+        <TkButton
+          v-show="uploadList.length"
+          :title="$t('clear')"
+          class="material-icons"
+          @click="clearFiles"
+        >
+          clear_all
+        </TkButton>
         <div style="flex:1"></div>
         <TkButton
           v-show="!isUploading"
-          :disabled="!uploadList.length" @click="batchUpload">Batch {{ $t('upload') }}</TkButton>
-        <TkButton v-show="isUploading" @click="batchCancel">全部取消</TkButton>
+          :disabled="!uploadList.length"
+          @click="batchUpload"
+          :title="$t('upload')"
+          class="material-icons"
+        >file_upload
+        </TkButton>
+        <TkButton
+          v-show="isUploading"
+          title="全部取消"
+          @click="batchCancel"
+          class="material-icons"
+        >close</TkButton>
       </div>
 
-      <div v-show="uploadList.length" class="file-upload-list">
+      <div
+        class="file-upload-list relative-position"
+        @dragover.prevent.stop="fileDragover"
+        @dragleave.prevent.stop="showDropzone = false"
+        @drop.prevent.stop="fileDrop"
+      >
+        <transition name="fade">
+          <FileDropzone v-show="showDropzone"/>
+        </transition>
+
         <FileItem
           v-for="(item, index) in uploadList"
           :key="item.id"
@@ -44,13 +86,15 @@
           @remove="handleRemoveItem(item, index)"
           @cancel="removeItemTask"
         />
+
+        <TkEmpty v-show="!uploadList.length" class="cursor-pointer" @click.native="chooseFiles"/>
       </div>
     </div>
 
     <div class="action-btn-row">
       <div class="progress-box">
         <div class="progress-text">
-          {{ $t('progress') }} ({{successCount}}/{{uploadList.length}})
+          {{ $t('progress') }} ({{ successCount }}/{{ uploadList.length }})
         </div>
         <TkProgress :value="progress"></TkProgress>
         <div class="progress-text">
@@ -65,11 +109,13 @@
 import {FileUploadItem, UploadStatus} from './enum'
 import FileItem from './FileItem'
 import {TaskQueue} from '@/utils/task-queue'
+import FileDropzone from '../FileDropzone'
 
 export default {
   name: 'FileUpload',
   components: {
-    FileItem
+    FileItem,
+    FileDropzone
   },
   props: {
     uploadConfig: {
@@ -77,7 +123,8 @@ export default {
       default() {
         return {
           path: 'Upload',
-          filename: ''
+          filename: '',
+          isUploadMultiple: true,
         }
       }
     }
@@ -86,7 +133,7 @@ export default {
     return {
       UploadStatus,
       isUploading: false,
-      isUploadFolder: false,
+      showDropzone: false,
       uploadList: [],
     }
   },
@@ -115,18 +162,21 @@ export default {
       const files = [...e.target.files]
       if (files.length === 0) return
 
-      console.log('>>> handleInputFileChange', files)
-
-      if (this.isUploadFolder) {
-        // this.uploadFolders(files)
-      } else {
-        this.addFiles(files)
-      }
+      this.addFiles(files)
 
       // clear files
       this.$refs.inputRef.files = new DataTransfer().files
     },
     addFiles(files) {
+      if (!files) {
+        return
+      }
+      console.log('addFiles', files)
+      if (!this.uploadConfig.isUploadMultiple && this.uploadList.length >= 1) {
+        const item = new FileUploadItem(files[0])
+        this.uploadList = [item]
+        return
+      }
       files.forEach(file => {
         const item = new FileUploadItem(file)
         this.uploadList.push(item)
@@ -187,7 +237,18 @@ export default {
       this.batchCancel()
       this.uploadList = []
       this.$emit('close')
-    }
+    },
+    // 拖拽上传
+    fileDragover(e) {
+      this.showDropzone = true
+      e.preventDefault()
+    },
+    fileDrop(e) {
+      e.preventDefault()
+      this.showDropzone = false
+      const files = Array.from(e.dataTransfer.files)
+      this.addFiles(files)
+    },
   },
 }
 </script>
@@ -239,6 +300,7 @@ export default {
     margin-top: 10px;
     border: 1px solid $border-color;
     max-height: 50vh;
+    min-height: 168px;
     overflow: auto;
     border-radius: $border-radius;
   }

@@ -1,28 +1,43 @@
 <template>
   <div class="file-item">
     <div class="file-info">
-      <div class="file-title text-overflow">{{ item.filename }}</div>
+      <div class="file-title">
+        <div class="_title text-overflow">{{ item.filename }}</div>
+        <div class="_subtitle text-overflow">
+          {{ item.progress }}%
+          {{ item.parentPath || '' }}
+        </div>
+      </div>
       <div class="file-actions">
         <TkButton
           v-if="item.status === UploadStatus.WAITING || item.status === UploadStatus.ERROR"
-          size="xs"
+          flat
+          round
+          :title="$t('upload')"
+          class="material-icons"
           @click="$emit('upload', item)"
         >
-          上传
+          file_upload
         </TkButton>
         <TkButton
           v-else-if="item.status === UploadStatus.UPLOADING"
-          size="xs"
-          class="btn-with-progress"
+          flat
+          round
+          class="material-icons"
           @click="cancelUpload"
+          :title="'Cancel'"
         >
-          <div class="progress-text">{{ item.progress }}%</div>
-          <div class="btn-text">取消</div>
+          close
         </TkButton>
 
-        <TkButton v-if="item.status !== UploadStatus.UPLOADING" size="xs" @click="$emit('remove', item)">
-
-          {{ item.status === UploadStatus.SUCCESS ? '完成' : $t('clear') }}
+        <TkButton
+          v-if="item.status !== UploadStatus.UPLOADING"
+          round
+          flat
+          :title="$t('clear')"
+          class="material-icons"
+          @click="$emit('remove', item)"
+        >clear_all
         </TkButton>
       </div>
     </div>
@@ -81,34 +96,21 @@ export default {
     .file-title {
       flex: 1;
       width: 100%;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      ._subtitle {
+        margin-top: 5px;
+        color: $border-color;
+        font-size: 12px;
+      }
     }
 
     .file-actions {
+      display: flex;
+      align-items: center;
       button + button {
         margin-left: 5px;
-      }
-
-      .btn-with-progress {
-        display: inline-block;
-        min-width: 50px;
-
-        .progress-text {
-          display: inline-block;
-        }
-
-        .btn-text {
-          display: none;
-        }
-
-        &:hover {
-          .progress-text {
-            display: none;
-          }
-
-          .btn-text {
-            display: inline-block;
-          }
-        }
       }
     }
   }
