@@ -10,9 +10,18 @@ const Model = sequelize.define('playlists', {
   sort: {type: Sequelize.NUMBER, defaultValue: ''},
 }, {timestamps: true})
 
-sequelize.sync({
+Model.sync({
   force: false,
   alter: true
+}).then(async () => {
+  const count = await Model.count()
+  if (count === 0) {
+    Model.create({
+      title: 'Default List'
+    })
+  }
+
 })
+
 
 module.exports = Model

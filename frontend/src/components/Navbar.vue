@@ -81,6 +81,12 @@ export default {
     width: 44px;
     font-size: 22px;
     border-radius: 0;
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 10;
+    border-right: 1px solid $border-color;
   }
 
   .btn-tab {
@@ -98,14 +104,20 @@ export default {
     justify-content: center;
     border-radius: 0;
 
-    & + button {
-      border-left: 1px solid $border-color;
-    }
-
     &.btn-tab {
       font-size: 14px;
 
-      &:after {
+      &::before {
+        position: absolute;
+        left: -1px;
+        top: 0;
+        bottom: 0;
+        content: " ";
+        background: $border-color;
+        width: 1px;
+      }
+
+      &::after {
         position: absolute;
         left: 0;
         bottom: 0;
