@@ -21,7 +21,7 @@ const Model = sequelize.define('musics', {
   tags: {type: Sequelize.STRING, defaultValue: ''},
   filename: {type: Sequelize.STRING, defaultValue: ''},
   path: {type: Sequelize.STRING, defaultValue: ''},
-  file: {type: Sequelize.STRING, defaultValue: '', allowNull: false}, // Relative file path (file = path+filename)
+  filepath: {type: Sequelize.STRING, defaultValue: '', allowNull: false}, // Relative file path (filepath = path+filename)
   sort: {type: Sequelize.NUMBER, defaultValue: 0},
   rank: {type: Sequelize.NUMBER, defaultValue: 0},
 }, {timestamps: true})

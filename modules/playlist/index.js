@@ -64,9 +64,9 @@ router.get('/list', async (req, res, next) => {
 })
 
 /**
- * Add playlist
+ * Create playlist
  */
-router.post('/add', userAuth, async (req, res, next) => {
+router.post('/create-playlist', userAuth, async (req, res, next) => {
   try {
     const {
       pid,
@@ -137,21 +137,18 @@ router.post('/delete', userAuth, async (req, res, next) => {
  */
 router.post('/add-music', userAuth, async (req, res, next) => {
   try {
-    // const {
-    //   pid,
-    //   title,
-    //   artists,
-    //   cover,
-    //   desc,
-    //   tags,
-    //   file,
-    //   sort,
-    //   rank,
-    // } = req.body
+    const {
+      musics = [],
+      pid
+    } = req.body
 
-    const resData = await Music.create(req.body)
+    if (!pid) {
+      return res.sendError({message: 'pid can not be empty'})
+    }
 
-    return res.sendData(resData)
+    // const resData = await Music.create(req.body)
+
+    return res.sendData({})
   } catch (error) {
     next(error)
   }

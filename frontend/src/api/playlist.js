@@ -11,8 +11,8 @@ export function getPlaylist(params) {
   })
 }
 
-export function addPlaylist(params) {
-  return service.post('/add', params)
+export function createPlaylist(params) {
+  return service.post('/create-playlist', params)
 }
 
 export function deletePlaylist(params) {

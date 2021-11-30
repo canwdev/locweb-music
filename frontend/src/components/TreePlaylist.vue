@@ -42,7 +42,7 @@ const TreeNode = tankUI.enum.TreeNode
 
 import {
   getPlaylist,
-  addPlaylist,
+  createPlaylist,
   deletePlaylist,
   removePlaylistMusic
 } from '@/api/playlist'
@@ -116,7 +116,7 @@ export default {
           return
         }
         this.isLoading = true
-        const res = await addPlaylist({
+        const res = await createPlaylist({
           pid,
           title
         })

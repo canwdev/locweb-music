@@ -19,7 +19,7 @@
       show-btn-menu
       :filter-placeholder="$t('filter-by-name')"
       @onItemClick="handleItemClick"
-      @onItemAction="handleItemAction"
+      @onItemAction="showFileMenu"
       @updateSort="handleUpdateSort"
       @openMenu="showListMenu"
     >
@@ -84,12 +84,7 @@ export default {
   },
   data() {
     return {
-      isLoading: false,
-      menuList: [
-        {icon: 'queue', label: 'Save playlist...', action: this.savePlaylist},
-        {icon: 'clear_all', label: 'Clear playlist', action: this.clearPlaylist},
-      ],
-      isShowChoosePlaylist: false
+      isLoading: false
     }
   },
   computed: {
@@ -234,40 +229,7 @@ export default {
         this.playingIndex = swapIndex
       }
     },
-    showListMenu() {
-      this.$refs.listMenuRef.open()
-    },
-    savePlaylist() {
-      // if (!this.playingList.length) {
-      //   return
-      // }
-      this.isShowChoosePlaylist = true
-    },
-    handleChoosePlaylist(val) {
-      console.log(val)
-    },
-    clearPlaylist() {
-      if (!this.playingList.length) {
-        return
-      }
-      this.$prompt.create({
-        propsData: {
-          title: 'Clear playlist?',
-        },
-        parentEl: this.$el
-      }).onConfirm(async () => {
-        this.$store.commit('setPlayingList', [])
-        this.playingIndex = 0
-        bus.$emit(ACTION_TOGGLE_PLAY, {isPause: true})
-        setTimeout(() => {
-          this.$store.commit('setMusicItem', null)
-        })
-      })
-    }
   }
 }
 </script>
 
-<style scoped>
-
-</style>
