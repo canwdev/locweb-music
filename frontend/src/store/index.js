@@ -42,6 +42,9 @@ export default new Vuex.Store({
   },
   mutations: {
     setMusicItem: (state, payload) => {
+      if (!payload) {
+        payload = new MusicItem()
+      }
       state.musicItem = payload
     },
     setNavbarTab(state, payload) {

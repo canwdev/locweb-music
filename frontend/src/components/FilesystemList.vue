@@ -7,6 +7,8 @@
     :active-id="lastPlayId"
     :min-item-size="40"
     :filter-placeholder="`${$t('filter-in')} ${currentPath || '/'}`"
+    show-btn-refresh
+    show-btn-menu
     @onItemClick="handleItemClick"
     @onItemAction="handleItemAction"
     @goUpDir="goUpDir"

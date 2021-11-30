@@ -10,10 +10,9 @@
         {{ $t('upload-to') }}: {{ (uploadConfig.path + uploadConfig.filename) || 'Root dir' }}
       </div>
       <TkButton
-        round
         flat
         :disabled="isUploading"
-        class="material-icons"
+        class="material-icons button-close"
         @click="handleClose"
       >close</TkButton>
     </div>
@@ -260,12 +259,17 @@ export default {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
+    position: relative;
 
     .title-inner {
-      display: flex;
-      align-items: center;
-      flex: 1;
-      height: 34px;
+      padding-right: 30px;
+    }
+    .button-close {
+      position: absolute;
+      right: 5px;
+      top: 8px;
+      display: block;
+      height: auto;
     }
   }
 

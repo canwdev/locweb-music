@@ -18,23 +18,25 @@
           </TkButton>
         </form>
 
-        <slot name="actions"></slot>
-
         <TkButton
-          v-if="!isPlayList"
+          v-if="showBtnRefresh"
           size="no-style"
           :title="$t('refresh-list')"
           @click="$emit('refresh')"
         ><i class="material-icons">refresh</i>
         </TkButton>
         <TkButton
+          v-if="showBtnLocate"
           size="no-style"
           :title="$t('locate')"
           @click="locateItem"
         ><i class="material-icons">my_location</i>
         </TkButton>
+
+        <slot name="actions"></slot>
+
         <TkButton
-          v-if="!isPlayList"
+          v-if="showBtnMenu"
           size="no-style"
           :title="$t('menu')"
           @click="$emit('openMenu')"
@@ -114,6 +116,18 @@ export default {
       default: false
     },
     showUp: {
+      type: Boolean,
+      default: false
+    },
+    showBtnRefresh: {
+      type: Boolean,
+      default: false
+    },
+    showBtnLocate: {
+      type: Boolean,
+      default: true
+    },
+    showBtnMenu: {
       type: Boolean,
       default: false
     },

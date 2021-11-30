@@ -54,6 +54,11 @@ export default {
   },
   watch: {
     async musicItem(val) {
+
+      if (!val || !val.id) {
+        return
+      }
+
       updateTitle(val)
       if (!val.isOutSource) {
         const params = {

@@ -62,7 +62,6 @@
 
         <TkButton
           size="no-style"
-          :disabled="isDisabled"
           :class="{active: isShowPlayingList}"
           class="btn-action"
           @click="isShowPlayingList = !isShowPlayingList"
@@ -118,12 +117,7 @@
       class="playing-list-dialog"
       transition-name="slide-bottom"
     >
-      <div class="playlist-wrap settings-form">
-        <div class="settings-title">
-          <i class="material-icons">playlist_play</i> 正在播放
-        </div>
-        <PlayList ref="playingListRef"/>
-      </div>
+      <PlayList ref="playingListRef"/>
 
     </TkModalDialog>
 
@@ -485,17 +479,18 @@ $bottomZIndex: 2100;
   padding-bottom: 75px;
   box-sizing: border-box;
 
-  .main-list {
-    height: 50vh;
-    overflow: hidden;
-  }
 
   ::v-deep .playlist-wrap {
     .virtual-scroller {
-      padding: 5px 10px;
+      padding: 0 10px;
       overflow-y: overlay; // 滚动条覆盖
       box-sizing: border-box;
     }
+    .main-list {
+      height: 50vh;
+      overflow: hidden;
+    }
+
   }
 }
 

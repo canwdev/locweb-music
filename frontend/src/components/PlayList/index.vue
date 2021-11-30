@@ -1,33 +1,46 @@
 <template>
-  <MainList
-    ref="mainListRef"
-    :is-loading="isLoading"
-    :list="playingList"
-    :active-id="playingId"
-    is-play-list
-    :is-paused="paused"
-    :min-item-size="55"
-    allow-sort
-    :filter-placeholder="$t('filter-by-name')"
-    @onItemClick="handleItemClick"
-    @onItemAction="handleItemAction"
-    @updateSort="handleUpdateSort"
-  >
-    <template v-slot:actions>
-      <TkButton
-        size="no-style"
-        :disabled="!playingList.length"
-        :class="{active: isRandom}"
-        :title="$t('random')"
-        @click="toggleRandom"
-      ><i class="material-icons">casino</i>
-      </TkButton>
-    </template>
-    <ContextMenuCommon
-      ref="fileMenuRef"
-      :list-fn="getFileMenuList"
-    />
-  </MainList>
+  <div class="playlist-wrap settings-form">
+    <div class="settings-title">
+      <i class="title-icon material-icons">playlist_play</i> 正在播放 ({{ playingIndex + 1 }}/{{ playingList.length }})
+    </div>
+    <MainList
+      ref="mainListRef"
+      :is-loading="isLoading"
+      :list="playingList"
+      :active-id="playingId"
+      is-play-list
+      :is-paused="paused"
+      :min-item-size="55"
+      allow-sort
+      show-btn-menu
+      :filter-placeholder="$t('filter-by-name')"
+      @onItemClick="handleItemClick"
+      @onItemAction="handleItemAction"
+      @updateSort="handleUpdateSort"
+      @openMenu="showListMenu"
+    >
+      <template v-slot:actions>
+        <TkButton
+          size="no-style"
+          :disabled="!playingList.length"
+          :class="{active: isRandom}"
+          :title="$t('random')"
+          @click="toggleRandom"
+        ><i class="material-icons">casino</i>
+        </TkButton>
+      </template>
+      <ContextMenuCommon
+        ref="fileMenuRef"
+        :list-fn="getFileMenuList"
+      />
+
+      <ContextMenuCommon
+        ref="listMenuRef"
+        :list="menuList"
+      />
+    </MainList>
+  </div>
+
 </template>
 
 <script>
@@ -59,7 +72,11 @@ export default {
   },
   data() {
     return {
-      isLoading: false
+      isLoading: false,
+      menuList: [
+        {icon: 'queue', label: 'Save playlist...', action: null},
+        {icon: 'clear_all', label: 'Clear playlist', action: this.clearPlaylist},
+      ],
     }
   },
   computed: {
@@ -203,6 +220,24 @@ export default {
       if (this.playingIndex === index) {
         this.playingIndex = swapIndex
       }
+    },
+    showListMenu() {
+      this.$refs.listMenuRef.open()
+    },
+    clearPlaylist() {
+      this.$prompt.create({
+        propsData: {
+          title: 'Clear playlist?',
+        },
+        parentEl: this.$el
+      }).onConfirm(async () => {
+        this.$store.commit('setPlayingList', [])
+        this.playingIndex = 0
+        bus.$emit(ACTION_TOGGLE_PLAY, {isPlay: false})
+        setTimeout(() => {
+          this.$store.commit('setMusicItem', null)
+        })
+      })
     }
   }
 }
