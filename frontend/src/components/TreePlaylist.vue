@@ -2,7 +2,7 @@
   <div class="list-playlist">
     <TkTree
       :nodes="treeData"
-      :selected-id="selected && selected.id"
+      :selected-id="mSelected && mSelected.id"
       @onItemClick="handleNodeClick"
       @onItemDbClick="playItem"
       @onItemLazyLoad="handleLazyLoad"
@@ -59,16 +59,35 @@ const root = new TreeNode({
 
 export default {
   name: 'TreePlaylist',
+  props: {
+    selected: {
+      type: Object,
+      default: null
+    }
+  },
   data() {
     return {
       treeData: root,
-      selected: null,
+      self_selected: null,
       isLoading: false,
+    }
+  },
+  computed: {
+    mSelected: {
+      get() {
+        return this.selected || this.self_selected
+      },
+      set(val) {
+        // console.log('mSelected', val)
+        this.$emit('update:selected', val)
+        this.$emit('onSelect', val)
+        this.self_selected = val
+      }
     }
   },
   methods: {
     handleNodeClick(node) {
-      this.selected = node
+      this.mSelected = node
     },
     async handleLazyLoad({node, done, fail}) {
       try {

@@ -48,6 +48,8 @@
     "password": "Password",
     "logout": "Logout"
   },
+  "cancel": "Cancel",
+  "ok": "OK",
   "submit": "Submit",
   "page": {
     "about": "About"

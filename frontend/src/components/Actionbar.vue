@@ -117,7 +117,7 @@
       class="playing-list-dialog"
       transition-name="slide-bottom"
     >
-      <PlayList ref="playingListRef"/>
+      <PlayingList ref="playingListRef"/>
 
     </TkModalDialog>
 
@@ -156,7 +156,7 @@ import MusicDetail from '@/components/MusicDetail.vue'
 import hotkeys from 'hotkeys-js'
 import {mapGetters, mapState} from 'vuex'
 import audioVolumeMixin from '@/mixins/audio-volume'
-import PlayList from '@/components/PlayList/index.vue'
+import PlayingList from '@/components/PlayingList/index.vue'
 
 const loopModeList = [
   LoopModeType.LOOP_SEQUENCE,
@@ -177,7 +177,7 @@ export default {
   components: {
     ButtonCover,
     MusicDetail,
-    PlayList,
+    PlayingList,
   },
   data() {
     return {

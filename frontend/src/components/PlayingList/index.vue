@@ -43,8 +43,14 @@
         :list="menuList"
       />
     </MainList>
-  </div>
 
+    <TreePlaylistChooser
+      :visible.sync="isShowChoosePlaylist"
+      :title="`添加到歌单`"
+      :title-icon="`playlist_add`"
+      @submit="handleChoosePlaylist"
+    />
+  </div>
 </template>
 
 <script>
@@ -60,6 +66,7 @@ import {LoopModeType} from '@/enum'
 import {mapGetters, mapState} from 'vuex'
 import dialogMenuMixin from './dialog-menu'
 import ContextMenuCommon from '@/components/ContextMenuCommon'
+import TreePlaylistChooser from '@/components/TreePlaylistChooser'
 
 function getRandomInt(min, max) {
   min = Math.ceil(min)
@@ -72,15 +79,17 @@ export default {
   mixins: [dialogMenuMixin],
   components: {
     MainList,
-    ContextMenuCommon
+    ContextMenuCommon,
+    TreePlaylistChooser,
   },
   data() {
     return {
       isLoading: false,
       menuList: [
-        {icon: 'queue', label: 'Save playlist...', action: null},
+        {icon: 'queue', label: 'Save playlist...', action: this.savePlaylist},
         {icon: 'clear_all', label: 'Clear playlist', action: this.clearPlaylist},
       ],
+      isShowChoosePlaylist: false
     }
   },
   computed: {
@@ -219,7 +228,7 @@ export default {
       this.$refs.mainListRef.locateItem()
     },
     handleUpdateSort(data) {
-      console.log('handleUpdateSort',data)
+      console.log('handleUpdateSort', data)
       const {index, swapIndex} = data
       if (this.playingIndex === index) {
         this.playingIndex = swapIndex
@@ -228,7 +237,19 @@ export default {
     showListMenu() {
       this.$refs.listMenuRef.open()
     },
+    savePlaylist() {
+      // if (!this.playingList.length) {
+      //   return
+      // }
+      this.isShowChoosePlaylist = true
+    },
+    handleChoosePlaylist(val) {
+      console.log(val)
+    },
     clearPlaylist() {
+      if (!this.playingList.length) {
+        return
+      }
       this.$prompt.create({
         propsData: {
           title: 'Clear playlist?',
