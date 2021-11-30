@@ -256,6 +256,11 @@ export default {
           this.$refs.playingListRef.locateItem()
         })
       }
+    },
+    isShowDetail(val) {
+      if (val) {
+        this.isShowPlayingList = false
+      }
     }
   },
   mounted() {
@@ -479,7 +484,6 @@ $bottomZIndex: 2100;
   padding-bottom: 75px;
   box-sizing: border-box;
 
-
   ::v-deep .playlist-wrap {
     .virtual-scroller {
       padding: 0 10px;
@@ -489,6 +493,10 @@ $bottomZIndex: 2100;
     .main-list {
       height: 50vh;
       overflow: hidden;
+
+      @media screen and (max-height: $mq_pc_min_height) {
+        height: 75vh;
+      }
     }
 
   }

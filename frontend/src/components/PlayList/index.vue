@@ -1,7 +1,11 @@
 <template>
   <div class="playlist-wrap settings-form">
     <div class="settings-title">
-      <i class="title-icon material-icons">playlist_play</i> 正在播放 ({{ playingIndex + 1 }}/{{ playingList.length }})
+      <i class="title-icon material-icons">playlist_play</i>
+      <template v-if="playingList.length">
+        [{{ playingIndex + 1 }}/{{ playingList.length }}]
+      </template>
+      正在播放
     </div>
     <MainList
       ref="mainListRef"
@@ -233,7 +237,7 @@ export default {
       }).onConfirm(async () => {
         this.$store.commit('setPlayingList', [])
         this.playingIndex = 0
-        bus.$emit(ACTION_TOGGLE_PLAY, {isPlay: false})
+        bus.$emit(ACTION_TOGGLE_PLAY, {isPause: true})
         setTimeout(() => {
           this.$store.commit('setMusicItem', null)
         })

@@ -22,8 +22,8 @@ import store from '@/store'
 import {getDetail} from '@/api/music'
 import {mapState} from 'vuex'
 
-const updateTitle = (musicItem, isPaused) => {
-  document.title = `${isPaused ? '⏸️' : '▶️'} ${musicItem.filenameDisplay}`
+const updateTitle = (title, isPaused) => {
+  document.title = `${isPaused ? '⏸️' : '▶️'} ${title}`
 }
 
 export default {
@@ -53,20 +53,20 @@ export default {
     }
   },
   watch: {
-    async musicItem(val) {
-
-      if (!val || !val.id) {
+    async musicItem(item) {
+      if (!item || !item.filename) {
+        updateTitle('', true)
         return
       }
+      updateTitle(item.filenameDisplay)
 
-      updateTitle(val)
-      if (!val.isOutSource) {
+      if (!item.isOutSource) {
         const params = {
-          path: val.path,
-          filename: val.filename,
+          path: item.path,
+          filename: item.filename,
           updatePlayStat: true
         }
-        if (!val.isDetailLoaded) {
+        if (!item.isDetailLoaded) {
           const detail = await getDetail(params)
           // console.log('detail', detail)
 
@@ -75,8 +75,8 @@ export default {
             cover,
             lyric
           } = detail
-          val.setMetadata(metadata, cover, lyric)
-          updateTitle(val)
+          item.setMetadata(metadata, cover, lyric)
+          updateTitle(item.filenameDisplay)
         } else {
           // only update play status
           await getDetail({
@@ -88,9 +88,9 @@ export default {
       // https://developers.google.com/web/updates/2017/02/media-session
       if ('mediaSession' in navigator) {
         let artwork = [{src: require('@/assets/images/default-cover.jpg'), sizes: '512x512'}]
-        if (val.cover) {
+        if (item.cover) {
           artwork = [
-            {src: val.cover, sizes: '512x512'},
+            {src: item.cover, sizes: '512x512'},
           ]
         }
 
@@ -98,15 +98,15 @@ export default {
         // @ts-ignore
         navigator.mediaSession.metadata = new MediaMetadata({
           /* eslint-enable no-undef */
-          title: val.title,
-          artist: val.artist,
-          album: val.album,
+          title: item.title,
+          artist: item.artist,
+          album: item.album,
           artwork
         })
       }
     },
     paused(val) {
-      updateTitle(this.musicItem, val)
+      updateTitle(this.musicItem.filenameDisplay, val)
     }
   },
   mounted() {
@@ -137,11 +137,11 @@ export default {
     next() {
       bus.$emit(ACTION_NEXT)
     },
-    togglePlay({isPlay = false} = {}) {
+    togglePlay({isPlay = false, isPause = false} = {}) {
       if (!this.audio || !this.audio.src) {
         return
       }
-      if (this.audio.paused || isPlay) {
+      if ((this.audio.paused || isPlay) && !isPause) {
         this.play()
       } else {
         this.pause()
