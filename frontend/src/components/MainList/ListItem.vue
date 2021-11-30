@@ -1,8 +1,8 @@
 <template>
-  <a
+  <TkButton
     class="list-item-wrap"
     :class="{grey: !isSupport && !item.isDirectory, active}"
-    :href="item.getSource()"
+    size="no-style"
     @contextmenu="handleContextMenu"
     @click.prevent
   >
@@ -41,8 +41,8 @@
         <i class="material-icons">more_vert</i>
       </TkButton>
     </div>
-
-  </a>
+    <slot></slot>
+  </TkButton>
 </template>
 
 <script>
@@ -128,6 +128,9 @@ $active-color: $primary;
   display: block;
   text-decoration: none;
   color: inherit;
+  text-align: left;
+  width: 100%;
+  border-radius: 0;
 
   //&:hover {
   //  background: rgba(0, 0, 0, 0.08);
@@ -144,8 +147,6 @@ $active-color: $primary;
       color: white;
 
       .btn-cover {
-        background-color: white;
-        color: $active-color;
       }
     }
   }

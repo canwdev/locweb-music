@@ -7,9 +7,11 @@
     is-play-list
     :is-paused="paused"
     :min-item-size="55"
+    allow-sort
     :filter-placeholder="$t('filter-by-name')"
     @onItemClick="handleItemClick"
     @onItemAction="handleItemAction"
+    @updateSort="handleUpdateSort"
   >
     <template v-slot:actions>
       <TkButton
@@ -49,7 +51,7 @@ function getRandomInt(min, max) {
 }
 
 export default {
-  name: 'PlayList',
+  name: 'PlayingList',
   mixins: [dialogMenuMixin],
   components: {
     MainList,
@@ -194,6 +196,13 @@ export default {
     },
     locateItem() {
       this.$refs.mainListRef.locateItem()
+    },
+    handleUpdateSort(data) {
+      console.log('handleUpdateSort',data)
+      const {index, swapIndex} = data
+      if (this.playingIndex === index) {
+        this.playingIndex = swapIndex
+      }
     }
   }
 }

@@ -56,10 +56,11 @@
     />
 
     <DynamicScroller
-      ref="mainListEl"
+      ref="mainListRef"
       class="virtual-scroller"
       :items="filteredList"
       :min-item-size="minItemSize"
+      :class="{'_dragging': dragging}"
     >
       <template v-slot="{ item, index, active }">
         <DynamicScrollerItem
@@ -75,12 +76,24 @@
             :is-show-action="true"
             @onAction="i => $emit('onItemAction', i)"
             @click.native.prevent="$emit('onItemClick', item)"
-          />
+          >
+            <div
+              v-if="allowSort"
+              class="drag-handle material-icons"
+              :draggable="true"
+              :data-index="index"
+              :data-drag-handle="true"
+              @dragstart="handleDragStart"
+              @dragover="handleDragOver"
+              @dragleave="handleDragLeave"
+              @dragend="handleDrop"
+            >drag_handle
+            </div>
+          </ListItem>
         </DynamicScrollerItem>
 
       </template>
     </DynamicScroller>
-
 
     <slot></slot>
   </div>
@@ -126,6 +139,10 @@ export default {
     minItemSize: {
       type: Number,
       default: 54
+    },
+    allowSort: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -136,6 +153,7 @@ export default {
       }),
       searchInput: '',
       searchText: '',
+      dragging: false
     }
   },
   computed: {
@@ -164,12 +182,14 @@ export default {
       }
     }
   },
+  mounted() {
+  },
   methods: {
     handleSearch() {
       this.searchText = this.searchInput
     },
     locateItem() {
-      const virtualScroll = this.$refs.mainListEl
+      const virtualScroll = this.$refs.mainListRef
       if (!virtualScroll) {
         return
       }
@@ -183,11 +203,56 @@ export default {
           //   position: 'top',
           // })
 
-          const itemHeight = el.scrollHeight / this.filteredList.length
-          el.scrollTop = index * itemHeight
+          // const itemHeight = el.scrollHeight / this.filteredList.length
+          // el.scrollTop = index * itemHeight
+
+          this.$refs.mainListRef.scrollToItem(index)
         }
       }
-    }
+    },
+    handleDragStart(event) {
+      this.dragging = true
+      // console.log('handleDrag', e)
+      // const list = selectedItem.parentNode
+      const selectedItem = event.target
+      selectedItem.classList.add('_target')
+      event.dataTransfer.effectAllowed = 'move'
+    },
+    handleDragOver(event) {
+      event.preventDefault()
+      const selectedItem = event.target
+      selectedItem.classList.add('_over')
+      event.dataTransfer.dropEffect = 'move'
+    },
+    handleDragLeave(event) {
+      const selectedItem = event.target
+      selectedItem.classList.remove('_over')
+    },
+    handleDrop(event) {
+      this.dragging = false
+      // console.log('handleDrop', event)
+
+      const selectedItem = event.target
+      selectedItem.classList.remove('_target')
+      const x = event.clientX
+      const y = event.clientY
+      const swapItem = document.elementFromPoint(x, y)
+      if (!swapItem) {
+        return
+      }
+      swapItem.classList.remove('_over')
+      if (swapItem.attributes['data-drag-handle'] && swapItem !== selectedItem) {
+        const index = Number(selectedItem.getAttribute('data-index'))
+        const swapIndex = Number(swapItem.getAttribute('data-index'))
+
+        this.$emit('updateSort', {index, swapIndex})
+
+        // 交换数组元素
+        const temp = this.list[index]
+        this.$set(this.list, index, this.list[swapIndex])
+        this.$set(this.list, swapIndex, temp)
+      }
+    },
   }
 }
 </script>
@@ -260,6 +325,34 @@ export default {
       .material-icons {
         font-size: 18px;
       }
+    }
+  }
+
+  .list-item-wrap {
+    position: relative;
+    .drag-handle {
+      position: absolute;
+      top: 0;
+      left: 0;
+      cursor: grab;
+      z-index: 10;
+      transition: background-color .1s;
+
+      &._over {
+        background-color: rgba(233, 30, 99, 0.4);
+        box-shadow: 0 0 0 1px $accent inset;
+      }
+
+      &._target {
+        background-color: $primary-opacity;
+      }
+    }
+  }
+
+  ._dragging {
+    .drag-handle {
+      width: 100%;
+      height: 100%;
     }
   }
 
