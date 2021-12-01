@@ -35,7 +35,7 @@ function calcFileHash(filename, algorithm = 'sha1') {
         return resolve(hash);
       })
     } catch (error) {
-      return reject('calc fail');
+      return reject(error);
     }
   })
 }
@@ -48,7 +48,7 @@ function calcBufferHash(buffer, algorithm = 'sha1') {
       const hash = sum.digest('hex')
       return resolve(hash)
     } catch (error) {
-      return reject('calc fail')
+      return reject(error)
     }
   })
 }
