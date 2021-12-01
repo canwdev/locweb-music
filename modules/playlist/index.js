@@ -22,8 +22,6 @@ router.get('/list', async (req, res, next) => {
       showMusic = false,
     } = req.query
 
-    console.log(req.query)
-
     let paginationQuery = limit ? {
       offset: parseInt(offset) || 0,
       limit: parseInt(limit),
@@ -60,6 +58,43 @@ router.get('/list', async (req, res, next) => {
       list: resPlaylist.rows,
       musics: resMusic && resMusic.rows,
       count: resPlaylist.count
+    })
+  } catch (error) {
+    next(error)
+  }
+})
+
+router.get('/list-music', async (req, res, next) => {
+  try {
+    const {
+      pid,
+      offset,
+      limit,
+    } = req.query
+
+    let paginationQuery = limit ? {
+      offset: parseInt(offset) || 0,
+      limit: parseInt(limit),
+    } : {}
+
+    const where = {}
+    if (pid) {
+      where.pid = Number(pid)
+    }
+
+    const resMusic = await Music.findAndCountAll({
+      ...paginationQuery,
+      where: {
+        pid: pid
+      },
+      order: [
+        ['id', 'DESC'],
+      ]
+    })
+
+    return res.sendData({
+      list: resMusic.rows,
+      count: resMusic.count
     })
   } catch (error) {
     next(error)

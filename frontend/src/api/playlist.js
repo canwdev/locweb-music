@@ -11,6 +11,12 @@ export function getPlaylist(params) {
   })
 }
 
+export function getPlaylistMusic(params) {
+  return service.get('/list-music', {
+    params
+  })
+}
+
 export function createPlaylist(params) {
   return service.post('/create-playlist', params)
 }

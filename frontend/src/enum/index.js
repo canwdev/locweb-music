@@ -9,7 +9,7 @@ export const NCM_API_URL = localStorage.getItem('LOCWEB_NCM_API_URL') || process
 export const NavbarTabsType = {
   MAIN: 1, // file list
   PLAYING: 2, // playing list
-  PLAYLIST: 3, // playlist
+  SONGLIST: 3, // 歌单
   ALBUMS: 4,
   ARTISTS: 5,
   RECENT: 6,
@@ -33,11 +33,11 @@ export const NavbarTabs = {
     value: NavbarTabsType.PLAYING,
     // componentName: 'PlayList',
   },
-  [NavbarTabsType.PLAYLIST]: {
+  [NavbarTabsType.SONGLIST]: {
     iconName: 'queue_music',
     name: '歌单 (Beta)',
-    value: NavbarTabsType.PLAYLIST,
-    componentName: 'TreePlaylist',
+    value: NavbarTabsType.SONGLIST,
+    componentName: 'SongList',
   },
   [NavbarTabsType.ALBUMS]: {
     iconName: 'album',
@@ -79,7 +79,7 @@ export const NavbarTabs = {
 
 export const DrawerMenuTabItems = [
   NavbarTabs[NavbarTabsType.MAIN],
-  NavbarTabs[NavbarTabsType.PLAYLIST],
+  NavbarTabs[NavbarTabsType.SONGLIST],
   NavbarTabs[NavbarTabsType.ALBUMS],
   NavbarTabs[NavbarTabsType.ARTISTS],
   NavbarTabs[NavbarTabsType.RECENT],
@@ -105,13 +105,13 @@ export class MusicItem {
     this.album = item.album
     this.rating = item.rating
     this.filename = item.filename || ''
-    this.isDirectory = item.isDirectory
+    this.isDirectory = item.isDirectory || false
     this.path = item.path || ''
     this.size = item.size
     this.metadata = item.metadata
     this.coverOrigin = item.cover
-    this.isDetailLoaded = false
-    this.isOutSource = item.isOutSource
+    this.isDetailLoaded = item.isDetailLoaded || false
+    this.isOutSource = item.isOutSource || false
     this.src = item.src
     this.lyric = item.lyric || ''
   }

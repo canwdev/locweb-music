@@ -1,7 +1,7 @@
 <template>
   <TkButton
     class="list-item-wrap"
-    :class="{grey: !isSupport && !item.isDirectory, active}"
+    :class="{_grey: !isSupport && !item.isDirectory, active}"
     size="no-style"
     @contextmenu="handleContextMenu"
     @click.prevent
@@ -159,7 +159,7 @@ $active-color: $primary;
   //  background: rgba(0, 0, 0, 0.05);
   //}
 
-  &.grey {
+  &._grey {
     color: grey;
   }
 
