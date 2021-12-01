@@ -68,20 +68,20 @@ export default {
   data() {
     return {
       treeData: root,
-      self_selected: null,
+      selfSelected: null,
       isLoading: false,
     }
   },
   computed: {
     mSelected: {
       get() {
-        return this.selected || this.self_selected
+        return this.selected || this.selfSelected
       },
       set(val) {
         // console.log('mSelected', val)
         this.$emit('update:selected', val)
         this.$emit('onSelect', val)
-        this.self_selected = val
+        this.selfSelected = val
       }
     }
   },
