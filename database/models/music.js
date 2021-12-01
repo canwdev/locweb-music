@@ -4,10 +4,9 @@ const sequelize = require('../sequelize')
 // Table schema
 const Model = sequelize.define('musics', {
   pid: {type: Sequelize.NUMBER, defaultValue: -1}, // Playlist id
-  title: {type: Sequelize.STRING, defaultValue: ''},
+  title: {type: Sequelize.STRING, },
   artists: {
     type: Sequelize.STRING,
-    defaultValue: '',
     get() {
       return JSON.parse(this.getDataValue('artists') || '[]')
     },
@@ -15,17 +14,20 @@ const Model = sequelize.define('musics', {
       this.setDataValue('artists', JSON.stringify(val));
     }
   },
-  cover: {type: Sequelize.STRING, defaultValue: ''},
-  desc: {type: Sequelize.STRING, defaultValue: ''},
-  album: {type: Sequelize.STRING, defaultValue: ''},
-  tags: {type: Sequelize.STRING, defaultValue: ''},
-  filename: {type: Sequelize.STRING, defaultValue: ''},
-  path: {type: Sequelize.STRING, defaultValue: ''},
-  filepath: {type: Sequelize.STRING, defaultValue: '', allowNull: false}, // Relative file path (filepath = path+filename)
+  cover: {type: Sequelize.STRING, },
+  desc: {type: Sequelize.STRING, },
+  album: {type: Sequelize.STRING, },
+  tags: {type: Sequelize.STRING, },
+  filename: {type: Sequelize.STRING, },
+  filepathOrigin: {type: Sequelize.STRING}, // 原始文件位置（相对路径）
+  filepath: {type: Sequelize.STRING}, // 当前文件位置（相对路径）
   sort: {type: Sequelize.NUMBER, defaultValue: 0},
-  rank: {type: Sequelize.NUMBER, defaultValue: 0},
+  rank: {type: Sequelize.NUMBER, defaultValue: 0}
 }, {timestamps: true})
 
-sequelize.sync()
+sequelize.sync({
+  // force: false,
+  // alter: true
+})
 
 module.exports = Model

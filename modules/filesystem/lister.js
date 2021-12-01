@@ -1,6 +1,6 @@
 const {
-  getMusicExactPath,
-  getMusicPath,
+  getExactPath,
+  getMediaPath,
   getLyricsPath
 } = require('../../utils/fs-tool')
 const {
@@ -33,7 +33,7 @@ const listFiles = async (req, res, next) => {
       path: musicPath = '',
       getPlayStat = false
     } = req.query
-    const dir = getMusicPath(musicPath)
+    const dir = getMediaPath(musicPath)
     if (enableAuth && await fs.exists(path.join(dir, loginOnlyFileName))) {
       if (!req.__userid) {
         return res.sendData({message: 'You are not authorized', list: []})
@@ -101,7 +101,7 @@ const getDetail = async (req, res, next) => {
     let filePath, currentMusicDir
 
     try {
-      const res = getMusicExactPath(musicPath, filename)
+      const res = getExactPath(musicPath, filename)
       filePath = res.filePath
       currentMusicDir = res.currentMusicDir
     } catch (e) {

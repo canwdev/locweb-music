@@ -26,3 +26,7 @@ export function addPlaylistMusic(params) {
 export function removePlaylistMusic(params) {
   return service.post('/remove-music', params)
 }
+
+export function migrateMedia() {
+  return service.get('/migrate-media')
+}

@@ -9,7 +9,7 @@ const {nodeBus, BUS_UPDATE_LYRIC_CACHE} = require('./node-bus')
 
 /**
  * Get music metadata and extract cover
- * @param filePath
+ * @param filePath absolute file path
  * @returns {Promise<{coverFileName: string, metadata: IAudioMetadata}>}
  */
 const getMetadata = async (filePath) => {

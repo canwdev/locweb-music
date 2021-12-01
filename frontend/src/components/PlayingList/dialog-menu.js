@@ -1,4 +1,7 @@
-import { addPlaylistMusic } from '@/api/playlist'
+import { 
+  addPlaylistMusic,
+  migrateMedia
+ } from '@/api/playlist'
 import bus, {
   ACTION_LOCATE_FILE,
   ACTION_TOGGLE_PLAY,
@@ -10,6 +13,7 @@ export default {
       menuList: [
         { icon: 'queue', label: 'Save playlist...', action: this.savePlaylist },
         { icon: 'clear_all', label: 'Clear playlist', action: this.clearPlaylist },
+        { icon: 'my_location', label: 'migrateMedia', action: this.migrateMedia },
       ],
       isShowChoosePlaylist: false,
       currentAddItem: null
@@ -32,11 +36,13 @@ export default {
     showFileMenu(item) {
       this.$refs.fileMenuRef.open(item)
     },
-    async addMusic(item, pid) {
+    async addMusic(items, pid) {
       try {
         this.isLoading = true
         await addPlaylistMusic({
-          musics: [{ filepath: item.filepath }],
+          musics: items.map(item => {
+            return{ filepath: item.filepath }
+          }),
           pid: pid,
         })
         this.$toast.success(this.$t('msg.music-added'))
@@ -63,12 +69,14 @@ export default {
       this.isShowChoosePlaylist = true
     },
     handleChoosePlaylist(val) {
-      console.log(val)
+      const pid = val.data.id
 
       if (this.currentAddItem) {
         const item = this.currentAddItem
         this.currentAddItem = null
-        this.addMusic(item, val.data.id)
+        this.addMusic([item], pid)
+      } else {
+        this.addMusic(this.playingList, pid)
       }
     },
     clearPlaylist() {
@@ -88,6 +96,9 @@ export default {
           this.$store.commit('setMusicItem', null)
         })
       })
+    },
+    async migrateMedia() {
+      await migrateMedia()
     }
   }
 }

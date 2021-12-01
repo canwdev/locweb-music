@@ -1,6 +1,6 @@
 const {
-  getMusicExactPath,
-  getMusicPath,
+  getExactPath,
+  getMediaPath,
   getSafeFilename
 } = require('../../utils/fs-tool')
 const fs = require('fs-extra')
@@ -15,7 +15,7 @@ const downloadFile = async (req, res, next) => {
       path: musicPath = ''
     } = req.query
 
-    const {filePath} = getMusicExactPath(musicPath, filename)
+    const {filePath} = getExactPath(musicPath, filename)
 
     const stat = await fs.lstat(filePath)
 
@@ -58,7 +58,7 @@ const uploadFile = async (req, res, next) => {
 
     console.log('>>> filename: ',filename)
 
-    uploadPath = getMusicPath(getSafePath(musicPath) + '/' + filename)
+    uploadPath = getMediaPath(getSafePath(musicPath) + '/' + filename)
     fs.ensureDirSync(Path.dirname(uploadPath))
 
     console.log('>>> uploadPath: ',uploadPath)

@@ -10,9 +10,9 @@ const Model = sequelize.define('playlists', {
   sort: {type: Sequelize.NUMBER, defaultValue: ''},
 }, {timestamps: true})
 
-Model.sync({
-  force: false,
-  alter: true
+sequelize.sync({
+  // force: false,
+  // alter: true
 }).then(async () => {
   const count = await Model.count()
   if (count === 0) {

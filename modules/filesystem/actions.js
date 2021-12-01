@@ -2,8 +2,8 @@ const {
   enableModify,
 } = require('../../config')
 const {
-  getMusicExactPath,
-  getMusicPath
+  getExactPath,
+  getMediaPath
 } = require('../../utils/fs-tool')
 const {
   saveLyricFile
@@ -64,14 +64,14 @@ const handleAction = async (req, res, next) => {
     let filePath
 
     if (action === FileAction.CREATE_FOLDER) {
-      const curPath = getMusicPath(musicPath)
+      const curPath = getMediaPath(musicPath)
       const dir = path.join(curPath, getSafePath(getSafeFilename(actionValue)))
       await fs.mkdirp(dir)
       return res.sendData()
     }
 
     try {
-      const res = getMusicExactPath(musicPath, filename)
+      const res = getExactPath(musicPath, filename)
       filePath = res.filePath
     } catch (e) {
       return res.sendError(e)
@@ -86,7 +86,7 @@ const handleAction = async (req, res, next) => {
         return res.sendError({message: 'Rename: Filename cannot be empty'})
       }
       const newName = getSafeFilename(actionValue, {replacement: '_'})
-      const newPath = getMusicPath(path.join(musicPath, getSafePath(newName)))
+      const newPath = getMediaPath(path.join(musicPath, getSafePath(newName)))
 
       try {
         await fs.move(filePath, newPath)

@@ -1,11 +1,14 @@
 const Playlist = require('../../database/models/playlist')
 const Music = require('../../database/models/music')
-// const Op = require('sequelize').Op
+const Op = require('sequelize').Op
 const router = require('express').Router()
 const {
   userAuth,
   getUserId
 } = require('../../routes/middleware/user-auth')
+const {
+  migrateMedia
+} = require('./migrate-media')
 
 /**
  * Get playlists
@@ -146,7 +149,12 @@ router.post('/add-music', userAuth, async (req, res, next) => {
       return res.sendError({message: 'pid can not be empty'})
     }
 
-    // const resData = await Music.create(req.body)
+    await Music.bulkCreate(musics.map(item => {
+      return {
+        filepathOrigin: item.filepath,
+        pid
+      }
+    }))
 
     return res.sendData({})
   } catch (error) {
@@ -175,6 +183,26 @@ router.post('/remove-music', userAuth, async (req, res, next) => {
     const resData = await deleteMusics(ids)
 
     return res.sendData(resData)
+  } catch (error) {
+    next(error)
+  }
+})
+
+router.get('/migrate-media', userAuth, async (req, res, next) => {
+  try {
+    const data = await Music.findAll({
+      where: {
+        filepath: {
+          [Op.is]: null
+        }
+      }
+    })
+
+    if (data.length) {
+      migrateMedia(data[0])
+    }
+    
+    return res.sendData({})
   } catch (error) {
     next(error)
   }
