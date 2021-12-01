@@ -20,7 +20,11 @@ const getExactPath = (musicPath, filename) => {
   }
 }
 
-const {MUSIC_LIBRARY_PATH, MUSIC_LYRICS_PATH} = require('../config')
+const {
+  MUSIC_LIBRARY_PATH, 
+  MUSIC_LYRICS_PATH,
+  MEDIA_VAULT_PATH
+} = require('../config')
 
 const getMediaPath = (p = '') => {
   return Path.join(MUSIC_LIBRARY_PATH, getSafePath(p))
@@ -51,11 +55,21 @@ const parseFileName = (n) => {
   }
 }
 
+const copyToMediaVault = async (absPath, filename) => {
+  const newPath = Path.join(MEDIA_VAULT_PATH, filename)
+  if (await fs.exists(newPath)) {
+    return
+  }
+  await fs.copyFile(absPath, newPath)
+  console.log(`[copy] ${absPath} -> ${newPath}`);
+}
+
 module.exports = {
   getExactPath,
   getMediaPath,
   getLyricsPath,
   getSafePath,
   getSafeFilename,
-  parseFileName
+  parseFileName,
+  copyToMediaVault
 }

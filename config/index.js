@@ -6,11 +6,12 @@ const defaultDataPath = path.join(__dirname, '../data')
 // default config
 let config = {
   PORT: '12021', // Server port
-  DATA_PATH: defaultDataPath,
-  MUSIC_LIBRARY_PATH: path.join(defaultDataPath, 'music'), // Music library base path
-  MUSIC_LYRICS_PATH: path.join(defaultDataPath, 'lyrics'),
-  IMAGE_PATH: path.join(defaultDataPath, 'images'), // Cover cache
-  enableModify: true, // Allow modify/delete files
+  MUSIC_LIBRARY_PATH: defaultDataPath, // Music library base path
+  MUSIC_LYRICS_PATH: '.lyrics',
+  MEDIA_VAULT_PATH: '.media_vault',
+  IMAGE_PATH: '.images', // Cover cache
+  useAbsolutePath: false,
+  allowModify: true, // Allow modify/delete files
   enableAuth: true,
   authUsers: {'admin': 'admin'},
   jwtToken: 'token_secret_j3478n68o23ui',
@@ -29,11 +30,18 @@ if (fs.existsSync(configPath)) {
   } catch (e) {
     console.warn('config.json SyntaxError')
   }
-
 }
 
-fs.mkdirpSync(config.MUSIC_LIBRARY_PATH)
-fs.mkdirpSync(config.MUSIC_LYRICS_PATH)
-fs.mkdirpSync(config.IMAGE_PATH)
+if (!config.useAbsolutePath) {
+  const basePath = config.MUSIC_LIBRARY_PATH
+  config.MUSIC_LYRICS_PATH = path.join(basePath, config.MUSIC_LYRICS_PATH)
+  config.IMAGE_PATH = path.join(basePath, config.IMAGE_PATH)
+  config.MEDIA_VAULT_PATH = path.join(basePath, config.MEDIA_VAULT_PATH)
+}
+
+fs.ensureDirSync(config.MUSIC_LIBRARY_PATH)
+fs.ensureDirSync(config.MUSIC_LYRICS_PATH)
+fs.ensureDirSync(config.IMAGE_PATH)
+fs.ensureDirSync(config.MEDIA_VAULT_PATH)
 
 module.exports = config

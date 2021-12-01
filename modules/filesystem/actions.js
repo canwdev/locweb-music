@@ -1,5 +1,5 @@
 const {
-  enableModify,
+  allowModify,
 } = require('../../config')
 const {
   getExactPath,
@@ -19,7 +19,7 @@ const {MUSIC_LIBRARY_PATH} = require('../../config')
 
 const saveLyric = async (req, res, next) => {
   try {
-    if (!enableModify) {
+    if (!allowModify) {
       return res.sendError({code: 403, message: 'Modify not allowed'})
     }
 
@@ -50,7 +50,7 @@ const FileAction = {
 
 const handleAction = async (req, res, next) => {
   try {
-    if (!enableModify) {
+    if (!allowModify) {
       return res.sendError({code: 403, message: 'Modify not allowed'})
     }
 

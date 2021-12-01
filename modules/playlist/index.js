@@ -192,14 +192,18 @@ router.get('/migrate-media', userAuth, async (req, res, next) => {
   try {
     const data = await Music.findAll({
       where: {
-        filepath: {
-          [Op.is]: null
-        }
+        // filepath: {
+          // [Op.is]: null
+        // }
       }
     })
 
     if (data.length) {
-      migrateMedia(data[0])
+      data.forEach(item => {
+        // TODO: task queue
+        migrateMedia(item)
+      })
+      
     }
     
     return res.sendData({})
