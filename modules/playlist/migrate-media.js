@@ -6,6 +6,7 @@ const {
 } = require('../../utils/fs-tool')
 
 const { calcFileHash } = require('../../utils')
+const { TaskQueue } = require('../../utils/task-queue')
 const { getMetadata } = require('../../utils/music-tool')
 const Music = require('../../database/models/music')
 
@@ -24,7 +25,6 @@ const migrateMedia = async (item) => {
 
   
   const { common } = metadata
-  console.dir(common)
 
   Music.update({
     hash,
@@ -44,7 +44,25 @@ const migrateMedia = async (item) => {
   })
 }
 
+const mediaQueue = new TaskQueue({
+  concurrent: 3,
+  taskHandler: (task) => {
+    return new Promise(async (resolve, reject) => {
+      const {data: item} = task
+      try {
+        console.log('taskHandler', item.filepathOrigin)
+        await migrateMedia(item)
+        resolve(task)
+      } catch (e) {
+        console.error('[mediaQueue] error', e)
+        reject(e)
+      }
+    })
+  }
+})
+
 
 module.exports = {
-  migrateMedia
+  migrateMedia,
+  mediaQueue
 }

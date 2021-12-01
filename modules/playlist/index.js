@@ -7,7 +7,7 @@ const {
   getUserId
 } = require('../../routes/middleware/user-auth')
 const {
-  migrateMedia
+  mediaQueue
 } = require('./migrate-media')
 
 /**
@@ -98,7 +98,7 @@ router.post('/create-playlist', userAuth, async (req, res, next) => {
 /**
  * Delete playlist recursively
  */
-router.post('/delete', userAuth, async (req, res, next) => {
+router.post('/delete-playlist', userAuth, async (req, res, next) => {
   try {
     const {
       id,
@@ -135,6 +135,22 @@ router.post('/delete', userAuth, async (req, res, next) => {
   }
 })
 
+const doMigrateMedia = async () => {
+  const data = await Music.findAll({
+    where: {
+      hash: {
+        [Op.is]: null
+      }
+    }
+  })
+
+  if (data.length) {
+    mediaQueue.addTasks(data)
+  }
+
+  return data
+}
+
 /**
  * Add music to playlist
  */
@@ -155,6 +171,7 @@ router.post('/add-music', userAuth, async (req, res, next) => {
         pid
       }
     }))
+    await doMigrateMedia()
 
     return res.sendData({})
   } catch (error) {
@@ -190,21 +207,7 @@ router.post('/remove-music', userAuth, async (req, res, next) => {
 
 router.get('/migrate-media', userAuth, async (req, res, next) => {
   try {
-    const data = await Music.findAll({
-      where: {
-        // filepath: {
-          // [Op.is]: null
-        // }
-      }
-    })
-
-    if (data.length) {
-      data.forEach(item => {
-        // TODO: task queue
-        migrateMedia(item)
-      })
-      
-    }
+    await doMigrateMedia()
     
     return res.sendData({})
   } catch (error) {

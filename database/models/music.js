@@ -19,15 +19,16 @@ const Model = sequelize.define('musics', {
   title: {type: Sequelize.STRING, },
   artists: genJsonGetSet('artists'),
   album: {type: Sequelize.STRING, },
-  cover: {type: Sequelize.STRING, },
   year: {type: Sequelize.STRING },
   genre: genJsonGetSet('genre'),
-  disk: genJsonGetSet('track', '{}'),
+  disk: genJsonGetSet('disk', '{}'),
   track: genJsonGetSet('track', '{}'),
   desc: {type: Sequelize.STRING, },
   tags: {type: Sequelize.STRING, },
   rank: {type: Sequelize.NUMBER, defaultValue: 0},
   // sort: {type: Sequelize.NUMBER, defaultValue: 0},
+  cover: {type: Sequelize.STRING, },
+  lyric: {type: Sequelize.STRING, },
   filepathOrigin: {type: Sequelize.STRING}, // 原始文件位置（相对 MUSIC_LIBRARY_PATH 路径）
   filepath: {type: Sequelize.STRING}, // 当前文件位置（相对 MEDIA_VAULT_PATH 路径）
   hash: {type: Sequelize.STRING},

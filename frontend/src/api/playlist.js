@@ -16,7 +16,7 @@ export function createPlaylist(params) {
 }
 
 export function deletePlaylist(params) {
-  return service.post('/delete', params)
+  return service.post('/delete-playlist', params)
 }
 
 export function addPlaylistMusic(params) {
