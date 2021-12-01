@@ -170,6 +170,7 @@ export default {
       if (!item || !item.data.file) {
         return
       }
+      console.log(item)
       let playIndex = 0
       const list = item.parent.children.filter(i => i.data.file).map((i, index) => {
         const {data} = i
