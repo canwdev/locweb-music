@@ -81,27 +81,28 @@ export default {
       try {
         this.isLoading = true
 
-        const {list} = await getPlaylistMusic({
-          pid: this.currentNode.data.id,
-          showMusic: true
+        const {list, path} = await getPlaylistMusic({
+          pid: this.currentNode.data.id
         })
 
         this.songList = list.map(item => {
+          const {music} = item
           const params = {
-            ...item,
+            ...music,
+            id: item.id,
             isDetailLoaded: true,
           }
-          if (item.filepath) {
-            params.path = '.media_vault/'
-            params.filename = item.filepath
+          if (music.filepath) {
+            params.path = path + '/'
+            params.filename = music.filepath
           } else {
-            const pathArr = item.filepathOrigin.split('/')
+            const pathArr = music.filepathOrigin.split('/')
             const filename = pathArr.pop()
             params.path = pathArr.join('/') + '/'
             params.filename = filename
           }
-          if (item.cover) {
-            params.cover = `/images/${item.cover}`
+          if (music.cover) {
+            params.cover = `/images/${music.cover}`
           }
           return new MusicItem(params)
         })

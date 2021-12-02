@@ -1,6 +1,7 @@
 <template>
   <div class="list-playlist">
     <TkTree
+      v-if="treeData"
       :nodes="treeData"
       :selected-id="mSelected && mSelected.id"
       @onItemClick="handleNodeClick"
@@ -49,7 +50,7 @@ import {
 import bus, {ACTION_PLAY_START} from '@/utils/bus'
 import {MusicItem} from '@/enum'
 
-const root = new TreeNode({
+const rootNode = new TreeNode({
   isLazy: true,
   data: {
     id: -1,
@@ -67,7 +68,7 @@ export default {
   },
   data() {
     return {
-      treeData: root,
+      treeData: null,
       selfSelected: null,
       isLoading: false,
     }
@@ -85,7 +86,25 @@ export default {
       }
     }
   },
+  mounted() {
+    this.initRoot()
+  },
   methods: {
+    initRoot() {
+      this.handleLazyLoad({
+        node: {data: {id: -1}},
+        done:(list) => {
+          if (list.length > 0) {
+            this.treeData = list[0] 
+          } else {
+            this.treeData = rootNode
+          }
+        },
+        fail:(e) => {
+          console.error(e)
+        }
+      })
+    },
     handleNodeClick(node) {
       this.mSelected = node
     },

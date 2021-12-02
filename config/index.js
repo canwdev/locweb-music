@@ -36,7 +36,11 @@ if (!config.useAbsolutePath) {
   const basePath = config.MUSIC_LIBRARY_PATH
   config.MUSIC_LYRICS_PATH = path.join(basePath, config.MUSIC_LYRICS_PATH)
   config.IMAGE_PATH = path.join(basePath, config.IMAGE_PATH)
+  
+  config._mediaVaultPathRelative = config.MEDIA_VAULT_PATH
   config.MEDIA_VAULT_PATH = path.join(basePath, config.MEDIA_VAULT_PATH)
+} else {
+  config._mediaVaultPathRelative = config.MEDIA_VAULT_PATH.split('/').pop()
 }
 
 fs.ensureDirSync(config.MUSIC_LIBRARY_PATH)

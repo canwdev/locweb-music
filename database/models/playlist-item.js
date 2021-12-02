@@ -27,6 +27,9 @@ const Model = sequelize.define('playlist_items', {
   rank: {type: Sequelize.NUMBER},
 }, {timestamps: true})
 
+Music.hasOne(Model, { foreignKey: 'music_id' })
+Model.belongsTo(Music, { foreignKey: 'music_id' })
+
 sequelize.sync({
   // force: false,
   // alter: true

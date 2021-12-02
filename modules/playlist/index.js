@@ -10,6 +10,9 @@ const {
 const {
   mediaQueue
 } = require('./migrate-media')
+const {
+  _mediaVaultPathRelative
+} = require('../../config')
 
 /**
  * Get playlists
@@ -20,7 +23,6 @@ router.get('/list', async (req, res, next) => {
       pid,
       offset,
       limit,
-      showMusic = false,
     } = req.query
 
     let paginationQuery = limit ? {
@@ -42,22 +44,8 @@ router.get('/list', async (req, res, next) => {
       ]
     })
 
-    let resMusic
-    // TODO: List musics
-    if (showMusic) {
-      resMusic = await Music.findAndCountAll({
-        where: {
-          pid: pid
-        },
-        order: [
-          ['id', 'DESC'],
-        ]
-      })
-    }
-
     return res.sendData({
       list: resPlaylist.rows,
-      musics: resMusic && resMusic.rows,
       count: resPlaylist.count
     })
   } catch (error) {
@@ -83,19 +71,21 @@ router.get('/list-music', async (req, res, next) => {
       where.pid = Number(pid)
     }
 
-    const resMusic = await Music.findAndCountAll({
+    const resItems = await PlaylistItem.findAndCountAll({
       ...paginationQuery,
       where: {
-        pid: pid
+        playlist_id: pid
       },
       order: [
         ['id', 'DESC'],
-      ]
+      ],
+      include: Music // 联表查询
     })
 
     return res.sendData({
-      list: resMusic.rows,
-      count: resMusic.count
+      list: resItems.rows,
+      count: resItems.count,
+      path: _mediaVaultPathRelative
     })
   } catch (error) {
     next(error)
@@ -143,6 +133,7 @@ router.post('/delete-playlist', userAuth, async (req, res, next) => {
       return res.sendError({message: 'id can not be empty'})
     }
 
+    // 移除子播放列表项
     const findList = []
     const recursiveFind = async (id) => {
       const list = await Playlist.findAll({
@@ -153,15 +144,23 @@ router.post('/delete-playlist', userAuth, async (req, res, next) => {
         const node = list[key]
         findList.push(node)
         await recursiveFind(node.id)
-        // TODO: Delete musics
       }
     }
     await recursiveFind(id)
 
-    const ids = findList.map(item => item.id)
+    let idsToDelete = findList.map(item => item.id)
+    idsToDelete = [id, ...idsToDelete]
+    
+    // TODO: Delete musics
+    await PlaylistItem.destroy({
+      where: {
+        playlist_id: idsToDelete
+      }
+    })
+
     const resData = await Playlist.destroy({
       where: {
-        id: [id, ...ids]
+        id: idsToDelete
       }
     })
 
@@ -201,7 +200,7 @@ router.post('/add-music', userAuth, async (req, res, next) => {
       return res.sendError({message: 'pid can not be empty'})
     }
 
-    // 去重添加
+    // 去重添加Music
     const listMap = {}
     const addList = musics.map(item => {
       const newItem = {
