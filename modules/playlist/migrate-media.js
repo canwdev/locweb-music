@@ -9,12 +9,36 @@ const { calcFileHash } = require('../../utils')
 const { TaskQueue } = require('../../utils/task-queue')
 const { getMetadata } = require('../../utils/music-tool')
 const Music = require('../../database/models/music')
+const PlaylistItem = require('../../database/models/playlist-item')
+
+// 移除重复的Music，并修改相应外键值
+const removeDuplication = async (existMusic, newItem) => {
+  await PlaylistItem.update({
+    music_id: existMusic.id,
+  }, {
+    where: {
+      music_id: newItem.id
+    }
+  })
+  await newItem.destroy()
+}
 
 const migrateMedia = async (item) => {
-  const { filepathOrigin } = item
-  const absPath = getMediaPath(filepathOrigin)
+  const { filepath_origin } = item
+  const absPath = getMediaPath(filepath_origin)
   const hash = await calcFileHash(absPath)
-  const { suffix } = parseFileName(filepathOrigin)
+
+  const existMusic = await Music.findOne({
+    where: {
+      hash
+    }
+  })
+  if (existMusic) {
+    await removeDuplication(existMusic, item)
+    return
+  }
+
+  const { suffix } = parseFileName(filepath_origin)
   const newFilename = `${hash}${suffix}`
 
   await copyToMediaVault(absPath, newFilename)
@@ -50,7 +74,7 @@ const mediaQueue = new TaskQueue({
     return new Promise(async (resolve, reject) => {
       const {data: item} = task
       try {
-        console.log('taskHandler', item.filepathOrigin)
+        console.log('taskHandler', item.filepath_origin)
         await migrateMedia(item)
         resolve(task)
       } catch (e) {

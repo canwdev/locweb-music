@@ -3,7 +3,7 @@ const sequelize = require('../sequelize')
 
 // Table schema
 const Model = sequelize.define('playlists', {
-  pid: {type: Sequelize.NUMBER, allowNull: false, defaultValue: -1},
+  pid: {type: Sequelize.NUMBER, allowNull: false, defaultValue: -1}, // Parent id
   title: {type: Sequelize.STRING, defaultValue: ''},
   desc: {type: Sequelize.STRING, defaultValue: ''},
   cover: {type: Sequelize.STRING, defaultValue: ''},

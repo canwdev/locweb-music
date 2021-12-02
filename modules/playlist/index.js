@@ -1,4 +1,5 @@
 const Playlist = require('../../database/models/playlist')
+const PlaylistItem = require('../../database/models/playlist-item')
 const Music = require('../../database/models/music')
 const Op = require('sequelize').Op
 const router = require('express').Router()
@@ -200,15 +201,59 @@ router.post('/add-music', userAuth, async (req, res, next) => {
       return res.sendError({message: 'pid can not be empty'})
     }
 
-    await Music.bulkCreate(musics.map(item => {
-      return {
-        filepathOrigin: item.filepath,
-        pid
+    // 去重添加
+    const listMap = {}
+    const addList = musics.map(item => {
+      const newItem = {
+        filepath_origin: item.filepath,
       }
+      listMap[item.filepath] = newItem
+      return newItem
+    })
+
+    // console.log('>>> listMap', listMap)
+    // console.log('>>> addList', addList)
+
+    const existMusics = await Music.findAll({
+      where: {
+        filepath_origin: Object.keys(listMap)
+      }
+    })
+
+    // console.log('>>> existMusics')
+    // console.dir(existMusics)
+
+    existMusics.forEach(item => {
+      if (listMap[item.filepath_origin]) {
+        listMap[item.filepath_origin].id = item.id
+      }
+    })
+
+    const musicRes = await Music.bulkCreate(addList.filter(item => {
+      return !item.id
     }))
     await doMigrateMedia()
 
-    return res.sendData({})
+    // console.log('>>> musicRes')
+    // console.dir(musicRes)
+
+    musicRes.forEach(item => {
+      if (listMap[item.filepath_origin]) {
+        listMap[item.filepath_origin].id = item.id
+      }
+    })
+
+    const playlistItemRes = await PlaylistItem.bulkCreate(addList.map(item => {
+      return {
+        music_id: item.id,
+        playlist_id: pid,
+      }
+    }))
+
+    // console.log('>>> playlistItemRes')
+    // console.dir(playlistItemRes)
+
+    return res.sendData(playlistItemRes)
   } catch (error) {
     next(error)
   }

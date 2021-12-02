@@ -15,7 +15,6 @@ const genJsonGetSet = (name, defaultJSON = '[]') => {
 
 // Table schema
 const Model = sequelize.define('musics', {
-  pid: {type: Sequelize.NUMBER, defaultValue: -1}, // Playlist id
   title: {type: Sequelize.STRING, },
   artists: genJsonGetSet('artists'),
   album: {type: Sequelize.STRING, },
@@ -25,13 +24,19 @@ const Model = sequelize.define('musics', {
   track: genJsonGetSet('track', '{}'),
   desc: {type: Sequelize.STRING, },
   tags: {type: Sequelize.STRING, },
-  rank: {type: Sequelize.NUMBER, defaultValue: 0},
+  rank: {type: Sequelize.NUMBER},
   // sort: {type: Sequelize.NUMBER, defaultValue: 0},
   cover: {type: Sequelize.STRING, },
   lyric: {type: Sequelize.STRING, },
-  filepathOrigin: {type: Sequelize.STRING}, // 原始文件位置（相对 MUSIC_LIBRARY_PATH 路径）
+  filepath_origin: {
+    type: Sequelize.STRING,
+    unique: true
+  }, // 原始文件位置（相对 MUSIC_LIBRARY_PATH 路径）
   filepath: {type: Sequelize.STRING}, // 当前文件位置（相对 MEDIA_VAULT_PATH 路径）
-  hash: {type: Sequelize.STRING},
+  hash: {
+    type: Sequelize.STRING,
+    unique: true
+  },
 }, {timestamps: true})
 
 sequelize.sync({
