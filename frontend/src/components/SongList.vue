@@ -52,7 +52,7 @@ import {deletePlaylist, getPlaylistMusic, removePlaylistMusic} from '@/api/playl
 import {MusicItem} from '@/enum'
 import bus, {
   ACTION_TOGGLE_PLAY,
-  ACTION_PLAY_START, ACTION_ADD_PLAYLIST, ACTION_DOWNLOAD_FILE,
+  ACTION_PLAY_START, ACTION_ADD_PLAYLIST, ACTION_DOWNLOAD_FILE, ACTION_ADD_LIST_PLAY_NEXT,
 } from '@/utils/bus'
 import ContextMenuCommon from '@/components/ContextMenuCommon'
 
@@ -121,7 +121,8 @@ export default {
         {icon: 'play_arrow', label: this.$t('play'), action: () => this.handleItemClick(item)},
         {
           icon: 'playlist_play', label: 'Play next', action: () => {
-          }, disabled: true
+            bus.$emit(ACTION_ADD_LIST_PLAY_NEXT, item)
+          }
         },
         {
           icon: 'playlist_add', label: this.$t('msg.add-to-playlist'), action: () => {

@@ -166,7 +166,7 @@ import bus, {
   ACTION_CHANGE_CURRENT_TIME,
   ACTION_NEXT, ACTION_PREV,
   ACTION_TOGGLE_PLAY,
-  ACTION_ADD_PLAYLIST, ACTION_DOWNLOAD_FILE,
+  ACTION_ADD_PLAYLIST, ACTION_DOWNLOAD_FILE, ACTION_ADD_LIST_PLAY_NEXT,
 } from '@/utils/bus'
 import {downLoadFile, formatTimeHMS} from '@/utils'
 import ButtonCover from '@/components/ButtonCover.vue'
@@ -223,6 +223,7 @@ export default {
       'musicItem',
       'paused',
       'playingList',
+      'playingIndex',
     ]),
     isDisabled() {
       return this.playingList.length === 0
@@ -299,6 +300,7 @@ export default {
 
     bus.$on(ACTION_ADD_PLAYLIST, this.handleAddPlaylist)
     bus.$on(ACTION_DOWNLOAD_FILE, this.actionDownloadFile)
+    bus.$on(ACTION_ADD_LIST_PLAY_NEXT, this.addListPlayNext)
   },
   beforeDestroy() {
     hotkeys.unbind(keySpace, this.togglePlay)
@@ -311,6 +313,7 @@ export default {
 
     bus.$off(ACTION_ADD_PLAYLIST, this.handleAddPlaylist)
     bus.$off(ACTION_DOWNLOAD_FILE, this.actionDownloadFile)
+    bus.$off(ACTION_ADD_LIST_PLAY_NEXT, this.addListPlayNext)
   },
   methods: {
     formatTimeHMS,
@@ -405,6 +408,9 @@ export default {
         console.error(e)
       }
     },
+    addListPlayNext(item) {
+      this.playingList.splice(this.playingIndex, 0, item)
+    }
   }
 }
 </script>
