@@ -22,7 +22,6 @@
     <div
       v-else
       class="list-item-big flex"
-      :title="item.filename"
     >
       <ButtonCover
         :icon-name="iconName"

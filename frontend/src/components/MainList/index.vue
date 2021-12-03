@@ -325,7 +325,7 @@ export default {
       }
     }
 
-    button {
+    ::v-deep button {
       height: 100%;
       display: flex;
       align-items: center;

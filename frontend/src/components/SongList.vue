@@ -18,14 +18,34 @@
         show-btn-menu
         :filter-placeholder="$t('filter-by-name')"
         @onItemClick="handleItemClick"
+        @openMenu="showListMenu"
+        @onItemAction="showItemMenu"
       >
+        <template v-slot:actions>
+          <TkButton
+            size="no-style"
+            :title="$t('refresh')"
+            @click="loadSongList"
+          ><i class="material-icons">refresh</i>
+          </TkButton>
+        </template>
+
+        <ContextMenuCommon
+          ref="itemMenuRef"
+          :list-fn="getItemMenuList"
+        />
+
+        <ContextMenuCommon
+          ref="listMenuRef"
+          :list="menuList"
+        />
       </MainList>
     </div>
   </div>
 </template>
 
 <script>
-import TreePlaylist from "./TreePlaylist.vue"
+import TreePlaylist from './TreePlaylist.vue'
 import MainList from '@/components/MainList/index.vue'
 import {mapGetters, mapState} from 'vuex'
 import {getPlaylistMusic} from '@/api/playlist'
@@ -34,18 +54,25 @@ import bus, {
   ACTION_TOGGLE_PLAY,
   ACTION_PLAY_START,
 } from '@/utils/bus'
+import ContextMenuCommon from '@/components/ContextMenuCommon'
 
 export default {
-  name: "SongList",
+  name: 'SongList',
   components: {
     TreePlaylist,
-    MainList
+    MainList,
+    ContextMenuCommon
   },
   data() {
     return {
       currentNode: null,
       isLoading: false,
-      songList: []
+      songList: [],
+      menuList: [
+        { icon: 'save', label: 'Sync playlist', action: () => {} },
+        { icon: 'queue', label: 'Save as new playlist', action: () => {} },
+        { icon: 'archive', label: this.$t('download-archive'), action: () => {} },
+      ],
     }
   },
   computed: {
@@ -73,10 +100,20 @@ export default {
         }
         this.loadSongList()
       },
-      immidate: true
+      immediate: true
     }
   },
   methods: {
+    getItemMenuList(sItem) {
+      return [
+        {icon: 'play_arrow', label: 'Play', action: () => this.handleItemClick(sItem)},
+        {icon: 'playlist_play', label: 'Play next', action: () => {}},
+        {icon: 'playlist_add', label: 'Add to 歌单', action: () => {}},
+        {isSeparator: true},
+        {icon: 'file_download', label: this.$t('download'), action: () => {}},
+        {icon: 'delete', label: 'Remove', action: () => {}},
+      ]
+    },
     async loadSongList() {
       try {
         this.isLoading = true
@@ -96,7 +133,7 @@ export default {
             params.path = path + '/'
             params.filename = music.filepath
           } else {
-            const pathArr = music.filepathOrigin.split('/')
+            const pathArr = music.filepath_origin.split('/')
             const filename = pathArr.pop()
             params.path = pathArr.join('/') + '/'
             params.filename = filename
@@ -106,7 +143,6 @@ export default {
           }
           return new MusicItem(params)
         })
-
       } catch (e) {
         console.error(e)
       } finally {
@@ -125,24 +161,37 @@ export default {
       this.$store.commit('setPlayingList', list)
       bus.$emit(ACTION_PLAY_START, {list, item})
     },
+    showListMenu(item) {
+      this.$refs.listMenuRef.open()
+    },
+    showItemMenu(item) {
+      this.$refs.itemMenuRef.open(item)
+    },
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>
 .song-list {
+  display: flex;
+  height: 100%;
+  overflow: hidden;
   .panel-item {
-    position: absolute;
-    overflow: hidden;
-    top: 0;
-    left: 0;
     display: flex !important;
-    width: 50%;
     bottom: 0;
+
+    &.left-panel {
+      width: 300px;
+      box-sizing: border-box;
+      overflow: auto;
+      overflow-y: overlay;
+    }
+
     &.right-panel {
       border-left: 1px solid $border-color;
       left: unset;
       right: 0;
+      flex: 1;
     }
   }
 }

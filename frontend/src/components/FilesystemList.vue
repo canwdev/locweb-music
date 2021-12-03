@@ -19,8 +19,8 @@
     @drop.native="fileDrop"
   >
     <ContextMenuCommon
-      ref="fileMenuRef"
-      :list-fn="getFileMenuList"
+      ref="itemMenuRef"
+      :list-fn="getItemMenuList"
     />
     <ContextMenuCommon
       ref="folderMenuRef"
@@ -153,7 +153,7 @@ export default {
     },
   },
   methods: {
-    getFileMenuList(sItem) {
+    getItemMenuList(sItem) {
       const list = [
         {icon: 'space_bar', label: this.$t('rename'), action: () => this.actionRenameFile(sItem)},
         {icon: 'delete', label: this.$t('delete'), action: () => this.actionDeleteFile(sItem)},
@@ -266,7 +266,7 @@ export default {
       }
     },
     handleItemAction(item) {
-      this.$refs.fileMenuRef.open(item)
+      this.$refs.itemMenuRef.open(item)
     },
     spliceLocalItem(item, newItem) {
       const index = this.fileList.findIndex(v => v.id === item.id)

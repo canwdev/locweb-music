@@ -1,4 +1,4 @@
-import { 
+import {
   addPlaylistMusic,
   migrateMedia
  } from '@/api/playlist'
@@ -13,14 +13,15 @@ export default {
       menuList: [
         { icon: 'queue', label: 'Save playlist...', action: this.savePlaylist },
         { icon: 'clear_all', label: 'Clear playlist', action: this.clearPlaylist },
-        { icon: 'my_location', label: 'migrateMedia', action: this.migrateMedia },
+        {isSeparator: true},
+        { icon: 'sync', label: 'Migrate media', action: this.migrateMedia },
       ],
       isShowChoosePlaylist: false,
       currentAddItem: null
     }
   },
   methods: {
-    getFileMenuList(sItem) {
+    getItemMenuList(sItem) {
       return [
         { icon: 'my_location', label: this.$t('msg.locate-file'), action: () => this.locateFile(sItem) },
         {
@@ -33,8 +34,8 @@ export default {
         },
       ]
     },
-    showFileMenu(item) {
-      this.$refs.fileMenuRef.open(item)
+    showItemMenu(item) {
+      this.$refs.itemMenuRef.open(item)
     },
     async addMusic(items, pid) {
       try {

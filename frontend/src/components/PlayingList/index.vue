@@ -19,7 +19,7 @@
       show-btn-menu
       :filter-placeholder="$t('filter-by-name')"
       @onItemClick="handleItemClick"
-      @onItemAction="showFileMenu"
+      @onItemAction="showItemMenu"
       @updateSort="handleUpdateSort"
       @openMenu="showListMenu"
     >
@@ -34,8 +34,8 @@
         </TkButton>
       </template>
       <ContextMenuCommon
-        ref="fileMenuRef"
-        :list-fn="getFileMenuList"
+        ref="itemMenuRef"
+        :list-fn="getItemMenuList"
       />
 
       <ContextMenuCommon

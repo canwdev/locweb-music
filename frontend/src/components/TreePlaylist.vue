@@ -1,10 +1,11 @@
 <template>
-  <div class="list-playlist">
+  <div class="tree-playlist">
     <TkTree
       v-if="treeData"
       :nodes="treeData"
       :selected-id="mSelected && mSelected.id"
       @onItemClick="handleNodeClick"
+      @onItemContextMenu="handleNodeContextMenu"
       @onItemDbClick="playItem"
       @onItemLazyLoad="handleLazyLoad"
     >
@@ -16,23 +17,15 @@
         {{ item.data.title }}
       </template>
       <template v-slot:append="{item}">
-        <TkButton v-if="!item.data.file" size="no-style" :title="$t('add')" @click="handleAdd(item)"><i
-          class="material-icons"
-        >add</i></TkButton>
-        <TkButton v-else size="no-style" :title="$t('play')" @click="playItem(item)"><i class="material-icons">play_arrow</i>
+        <TkButton size="no-style" :title="$t('menu')" @click="showItemMenu(item)">
+          <i class="material-icons">more_vert</i>
         </TkButton>
-        <TkButton v-if="item.parent" size="no-style" :title="$t('delete')" @click="handleDel(item)"><i
-          class="material-icons"
-        >delete</i></TkButton>
-        <TkButton v-if="!item.data.file" size="no-style" :title="$t('refresh')" @click="item.$doLazyLoad()"><i
-          class="material-icons"
-        >refresh</i></TkButton>
-        <TkButton size="no-style" :title="`id: ${item.id}\ndata-id: ${item.data.id}\n`" @click="logNode(item)"><i
-          class="material-icons"
-        >bug_report</i></TkButton>
       </template>
     </TkTree>
-
+    <ContextMenuCommon
+      ref="itemMenuRef"
+      :list-fn="getItemMenuList"
+    />
   </div>
 </template>
 
@@ -47,8 +40,9 @@ import {
   deletePlaylist,
   removePlaylistMusic
 } from '@/api/playlist'
-import bus, {ACTION_PLAY_START} from '@/utils/bus'
+import bus, {ACTION_PLAY_START, ACTION_TOGGLE_PLAY} from '@/utils/bus'
 import {MusicItem} from '@/enum'
+import ContextMenuCommon from '@/components/ContextMenuCommon'
 
 const rootNode = new TreeNode({
   isLazy: true,
@@ -60,6 +54,9 @@ const rootNode = new TreeNode({
 
 export default {
   name: 'TreePlaylist',
+  components: {
+    ContextMenuCommon
+  },
   props: {
     selected: {
       type: Object,
@@ -90,17 +87,40 @@ export default {
     this.initRoot()
   },
   methods: {
+    getItemMenuList(item) {
+      const list = []
+
+      if (!item.data.file) {
+        list.push({icon: 'create_new_folder', label: this.$t('add'), action: () => this.handleAdd(item)})
+        list.push({icon: 'refresh', label: this.$t('refresh'), action: () => item.$doLazyLoad()})
+      } else {
+        list.push({icon: 'play_arrow', label: this.$t('play'), action: () => this.playItem(item)})
+      }
+
+      if (item.parent) {
+        list.push({icon: 'delete', label: this.$t('delete'), action: () => this.handleDel(item)})
+      }
+
+      list.push({isSeparator: true})
+      list.push({
+        icon: 'bug_report',
+        label: `id: ${item.id}, data-id: ${item.data.id}`,
+        action: () => this.logNode(item)
+      })
+
+      return list
+    },
     initRoot() {
       this.handleLazyLoad({
         node: {data: {id: -1}},
-        done:(list) => {
+        done: (list) => {
           if (list.length > 0) {
-            this.treeData = list[0] 
+            this.treeData = list[0]
           } else {
             this.treeData = rootNode
           }
         },
-        fail:(e) => {
+        fail: (e) => {
           console.error(e)
         }
       })
@@ -128,30 +148,41 @@ export default {
       }
     },
     async handleAdd(node) {
-      try {
-        const pid = node.data.id
-        const title = prompt(`Add Playlist under ${pid}`, 'Playlist' + Date.now())
-        if (!title) {
-          return
+      const pid = node.data.id
+
+      this.$prompt.create({
+        propsData: {
+          title: `Add Playlist`,
+          content: `Add Playlist under ${pid}`,
+          input: {
+            value: '',
+            required: true,
+            placeholder: '',
+          }
+        },
+        parentEl: this.$el
+      }).onConfirm(async (context) => {
+        try {
+          this.isLoading = true
+          const title = context.inputValue
+          const res = await createPlaylist({
+            pid,
+            title
+          })
+          // console.log('ok', res)
+          node.prependChild(new TreeNode({
+            isLazy: true,
+            data: res,
+            parent: node
+          }))
+          // node.isLazy = true
+          // node.$click()
+        } catch (e) {
+          console.error(e)
+        } finally {
+          this.isLoading = false
         }
-        this.isLoading = true
-        const res = await createPlaylist({
-          pid,
-          title
-        })
-        // console.log('ok', res)
-        node.prependChild(new TreeNode({
-          isLazy: true,
-          data: res,
-          parent: node
-        }))
-        // node.isLazy = true
-        // node.$click()
-      } catch (e) {
-        console.error(e)
-      } finally {
-        this.isLoading = false
-      }
+      })
     },
     async handleDel(item) {
       if (!item.parent) {
@@ -161,29 +192,33 @@ export default {
       if (item.data.file) {
         confirmMsg = `WARNING!! Remove《${item.data.title}》?`
       }
-      const flag = confirm(confirmMsg)
-      if (!flag) {
-        return
-      }
-      this.isLoading = true
-      try {
-        if (item.data.file) {
-          await removePlaylistMusic({
-            ids: [item.data.id]
-          })
-        } else {
-          await deletePlaylist({
-            id: item.data.id
-          })
-        }
+      this.$prompt.create({
+        propsData: {
+          title: this.$t('delete'),
+          content: confirmMsg,
+        },
+        parentEl: this.$el
+      }).onConfirm(async () => {
+        this.isLoading = true
+        try {
+          if (item.data.file) {
+            await removePlaylistMusic({
+              ids: [item.data.id]
+            })
+          } else {
+            await deletePlaylist({
+              id: item.data.id
+            })
+          }
 
-        item.parent.removeChild(item)
-        this.$toast.success(this.$t('msg.playlist-deleted'))
-      } catch (e) {
-        console.error(e)
-      } finally {
-        this.isLoading = false
-      }
+          item.parent.removeChild(item)
+          this.$toast.success(this.$t('msg.playlist-deleted'))
+        } catch (e) {
+          console.error(e)
+        } finally {
+          this.isLoading = false
+        }
+      })
     },
     async playItem(item) {
       if (!item || !item.data.file) {
@@ -207,17 +242,25 @@ export default {
     },
     logNode(n) {
       console.log(n)
+    },
+    showItemMenu(item) {
+      this.$refs.itemMenuRef.open(item)
+    },
+    handleNodeContextMenu({event, item}) {
+      event.preventDefault()
+      this.showItemMenu(item)
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.list-playlist {
+.tree-playlist {
   width: 100%;
   height: 100%;
   overflow: auto;
   padding: 5px 0;
+  box-sizing: border-box;
 
   .tk-tree-item {
     .append {
@@ -231,8 +274,8 @@ export default {
         }
 
         &:hover {
-          background: $secondary;
-          border-radius: $border-radius;
+          background: $primary;
+          color: white;
         }
       }
     }

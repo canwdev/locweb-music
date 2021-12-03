@@ -77,7 +77,7 @@ router.get('/list-music', async (req, res, next) => {
         playlist_id: pid
       },
       order: [
-        ['id', 'DESC'],
+        ['sort', 'ASC'],
       ],
       include: Music // 联表查询
     })
@@ -150,7 +150,7 @@ router.post('/delete-playlist', userAuth, async (req, res, next) => {
 
     let idsToDelete = findList.map(item => item.id)
     idsToDelete = [id, ...idsToDelete]
-    
+
     // TODO: Delete musics
     await PlaylistItem.destroy({
       where: {
@@ -287,7 +287,7 @@ router.post('/remove-music', userAuth, async (req, res, next) => {
 router.get('/migrate-media', userAuth, async (req, res, next) => {
   try {
     await doMigrateMedia()
-    
+
     return res.sendData({})
   } catch (error) {
     next(error)
