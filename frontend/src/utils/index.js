@@ -53,7 +53,7 @@ export const blobToDataURL = (blob) => {
   })
 }
 
-export function downLoadFile(src, name = 'download') {
+export function downLoadFile(src, name = '') {
   try {
     if (('download' in document.createElement('a'))) {
       const el = document.createElement('a')

@@ -159,6 +159,7 @@ export default {
           if (music.filepath) {
             params.path = path + '/'
             params.filename = music.filepath
+            params.isMigrated = true
           } else {
             const pathArr = music.filepath_origin.split('/')
             const filename = pathArr.pop()

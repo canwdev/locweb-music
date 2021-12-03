@@ -60,7 +60,8 @@ const migrateMedia = async (item) => {
     return
   }
 
-  const { suffix } = parseFileName(filepath_origin)
+  const filename = Path.basename(filepath_origin)
+  const { prefix, suffix } = parseFileName(filename)
   const newFilename = `${hash}${suffix}`
 
   await copyToMediaVault(absPath, newFilename)
@@ -76,7 +77,7 @@ const migrateMedia = async (item) => {
     hash,
     filepath: newFilename,
     cover: coverFileName,
-    title: common.title,
+    title: common.title || prefix,
     artists: common.artists,
     album: common.album,
     disk: common.disk,

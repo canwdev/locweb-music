@@ -111,7 +111,8 @@ export class MusicItem {
     this.metadata = item.metadata
     this.coverOrigin = item.cover
     this.isDetailLoaded = item.isDetailLoaded || false
-    this.isOutSource = item.isOutSource || false
+    this.isMigrated = item.isMigrated || false // 是否完成迁移到vault
+    this.isOutSource = item.isOutSource || false // 是否外链
     this.src = item.src
     this.lyric = item.lyric || ''
   }
@@ -129,6 +130,10 @@ export class MusicItem {
 
   get filepath() {
     return this.path + this.filename
+  }
+
+  get fileSuffix() {
+    return this.filename.split('.').pop()
   }
 
   get filenameDisplay() {

@@ -392,10 +392,15 @@ export default {
     async actionDownloadFile(item) {
       if (!item) return
       try {
+        let saveName = item.filename
+        if (item.isMigrated) {
+          saveName = item.filenameDisplay + '.' + item.fileSuffix
+        }
         downLoadFile(getDownloadUrl({
           path: item.path,
           filename: item.filename,
-        }), item.filename)
+          saveName: saveName
+        }))
       } catch (e) {
         console.error(e)
       }

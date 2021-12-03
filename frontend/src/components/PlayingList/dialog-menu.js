@@ -1,36 +1,43 @@
 import {
   migrateMedia
- } from '@/api/playlist'
+} from '@/api/playlist'
 import bus, {
   ACTION_LOCATE_FILE,
   ACTION_TOGGLE_PLAY,
-  ACTION_ADD_PLAYLIST
+  ACTION_ADD_PLAYLIST, ACTION_DOWNLOAD_FILE
 } from '@/utils/bus'
 
 export default {
   data() {
     return {
       menuList: [
-        { icon: 'queue', label: 'Save playlist...', action: this.savePlaylist },
-        { icon: 'clear_all', label: 'Clear playlist', action: this.clearPlaylist },
+        {icon: 'queue', label: 'Save playlist...', action: this.savePlaylist},
+        {icon: 'clear_all', label: 'Clear playlist', action: this.clearPlaylist},
         {isSeparator: true},
-        { icon: 'sync', label: 'Migrate media', action: this.migrateMedia },
+        {icon: 'sync', label: 'Migrate media', action: this.migrateMedia},
       ],
     }
   },
   methods: {
     getItemMenuList(item) {
-      return [
-        { icon: 'my_location', label: this.$t('msg.locate-file'), action: () => this.locateFile(item) },
-        {
-          icon: 'playlist_add', label: this.$t('msg.add-to-playlist'),
-          action: () => {
-            bus.$emit(ACTION_ADD_PLAYLIST, {
-              items: [item]
-            })
-          }
-        },
-      ]
+      const list = []
+
+      if (!item.isMigrated && !item.isOutSource) {
+        list.push({icon: 'my_location', label: this.$t('msg.locate-file'), action: () => this.locateFile(item)})
+      }
+      list.push({
+        icon: 'playlist_add', label: this.$t('msg.add-to-playlist'),
+        action: () => {
+          bus.$emit(ACTION_ADD_PLAYLIST, {
+            items: [item]
+          })
+        }
+      })
+
+      list.push({
+        icon: 'file_download', label: this.$t('download'), action: () => bus.$emit(ACTION_DOWNLOAD_FILE, item)
+      })
+      return list
     },
     showItemMenu(item) {
       this.$refs.itemMenuRef.open(item)
@@ -64,7 +71,7 @@ export default {
       }).onConfirm(async () => {
         this.$store.commit('setPlayingList', [])
         this.playingIndex = 0
-        bus.$emit(ACTION_TOGGLE_PLAY, { isPause: true })
+        bus.$emit(ACTION_TOGGLE_PLAY, {isPause: true})
         setTimeout(() => {
           this.$store.commit('setMusicItem', null)
         })

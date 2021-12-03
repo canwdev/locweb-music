@@ -12,8 +12,11 @@ const downloadFile = async (req, res, next) => {
   try {
     const {
       filename,
-      path: musicPath = ''
+      path: musicPath = '',
+      saveName
     } = req.query
+
+    const downloadFilename = saveName || filename
 
     const {filePath} = getExactPath(musicPath, filename)
 
@@ -24,13 +27,13 @@ const downloadFile = async (req, res, next) => {
         zlib: { level: 9 }
       })
       archive.directory(filePath, filename);
-      res.header('Content-Disposition', `attachment; filename="${filename}.zip"`);
+      res.header('Content-Disposition', `attachment; filename="${downloadFilename}.zip"`);
       archive.pipe(res)
       archive.finalize()
       return
     }
 
-    return res.download(filePath, filename, {
+    return res.download(filePath, downloadFilename, {
       dotfiles: 'allow'
     })
   } catch (error) {
