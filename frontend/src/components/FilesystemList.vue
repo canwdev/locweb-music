@@ -153,16 +153,39 @@ export default {
     },
   },
   methods: {
-    getItemMenuList(sItem) {
-      const list = [
-        {icon: 'drive_file_rename_outline', label: this.$t('rename'), action: () => this.actionRenameFile(sItem)},
-        {icon: 'delete', label: this.$t('delete'), action: () => this.actionDeleteFile(sItem)},
-        !sItem.isDirectory
-          ? {icon: 'file_download', label: this.$t('download'), action: () => this.actionDownloadFile(sItem)}
-          : {icon: 'archive', label: this.$t('download-archive'), action: () => this.actionDownloadFile(sItem)},
-      ]
-      if (!sItem.isDirectory) {
-        list.push({icon: 'upgrade', label: this.$t('replace') + '...', action: () => this.actionReplaceFile(sItem)})
+    getItemMenuList(item) {
+      let list = []
+
+      if (item.isDirectory) {
+        list.push({icon: 'play_arrow', label: this.$t('play'), action: () => {}, disabled: true})
+        list.push({
+          icon: 'playlist_add', label: '保存为播放列表',
+          action: () => {
+          }, disabled: true
+        })
+      } else {
+        list.push({icon: 'play_arrow', label: this.$t('play'), action: () => this.handleItemClick(item)})
+        list.push(
+          {icon: 'playlist_play', label: 'Play next', action: () => {}, disabled: true})
+        list.push({
+          icon: 'playlist_add', label: this.$t('msg.add-to-playlist'),
+          action: () => {
+          }, disabled: true
+        })
+      }
+
+      list = [...list, ...[
+        {isSeparator: true},
+        {icon: 'drive_file_rename_outline', label: this.$t('rename'), action: () => this.actionRenameFile(item)},
+        {icon: 'delete', label: this.$t('delete'), action: () => this.actionDeleteFile(item)},
+        {isSeparator: true},
+      ]]
+
+      if (item.isDirectory) {
+        list.push({icon: 'archive', label: this.$t('download-archive'), action: () => this.actionDownloadFile(item)})
+      } else {
+        list.push({icon: 'swap_horiz', label: this.$t('replace') + '...', action: () => this.actionReplaceFile(item)})
+        list.push({icon: 'file_download', label: this.$t('download'), action: () => this.actionDownloadFile(item)})
       }
       return list
     },

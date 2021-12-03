@@ -104,14 +104,14 @@ export default {
     }
   },
   methods: {
-    getItemMenuList(sItem) {
+    getItemMenuList(item) {
       return [
-        {icon: 'play_arrow', label: 'Play', action: () => this.handleItemClick(sItem)},
+        {icon: 'play_arrow', label: this.$t('play'), action: () => this.handleItemClick(item)},
         {icon: 'playlist_play', label: 'Play next', action: () => {}, disabled: true},
-        {icon: 'playlist_add', label: 'Add to 歌单', action: () => {}, disabled: true},
+        {icon: 'playlist_add', label: this.$t('msg.add-to-playlist'), action: () => {}, disabled: true},
         {isSeparator: true},
         {icon: 'file_download', label: this.$t('download'), action: () => {}, disabled: true},
-        {icon: 'delete', label: 'Remove', action: () => this.handleDeleteItem(sItem)},
+        {icon: 'delete', label: 'Remove', action: () => this.handleDeleteItem(item)},
         {icon: 'info', label: 'Properties', action: () => {}, disabled: true},
       ]
     },

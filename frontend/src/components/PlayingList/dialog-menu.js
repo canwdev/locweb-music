@@ -21,15 +21,14 @@ export default {
     }
   },
   methods: {
-    getItemMenuList(sItem) {
+    getItemMenuList(item) {
       return [
-        { icon: 'my_location', label: this.$t('msg.locate-file'), action: () => this.locateFile(sItem) },
+        { icon: 'my_location', label: this.$t('msg.locate-file'), action: () => this.locateFile(item) },
         {
-          icon: 'playlist_add', label: this.$t('msg.add-to-playlist') + '...',
+          icon: 'playlist_add', label: this.$t('msg.add-to-playlist'),
           action: () => {
-            this.currentAddItem = sItem
+            this.currentAddItem = item
             this.isShowChoosePlaylist = true
-            // this.addMusic(sItem)
           }
         },
       ]
