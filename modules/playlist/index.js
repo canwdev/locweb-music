@@ -8,7 +8,8 @@ const {
   getUserId
 } = require('../../routes/middleware/user-auth')
 const {
-  mediaQueue
+  mediaQueue,
+  deleteMusic
 } = require('./migrate-media')
 const {
   _mediaVaultPathRelative
@@ -116,6 +117,35 @@ router.post('/create-playlist', userAuth, async (req, res, next) => {
     })
 
     return res.sendData(resData)
+  } catch (error) {
+    next(error)
+  }
+})
+
+router.post('/update-playlist', userAuth, async (req, res, next) => {
+  try {
+    const {
+      pid,
+      title,
+      desc,
+      cover
+    } = req.body
+
+    if (!pid) {
+      return res.sendError({message: 'pid can not be empty'})
+    }
+
+    await Playlist.update({
+      title,
+      desc,
+      cover
+    }, {
+      where: {
+        id: pid
+      }
+    })
+
+    return res.sendData({})
   } catch (error) {
     next(error)
   }
@@ -258,13 +288,27 @@ router.post('/add-music', userAuth, async (req, res, next) => {
   }
 })
 
-const deleteMusics = (ids) => {
-  console.log('deleteMusics', ids)
-  return Music.destroy({
-    where: {
-      id: [...ids]
-    }
+const removePlaylistItem = async (id) => {
+  const item = await PlaylistItem.findOne({
+    where: {id}
   })
+  if (!item) {
+    throw new Error('item not found: ' + id)
+    return
+  }
+
+  const music_id = item.music_id
+
+  console.log('del item', id)
+  await item.destroy()
+
+  const remainItems = await PlaylistItem.findAndCountAll({
+    where: {music_id}
+  })
+
+  if (!remainItems.count) {
+    await deleteMusic(music_id)
+  }
 }
 
 /**
@@ -273,12 +317,17 @@ const deleteMusics = (ids) => {
 router.post('/remove-music', userAuth, async (req, res, next) => {
   try {
     const {
-      ids,
+      id,
     } = req.body
 
-    const resData = await deleteMusics(ids)
+    try {
+      await removePlaylistItem(id)
+    } catch (e) {
+      return res.sendError({message: e.message})
+    }
 
-    return res.sendData(resData)
+
+    return res.sendData()
   } catch (error) {
     next(error)
   }

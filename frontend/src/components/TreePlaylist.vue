@@ -37,6 +37,7 @@ const TreeNode = tankUI.enum.TreeNode
 import {
   getPlaylist,
   createPlaylist,
+  updatePlaylist,
   deletePlaylist,
   removePlaylistMusic
 } from '@/api/playlist'
@@ -93,6 +94,7 @@ export default {
       if (!item.data.file) {
         list.push({icon: 'create_new_folder', label: this.$t('add'), action: () => this.handleAdd(item)})
         list.push({icon: 'refresh', label: this.$t('refresh'), action: () => item.$doLazyLoad()})
+        list.push({icon: 'drive_file_rename_outline', label: this.$t('rename'), action: () => this.handleRename(item)})
       } else {
         list.push({icon: 'play_arrow', label: this.$t('play'), action: () => this.playItem(item)})
       }
@@ -162,26 +164,41 @@ export default {
         },
         parentEl: this.$el
       }).onConfirm(async (context) => {
-        try {
-          this.isLoading = true
-          const title = context.inputValue
-          const res = await createPlaylist({
-            pid,
-            title
-          })
-          // console.log('ok', res)
-          node.prependChild(new TreeNode({
-            isLazy: true,
-            data: res,
-            parent: node
-          }))
-          // node.isLazy = true
-          // node.$click()
-        } catch (e) {
-          console.error(e)
-        } finally {
-          this.isLoading = false
-        }
+        const title = context.inputValue
+        const res = await createPlaylist({
+          pid,
+          title
+        })
+        // console.log('ok', res)
+        node.prependChild(new TreeNode({
+          isLazy: true,
+          data: res,
+          parent: node
+        }))
+      })
+    },
+
+    async handleRename(node) {
+      const pid = node.data.id
+
+      this.$prompt.create({
+        propsData: {
+          title: this.$t('rename'),
+          input: {
+            value: node.data.title,
+            required: true,
+            placeholder: node.data.title,
+          }
+        },
+        parentEl: this.$el
+      }).onConfirm(async (context) => {
+        const title = context.inputValue
+        const res = await updatePlaylist({
+          pid,
+          title
+        })
+        console.log(res)
+        node.data.title = title
       })
     },
     async handleDel(item) {
@@ -199,25 +216,18 @@ export default {
         },
         parentEl: this.$el
       }).onConfirm(async () => {
-        this.isLoading = true
-        try {
-          if (item.data.file) {
-            await removePlaylistMusic({
-              ids: [item.data.id]
-            })
-          } else {
-            await deletePlaylist({
-              id: item.data.id
-            })
-          }
-
-          item.parent.removeChild(item)
-          this.$toast.success(this.$t('msg.playlist-deleted'))
-        } catch (e) {
-          console.error(e)
-        } finally {
-          this.isLoading = false
+        if (item.data.file) {
+          await removePlaylistMusic({
+            id: item.data.id
+          })
+        } else {
+          await deletePlaylist({
+            id: item.data.id
+          })
         }
+
+        item.parent.removeChild(item)
+        this.$toast.success(this.$t('msg.playlist-deleted'))
       })
     },
     async playItem(item) {

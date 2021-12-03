@@ -10,6 +10,7 @@
         :key="index"
         size="no-style"
         class="menu-item"
+        :class="item.customClass"
         :disabled="item.disabled"
         @click="item.action ? item.action() : () => {}"
         @contextmenu.prevent="item.action"

@@ -21,6 +21,10 @@ export function createPlaylist(params) {
   return service.post('/create-playlist', params)
 }
 
+export function updatePlaylist(params) {
+  return service.post('/update-playlist', params)
+}
+
 export function deletePlaylist(params) {
   return service.post('/delete-playlist', params)
 }

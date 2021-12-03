@@ -48,7 +48,7 @@
 import TreePlaylist from './TreePlaylist.vue'
 import MainList from '@/components/MainList/index.vue'
 import {mapGetters, mapState} from 'vuex'
-import {getPlaylistMusic} from '@/api/playlist'
+import {deletePlaylist, getPlaylistMusic, removePlaylistMusic} from '@/api/playlist'
 import {MusicItem} from '@/enum'
 import bus, {
   ACTION_TOGGLE_PLAY,
@@ -69,9 +69,9 @@ export default {
       isLoading: false,
       songList: [],
       menuList: [
-        { icon: 'save', label: 'Sync playlist', action: () => {} },
-        { icon: 'queue', label: 'Save as new playlist', action: () => {} },
-        { icon: 'archive', label: this.$t('download-archive'), action: () => {} },
+        { icon: 'save', label: 'Sync playlist', action: () => {}, disabled: true },
+        { icon: 'queue', label: 'Save as new playlist', action: () => {}, disabled: true },
+        { icon: 'archive', label: this.$t('download-archive'), action: () => {}, disabled: true },
       ],
     }
   },
@@ -107,11 +107,12 @@ export default {
     getItemMenuList(sItem) {
       return [
         {icon: 'play_arrow', label: 'Play', action: () => this.handleItemClick(sItem)},
-        {icon: 'playlist_play', label: 'Play next', action: () => {}},
-        {icon: 'playlist_add', label: 'Add to 歌单', action: () => {}},
+        {icon: 'playlist_play', label: 'Play next', action: () => {}, disabled: true},
+        {icon: 'playlist_add', label: 'Add to 歌单', action: () => {}, disabled: true},
         {isSeparator: true},
-        {icon: 'file_download', label: this.$t('download'), action: () => {}},
-        {icon: 'delete', label: 'Remove', action: () => {}},
+        {icon: 'file_download', label: this.$t('download'), action: () => {}, disabled: true},
+        {icon: 'delete', label: 'Remove', action: () => this.handleDeleteItem(sItem)},
+        {icon: 'info', label: 'Properties', action: () => {}, disabled: true},
       ]
     },
     async loadSongList() {
@@ -166,6 +167,24 @@ export default {
     },
     showItemMenu(item) {
       this.$refs.itemMenuRef.open(item)
+    },
+    async handleDeleteItem(item) {
+      this.$prompt.create({
+        propsData: {
+          title: this.$t('delete'),
+          content: `WARNING!! Remove《${item.title}》?`,
+        },
+        parentEl: this.$el
+      }).onConfirm(async () => {
+        await removePlaylistMusic({
+          id: item.id
+        })
+
+        const index = this.songList.findIndex(v => v.id === item.id)
+        if (index > -1) {
+          this.songList.splice(index, 1)
+        }
+      })
     },
   }
 }

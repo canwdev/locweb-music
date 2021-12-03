@@ -155,7 +155,7 @@ export default {
   methods: {
     getItemMenuList(sItem) {
       const list = [
-        {icon: 'space_bar', label: this.$t('rename'), action: () => this.actionRenameFile(sItem)},
+        {icon: 'drive_file_rename_outline', label: this.$t('rename'), action: () => this.actionRenameFile(sItem)},
         {icon: 'delete', label: this.$t('delete'), action: () => this.actionDeleteFile(sItem)},
         !sItem.isDirectory
           ? {icon: 'file_download', label: this.$t('download'), action: () => this.actionDownloadFile(sItem)}

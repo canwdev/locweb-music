@@ -10,6 +10,8 @@ const { TaskQueue } = require('../../utils/task-queue')
 const { getMetadata } = require('../../utils/music-tool')
 const Music = require('../../database/models/music')
 const PlaylistItem = require('../../database/models/playlist-item')
+const Path = require('path')
+const {_mediaVaultPathRelative} = require('../../config')
 
 // 移除重复的Music，并修改相应外键值
 const removeDuplication = async (existMusic, newItem) => {
@@ -21,6 +23,24 @@ const removeDuplication = async (existMusic, newItem) => {
     }
   })
   await newItem.destroy()
+}
+
+const deleteMusic = async (id) => {
+  const music = await Music.findOne({
+    where: {id}
+  })
+  if (!music) {
+    return
+  }
+  if (music.filepath) {
+    const absPath = getMediaPath(Path.join(_mediaVaultPathRelative, music.filepath))
+    if (await fs.exists(absPath)) {
+      console.log('rm', absPath)
+      await fs.rm(absPath)
+    }
+  }
+  console.log('del music', id)
+  await music.destroy()
 }
 
 const migrateMedia = async (item) => {
@@ -47,7 +67,7 @@ const migrateMedia = async (item) => {
     coverFileName
   } = await getMetadata(absPath)
 
-  
+
   const { common } = metadata
 
   Music.update({
@@ -88,5 +108,6 @@ const mediaQueue = new TaskQueue({
 
 module.exports = {
   migrateMedia,
-  mediaQueue
+  mediaQueue,
+  deleteMusic
 }
