@@ -1,10 +1,10 @@
 import {
-  addPlaylistMusic,
   migrateMedia
  } from '@/api/playlist'
 import bus, {
   ACTION_LOCATE_FILE,
   ACTION_TOGGLE_PLAY,
+  ACTION_ADD_PLAYLIST
 } from '@/utils/bus'
 
 export default {
@@ -16,8 +16,6 @@ export default {
         {isSeparator: true},
         { icon: 'sync', label: 'Migrate media', action: this.migrateMedia },
       ],
-      isShowChoosePlaylist: false,
-      currentAddItem: null
     }
   },
   methods: {
@@ -27,30 +25,15 @@ export default {
         {
           icon: 'playlist_add', label: this.$t('msg.add-to-playlist'),
           action: () => {
-            this.currentAddItem = item
-            this.isShowChoosePlaylist = true
+            bus.$emit(ACTION_ADD_PLAYLIST, {
+              items: [item]
+            })
           }
         },
       ]
     },
     showItemMenu(item) {
       this.$refs.itemMenuRef.open(item)
-    },
-    async addMusic(items, pid) {
-      try {
-        this.isLoading = true
-        await addPlaylistMusic({
-          musics: items.map(item => {
-            return{ filepath: item.filepath }
-          }),
-          pid: pid,
-        })
-        this.$toast.success(this.$t('msg.music-added'))
-      } catch (e) {
-        console.error(e)
-      } finally {
-        this.isLoading = false
-      }
     },
     locateFile(item) {
       if (!item) {
@@ -62,22 +45,12 @@ export default {
       this.$refs.listMenuRef.open()
     },
     savePlaylist() {
-      // if (!this.playingList.length) {
-      //   return
-      // }
-      this.currentAddItem = null
-      this.isShowChoosePlaylist = true
-    },
-    handleChoosePlaylist(val) {
-      const pid = val.data.id
-
-      if (this.currentAddItem) {
-        const item = this.currentAddItem
-        this.currentAddItem = null
-        this.addMusic([item], pid)
-      } else {
-        this.addMusic(this.playingList, pid)
+      if (!this.playingList.length) {
+        return
       }
+      bus.$emit(ACTION_ADD_PLAYLIST, {
+        items: this.playingList
+      })
     },
     clearPlaylist() {
       if (!this.playingList.length) {

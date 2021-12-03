@@ -32,6 +32,9 @@ const deleteMusic = async (id) => {
   if (!music) {
     return
   }
+  console.log('del music', id)
+  await music.destroy()
+
   if (music.filepath) {
     const absPath = getMediaPath(Path.join(_mediaVaultPathRelative, music.filepath))
     if (await fs.exists(absPath)) {
@@ -39,8 +42,7 @@ const deleteMusic = async (id) => {
       await fs.rm(absPath)
     }
   }
-  console.log('del music', id)
-  await music.destroy()
+
 }
 
 const migrateMedia = async (item) => {

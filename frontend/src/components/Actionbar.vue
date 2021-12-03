@@ -140,6 +140,23 @@
       </div>
     </TkModalDialog>
 
+    <TreePlaylistChooser
+      :visible.sync="isShowChoosePlaylist"
+      :title="$t('msg.add-to-playlist')"
+      :title-icon="`playlist_add`"
+      @submit="handleChoosePlaylist"
+    />
+
+    <TkModalDialog
+      v-model="isLoading"
+      fixed
+      unlimited-size
+      persistent
+    >
+      <TkCard>
+        <TkLoading :visible="isLoading"/>
+      </TkCard>
+    </TkModalDialog>
   </div>
 </template>
 
@@ -149,14 +166,18 @@ import bus, {
   ACTION_CHANGE_CURRENT_TIME,
   ACTION_NEXT, ACTION_PREV,
   ACTION_TOGGLE_PLAY,
+  ACTION_ADD_PLAYLIST, ACTION_DOWNLOAD_FILE,
 } from '@/utils/bus'
-import {formatTimeHMS} from '@/utils'
+import {downLoadFile, formatTimeHMS} from '@/utils'
 import ButtonCover from '@/components/ButtonCover.vue'
 import MusicDetail from '@/components/MusicDetail.vue'
 import hotkeys from 'hotkeys-js'
 import {mapGetters, mapState} from 'vuex'
 import audioVolumeMixin from '@/mixins/audio-volume'
 import PlayingList from '@/components/PlayingList/index.vue'
+import TreePlaylistChooser from '@/components/TreePlaylistChooser'
+import {addPlaylistMusic} from '@/api/playlist'
+import {getDownloadUrl} from '@/api/music'
 
 const loopModeList = [
   LoopModeType.LOOP_SEQUENCE,
@@ -178,6 +199,7 @@ export default {
     ButtonCover,
     MusicDetail,
     PlayingList,
+    TreePlaylistChooser,
   },
   data() {
     return {
@@ -186,6 +208,9 @@ export default {
       isShowDetail: false,
       isShowPlayingList: false,
       isShowVolumeSlider: false,
+      isShowChoosePlaylist: false,
+      currentAddItems: null,
+      isLoading: false
     }
   },
   computed: {
@@ -271,6 +296,9 @@ export default {
 
     hotkeys(keyUp, this.volumeUpFn)
     hotkeys(keyDown, this.volumeDownFn)
+
+    bus.$on(ACTION_ADD_PLAYLIST, this.handleAddPlaylist)
+    bus.$on(ACTION_DOWNLOAD_FILE, this.actionDownloadFile)
   },
   beforeDestroy() {
     hotkeys.unbind(keySpace, this.togglePlay)
@@ -280,6 +308,9 @@ export default {
 
     hotkeys.unbind(keyUp, this.volumeUpFn)
     hotkeys.unbind(keyDown, this.volumeDownFn)
+
+    bus.$off(ACTION_ADD_PLAYLIST, this.handleAddPlaylist)
+    bus.$off(ACTION_DOWNLOAD_FILE, this.actionDownloadFile)
   },
   methods: {
     formatTimeHMS,
@@ -326,7 +357,49 @@ export default {
     showDetailDialog() {
       this.isShowDetail = !this.isShowDetail
       // console.log(musicItem.value)
-    }
+    },
+    handleAddPlaylist(config = {}) {
+      const {
+        items,
+      } = config
+
+      this.currentAddItems = items
+      this.isShowChoosePlaylist = true
+    },
+    handleChoosePlaylist(val) {
+      const pid = val.data.id
+
+      const items = this.currentAddItems
+      this.currentAddItems = null
+      this.addMusicToPlaylist(items, pid)
+    },
+    async addMusicToPlaylist(items, pid) {
+      try {
+        this.isLoading = true
+        await addPlaylistMusic({
+          musics: items.map(item => {
+            return {filepath: item.filepath}
+          }),
+          pid: pid,
+        })
+        this.$toast.success(this.$t('msg.music-added'))
+      } catch (e) {
+        console.error(e)
+      } finally {
+        this.isLoading = false
+      }
+    },
+    async actionDownloadFile(item) {
+      if (!item) return
+      try {
+        downLoadFile(getDownloadUrl({
+          path: item.path,
+          filename: item.filename,
+        }), item.filename)
+      } catch (e) {
+        console.error(e)
+      }
+    },
   }
 }
 </script>
@@ -490,6 +563,7 @@ $bottomZIndex: 2100;
       overflow-y: overlay; // 滚动条覆盖
       box-sizing: border-box;
     }
+
     .main-list {
       height: 50vh;
       overflow: hidden;

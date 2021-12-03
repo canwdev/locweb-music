@@ -44,12 +44,7 @@
       />
     </MainList>
 
-    <TreePlaylistChooser
-      :visible.sync="isShowChoosePlaylist"
-      :title="`添加到歌单`"
-      :title-icon="`playlist_add`"
-      @submit="handleChoosePlaylist"
-    />
+
   </div>
 </template>
 
@@ -66,7 +61,6 @@ import {LoopModeType} from '@/enum'
 import {mapGetters, mapState} from 'vuex'
 import dialogMenuMixin from './dialog-menu'
 import ContextMenuCommon from '@/components/ContextMenuCommon'
-import TreePlaylistChooser from '@/components/TreePlaylistChooser'
 
 function getRandomInt(min, max) {
   min = Math.ceil(min)
@@ -80,7 +74,6 @@ export default {
   components: {
     MainList,
     ContextMenuCommon,
-    TreePlaylistChooser,
   },
   data() {
     return {

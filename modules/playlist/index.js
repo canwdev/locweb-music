@@ -151,6 +151,26 @@ router.post('/update-playlist', userAuth, async (req, res, next) => {
   }
 })
 
+const removePlaylistItem = async (pItem) => {
+  if (!pItem) {
+    throw new Error('pItem not found')
+    return
+  }
+
+  const music_id = pItem.music_id
+
+  console.log('del pItem')
+  await pItem.destroy()
+
+  const remainItems = await PlaylistItem.findAndCountAll({
+    where: {music_id}
+  })
+
+  if (!remainItems.count) {
+    await deleteMusic(music_id)
+  }
+}
+
 /**
  * Delete playlist recursively
  */
@@ -181,20 +201,28 @@ router.post('/delete-playlist', userAuth, async (req, res, next) => {
     let idsToDelete = findList.map(item => item.id)
     idsToDelete = [id, ...idsToDelete]
 
-    // TODO: Delete musics
-    await PlaylistItem.destroy({
-      where: {
-        playlist_id: idsToDelete
-      }
-    })
+    for (let i = 0; i < idsToDelete.length; i++) {
+      const playlistId = idsToDelete[i]
+      // TODO: Batch delete
+      const playlistItems = await PlaylistItem.findAll({
+        where: {
+          'playlist_id': playlistId
+        }
+      })
 
-    const resData = await Playlist.destroy({
+      for (let j = 0; j < playlistItems.length; j++) {
+        const pItem = playlistItems[j]
+        await removePlaylistItem(pItem)
+      }
+    }
+
+    await Playlist.destroy({
       where: {
         id: idsToDelete
       }
     })
 
-    return res.sendData(resData)
+    return res.sendData()
   } catch (error) {
     next(error)
   }
@@ -288,29 +316,6 @@ router.post('/add-music', userAuth, async (req, res, next) => {
   }
 })
 
-const removePlaylistItem = async (id) => {
-  const item = await PlaylistItem.findOne({
-    where: {id}
-  })
-  if (!item) {
-    throw new Error('item not found: ' + id)
-    return
-  }
-
-  const music_id = item.music_id
-
-  console.log('del item', id)
-  await item.destroy()
-
-  const remainItems = await PlaylistItem.findAndCountAll({
-    where: {music_id}
-  })
-
-  if (!remainItems.count) {
-    await deleteMusic(music_id)
-  }
-}
-
 /**
  * Remove playlist music
  */
@@ -321,7 +326,12 @@ router.post('/remove-music', userAuth, async (req, res, next) => {
     } = req.body
 
     try {
-      await removePlaylistItem(id)
+      const pItem = await PlaylistItem.findOne({
+        where: {
+          id
+        }
+      })
+      await removePlaylistItem(pItem)
     } catch (e) {
       return res.sendError({message: e.message})
     }

@@ -52,7 +52,7 @@ import {deletePlaylist, getPlaylistMusic, removePlaylistMusic} from '@/api/playl
 import {MusicItem} from '@/enum'
 import bus, {
   ACTION_TOGGLE_PLAY,
-  ACTION_PLAY_START,
+  ACTION_PLAY_START, ACTION_ADD_PLAYLIST, ACTION_DOWNLOAD_FILE,
 } from '@/utils/bus'
 import ContextMenuCommon from '@/components/ContextMenuCommon'
 
@@ -69,9 +69,21 @@ export default {
       isLoading: false,
       songList: [],
       menuList: [
-        { icon: 'save', label: 'Sync playlist', action: () => {}, disabled: true },
-        { icon: 'queue', label: 'Save as new playlist', action: () => {}, disabled: true },
-        { icon: 'archive', label: this.$t('download-archive'), action: () => {}, disabled: true },
+        {
+          icon: 'save', label: 'Sync playlist', action: () => {
+          }, disabled: true
+        },
+        {
+          icon: 'queue', label: 'Save as new playlist', action: () => {
+            bus.$emit(ACTION_ADD_PLAYLIST, {
+              items: this.songList
+            })
+          }
+        },
+        {
+          icon: 'archive', label: this.$t('download-archive'), action: () => {
+          }, disabled: true
+        },
       ],
     }
   },
@@ -107,12 +119,26 @@ export default {
     getItemMenuList(item) {
       return [
         {icon: 'play_arrow', label: this.$t('play'), action: () => this.handleItemClick(item)},
-        {icon: 'playlist_play', label: 'Play next', action: () => {}, disabled: true},
-        {icon: 'playlist_add', label: this.$t('msg.add-to-playlist'), action: () => {}, disabled: true},
+        {
+          icon: 'playlist_play', label: 'Play next', action: () => {
+          }, disabled: true
+        },
+        {
+          icon: 'playlist_add', label: this.$t('msg.add-to-playlist'), action: () => {
+            bus.$emit(ACTION_ADD_PLAYLIST, {
+              items: [item]
+            })
+          }
+        },
         {isSeparator: true},
-        {icon: 'file_download', label: this.$t('download'), action: () => {}, disabled: true},
+        {
+          icon: 'file_download', label: this.$t('download'), action: () => bus.$emit(ACTION_DOWNLOAD_FILE, item)
+        },
         {icon: 'delete', label: 'Remove', action: () => this.handleDeleteItem(item)},
-        {icon: 'info', label: 'Properties', action: () => {}, disabled: true},
+        {
+          icon: 'info', label: 'Properties', action: () => {
+          }, disabled: true
+        },
       ]
     },
     async loadSongList() {
@@ -195,6 +221,7 @@ export default {
   display: flex;
   height: 100%;
   overflow: hidden;
+
   .panel-item {
     display: flex !important;
     bottom: 0;

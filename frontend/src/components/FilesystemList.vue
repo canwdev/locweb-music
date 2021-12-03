@@ -53,7 +53,7 @@ import {
   getDownloadUrl,
 } from '@/api/music'
 import {isSupportedMusicFormat} from '@/utils/is'
-import bus, {ACTION_PLAY_START, ACTION_LOCATE_FILE} from '@/utils/bus'
+import bus, {ACTION_PLAY_START, ACTION_LOCATE_FILE, ACTION_ADD_PLAYLIST, ACTION_DOWNLOAD_FILE} from '@/utils/bus'
 import {downLoadFile} from '@/utils'
 import MainList from '@/components/MainList/index.vue'
 import FileUpload from '@/components/FileUpload/index.vue'
@@ -157,20 +157,30 @@ export default {
       let list = []
 
       if (item.isDirectory) {
-        list.push({icon: 'play_arrow', label: this.$t('play'), action: () => {}, disabled: true})
+        list.push({
+          icon: 'play_arrow', label: this.$t('play'), action: () => {
+          }, disabled: true
+        })
         list.push({
           icon: 'playlist_add', label: '保存为播放列表',
           action: () => {
+
           }, disabled: true
         })
       } else {
         list.push({icon: 'play_arrow', label: this.$t('play'), action: () => this.handleItemClick(item)})
         list.push(
-          {icon: 'playlist_play', label: 'Play next', action: () => {}, disabled: true})
+          {
+            icon: 'playlist_play', label: 'Play next', action: () => {
+            }, disabled: true
+          })
         list.push({
           icon: 'playlist_add', label: this.$t('msg.add-to-playlist'),
           action: () => {
-          }, disabled: true
+            bus.$emit(ACTION_ADD_PLAYLIST, {
+              items: [item]
+            })
+          }
         })
       }
 
@@ -182,10 +192,18 @@ export default {
       ]]
 
       if (item.isDirectory) {
-        list.push({icon: 'archive', label: this.$t('download-archive'), action: () => this.actionDownloadFile(item)})
+        list.push({
+          icon: 'archive',
+          label: this.$t('download-archive'),
+          action: () => bus.$emit(ACTION_DOWNLOAD_FILE, item)
+        })
       } else {
         list.push({icon: 'swap_horiz', label: this.$t('replace') + '...', action: () => this.actionReplaceFile(item)})
-        list.push({icon: 'file_download', label: this.$t('download'), action: () => this.actionDownloadFile(item)})
+        list.push({
+          icon: 'file_download',
+          label: this.$t('download'),
+          action: () => bus.$emit(ACTION_DOWNLOAD_FILE, item)
+        })
       }
       return list
     },
@@ -359,20 +377,6 @@ export default {
           this.isLoading = false
         }
       })
-    },
-    async actionDownloadFile(sItem) {
-      if (!sItem) return
-      this.isLoading = true
-      try {
-        downLoadFile(getDownloadUrl({
-          path: sItem.path,
-          filename: sItem.filename,
-        }), sItem.filename)
-      } catch (e) {
-        console.error(e)
-      } finally {
-        this.isLoading = false
-      }
     },
     async actionReplaceFile(sItem) {
       if (!sItem) return
