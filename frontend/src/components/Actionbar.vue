@@ -161,7 +161,7 @@
 </template>
 
 <script>
-import {LoopModeType,} from '@/enum'
+import {LoopModeType, } from '@/enum'
 import bus, {
   ACTION_CHANGE_CURRENT_TIME,
   ACTION_NEXT, ACTION_PREV,
@@ -171,13 +171,13 @@ import bus, {
 import {downLoadFile, formatTimeHMS} from '@/utils'
 import ButtonCover from '@/components/ButtonCover.vue'
 import MusicDetail from '@/components/MusicDetail.vue'
-import hotkeys from 'hotkeys-js'
 import {mapGetters, mapState} from 'vuex'
 import audioVolumeMixin from '@/mixins/audio-volume'
 import PlayingList from '@/components/PlayingList/index.vue'
 import TreePlaylistChooser from '@/components/TreePlaylistChooser'
 import {addPlaylistMusic} from '@/api/playlist'
 import {getDownloadUrl} from '@/api/music'
+import Mousetrap from 'mousetrap'
 
 const loopModeList = [
   LoopModeType.LOOP_SEQUENCE,
@@ -186,11 +186,11 @@ const loopModeList = [
   LoopModeType.LOOP_REVERSE,
   LoopModeType.NONE,
 ]
-const keySpace = 'space'
-const keyPrevious = 'left,pageup,k,l'
-const keyNext = 'right,pagedown,h,j'
-const keyUp = 'up'
-const keyDown = 'down'
+const KEY_SPACE = 'space'
+const KEY_PREVIOUS = ['left', 'pageup', 'k', 'l']
+const KEY_NEXT = ['right', 'pagedown', 'h', 'j']
+const KEY_UP = 'up'
+const KEY_DOWN = 'down'
 
 export default {
   name: 'Actionbar',
@@ -290,26 +290,22 @@ export default {
     }
   },
   mounted() {
-    hotkeys(keySpace, this.togglePlay)
-    hotkeys(keyPrevious, this.previous)
-    hotkeys(keyNext, this.next)
-    hotkeys('x', this.switchLoopMode)
-
-    hotkeys(keyUp, this.volumeUpFn)
-    hotkeys(keyDown, this.volumeDownFn)
+    const mousetrap = this.mousetrap = new Mousetrap()
+    mousetrap.bind(KEY_SPACE, this.togglePlay)
+    mousetrap.bind(KEY_PREVIOUS, this.previous)
+    mousetrap.bind(KEY_NEXT, this.next)
+    mousetrap.bind('ctrl+x', this.switchLoopMode)
+    mousetrap.bind(KEY_UP, this.volumeUpFn)
+    mousetrap.bind(KEY_DOWN, this.volumeDownFn)
 
     bus.$on(ACTION_ADD_PLAYLIST, this.handleAddPlaylist)
     bus.$on(ACTION_DOWNLOAD_FILE, this.actionDownloadFile)
     bus.$on(ACTION_ADD_LIST_PLAY_NEXT, this.addListPlayNext)
   },
   beforeDestroy() {
-    hotkeys.unbind(keySpace, this.togglePlay)
-    hotkeys.unbind(keyPrevious, this.previous)
-    hotkeys.unbind(keyNext, this.next)
-    hotkeys.unbind('x', this.switchLoopMode)
-
-    hotkeys.unbind(keyUp, this.volumeUpFn)
-    hotkeys.unbind(keyDown, this.volumeDownFn)
+    if (this.mousetrap) {
+      this.mousetrap.reset()
+    }
 
     bus.$off(ACTION_ADD_PLAYLIST, this.handleAddPlaylist)
     bus.$off(ACTION_DOWNLOAD_FILE, this.actionDownloadFile)

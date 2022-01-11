@@ -1,6 +1,7 @@
-.git
-frontend
-.idea
-data
-config/config.json
-*-docker.tar
+# https://stackoverflow.com/a/51429852
+# Ignore everything
+**
+
+# Allow files and directories
+!/dist.tar
+!/dist.tar.gz

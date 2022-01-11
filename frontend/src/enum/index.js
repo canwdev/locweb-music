@@ -113,6 +113,7 @@ export class MusicItem {
     this.isDetailLoaded = item.isDetailLoaded || false
     this.isMigrated = item.isMigrated || false // 是否完成迁移到vault
     this.isOutSource = item.isOutSource || false // 是否外链
+    this.isChecked = item.isChecked || false
     this.src = item.src
     this.lyric = item.lyric || ''
   }

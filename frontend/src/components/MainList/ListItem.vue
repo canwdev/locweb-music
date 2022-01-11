@@ -1,27 +1,44 @@
 <template>
   <TkButton
-    class="list-item-wrap"
-    :class="{_grey: !isSupport && !item.isDirectory, active}"
+    class="list-item"
+    :class="{
+      'list-item--grey': !isSupport && !item.isDirectory,
+      'list-item--active': active,
+      'list-item--checkable': checkable,
+      'list-item--checked': item.isChecked,
+    }"
     size="no-style"
+    :data-id="item.id"
     @contextmenu="handleContextMenu"
-    @click.prevent
+    @click.prevent="handleClick"
   >
     <div
+      v-if="checkable"
+      class="list-item__checkbox"
+      @click.stop="handleCheck"
+    >
+      <TkSwitch
+        :value="item.isChecked"
+        checkbox
+        size="sm"
+      />
+    </div>
+    <div
       v-if="!isBigItem"
-      class="list-item"
+      class="list-item__inner"
     >
       <i class="left material-icons">{{ iconName }}</i>
       <span class="middle text-overflow">{{ item.filename }}</span>
       <TkButton
-        size="no-style"
         v-if="isShowAction"
+        size="no-style"
         class="right"
         @click.stop.prevent="$emit('onAction', item)"
       ><i class="material-icons">more_vert</i></TkButton>
     </div>
     <div
       v-else
-      class="list-item-big flex"
+      class="list-item__inner list-item__inner--big flex"
     >
       <ButtonCover
         :icon-name="iconName"
@@ -32,8 +49,8 @@
         <div class="text-overflow display-title">{{ artistsAlbum }}</div>
       </div>
       <TkButton
-        size="no-style"
         v-if="isShowAction"
+        size="no-style"
         class="right"
         @click.stop.prevent="$emit('onAction', item)"
       >
@@ -59,6 +76,10 @@ export default {
       required: true
     },
     active: {
+      type: Boolean,
+      default: false
+    },
+    checkable: {
       type: Boolean,
       default: false
     },
@@ -115,6 +136,19 @@ export default {
     handleContextMenu(event) {
       event.preventDefault()
       this.isShowAction && this.$emit('onAction', this.item)
+    },
+    handleCheck() {
+      if (!this.checkable) {
+        return
+      }
+      this.$emit('onCheck', this.item)
+    },
+    handleClick(event) {
+      if (event.ctrlKey) {
+        this.handleCheck()
+        return
+      }
+      this.$emit('onClick', this.item)
     }
   },
 }
@@ -123,46 +157,53 @@ export default {
 <style lang="scss" scoped>
 $active-color: $primary;
 
-.list-item-wrap {
+.list-item {
   display: block;
   text-decoration: none;
   color: inherit;
   text-align: left;
   width: 100%;
   border-radius: 0;
+  position: relative;
 
   //&:hover {
-  //  background: rgba(0, 0, 0, 0.08);
+  //  background-color: rgba(0, 0, 0, 0.08);
   //}
 
-  &.active {
-    .list-item {
-      background: $active-color;
+  &--active {
+    .list-item__inner {
+      background-color: $active-color;
       color: white;
     }
 
-    .list-item-big {
-      background: $active-color;
+    .list-item__inner--big {
+      background-color: $active-color;
       color: white;
 
       .btn-cover {
       }
     }
   }
-
-  //& + .list-item-wrap {
-  //  border-top: $layout-border;
-  //}
-
   //&:nth-child(even) {
-  //  background: rgba(0, 0, 0, 0.05);
+  //  background-color: rgba(0, 0, 0, 0.05);
   //}
 
-  &._grey {
+  &--grey {
     color: grey;
   }
 
-  .list-item {
+  &--checked {
+    background-color: $primary-opacity;
+  }
+
+  &__checkbox {
+    position: absolute;
+    left: 5px;
+    bottom: 2px;
+    z-index: 10;
+  }
+
+  &__inner {
     display: flex;
     align-items: center;
     width: 100%;
@@ -187,7 +228,7 @@ $active-color: $primary;
     }
   }
 
-  .list-item-big {
+  &__inner--big {
     height: 55px;
     display: flex;
     align-items: center;

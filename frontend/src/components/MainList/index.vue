@@ -59,7 +59,7 @@
 
     <DynamicScroller
       ref="mainListRef"
-      class="virtual-scroller"
+      class="virtual-scroller list-select-body"
       :items="filteredList"
       :min-item-size="minItemSize"
       :class="{'_dragging': dragging}"
@@ -76,8 +76,10 @@
             :is-big-item="isPlayList"
             :is-paused="isPaused"
             :is-show-action="true"
+            :checkable="checkable"
             @onAction="i => $emit('onItemAction', i)"
-            @click.native.prevent="$emit('onItemClick', item)"
+            @onClick="$emit('onItemClick', item)"
+            @onCheck="toggleCheckItem"
           >
             <div
               v-if="allowSort"
@@ -104,6 +106,9 @@
 <script>
 import ListItem from './ListItem.vue'
 import {MusicItem} from '@/enum'
+import Mousetrap from 'mousetrap'
+const HOTKEY_SELECT_ALL = ['command+a', 'ctrl+a']
+const HOTKEY_DESELECT_ALL = ['command+shift+a', 'ctrl+shift+a']
 
 export default {
   name: 'MainList',
@@ -114,6 +119,11 @@ export default {
     isLoading: {
       type: Boolean,
       default: false
+    },
+    // TODO: Switch
+    checkable: {
+      type: Boolean,
+      default: true
     },
     showUp: {
       type: Boolean,
@@ -167,7 +177,7 @@ export default {
       }),
       searchInput: '',
       searchText: '',
-      dragging: false
+      dragging: false,
     }
   },
   computed: {
@@ -184,7 +194,27 @@ export default {
         const title = item.filename || item.title
         return reg.test(title)
       })
-    }
+    },
+    checkedItems() {
+      return this.list.filter(item => item.isChecked)
+    },
+    checkedLength() {
+      return this.checkedItems.length
+    },
+    isCheckAll: {
+      get() {
+        const length = this.list.length
+        if (length === 0) {
+          return false
+        }
+        return length === this.checkedLength
+      },
+      set(val) {
+        this.list.forEach(item => {
+          item.isChecked = val
+        })
+      }
+    },
   },
   watch: {
     list() {
@@ -197,6 +227,11 @@ export default {
     }
   },
   mounted() {
+    const mousetrap = new Mousetrap(this.$el)
+    mousetrap.bind(HOTKEY_SELECT_ALL, this.handleKeyCheckAll)
+    mousetrap.bind(HOTKEY_DESELECT_ALL, this.handleKeyClearCheckAll)
+  },
+  beforeDestroy() {
   },
   methods: {
     handleSearch() {
@@ -267,6 +302,50 @@ export default {
         this.$set(this.list, swapIndex, temp)
       }
     },
+    // 勾选一项
+    toggleCheckItem(item, forceState) {
+      if (typeof forceState === 'boolean') {
+        item.isChecked = forceState
+      } else {
+        item.isChecked = !item.isChecked
+      }
+    },
+    checkItem(item) {
+      item.isChecked = true
+    },
+    unCheckItem(item) {
+      item.isChecked = false
+    },
+    handleKeyCheckAll(e) {
+      console.log('handleKeyCheckAll', e)
+      e.preventDefault()
+      this.checkAll()
+    },
+    handleKeyClearCheckAll(e) {
+      console.log('handleKeyClearCheckAll', e)
+      e.preventDefault()
+      this.clearCheckAll()
+    },
+    // 切换全选
+    toggleCheckAll() {
+      if (this.isCheckAll) {
+        this.clearCheckAll()
+      } else {
+        this.checkAll()
+      }
+    },
+    // 全选
+    checkAll() {
+      this.list.forEach(item => {
+        item.isChecked = true
+      })
+    },
+    // 清除选中
+    clearCheckAll() {
+      this.list.forEach(item => {
+        item.isChecked = false
+      })
+    }
   }
 }
 </script>
@@ -297,7 +376,7 @@ export default {
     left: 0;
     right: 0;
 
-    .list-item-wrap {
+    .list-item {
       border-bottom: 1px solid $border-color;
     }
   }
@@ -342,8 +421,9 @@ export default {
     }
   }
 
-  .list-item-wrap {
+  .list-item {
     position: relative;
+
     .drag-handle {
       position: absolute;
       top: 0;
