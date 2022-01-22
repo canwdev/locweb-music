@@ -1,0 +1,27 @@
+{
+  "name": "locweb-music-electron",
+  "version": "1.0.0",
+  "author": "canwdev",
+  "license": "GPLV3",
+  "main": "src/main.js",
+  "scripts": {
+    "dev:electron": "cross-env ELECTRON_START_URL=http://localhost:8080 electron .",
+    "prod:electron": "cross-env ELECTRON_IS_DEV=0 electron .",
+    "build-dir": "yarn run build:frontend && yarn run build:electron-dir",
+    "build:electron-dir": "electron-builder --dir",
+    "build:electron": "electron-builder",
+    "build:electron-ia32": "electron-builder --ia32"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.2",
+    "electron": "15.3.0",
+    "electron-builder": "^22.8.0",
+    "vue-devtools": "^5.1.4"
+  },
+  "dependencies": {
+    "@canwdev/electron-utils": "^0.1.0",
+    "@canwdev/electron-window-manager": "^0.1.7",
+    "@electron/remote": "^2.0.1",
+    "fs-extra": "^10.0.0"
+  }
+}

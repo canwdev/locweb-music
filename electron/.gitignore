@@ -1,0 +1,11 @@
+/frontend-dist/
+/server-dist/
+/dist/
+
+node_modules
+/.idea/
+
+.yarnclean
+/yarn-error.log
+/dist-frontend/
+.DS_Store
