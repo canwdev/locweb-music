@@ -1,6 +1,5 @@
 productName: "Locweb Music"
 appId: "com.canwdev.locweb"
-asar: false
 
 files:
   - ./frontend-dist/**/*
