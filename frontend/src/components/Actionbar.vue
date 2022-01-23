@@ -133,6 +133,7 @@
         <TkSeekbar
           vertical
           :value="audioVolume"
+          wheel
           @input="volumeSeeking"
           @change="volumeChange"
         />
