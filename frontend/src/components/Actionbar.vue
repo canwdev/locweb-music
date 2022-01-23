@@ -82,7 +82,7 @@
           size="no-style"
           class="btn-action"
           :title="$t('volume')"
-          @click="isShowVolumeSlider = !isShowVolumeSlider"
+          @click="showVolumeSlider"
         >
           <i class="material-icons">{{ volumeIcon }}</i>
         </TkButton>
@@ -121,25 +121,23 @@
 
     </TkModalDialog>
 
-    <TkModalDialog
-      v-model="isShowVolumeSlider"
-      fixed
-    >
+    <TkContextMenu ref="volumeCtxMenu" :border-margin="60">
       <div
         class="volume-slider-wrap"
         @click.stop
       >
         <div class="tip">{{ $t('volume') }}</div>
-        <TkSeekbar
-          vertical
-          :value="audioVolume"
-          wheel
-          @input="volumeSeeking"
-          @change="volumeChange"
-        />
+        <div style="height: 30px; position:relative;">
+          <TkSeekbar
+            :value="audioVolume"
+            wheel
+            @input="volumeSeeking"
+            @change="volumeChange"
+          />
+        </div>
         <div class="tip">{{ audioVolume }}%</div>
       </div>
-    </TkModalDialog>
+    </TkContextMenu>
 
     <TreePlaylistChooser
       :visible.sync="isShowChoosePlaylist"
@@ -208,7 +206,6 @@ export default {
       isSeeking: false,
       isShowDetail: false,
       isShowPlayingList: false,
-      isShowVolumeSlider: false,
       isShowChoosePlaylist: false,
       currentAddItems: null,
       isLoading: false
@@ -314,6 +311,9 @@ export default {
   },
   methods: {
     formatTimeHMS,
+    showVolumeSlider() {
+      this.$refs.volumeCtxMenu.open()
+    },
     volumeUpFn(e) {
       e.preventDefault()
       this.volumeUp()
@@ -586,18 +586,18 @@ $bottomZIndex: 2100;
 
 .volume-slider-wrap {
   text-align: center;
-  width: 80px;
-  height: 180px;
-  padding: 10px 0 0 0;
+  width: 200px;
+  padding: 5px 10px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
 
+  .tk-seekbar {
+    height: 30px;
+  }
+
   .tip {
-    max-width: 100%;
-    overflow: hidden;
     font-size: 12px;
-    margin: 5px 10px;
   }
 }
 </style>
