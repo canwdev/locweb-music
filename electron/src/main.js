@@ -20,7 +20,7 @@ function createMainWindow() {
     // and load the index.html of the app.
     // mainWindow.loadFile('src/index.html')
     const startUrl = process.env.ELECTRON_START_URL || url.format({
-      pathname: path.join(__dirname, '../frontend-dist/index.html'),
+      pathname: path.join(__dirname, '../server-dist/frontend-dist/index.html'),
       protocol: 'file:',
       slashes: true
     });

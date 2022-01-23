@@ -15,8 +15,8 @@ const buildFrontend = async () => {
 const buildElectron = async () => {
   // Build and copy frontend
   await buildFrontend()
-  Fs.removeSync(Dirs.ELECTRON_FRONTEND_DIST)
-  Fs.copySync(Dirs.FRONTEND_DIST, Dirs.ELECTRON_FRONTEND_DIST)
+  Fs.removeSync(Dirs.SERVER_FRONTEND_DIST)
+  Fs.copySync(Dirs.FRONTEND_DIST, Dirs.SERVER_FRONTEND_DIST)
 
   // Copy server code
   await buildServer()

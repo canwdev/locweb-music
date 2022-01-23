@@ -1,10 +1,10 @@
 productName: "Locweb Music"
 appId: "com.canwdev.locweb"
-asar: false
+asar: true
 files:
   - ./server-dist/**/*
-  - ./frontend-dist/**/*
   - ./src/**/*
+
 extraMetadata:
   main: ./src/main.js
 
