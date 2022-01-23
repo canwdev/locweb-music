@@ -78,7 +78,8 @@ export default {
   },
   data() {
     return {
-      isLoading: false
+      isLoading: false,
+      isPlayEnded: false
     }
   },
   computed: {
@@ -146,7 +147,10 @@ export default {
       this.$store.commit('setMusicItem', this.playingList[index])
       this.playingIndex = index
       this.$nextTick(() => {
-        if (this.paused) {
+        if (this.isPlayEnded) {
+          bus.$emit(ACTION_TOGGLE_PLAY, {isPlay: true})
+          this.isPlayEnded = false
+        } else if (this.paused) {
           bus.$emit(ACTION_TOGGLE_PLAY, {isPause: true})
         } else {
           bus.$emit(ACTION_TOGGLE_PLAY, {isPlay: true})
@@ -181,6 +185,7 @@ export default {
       this.playByIndex(index)
     },
     handlePlayEnded() {
+      this.isPlayEnded = true
       // console.log('handlePlayEnded', this.loopMode)
       if (this.loopMode === LoopModeType.LOOP_SINGLE) {
         // single loop

@@ -12,11 +12,11 @@
 import bus, {
   ACTION_CHANGE_CURRENT_TIME,
   ACTION_CHANGE_SPEED,
+  ACTION_CHANGE_VOLUME,
   ACTION_NEXT,
   ACTION_PLAY_ENDED,
   ACTION_PREV,
-  ACTION_TOGGLE_PLAY,
-  ACTION_CHANGE_VOLUME
+  ACTION_TOGGLE_PLAY
 } from '@/utils/bus'
 import store from '@/store'
 import {getDetail} from '@/api/music'
@@ -100,7 +100,6 @@ export default {
         }
 
         /* eslint-disable no-undef */
-        // @ts-ignore
         navigator.mediaSession.metadata = new MediaMetadata({
           /* eslint-enable no-undef */
           title: item.title,
@@ -154,15 +153,11 @@ export default {
     },
     registerAudioEvents(audio) {
       if ('mediaSession' in navigator) {
-        // @ts-ignore
         navigator.mediaSession.setActionHandler('play', this.play)
-        // @ts-ignore
         navigator.mediaSession.setActionHandler('pause', this.pause)
-        // navigator.mediaSession.setActionHandler('seekbackward', function() {});
-        // navigator.mediaSession.setActionHandler('seekforward', function() {});
-        // @ts-ignore
+        // navigator.mediaSession.setActionHandler('seekbackward', this.previous)
+        // navigator.mediaSession.setActionHandler('seekforward', this.next)
         navigator.mediaSession.setActionHandler('previoustrack', this.previous)
-        // @ts-ignore
         navigator.mediaSession.setActionHandler('nexttrack', this.next)
       }
 

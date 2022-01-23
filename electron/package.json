@@ -13,7 +13,7 @@
   },
   "devDependencies": {
     "cross-env": "^7.0.2",
-    "electron": "15.3.0",
+    "electron": "16.0.6",
     "electron-builder": "^22.8.0",
     "vue-devtools": "^5.1.4"
   },
