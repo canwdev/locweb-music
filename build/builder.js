@@ -53,7 +53,7 @@ const buildServer = async () => {
 }
 
 const buildServerDocker = async () => {
-  // await buildServer()
+  await buildServer()
   Utils.cd(Dirs.SERVER)
   Utils.exec(`./build-docker.sh`)
 }
