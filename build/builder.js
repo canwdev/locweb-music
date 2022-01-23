@@ -21,11 +21,21 @@ const buildFrontend = async () => {
   Utils.exec(`yarn run build`)
 }
 
-const packupServer = async () => {
+const packupServer = async (options = {}) => {
+  const {
+    excludeNodeModules = true
+  } = options
+
   Utils.colorLog(Dirs.SERVER, 'Build Server', 'blue')
   Utils.cd(Dirs.SERVER)
   Utils.exec(`yarn install`)
-  const entries = await fg(['**', '!node_modules', '!data', '!*.tar'], {
+
+  const globPatterns = ['**', '!data', '!*.tar']
+  if (excludeNodeModules) {
+    globPatterns.push('!node_modules')
+  }
+
+  const entries = await fg(globPatterns, {
     dot: false,
     onlyFiles: false,
     deep: 1
@@ -42,18 +52,20 @@ const packupServer = async () => {
   }, entries)
 }
 
-const buildServer = async () => {
+const buildServer = async (options) => {
   // Build and copy frontend
   await buildFrontend()
   Fs.removeSync(Dirs.SERVER_FRONTEND_DIST)
   Fs.copySync(Dirs.FRONTEND_DIST, Dirs.SERVER_FRONTEND_DIST)
-  await packupServer()
+  await packupServer(options)
   Fs.removeSync(Dirs.ELECTRON_SERVER_DIST)
   Fs.ensureDirSync(Dirs.ELECTRON_SERVER_DIST)
 }
 
 const buildServerDocker = async () => {
-  await buildServer()
+  await buildServer({
+    excludeNodeModules: false
+  })
   Utils.cd(Dirs.SERVER)
   Utils.exec(`./build-docker.sh`)
 }
