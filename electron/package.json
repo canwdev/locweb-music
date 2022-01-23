@@ -2,7 +2,7 @@
   "name": "locweb-music",
   "version": "1.0.0",
   "author": "canwdev",
-  "license": "GPLV3",
+  "license": "GPL-3.0",
   "main": "src/main.js",
   "scripts": {
     "dev:electron": "cross-env ELECTRON_START_URL=http://localhost:8080 electron .",

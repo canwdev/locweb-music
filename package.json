@@ -4,7 +4,7 @@
   "main": "server/index.js",
   "repository": "https://github.com/canwdev/locweb-music.git",
   "author": "canwdev",
-  "license": "GPLV3",
+  "license": "GPL-3.0",
   "scripts": {
     "build": "node build/build-electron.js"
   },

@@ -9,6 +9,7 @@ const fg = require('fast-glob')
 const buildFrontend = async () => {
   Utils.colorLog(Dirs.FRONTEND, 'Build Frontend', 'green')
   Utils.cd(Dirs.FRONTEND)
+  Utils.exec(`yarn install`)
   Utils.exec(`yarn run build`)
 }
 
@@ -30,12 +31,14 @@ const buildElectron = async () => {
   // Build client
   Utils.colorLog(Dirs.ELECTRON, 'Build Client', 'yellow')
   Utils.cd(Dirs.ELECTRON)
+  Utils.exec(`yarn install`)
   Utils.exec(`yarn run build:electron-dir`)
 }
 
 const buildServer = async () => {
   Utils.colorLog(Dirs.SERVER, 'Build Server', 'blue')
   Utils.cd(Dirs.SERVER)
+  Utils.exec(`yarn install`)
   const entries = await fg(['**', '!node_modules', '!data', '!*.tar'], {
     dot: false,
     onlyFiles: false,
