@@ -11,7 +11,7 @@ let mainWindow
 function createMainWindow() {
   if (!isDev) {
     // Start backend server
-    process.env.SERVER_CONFIG_PATH = 'D:\\Projects\\locweb-music\\server\\config\\config.json'
+    // process.env.SERVER_CONFIG_PATH = 'D:\\Projects\\locweb-music\\server\\config\\config.json'
     require('../server-dist/index')
   }
 

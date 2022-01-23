@@ -22,7 +22,7 @@ const buildElectron = async () => {
   await buildServer()
   Fs.removeSync(Dirs.ELECTRON_SERVER_DIST)
   Fs.ensureDirSync(Dirs.ELECTRON_SERVER_DIST)
-  tar.x({
+  await tar.x({
     C: Dirs.ELECTRON_SERVER_DIST,
     file: Path.join(Dirs.SERVER, 'dist.tar')
   })
