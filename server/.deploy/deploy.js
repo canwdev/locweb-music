@@ -4,9 +4,8 @@ const productionDir = `/usr/server/dockers/locweb-music/`
 
 const sshConfig = {
   host: '127.0.0.1',
-  port: 6903,
+  port: 2333,
   username: 'root',
-  privateKey: require('os').homedir() + '/.ssh/CAN@CAN-OMEN-PC/id_rsa'
 }
 
 async function run() {
@@ -15,8 +14,8 @@ async function run() {
   automate.cd(projectDir)
   automate.exec('pwd')
   automate.exec('git pull')
-  automate.exec(`./build.sh`, '构建中...')
-  automate.exec(`./build-docker.sh`, 'Dockering...')
+  automate.exec(`yarn install`)
+  automate.exec(`yarn run builder serverDocker`, '构建中...')
 
   await automate.sendFileExecuteCommands(sshConfig, null, [
     {
