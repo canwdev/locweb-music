@@ -36,6 +36,7 @@
       <ContextMenuCommon
         ref="itemMenuRef"
         :list-fn="getItemMenuList"
+        :border-margin="80"
       />
 
       <ContextMenuCommon

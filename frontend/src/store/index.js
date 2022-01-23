@@ -55,8 +55,8 @@ export default new Vuex.Store({
       })
     },
     setPlayingList: (state, payload) => {
-      state.playlistBackup = [...state.playingList]
       state.playingList = payload
+      state.playlistBackup = []
     },
     restorePlayingList: (state) => {
       state.playingList = state.playlistBackup
@@ -69,8 +69,8 @@ export default new Vuex.Store({
       state.paused = payload
     },
     setShuffle(state) {
-      // @ts-ignore
-      this.commit('setPlayingList', shuffleArray(state.playingList))
+      state.playlistBackup = [...state.playingList]
+      state.playingList = shuffleArray(state.playingList)
 
       state.playingIndexBackup = state.playingIndex
       state.playingIndex = 0

@@ -1,3 +1,5 @@
+import {openInBrowser} from '@/utils/client'
+
 export const guid = () => {
   function S4() {
     return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1)
@@ -74,6 +76,6 @@ export function downLoadFile(src, name = '') {
     }
   } catch (e) {
     console.error(e)
-    window.open(src)
+    openInBrowser(src)
   }
 }

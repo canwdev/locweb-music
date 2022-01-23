@@ -1,5 +1,5 @@
 <template>
-  <TkContextMenu ref="ctxMenu" class="common-menu">
+  <TkContextMenu ref="ctxMenu" class="common-menu" :border-margin="borderMargin">
     <ContextMenuList
       :list="mList"
     />
@@ -24,6 +24,9 @@ export default {
     listFn: {
       type: Function,
       default: null
+    },
+    borderMargin: {
+      type: Number,
     }
   },
   data() {

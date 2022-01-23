@@ -78,7 +78,7 @@
             :is-show-action="true"
             :checkable="checkable"
             @onAction="i => $emit('onItemAction', i)"
-            @onClick="$emit('onItemClick', item)"
+            @onClick="$emit('onItemClick', item, index)"
             @onCheck="toggleCheckItem"
           >
             <div

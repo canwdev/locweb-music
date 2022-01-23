@@ -85,6 +85,7 @@ import {saveAs} from 'file-saver'
 import ID3Writer from 'browser-id3-writer'
 import bus, {ACTION_PLAY_START} from '@/utils/bus'
 import {MusicItem} from '@/enum'
+import {openInBrowser} from '@/utils/client'
 
 export default {
   name: 'DownloadView',
@@ -222,7 +223,7 @@ export default {
       const url = await this.getMusicUrl(music, direct)
       // 直接打开
       if (direct) {
-        window.open(url)
+        openInBrowser(url)
         return
       }
       await this.downloadMusic(url, music)

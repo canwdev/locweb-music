@@ -59,6 +59,7 @@ import MainList from '@/components/MainList/index.vue'
 import FileUpload from '@/components/FileUpload/index.vue'
 import ContextMenuCommon from '@/components/ContextMenuCommon.vue'
 import FileDropzone from './FileDropzone'
+import {openInBrowser} from '@/utils/client'
 
 export default {
   name: 'FilesystemList',
@@ -274,7 +275,7 @@ export default {
     goUpDir() {
       this.directories.pop()
     },
-    async handleItemClick(item) {
+    async handleItemClick(item, index) {
       // jump folder
       if (item.isDirectory) {
         await this.setLastPlayId()
@@ -285,14 +286,18 @@ export default {
       if (isSupportedMusicFormat(item.filename)) {
         this.$store.commit('clearShuffle')
         // format data
-        const list = this.fileList.filter((val) => {
+        let list = this.fileList.map(i => {
+          return new MusicItem(i)
+        })
+        const playItem = list[index]
+        list = list.filter((val) => {
           return isSupportedMusicFormat(val.filename)
         })
+
         this.$store.commit('setPlayingList', list)
         // set current playing
-        // playMusicFromList(list, item)
-        bus.$emit(ACTION_PLAY_START, {list, item})
-        this.lastPlayId = item.id
+        bus.$emit(ACTION_PLAY_START, {list, item: playItem})
+        this.lastPlayId = playItem.id
         this.setLastPlayId()
       } else {
         this.$prompt.create({
@@ -302,7 +307,7 @@ export default {
           },
           parentEl: this.$el
         }).onConfirm(async () => {
-          window.open(item.getSource(), '_blank')
+          openInBrowser(item.getSource())
         })
       }
     },
