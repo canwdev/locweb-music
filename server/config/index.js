@@ -1,7 +1,7 @@
-const path = require('path')
-const fs = require('fs-extra')
+const Path = require('path')
+const Fs = require('fs-extra')
 
-const defaultDataPath = path.join(__dirname, '../data')
+const defaultDataPath = Path.join(__dirname, '../data')
 
 // default config
 let config = {
@@ -19,8 +19,8 @@ let config = {
   showHiddenFiles: false
 }
 
-const configPath = path.join(__dirname, 'config.json')
-if (fs.existsSync(configPath)) {
+const configPath = process.env.SERVER_CONFIG_PATH || Path.join(__dirname, 'config.json')
+if (Fs.existsSync(configPath)) {
   try {
     const userConfig = require(configPath)
     config = {
@@ -34,18 +34,18 @@ if (fs.existsSync(configPath)) {
 
 if (!config.useAbsolutePath) {
   const basePath = config.MUSIC_LIBRARY_PATH
-  config.MUSIC_LYRICS_PATH = path.join(basePath, config.MUSIC_LYRICS_PATH)
-  config.IMAGE_PATH = path.join(basePath, config.IMAGE_PATH)
-  
+  config.MUSIC_LYRICS_PATH = Path.join(basePath, config.MUSIC_LYRICS_PATH)
+  config.IMAGE_PATH = Path.join(basePath, config.IMAGE_PATH)
+
   config._mediaVaultPathRelative = config.MEDIA_VAULT_PATH
-  config.MEDIA_VAULT_PATH = path.join(basePath, config.MEDIA_VAULT_PATH)
+  config.MEDIA_VAULT_PATH = Path.join(basePath, config.MEDIA_VAULT_PATH)
 } else {
   config._mediaVaultPathRelative = config.MEDIA_VAULT_PATH.split('/').pop()
 }
 
-fs.ensureDirSync(config.MUSIC_LIBRARY_PATH)
-fs.ensureDirSync(config.MUSIC_LYRICS_PATH)
-fs.ensureDirSync(config.IMAGE_PATH)
-fs.ensureDirSync(config.MEDIA_VAULT_PATH)
+Fs.ensureDirSync(config.MUSIC_LIBRARY_PATH)
+Fs.ensureDirSync(config.MUSIC_LYRICS_PATH)
+Fs.ensureDirSync(config.IMAGE_PATH)
+Fs.ensureDirSync(config.MEDIA_VAULT_PATH)
 
 module.exports = config

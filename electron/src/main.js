@@ -6,14 +6,15 @@ const url = require('url')
 const {isDev} = require('./utils')
 const wm = require('./utils/wm-instance')
 
-if (!isDev) {
-  require('../server-dist/index')
-}
-
-
 let mainWindow
 
 function createMainWindow() {
+  if (!isDev) {
+    // Start backend server
+    process.env.SERVER_CONFIG_PATH = 'D:\\Projects\\locweb-music\\server\\config\\config.json'
+    require('../server-dist/index')
+  }
+
   // and load the index.html of the app.
   // mainWindow.loadFile('src/index.html')
   const startUrl = process.env.ELECTRON_START_URL || url.format({
@@ -70,9 +71,12 @@ if (!gotTheLock) {
 } else {
   app.on('second-instance', (event, commandLine, workingDirectory) => {
     if (mainWindow) {
-      // if (mainWindow.isMinimized()) mainWindow.restore()
-      // mainWindow.focus()
-      createMainWindow()
+      // 禁止多开
+      if (mainWindow.isMinimized()) mainWindow.restore()
+      mainWindow.focus()
+
+      // 允许多开
+      // createMainWindow()
     }
   })
 

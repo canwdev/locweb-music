@@ -2,7 +2,7 @@ const isProd = process.env.NODE_ENV === 'production' // 'development'
 
 module.exports = {
   publicPath: './',
-  outputDir: '../frontend-dist',
+  outputDir: './dist',
   productionSourceMap: false,
   css: {
     // extract: false,
