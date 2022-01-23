@@ -121,7 +121,7 @@
 
     </TkModalDialog>
 
-    <TkContextMenu ref="volumeCtxMenu" :border-margin="60">
+    <TkContextMenu ref="volumeCtxMenu" :border-margin="10">
       <div
         class="volume-slider-wrap"
         @click.stop
