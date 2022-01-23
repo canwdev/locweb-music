@@ -50,11 +50,15 @@ import {FileAction} from '@/enum/service'
 import {
   fileAction,
   getList,
-  getDownloadUrl,
 } from '@/api/music'
 import {isSupportedMusicFormat} from '@/utils/is'
-import bus, {ACTION_PLAY_START, ACTION_LOCATE_FILE, ACTION_ADD_PLAYLIST, ACTION_DOWNLOAD_FILE} from '@/utils/bus'
-import {downLoadFile} from '@/utils'
+import bus, {
+  ACTION_PLAY_START,
+  ACTION_LOCATE_FILE,
+  ACTION_ADD_PLAYLIST,
+  ACTION_DOWNLOAD_FILE,
+  ACTION_REFRESH_FILESYSTEM
+} from '@/utils/bus'
 import MainList from '@/components/MainList/index.vue'
 import FileUpload from '@/components/FileUpload/index.vue'
 import ContextMenuCommon from '@/components/ContextMenuCommon.vue'
@@ -113,9 +117,11 @@ export default {
   mounted() {
     this.getFileList()
     bus.$on(ACTION_LOCATE_FILE, this.handleLocateFile)
+    bus.$on(ACTION_REFRESH_FILESYSTEM, this.handleRefresh)
   },
   beforeDestroy() {
     bus.$off(ACTION_LOCATE_FILE, this.handleLocateFile)
+    bus.$off(ACTION_REFRESH_FILESYSTEM, this.handleRefresh)
   },
   watch: {
     '$route.query.id': {
@@ -284,21 +290,20 @@ export default {
       }
 
       if (isSupportedMusicFormat(item.filename)) {
-        this.$store.commit('clearShuffle')
-        // format data
-        let list = this.fileList.map(i => {
-          return new MusicItem(i)
-        })
-        const playItem = list[index]
-        list = list.filter((val) => {
-          return isSupportedMusicFormat(val.filename)
-        })
+        if (this.$store.state.playingList.length) {
+          this.$prompt.create({
+            propsData: {
+              title: `播放确认`,
+              content: `播放歌曲《${item.filename}》将替换当前播放列表，是否继续？`,
+            },
+            parentEl: this.$el
+          }).onConfirm(async () => {
+            this.playItem(item, index)
+          })
+        } else {
+          this.playItem(item, index)
+        }
 
-        this.$store.commit('setPlayingList', list)
-        // set current playing
-        bus.$emit(ACTION_PLAY_START, {list, item: playItem})
-        this.lastPlayId = playItem.id
-        this.setLastPlayId()
       } else {
         this.$prompt.create({
           propsData: {
@@ -310,6 +315,28 @@ export default {
           openInBrowser(item.getSource())
         })
       }
+    },
+    playItem(item, index) {
+      this.$store.commit('clearShuffle')
+      // format data
+      let list = this.fileList.map(i => {
+        return new MusicItem(i)
+      })
+      const playItem = list[index]
+      list = list.filter((val) => {
+        return isSupportedMusicFormat(val.filename)
+      })
+
+      this.$store.commit('setPlayingList', list)
+      // set current playing
+      bus.$emit(ACTION_PLAY_START, {
+        list,
+        item: playItem,
+        isPlay: true
+      })
+      this.lastPlayId = playItem.id
+      this.setLastPlayId()
+
     },
     handleItemAction(item) {
       this.$refs.itemMenuRef.open(item)

@@ -44,6 +44,7 @@ export default new Vuex.Store({
     setMusicItem: (state, payload) => {
       if (!payload) {
         payload = new MusicItem()
+        state.currentTime = 0
       }
       state.musicItem = payload
     },

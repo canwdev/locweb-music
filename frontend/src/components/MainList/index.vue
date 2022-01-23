@@ -77,7 +77,7 @@
             :is-paused="isPaused"
             :is-show-action="true"
             :checkable="checkable"
-            @onAction="i => $emit('onItemAction', i)"
+            @onAction="$emit('onItemAction', item, index)"
             @onClick="$emit('onItemClick', item, index)"
             @onCheck="toggleCheckItem"
           >

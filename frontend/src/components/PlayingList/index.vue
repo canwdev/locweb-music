@@ -123,14 +123,14 @@ export default {
     bus.$off(ACTION_PLAY_ENDED, this.handlePlayEnded)
   },
   methods: {
-    playMusicFromList(list, item) {
+    playMusicFromList(list, item, isPlay) {
       this.$store.commit('setMusicItem', item)
       this.playingIndex = list.findIndex((val) => {
         return val.filename === item.filename
       })
 
       this.$nextTick(() => {
-        bus.$emit(ACTION_TOGGLE_PLAY) // {isPlay: true}
+        bus.$emit(ACTION_TOGGLE_PLAY, {isPlay}) // {isPlay: true}
       })
     },
     handleItemClick(item) {
@@ -146,7 +146,11 @@ export default {
       this.$store.commit('setMusicItem', this.playingList[index])
       this.playingIndex = index
       this.$nextTick(() => {
-        bus.$emit(ACTION_TOGGLE_PLAY, {isPlay: true})
+        if (this.paused) {
+          bus.$emit(ACTION_TOGGLE_PLAY, {isPause: true})
+        } else {
+          bus.$emit(ACTION_TOGGLE_PLAY, {isPlay: true})
+        }
       })
     },
     playPrev() {
@@ -194,12 +198,13 @@ export default {
       }
       this.playNext()
     },
-    handlePlayStart(event) {
+    handlePlayStart(config) {
       const {
         list,
-        item
-      } = event
-      this.playMusicFromList(list, item)
+        item,
+        isPlay
+      } = config
+      this.playMusicFromList(list, item, isPlay)
     },
     toggleRandom() {
       if (this.playingList.length === 0) {

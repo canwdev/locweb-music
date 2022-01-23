@@ -22,8 +22,13 @@ import store from '@/store'
 import {getDetail} from '@/api/music'
 import {mapState} from 'vuex'
 
+const originalTitle = document.title
 const updateTitle = (title, isPaused) => {
-  document.title = `${isPaused ? '⏸️' : '▶️'} ${title}`
+  if (!title) {
+    document.title = originalTitle
+  } else {
+    document.title = `${isPaused ? '⏸️' : '▶️'} ${title}`
+  }
 }
 
 export default {
