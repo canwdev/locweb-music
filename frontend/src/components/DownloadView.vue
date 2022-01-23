@@ -1,14 +1,9 @@
 <template>
   <div class="download-view">
-    <TkLoading
-      absolute
-      :visible="isLoading"
-    />
-    <div class="music-download-wrap">
-      <div class="wrap-inner-box">
-        <div class="main-title">
-          {{ $t('msg.netease-music-down') }}
-        </div>
+
+    <div class="music-download">
+      <div class="music-download__header">
+        <div class="main-title">{{ $t('msg.netease-music-down') }}</div>
         <form class="search-wrap" @submit.prevent="handleSearch">
           <TkInput
             v-model="searchText"
@@ -19,52 +14,58 @@
           />
           <TkButton class="search-submit " type="submit">{{ $t('search') }}</TkButton>
         </form>
-        <div class="search-result">
-          <div v-if="resultList.length" class="result-list">
-            <div
-              v-for="(item, index) in resultList"
-              :key="index"
-              class="list-item"
-            >
-              <div class="_title">{{ item.name }}</div>
-              <div class="_content">
-                <div v-if="item.alias.length > 0" class="content-row ">
-                  <strong>{{ $t('alias') }}</strong> <span class="_pink">{{ item.alias.join(' / ') }}</span>
-                </div>
+      </div>
 
-                <div class="content-row">
-                  <strong>{{ $t('artists') }}</strong> {{ formatArtist(item.artists) }}
-                </div>
+      <div class="music-download__content">
+        <TkLoading
+          absolute
+          :visible="isLoading"
+        />
 
-                <div class="content-row">
-                  <strong>{{ $t('album') }}</strong> {{ item.album.name }}
-                </div>
+        <div v-if="resultList.length" class="result-list">
+          <div
+            v-for="(item, index) in resultList"
+            :key="index"
+            class="list-item"
+          >
+            <div class="_title">{{ item.name }}</div>
+            <div class="_content">
+              <div v-if="item.alias.length > 0" class="content-row">
+                <strong>{{ $t('alias') }}</strong> <span class="_pink">{{ item.alias.join(' / ') }}</span>
+              </div>
 
-                <div class="content-row type-2">
-                  <div class="content-col">
-                    <strong>{{ $t('duration') }}</strong> {{ formatTimeHMS(item.duration / 1000) }}
-                  </div>
-                  <div class="content-col">
-                    <strong>ID</strong> {{ item.id }}
-                  </div>
-                </div>
+              <div class="content-row">
+                <strong>{{ $t('artists') }}</strong> {{ formatArtist(item.artists) }}
+              </div>
 
-                <div class="content-row type-3">
-                  <TkButton class="content-col " @click="playMusic(item)">
-                    {{ $t('play') }}
-                  </TkButton>
-                  <TkButton class="content-col " @click="handleDownMusic(item, true)">
-                    {{ $t('msg.direct-open') }}
-                  </TkButton>
-                  <TkButton class="content-col " @click="handleDownMusic(item, false)">
-                    {{ $t('msg.download-with-meta') }}
-                  </TkButton>
+              <div class="content-row">
+                <strong>{{ $t('album') }}</strong> {{ item.album.name }}
+              </div>
+
+              <div class="content-row type-2">
+                <div class="content-col">
+                  <strong>{{ $t('duration') }}</strong> {{ formatTimeHMS(item.duration / 1000) }}
                 </div>
+                <div class="content-col">
+                  <strong>ID</strong> {{ item.id }}
+                </div>
+              </div>
+
+              <div class="content-row type-3">
+                <TkButton class="content-col " @click="playMusic(item)">
+                  {{ $t('play') }}
+                </TkButton>
+                <TkButton class="content-col " @click="handleDownMusic(item, true)">
+                  {{ $t('msg.direct-open') }}
+                </TkButton>
+                <TkButton class="content-col " @click="handleDownMusic(item, false)">
+                  {{ $t('msg.download-with-meta') }}
+                </TkButton>
               </div>
             </div>
           </div>
-          <TkEmpty v-else :text="$t('msg.kong-kong-ru-ye')"/>
         </div>
+        <TkEmpty v-else :text="$t('msg.kong-kong-ru-ye')"/>
       </div>
     </div>
   </div>
@@ -249,98 +250,65 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@media screen and (min-width: 425px) {
-  .music-download-wrap {
-    width: 425px;
-    position: relative;
-    margin: 0 auto;
-  }
-  .music-download-wrap::before {
-    content: " ";
-    display: block;
-    padding-bottom: 198%;
-
-  }
-  .music-download-wrap::after {
-    content: " ";
-    display: block;
-    background: url("~@/assets/images/hardware_faceid_silver_portrait_large.png") no-repeat center/contain;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 10;
-    pointer-events: none;
-  }
-
-  .music-download-wrap .wrap-inner-box {
-    position: absolute;
-    top: 36px;
-    left: 35px;
-    right: 35px;
-    bottom: 34px;
-    box-shadow: 0 0px 2px rgba(0, 0, 0, 0.49);
-    border-radius: 5px;
-    overflow: auto;
-  }
-  .music-download-wrap .wrap-inner-box:before {
-    content: " ";
-    display: block;
-    height: 29px;
-    width: 100%;
-    background: $primary;
-  }
-
-}
-
-.wrap-inner-box {
-  display: flex;
-  flex-direction: column;
-}
-
 .download-view {
   height: 100%;
   width: 100%;
   overflow: auto;
+}
+.music-download {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  max-width: 500px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 10px $separator-color;
+  border-left: 1px solid $border-color;
+  border-right: 1px solid $border-color;
 
-  .main-title {
-    background: linear-gradient(
-        180deg, $primary 0, $primary);
-    color: white;
-    line-height: 46px;
-    text-align: center;
+  &__header {
+    border-bottom: 1px solid $border-color;
+    .main-title {
+      font-size: 12px;
+      line-height: 2;
+      text-align: center;
+    }
+    .search-wrap {
+      display: flex;
+      padding: 10px 10px;
+
+      input {
+        flex: 1;
+      }
+
+      .search-submit {
+        margin-left: 10px;
+      }
+    }
   }
 
-  .search-wrap {
-    display: flex;
-    padding: 10px 16px;
-    border-top: $layout-border;
-    border-bottom: $layout-border;
-
-    input {
-      flex: 1;
-    }
-
-    .search-submit {
-      margin-left: 10px;
-    }
-  }
-
-  .search-result {
+  &__content {
     flex: 1;
     overflow: auto;
+    position: relative;
 
     .result-list {
       .list-item {
         border-radius: $border-radius;
         border: $layout-border;
-        margin: 5px 5px;
+        margin: 10px 10px;
         overflow: hidden;
+        transition: box-shadow .3s;
+
+        &:hover {
+          box-shadow: 0 0 5px $separator-color;
+        }
 
         ._title {
           background: $border-color;
           padding: 10px 15px;
+          font-weight: bold;
         }
 
         ._content {
