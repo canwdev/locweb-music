@@ -6,6 +6,7 @@
   "author": "canwdev",
   "license": "GPL-3.0",
   "scripts": {
+    "builder": "node build/builder.js",
     "build-frontend": "node build/builder.js frontend",
     "build-server": "node build/builder.js server",
     "build-electron": "node build/builder.js electron"

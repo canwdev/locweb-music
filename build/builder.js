@@ -9,6 +9,11 @@ const fg = require('fast-glob')
 const args = process.argv.slice(2)
 const buildType = args[0] || ''
 
+const setupMirror = async () => {
+  Utils.exec(`yarn config set registry https://registry.npm.taobao.org`)
+  Utils.exec(`yarn config set disturl https://npm.taobao.org/dist`)
+}
+
 const buildFrontend = async () => {
   Utils.colorLog(Dirs.FRONTEND, 'Build Frontend', 'green')
   Utils.cd(Dirs.FRONTEND)
@@ -47,6 +52,12 @@ const buildServer = async () => {
   Fs.ensureDirSync(Dirs.ELECTRON_SERVER_DIST)
 }
 
+const buildServerDocker = async () => {
+  // await buildServer()
+  Utils.cd(Dirs.SERVER)
+  Utils.exec(`./build-docker.sh`)
+}
+
 const buildElectron = async () => {
   await buildServer()
   // Copy server code
@@ -64,11 +75,17 @@ const buildElectron = async () => {
 
 const builder = async () => {
   switch (buildType) {
+    case 'setupMirror':
+      await setupMirror()
+      break
     case 'frontend':
       await buildFrontend()
       break
     case 'server':
       await buildServer()
+      break
+    case 'serverDocker':
+      await buildServerDocker()
       break
     case 'electron':
       await buildElectron()
