@@ -6,7 +6,9 @@
   "author": "canwdev",
   "license": "GPL-3.0",
   "scripts": {
-    "build": "node build/build-electron.js"
+    "build-frontend": "node build/builder.js frontend",
+    "build-server": "node build/builder.js server",
+    "build-electron": "node build/builder.js electron"
   },
   "devDependencies": {
     "chalk": "^4.1.0",
