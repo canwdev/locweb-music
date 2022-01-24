@@ -1,10 +1,11 @@
 import i18n from '@/lang/i18n'
+import {getClientHostUrl} from '@/utils/client'
 
 // server api url
-export const HOST_URL = localStorage.getItem('LOCWEB_API_HOST') || process.env.VUE_APP_API_HOST || ''
+export const HOST_URL = getClientHostUrl()
 
 // https://github.com/Binaryify/NeteaseCloudMusicApi
-export const NCM_API_URL = localStorage.getItem('LOCWEB_NCM_API_URL') || process.env.NCM_API_URL || 'https://konsole.top:9001'
+export const NCM_API_URL = localStorage.getItem('LOCWEB_NCM_API_URL') || process.env.VUE_APP_NCM_API_URL || 'https://konsole.top:9001'
 
 export const NavbarTabsType = {
   MAIN: 1, // file list

@@ -63,3 +63,7 @@ process.on('SIGTERM', () => {
     console.log('Process terminated')
   })
 })
+
+module.exports = {
+  SERVER_PORT: port
+}

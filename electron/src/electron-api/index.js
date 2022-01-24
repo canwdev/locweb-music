@@ -6,6 +6,9 @@ const self = {
   ...ipcHelper,
   ...wmPreload,
   openExternal: shell.openExternal,
+  getClientHostPort() {
+    return ipcHelper.ipcSendEventSync('IPC_GET_PORT')
+  }
 }
 
 module.exports = self

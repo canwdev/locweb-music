@@ -227,9 +227,9 @@ export default {
     }
   },
   mounted() {
-    const mousetrap = new Mousetrap(this.$el)
-    mousetrap.bind(HOTKEY_SELECT_ALL, this.handleKeyCheckAll)
-    mousetrap.bind(HOTKEY_DESELECT_ALL, this.handleKeyClearCheckAll)
+    // const mousetrap = new Mousetrap(this.$el)
+    // mousetrap.bind(HOTKEY_SELECT_ALL, this.handleKeyCheckAll)
+    // mousetrap.bind(HOTKEY_DESELECT_ALL, this.handleKeyClearCheckAll)
   },
   beforeDestroy() {
   },

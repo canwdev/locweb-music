@@ -5,16 +5,23 @@ const path = require('path')
 const url = require('url')
 const {isDev} = require('./utils')
 const wm = require('./utils/wm-instance')
+const {ipcOnEventSync} = require('@canwdev/electron-utils/ipc/ipc-helper-main')
 
 let mainWindow
+let serverPort = 12022
 
-function createMainWindow() {
+ipcOnEventSync('IPC_GET_PORT', () => {
+  return serverPort
+})
+
+const createMainWindow = () => {
   try {
 
     if (!isDev) {
       // Start backend server
       require('./utils/init-server-config')
-      require('../server-dist/index')
+      const {SERVER_PORT} = require('../server-dist/index')
+      serverPort = SERVER_PORT
     }
 
     // and load the index.html of the app.
