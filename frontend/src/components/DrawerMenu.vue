@@ -161,7 +161,15 @@ export default {
         // {name: this.$t('drawer.rescan-media'), iconName: 'loop', disabled: true},
         this.menuItemLogin,
         this.menuItemAbout,
-        {name: this.$t('drawer.settings'), iconName: 'settings', subtitle: true},
+        {name: this.$t('drawer.settings'), subtitle: true},
+        {
+          iconClass,
+          name: this.$t('drawer.settings'), iconName: 'settings', action: () => {
+            this.$router.push({
+              name: 'Settings'
+            })
+          }
+        }
       ]
     }
   },

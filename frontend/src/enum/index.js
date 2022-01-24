@@ -140,7 +140,7 @@ export class MusicItem {
 
   get filenameDisplay() {
     if (this.title) {
-      return [this.title, this.artist].join(' - ')
+      return [this.artist, this.title].join(' - ')
     }
     return this.filename
   }

@@ -7391,11 +7391,6 @@ snapdragon@^0.8.1:
     source-map-resolve "^0.5.0"
     use "^3.1.0"
 
-snarkdown@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.npm.taobao.org/snarkdown/download/snarkdown-2.0.0.tgz#b1feb4db91b9f94a8ebbd7a50f3e99aee18b1e03"
-  integrity sha1-sf6025G5+UqOu9elDz6ZruGLHgM=
-
 sockjs-client@^1.5.0:
   version "1.5.2"
   resolved "https://registry.nlark.com/sockjs-client/download/sockjs-client-1.5.2.tgz?cache=0&sync_timestamp=1629825055862&other_urls=https%3A%2F%2Fregistry.nlark.com%2Fsockjs-client%2Fdownload%2Fsockjs-client-1.5.2.tgz#4bc48c2da9ce4769f19dc723396b50f5c12330a3"

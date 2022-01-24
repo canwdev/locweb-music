@@ -1,25 +1,31 @@
 <template>
-  <div class="about">
-    <div class="container">
-      <div class="title-wrap flex items-center justify-between">
-        <span class="title"> {{ $t('page.about') }}</span>
-        <TkButton @click="backHome">{{ $t('back') }}</TkButton>
-      </div>
+  <PageLayout
+    :title="$t('page.about')"
+    :back-text="$t('back')"
+    class="about"
+    @back="$router.back()"
+  >
+    <div class="about-main">
       <textarea style="height: 130px" class="" readonly :value="pkgInfo"></textarea>
-      <div class="title-wrap flex items-center justify-between">
-        <span class="title"> {{ $t('changelog') }}</span>
+
+      <div class="changelog-content">
+        <div class="title-wrap">{{ $t('changelog') }}</div>
+        <pre v-html="changelog"></pre>
       </div>
-      <div class="changelog-content" v-html="changelog"></div>
+
     </div>
-  </div>
+  </PageLayout>
 </template>
 
 <script>
-import {getInfo} from "@/api/service";
-import snarkdown from "snarkdown"
+import {getInfo} from '@/api/service'
+import PageLayout from '@/components/PageLayout'
 
 export default {
   name: 'About',
+  components: {
+    PageLayout,
+  },
   data() {
     return {
       pkgInfo: '',
@@ -27,12 +33,9 @@ export default {
     }
   },
   mounted() {
-    getInfo().then(res=> {
-      console.log('res',res)
-      // @ts-ignore
+    getInfo().then(res => {
       this.pkgInfo = JSON.stringify(res.package, null, 2)
-      // @ts-ignore
-      this.changelog = snarkdown(res.changelog)
+      this.changelog = res.changelog
     })
   },
   methods: {
@@ -44,7 +47,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.about {
+.about-main {
   box-sizing: border-box;
   padding: 10px;
   color: $primary;
@@ -53,12 +56,11 @@ export default {
 
   .title-wrap {
     margin: 10px 0;
+    font-size: 18px;
   }
-  .title {
-    font-size: 30px;
-  }
+
   textarea {
-    width: 95%;
+    width: 96%;
     min-height: 100px;
     resize: none;
     font-size: 14px;
@@ -69,12 +71,9 @@ export default {
     overflow: auto;
     border-radius: 4px;
   }
-  .container {
-    max-width: 500px;
-    margin: 0 auto;
-  }
   .changelog-content {
     user-select: text;
+    font-size: 14px;
   }
 }
 </style>
