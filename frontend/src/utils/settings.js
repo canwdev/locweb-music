@@ -1,16 +1,20 @@
-import {LoopModeType, NavbarTabsType} from '@/enum'
+import {LS_KEY_SETTINGS, settingsList} from '@/enum/settings'
 
-const LS_KEY_SETTINGS = 'LS_KEY_LOCWEB_SETTINGS'
+const defaultSettings = {}
 
-const isSystemDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+settingsList.forEach(group => {
+  const {children} = group
 
-const defaultSettings = {
-  isDarkTheme: isSystemDarkMode,
-  ncmApi: null,
-  navbarTab: NavbarTabsType.MAIN,
-  themeColor: '#72bb8d',
-  loopMode: LoopModeType.LOOP_SEQUENCE, // music playing loop mode
-}
+  children.forEach(item => {
+    if (item.disabled) {
+      return
+    }
+
+    defaultSettings[item.id] = item.default
+  })
+})
+
+console.log('>>> defaultSettings', defaultSettings)
 
 export function loadSettings() {
   const settings = JSON.parse(localStorage.getItem(LS_KEY_SETTINGS) || '{}')

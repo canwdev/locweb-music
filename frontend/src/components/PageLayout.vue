@@ -21,10 +21,10 @@ export default {
   name: 'PageLayout',
   props: {
     title: {
-      type: 'String'
+      type: String
     },
     backText: {
-      type: 'String'
+      type: String
     }
   }
 }
