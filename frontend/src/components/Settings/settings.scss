@@ -55,6 +55,11 @@
       flex: 1;
     }
 
+    &__right {
+      min-width: 50px;
+      text-align: center;
+    }
+
     &__titles {
       padding-left: 5px;
       height: 100%;

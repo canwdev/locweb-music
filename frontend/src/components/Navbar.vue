@@ -13,7 +13,7 @@
         class="btn-tab active"
       >
         <span v-if="item.icon" class="material-icons">{{ item.icon }}</span>
-        {{ item.name }}
+        {{ item.label_i18n ? $t(item.label_i18n) : item.label }}
       </TkButton>
     </div>
   </div>

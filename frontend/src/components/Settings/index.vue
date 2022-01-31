@@ -1,19 +1,24 @@
 <template>
   <div class="settings">
-    <div
-      v-for="(group, index) in settingsList"
-      :key="index"
-      class="settings__group"
-    >
-      <div class="settings__group__title">{{ group.title }}</div>
-      <div class="settings__group__children">
-        <SettingsItem
-          v-for="(item) in group.children"
-          :key="item.id"
-          :item="item"
-        />
+    <template v-for="(group, index) in settingsList">
+      <div
+        v-if="!group.hidden"
+        :key="index"
+        class="settings__group"
+      >
+        <div class="settings__group__title">{{ group.title }}</div>
+        <div class="settings__group__children">
+          <template v-for="(item) in group.children">
+            <SettingsItem
+              v-if="!item.hidden"
+              :key="item.id"
+              :item="item"
+            />
+          </template>
+        </div>
       </div>
-    </div>
+    </template>
+
   </div>
 </template>
 

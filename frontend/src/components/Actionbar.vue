@@ -160,7 +160,7 @@
 </template>
 
 <script>
-import {LoopModeType, } from '@/enum'
+import {getLoopModeMap, LoopModeType,} from '@/enum'
 import bus, {
   ACTION_CHANGE_CURRENT_TIME,
   ACTION_NEXT, ACTION_PREV,
@@ -242,30 +242,11 @@ export default {
         this.$store.commit('setLoopMode', val)
       }
     },
+    loopModeMap() {
+      return getLoopModeMap.call(this)
+    },
     currentLoopMode() {
-      const loopModeMap = {
-        [LoopModeType.NONE]: {
-          icon: 'arrow_forward',
-          label: this.$t('msg.play-in-order'),
-        },
-        [LoopModeType.SHUFFLE]: {
-          icon: 'shuffle',
-          label: this.$t('shuffle'),
-        },
-        [LoopModeType.LOOP_SEQUENCE]: {
-          icon: 'repeat',
-          label: this.$t('msg.sequential-loop'),
-        },
-        [LoopModeType.LOOP_REVERSE]: {
-          icon: 'repeat', className: 'reverse-x',
-          label: this.$t('msg.reverse-loop'),
-        },
-        [LoopModeType.LOOP_SINGLE]: {
-          icon: 'repeat_one',
-          label: this.$t('msg.single-cycle'),
-        },
-      }
-      return loopModeMap[this.loopMode]
+      return this.loopModeMap[this.loopMode]
     }
   },
   watch: {

@@ -8,29 +8,48 @@
 </template>
 
 <script>
-import store from '@/store'
-import {hexToRgb} from '@/utils/color'
+import {getSystemDarkMode, hexToRgb} from '@/utils/color'
 import PlayerCore from '@/components/PlayerCore.vue'
+import {mapGetters} from 'vuex'
 
 export default {
   components: {
     PlayerCore
   },
   computed: {
+    ...mapGetters([
+      'themeColor',
+      'useSystemTheme',
+    ]),
     isDarkTheme: {
-      get: () => store.getters.isDarkTheme
+      get() {
+        if (this.useSystemTheme) {
+          return getSystemDarkMode()
+        }
+        return this.$store.getters.isDarkTheme
+      }
     },
   },
   created() {
-    const themeColor = this.$store.getters.themeColor
-    // console.log('themeColor', themeColor.value)
-    if (themeColor) {
-      const {r, g, b} = hexToRgb(themeColor)
-      const root = document.documentElement
-      root.style.setProperty('--primary-rgb', `${r}, ${g}, ${b}`)
-    }
+  },
+  watch: {
+    themeColor() {
+      this.updateThemeColor()
+    },
   },
   mounted() {
+    this.updateThemeColor()
+  },
+  methods: {
+    updateThemeColor() {
+      const {themeColor} = this
+      // console.log({themeColor})
+      if (themeColor) {
+        const {r, g, b} = hexToRgb(themeColor)
+        const root = document.documentElement
+        root.style.setProperty('--primary-rgb', `${r}, ${g}, ${b}`)
+      }
+    }
   }
 }
 </script>

@@ -31,12 +31,15 @@
             v-model="$i18n.locale"
             size="sm"
             :options="languages"
+            customized
             option-label="name"
             option-value="locate"
             @change="saveLocateChange($i18n.locale)"
           />
         </span>
       </TkButton>
+
+      <div style="height: 100px;"></div>
 
     </TkDrawer>
     <TkModalDialog
@@ -58,7 +61,6 @@ import {mapGetters, mapState} from 'vuex'
 import visibleMixin from '@/mixins/visible'
 import LoginPrompt from '@/components/LoginPrompt.vue'
 import {DrawerMenuTabItems} from '@/enum'
-import {hexToRgb} from '@/utils/color'
 import languages from '@/lang/languages'
 import {LS_KEY_LOCATE} from '@/lang/i18n'
 
@@ -144,6 +146,7 @@ export default {
       return DrawerMenuTabItems.map(item => {
         return {
           ...item,
+          name: item.label_i18n ? this.$t(item.label_i18n) : item.label,
           iconClass,
           active: this.navbarTab === item.value,
           action: () => {
@@ -174,14 +177,8 @@ export default {
     }
   },
   methods: {
-
     handleThemeColorChange(event) {
       const colorHex = event.target.value
-      const {r, g, b} = hexToRgb(colorHex)
-      console.log(colorHex)
-
-      const root = document.documentElement
-      root.style.setProperty('--primary-rgb', `${r}, ${g}, ${b}`)
       this.$store.commit('updateSettings', {
         key: 'themeColor',
         value: colorHex

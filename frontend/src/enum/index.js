@@ -24,55 +24,55 @@ export const NavbarTabsType = {
 export const NavbarTabs = {
   [NavbarTabsType.MAIN]: {
     iconName: 'storage',
-    name: i18n.t('file-system'),
+    label_i18n: 'file-system',
     value: NavbarTabsType.MAIN,
     componentName: 'FilesystemList',
   },
   [NavbarTabsType.PLAYING]: {
     iconName: 'audiotrack',
-    name: i18n.t('playlist'),
+    label_i18n: 'playlist',
     value: NavbarTabsType.PLAYING,
     // componentName: 'PlayList',
   },
   [NavbarTabsType.SONGLIST]: {
     iconName: 'queue_music',
-    name: '歌单 (Beta)',
+    label: '歌单 (Beta)',
     value: NavbarTabsType.SONGLIST,
     componentName: 'SongList',
   },
   [NavbarTabsType.ALBUMS]: {
     iconName: 'album',
-    name: i18n.t('albums'),
+    label_i18n: 'albums',
     value: NavbarTabsType.ALBUMS,
     disabled: true
   },
   [NavbarTabsType.ARTISTS]: {
     iconName: 'mic',
-    name: i18n.t('artists'),
+    label_i18n: 'artists',
     value: NavbarTabsType.ARTISTS,
     disabled: true
   },
   [NavbarTabsType.RECENT]: {
     iconName: 'history',
-    name: i18n.t('recent'),
+    label_i18n: 'recent',
     value: NavbarTabsType.RECENT,
     disabled: true
   },
   [NavbarTabsType.RATED]: {
     iconName: 'stars',
-    name: i18n.t('rated'),
+    label_i18n: 'rated',
     value: NavbarTabsType.RATED,
     disabled: true
   },
   [NavbarTabsType.SEARCH]: {
     iconName: 'search',
-    name: i18n.t('search'),
+    label_i18n: 'search',
     value: NavbarTabsType.SEARCH,
     disabled: true
   },
   [NavbarTabsType.DOWNLOAD]: {
     iconName: 'cloud_download',
-    name: i18n.t('download'),
+    label_i18n: 'download',
     value: NavbarTabsType.DOWNLOAD,
     componentName: 'DownloadView',
   },
@@ -95,6 +95,33 @@ export const LoopModeType = {
   LOOP_REVERSE: 3, // Reverse play
   LOOP_SINGLE: 4, // Single cycle
   SHUFFLE: 5, // Shuffle next
+}
+
+export const LoopModeTypeArray = Object.values(LoopModeType)
+
+export function getLoopModeMap() {
+  return {
+    [LoopModeType.NONE]: {
+      icon: 'arrow_forward',
+      label: this.$t('msg.play-in-order'),
+    },
+    [LoopModeType.SHUFFLE]: {
+      icon: 'shuffle',
+      label: this.$t('shuffle'),
+    },
+    [LoopModeType.LOOP_SEQUENCE]: {
+      icon: 'repeat',
+      label: this.$t('msg.sequential-loop'),
+    },
+    [LoopModeType.LOOP_REVERSE]: {
+      icon: 'repeat', className: 'reverse-x',
+      label: this.$t('msg.reverse-loop'),
+    },
+    [LoopModeType.LOOP_SINGLE]: {
+      icon: 'repeat_one',
+      label: this.$t('msg.single-cycle'),
+    },
+  }
 }
 
 // single song data
@@ -183,6 +210,6 @@ export class MusicItem {
     }
 
     this.isDetailLoaded = true
-    console.log('setMetadata',this)
+    console.log('setMetadata', this)
   }
 }

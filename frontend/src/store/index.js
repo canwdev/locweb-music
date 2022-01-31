@@ -34,6 +34,7 @@ export default new Vuex.Store({
   },
   getters: {
     isDarkTheme: state => state.settings.isDarkTheme,
+    useSystemTheme: state => state.settings.useSystemTheme,
     navbarTab: state => state.settings.navbarTab,
     themeClass: state => state.settings.isDarkTheme ? 'bg-dark' : 'bg-light',
     themeColor: state => state.settings.themeColor,

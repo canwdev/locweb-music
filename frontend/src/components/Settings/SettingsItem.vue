@@ -2,7 +2,7 @@
   <div
     class="settings-item"
     :class="{
-      'settings-item--disabled': item.disabled
+      'settings-item--disabled': isDisabled
     }"
   >
     <div class="settings-item__left">
@@ -10,7 +10,7 @@
         <span v-if="item.icon" class="material-icons">{{ item.icon }}</span>
       </div>
       <div class="settings-item__titles">
-        <div class="settings-item__titles__title">{{ item.title || item.id }}</div>
+        <div class="settings-item__titles__title">{{ title || item.id }}</div>
         <div v-if="item.desc" class="settings-item__titles__subtitle">{{ item.desc }}</div>
       </div>
     </div>
@@ -19,6 +19,7 @@
         <TkSwitch
           :checkbox="SettingsType.CHECKBOX === item.type"
           :value="currentValue"
+          :disabled="isDisabled"
           @click="handleSwitchClick"
         />
       </template>
@@ -26,12 +27,22 @@
         <input
           class="tk-button-no-style color-input"
           type="color"
+          :disabled="isDisabled"
           :value="currentValue"
           @change="handleColorChange"
         >
       </template>
+      <template v-else-if="SettingsType.SELECT === item.type">
+        <TkDropdown
+          :disabled="isDisabled"
+          :value="currentValue"
+          :customized="typeof item.options === 'function'"
+          :options="dropdownOptions"
+          @change="handleSelectChange"
+        />
+      </template>
       <template v-else>
-        <div class="current-value">{{ item.value || item.default }}</div>
+        <div class="current-value">{{ currentValue }}</div>
       </template>
 
     </div>
@@ -61,8 +72,31 @@ export default {
     ...mapState([
       'settings'
     ]),
+    title() {
+      return this.getI18nValue('title')
+    },
+    desc() {
+      return this.getI18nValue('desc')
+    },
     currentValue() {
       return this.settings[this.item.id]
+    },
+    isDisabled() {
+      const {disabled} = this.item
+      if (typeof disabled === 'function') {
+        return disabled(this.settings)
+      }
+      return disabled
+    },
+    dropdownOptions() {
+      if (SettingsType.SELECT !== this.item.type) {
+        return
+      }
+      const {options} = this.item
+      if (typeof options === 'function') {
+        return options.call(this)
+      }
+      return options
     }
   },
   methods: {
@@ -79,6 +113,20 @@ export default {
     },
     handleSwitchClick() {
       this.updateSetting(!this.currentValue)
+    },
+    getI18nValue(key) {
+      if (!key) {
+        return
+      }
+      const {item} = this
+      if (item.i18n) {
+        return this.$t(item[key])
+      }
+      return item[key]
+    },
+    handleSelectChange(value) {
+      // console.log(value)
+      this.updateSetting(value)
     }
   }
 }

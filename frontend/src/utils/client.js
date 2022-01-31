@@ -1,7 +1,9 @@
 const {electronAPI} = window
 
+export const isClient = Boolean(electronAPI)
+
 export const getClientHostUrl = (fallbackUrl = '') => {
-  if (electronAPI) {
+  if (isClient) {
     const port = electronAPI.getClientHostPort()
     return `http://127.0.0.1:${port}`
   }
@@ -9,7 +11,7 @@ export const getClientHostUrl = (fallbackUrl = '') => {
 }
 
 export const openInBrowser = (url) => {
-  if (electronAPI) {
+  if (isClient) {
     electronAPI.openExternal(url)
   } else {
     window.open(url, '_blank')
