@@ -2,7 +2,9 @@
   <div id="app" class="tk-scroll" :class="[isDarkTheme ? 'tk-dark-theme' : 'tk-light-theme']">
     <PlayerCore/>
     <keep-alive>
-      <router-view/>
+      <transition :name="transitionName">
+        <router-view/>
+      </transition>
     </keep-alive>
   </div>
 </template>
@@ -11,6 +13,12 @@
 import {getSystemDarkMode, hexToRgb} from '@/utils/color'
 import PlayerCore from '@/components/PlayerCore.vue'
 import {mapGetters} from 'vuex'
+const getPathDepth = (path) => {
+  if (path === '/') {
+    return 0
+  }
+  return path.split('/').length
+}
 
 export default {
   components: {
@@ -30,12 +38,20 @@ export default {
       }
     },
   },
-  created() {
+  data() {
+    return {
+      transitionName: ''
+    }
   },
   watch: {
     themeColor() {
       this.updateThemeColor()
     },
+    '$route' (to, from) {
+      const toDepth = getPathDepth(to.path)
+      const fromDepth = getPathDepth(from.path)
+      this.transitionName = toDepth < fromDepth ? 'fade-up' : 'fade-down'
+    }
   },
   mounted() {
     this.updateThemeColor()

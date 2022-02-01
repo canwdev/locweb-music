@@ -1,13 +1,15 @@
 <template>
   <div
     class="settings-item"
-    :class="{
-      'settings-item--disabled': isDisabled
-    }"
+    :class="[{
+      'settings-item--disabled': isDisabled,
+      'settings-item--acc': allowCommonClick,
+    }, item.className]"
+    @click="handleCommonClick"
   >
     <div class="settings-item__left">
       <div class="settings-item__icon">
-        <span v-if="item.icon" class="material-icons">{{ item.icon }}</span>
+        <span v-if="icon" class="material-icons">{{ icon }}</span>
       </div>
       <div class="settings-item__titles">
         <div class="settings-item__titles__title">{{ title || item.id }}</div>
@@ -17,32 +19,37 @@
     <div class="settings-item__right">
       <template v-if="SettingsType.SWITCH === item.type || SettingsType.CHECKBOX === item.type">
         <TkSwitch
+          ref="clickableRef"
           :checkbox="SettingsType.CHECKBOX === item.type"
           :value="currentValue"
           :disabled="isDisabled"
-          @click="handleSwitchClick"
+          @click.stop="handleSwitchClick"
         />
       </template>
       <template v-else-if="SettingsType.COLOR === item.type">
         <input
+          ref="clickableRef"
           class="tk-button-no-style color-input"
           type="color"
           :disabled="isDisabled"
           :value="currentValue"
+          @click.stop
           @change="handleColorChange"
         >
       </template>
       <template v-else-if="SettingsType.SELECT === item.type">
         <TkDropdown
+          ref="clickableRef"
           :disabled="isDisabled"
           :value="currentValue"
           :customized="typeof item.options === 'function'"
           :options="dropdownOptions"
+          @click.stop
           @change="handleSelectChange"
         />
       </template>
       <template v-else>
-        <div class="current-value">{{ currentValue }}</div>
+        <div class="current-value" @click.stop>{{ currentValue }}</div>
       </template>
 
     </div>
@@ -78,8 +85,19 @@ export default {
     desc() {
       return this.getI18nValue('desc')
     },
+    icon() {
+      const {icon} = this.item
+      if (typeof icon === 'function') {
+        return icon.call(this, this.settings)
+      }
+      return icon
+    },
     currentValue() {
-      return this.settings[this.item.id]
+      const value = this.settings[this.item.id]
+      if (value === undefined || value === null) {
+        return this.item.default
+      }
+      return value
     },
     isDisabled() {
       const {disabled} = this.item
@@ -97,6 +115,9 @@ export default {
         return options.call(this)
       }
       return options
+    },
+    allowCommonClick() {
+      return !this.isDisabled && this.item.type && SettingsType.SELECT !== this.item.type
     }
   },
   methods: {
@@ -127,6 +148,16 @@ export default {
     handleSelectChange(value) {
       // console.log(value)
       this.updateSetting(value)
+    },
+    handleCommonClick() {
+      if (!this.allowCommonClick) {
+        return
+      }
+      let el = this.$refs.clickableRef
+      if (el._isVue) {
+        el = el.$el
+      }
+      el.click()
     }
   }
 }

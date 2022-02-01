@@ -1,8 +1,9 @@
 import Service from '@/utils/service'
+import store from '@/store'
 import {NCM_API_URL} from '@/enum'
 
 const service = Service({
-  baseURL: NCM_API_URL,
+  baseURL: store.state.settings.ncmApi || NCM_API_URL,
   withCredentials: false,
   isAuth: false
 })

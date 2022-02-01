@@ -1,4 +1,4 @@
-import {getLoopModeMap, LoopModeType, LoopModeTypeArray, NavbarTabs, NavbarTabsType} from '@/enum'
+import {getLoopModeMap, LoopModeType, LoopModeTypeArray, NavbarTabs, NavbarTabsType, NCM_API_URL} from '@/enum'
 import {getSystemDarkMode} from '@/utils/color'
 import {isClient} from '@/utils/client'
 
@@ -21,6 +21,7 @@ export const settingsList = [
         id: 'useSystemTheme',
         title: '使用系统主题',
         type: SettingsType.CHECKBOX,
+        icon: 'brightness_auto',
         default: true,
         desc: '根据系统设置自动调整明暗主题。'
       },
@@ -52,16 +53,16 @@ export const settingsList = [
         title: '网易云第三方 Node.js API地址',
         desc: '用于下载歌曲、搜索歌词',
         type: SettingsType.TEXT,
-        icon: '',
-        placeholder: '',
-        disabled: true
+        icon: 'album',
+        placeholder: NCM_API_URL,
+        default: NCM_API_URL,
       },
       {
         id: 'serverApi',
         title: '服务器API地址',
         desc: 'Locweb Music 服务器',
         type: SettingsType.TEXT,
-        icon: '',
+        icon: 'dns',
         placeholder: '',
         disabled: true
       },
@@ -87,13 +88,17 @@ export const settingsList = [
             value: item.value
           }))
         },
-        hidden: false
+        hidden: true
       },
       // music playing loop mode
       {
         id: 'loopMode',
         title: '播放模式',
         type: SettingsType.SELECT,
+        icon(settings) {
+          const loopModeMap = getLoopModeMap.call(this)
+          return loopModeMap[settings.loopMode].icon
+        },
         options() {
           const loopModeMap = getLoopModeMap.call(this)
           return LoopModeTypeArray.map(option => {

@@ -2,40 +2,59 @@
   <PageLayout
     :title="$t('page.about')"
     :back-text="$t('back')"
-    class="about"
+    class="about-page"
     @back="$router.back()"
   >
-    <div class="about-main">
-      <textarea style="height: 130px" class="" readonly :value="pkgInfo"></textarea>
+    <Settings :settings-list="aboutList"/>
 
-      <div class="changelog-content">
-        <div class="title-wrap">{{ $t('changelog') }}</div>
-        <pre v-html="changelog"></pre>
-      </div>
-
-    </div>
   </PageLayout>
 </template>
 
 <script>
 import {getInfo} from '@/api/service'
 import PageLayout from '@/components/PageLayout'
+import Settings from '@/components/Settings'
 
 export default {
   name: 'About',
   components: {
     PageLayout,
+    Settings,
   },
   data() {
     return {
       pkgInfo: '',
-      changelog: ''
+      changelog: '',
+      aboutList: []
     }
   },
   mounted() {
     getInfo().then(res => {
-      this.pkgInfo = JSON.stringify(res.package, null, 2)
-      this.changelog = res.changelog
+      const {package: pkg, changelog} = res
+      const packageInfos = []
+      for (let key in pkg) {
+        packageInfos.push({
+          id: key,
+          default: pkg[key]
+        })
+      }
+      this.aboutList = [
+        {
+          title: 'package',
+          children: packageInfos
+        },
+        {
+          title: this.$t('changelog'),
+          children: [{
+            id: 'changelog',
+            default: changelog,
+            className: 'changelog-item'
+          }]
+        }
+      ]
+
+      this.pkgInfo = JSON.stringify(pkg, null, 2)
+      this.changelog = changelog
     })
   },
   methods: {
@@ -47,33 +66,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.about-main {
-  box-sizing: border-box;
-  padding: 10px;
-  color: $primary;
-  height: 100%;
-  overflow: auto;
-
-  .title-wrap {
-    margin: 10px 0;
-    font-size: 18px;
-  }
-
-  textarea {
-    width: 96%;
-    min-height: 100px;
-    resize: none;
-    font-size: 14px;
-    font-family: 'Consolas', monospace;
-    color: $secondary;
-    background: $dark;
-    padding: 10px;
-    overflow: auto;
-    border-radius: 4px;
-  }
-  .changelog-content {
-    user-select: text;
-    font-size: 14px;
+.about-page {
+  ::v-deep .changelog-item {
+    .current-value {
+      text-align: left;
+    }
   }
 }
 </style>

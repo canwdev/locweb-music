@@ -37,14 +37,18 @@
     transition: all .3s;
     border-radius: $border-radius;
     padding: 0 5px;
+    overflow: hidden;
 
     &--disabled {
       opacity: .5;
       cursor: not-allowed;
     }
 
-    &:hover {
-      background-color: $separator-color;
+    &--acc {
+      cursor: pointer;
+      &:hover {
+        background-color: $separator-color;
+      }
     }
 
     &__left {
@@ -58,6 +62,12 @@
     &__right {
       min-width: 50px;
       text-align: center;
+
+      .current-value {
+        font-size: 12px;
+        user-select: text;
+        white-space: pre-wrap;
+      }
     }
 
     &__titles {

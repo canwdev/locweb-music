@@ -2,8 +2,13 @@
   <div class="page-layout">
     <div class="page-layout__header">
       <TkButton
-        class="page-layout__header__back"
-        @click="$emit('back')">{{ backText }}</TkButton>
+        class="page-layout__header__back material-icons"
+        round
+        flat
+        @click="$emit('back')"
+        :title="backText"
+      >arrow_back
+      </TkButton>
       <div class="page-layout__header__title">{{ title }}</div>
     </div>
     <div class="page-layout__main">
