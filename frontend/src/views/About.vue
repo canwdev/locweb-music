@@ -68,6 +68,17 @@ export default {
 <style lang="scss" scoped>
 .about-page {
   ::v-deep .changelog-item {
+    margin-top: 10px;
+
+    .settings-item__left {
+      flex: unset;
+      width: auto;
+    }
+
+    .settings-item__titles__title {
+      display: none;
+    }
+
     .current-value {
       text-align: left;
     }

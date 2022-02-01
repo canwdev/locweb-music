@@ -7,7 +7,7 @@ export const getClientHostUrl = (fallbackUrl = '') => {
     const port = electronAPI.getClientHostPort()
     return `http://127.0.0.1:${port}`
   }
-  return localStorage.getItem('LOCWEB_API_HOST') || process.env.VUE_APP_API_HOST || fallbackUrl
+  return process.env.VUE_APP_API_HOST || fallbackUrl
 }
 
 export const openInBrowser = (url) => {

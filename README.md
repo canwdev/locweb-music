@@ -1,4 +1,4 @@
-# 本地云音乐 - LocwebMusic
+# 本地云音乐 - Locweb Music
 
 一款用来播放本地音乐文件的 Web 应用程序
 

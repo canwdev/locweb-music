@@ -3,10 +3,13 @@ import {LS_KEY_SETTINGS, settingsList} from '@/enum/settings'
 const defaultSettings = {}
 
 settingsList.forEach(group => {
+  if (group.hidden) {
+    return
+  }
   const {children} = group
 
   children.forEach(item => {
-    if (item.disabled) {
+    if (!item.id || item.manualUpdate) {
       return
     }
 

@@ -48,8 +48,16 @@
           @change="handleSelectChange"
         />
       </template>
+      <template v-else-if="SettingsType.TEXT === item.type">
+        <div
+          ref="clickableRef"
+          class="current-value"
+          @click.stop="handleTextPrompt"
+        >{{ currentValue || item.placeholder }}
+        </div>
+      </template>
       <template v-else>
-        <div class="current-value" @click.stop>{{ currentValue }}</div>
+        <div class="current-value" @click.stop>{{ currentValue || item.placeholder }}</div>
       </template>
 
     </div>
@@ -72,7 +80,8 @@ export default {
   },
   data() {
     return {
-      SettingsType
+      SettingsType,
+      forceRecomputeCounter: 0
     }
   },
   computed: {
@@ -93,9 +102,13 @@ export default {
       return icon
     },
     currentValue() {
-      const value = this.settings[this.item.id]
+      this.forceRecomputeCounter;
+      const value = this.item.value || this.settings[this.item.id]
       if (value === undefined || value === null) {
         return this.item.default
+      }
+      if (typeof value === 'function') {
+        return value.call(this)
       }
       return value
     },
@@ -121,9 +134,17 @@ export default {
     }
   },
   methods: {
-    updateSetting(value) {
+    async updateSetting(value) {
+      const {item} = this
+      if (typeof item.manualUpdate === 'function') {
+        const isContinue = await item.manualUpdate.call(this, value, this.settings)
+
+        if (!isContinue) {
+          return
+        }
+      }
       this.$store.commit('updateSettings', {
-        key: this.item.id,
+        key: item.id,
         value
       })
     },
@@ -147,6 +168,9 @@ export default {
     },
     handleSelectChange(value) {
       // console.log(value)
+      if (typeof this.item.resultFormatter === 'function') {
+        value = this.item.resultFormatter(value)
+      }
       this.updateSetting(value)
     },
     handleCommonClick() {
@@ -154,10 +178,34 @@ export default {
         return
       }
       let el = this.$refs.clickableRef
+      if (!el) {
+        return
+      }
       if (el._isVue) {
         el = el.$el
       }
       el.click()
+    },
+    handleTextPrompt() {
+      const {item} = this
+      this.$prompt.create({
+        propsData: {
+          title: this.title,
+          subtitle: this.subtitle,
+          input: {
+            value: this.currentValue,
+            placeholder: item.placeholder,
+            required: false,
+          }
+        },
+        parentEl: this.$el.parentNode
+      }).onConfirm(async (context) => {
+        const { inputValue } = context
+        this.handleSelectChange(inputValue)
+      })
+    },
+    updateCurrentValue() {
+      this.forceRecomputeCounter++
     }
   }
 }

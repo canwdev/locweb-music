@@ -75,6 +75,7 @@ export default {
 
   .btn-tab {
     flex: 1;
+    cursor: default;
     .material-icons {
       font-size: 16px;
       margin-right: 5px;

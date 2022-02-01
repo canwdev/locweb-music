@@ -2,40 +2,11 @@
   <div class="drawer-component">
     <TkDrawer :title="$t('drawer.main-menu')" class="custom-drawer" :visible.sync="mVisible" :menu="menuList">
 
-      <TkButton size="no-style" class="menu-item" @click="isDarkTheme = !isDarkTheme">
+      <TkButton size="no-style" class="menu-item" @click="updateDarkTheme">
         <span class="material-icons">nights_stay</span>
         <span class="menu-item-title">
           {{ $t('settings.dark-theme') }}
           <TkSwitch :value="isDarkTheme"/>
-        </span>
-      </TkButton>
-
-      <TkButton size="no-style" class="menu-item cursor-default">
-        <span class="material-icons">color_lens</span>
-        <span class="menu-item-title">
-          {{ $t('settings.theme-color') }}
-          <input
-            class="tk-button-no-style color-input"
-            type="color"
-            :value="themeColor"
-            @change="handleThemeColorChange"
-          >
-        </span>
-      </TkButton>
-
-      <TkButton size="no-style" class="menu-item cursor-default">
-        <span class="material-icons">translate</span>
-        <span class="menu-item-title">
-          {{ $t('settings.language') }}
-          <TkDropdown
-            v-model="$i18n.locale"
-            size="sm"
-            :options="languages"
-            customized
-            option-label="name"
-            option-value="locate"
-            @change="saveLocateChange($i18n.locale)"
-          />
         </span>
       </TkButton>
 
@@ -85,9 +56,6 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
-      'themeColor'
-    ]),
     ...mapState([
       'token'
     ]),
@@ -107,6 +75,10 @@ export default {
         this.$store.commit('updateSettings', {
           key: 'isDarkTheme',
           value: val
+        })
+        this.$store.commit('updateSettings', {
+          key: 'useSystemTheme',
+          value: false
         })
       }
     },
@@ -177,15 +149,8 @@ export default {
     }
   },
   methods: {
-    handleThemeColorChange(event) {
-      const colorHex = event.target.value
-      this.$store.commit('updateSettings', {
-        key: 'themeColor',
-        value: colorHex
-      })
-    },
-    saveLocateChange(val) {
-      localStorage.setItem(LS_KEY_LOCATE, val)
+    updateDarkTheme() {
+      this.isDarkTheme = !this.isDarkTheme
     },
     handleLoginSuccess() {
       this.$toast.success(this.$t('msg.login-success'))

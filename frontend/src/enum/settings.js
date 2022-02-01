@@ -1,6 +1,17 @@
-import {getLoopModeMap, LoopModeType, LoopModeTypeArray, NavbarTabs, NavbarTabsType, NCM_API_URL} from '@/enum'
+import {
+  getLoopModeMap,
+  HOST_URL_DEFAULT,
+  LoopModeType,
+  LoopModeTypeArray,
+  NavbarTabs,
+  NavbarTabsType,
+  NCM_API_URL_DEFAULT
+} from '@/enum'
 import {getSystemDarkMode} from '@/utils/color'
 import {isClient} from '@/utils/client'
+import languages from '@/lang/languages'
+import {LS_KEY_LOCATE} from '@/lang/i18n'
+import {LS_KEY_API_HOST, LS_KEY_NCM_API_URL} from '@/enum/service'
 
 export const LS_KEY_SETTINGS = 'LS_KEY_LOCWEB_SETTINGS'
 
@@ -17,6 +28,28 @@ export const settingsList = [
   {
     title: 'UI',
     children: [
+      {
+        id: 'language',
+        title: 'settings.language',
+        i18n: true,
+        type: SettingsType.SELECT,
+        options() {
+          return languages.map(item => ({
+            label: item.name,
+            value: item.locate
+          }))
+        },
+        manualUpdate(value) {
+          this.$i18n.locale = value
+          localStorage.setItem(LS_KEY_LOCATE, value)
+          return false
+        },
+        value() {
+          return this.$i18n.locale
+        },
+        icon: 'translate',
+        default: null,
+      },
       {
         id: 'useSystemTheme',
         title: '使用系统主题',
@@ -39,7 +72,10 @@ export const settingsList = [
       {
         id: 'themeColor',
         title: 'settings.theme-color',
-        i18n: true, type: SettingsType.COLOR, icon: 'color_lens', default: '#72bb8d'
+        i18n: true,
+        type: SettingsType.COLOR,
+        icon: 'color_lens',
+        default: '#72bb8d'
       },
       {id: 'fxEnabled', type: SettingsType.SWITCH, icon: '', default: false, hidden: true},
       {id: 'backgroundStyle', type: SettingsType.SWITCH, icon: '', hidden: true},
@@ -50,21 +86,37 @@ export const settingsList = [
     children: [
       {
         id: 'ncmApi',
-        title: '网易云第三方 Node.js API地址',
-        desc: '用于下载歌曲、搜索歌词',
+        title: '网易云第三方 API 地址',
+        desc: '用于下载歌曲、搜索歌词（NeteaseCloudMusicApi）',
         type: SettingsType.TEXT,
         icon: 'album',
-        placeholder: NCM_API_URL,
-        default: NCM_API_URL,
+        placeholder: NCM_API_URL_DEFAULT,
+        manualUpdate(value) {
+          localStorage.setItem(LS_KEY_NCM_API_URL, value)
+          this.updateCurrentValue()
+          this.$toast.info('刷新頁面后生效！')
+          return false
+        },
+        value() {
+          return localStorage.getItem(LS_KEY_NCM_API_URL)
+        },
       },
       {
         id: 'serverApi',
-        title: '服务器API地址',
+        title: '服务器 API 地址',
         desc: 'Locweb Music 服务器',
         type: SettingsType.TEXT,
         icon: 'dns',
-        placeholder: '',
-        disabled: true
+        placeholder: HOST_URL_DEFAULT,
+        manualUpdate(value) {
+          localStorage.setItem(LS_KEY_API_HOST, value)
+          this.updateCurrentValue()
+          this.$toast.info('刷新頁面后生效！')
+          return false
+        },
+        value() {
+          return localStorage.getItem(LS_KEY_API_HOST)
+        },
       },
     ]
   },
@@ -72,8 +124,16 @@ export const settingsList = [
     hidden: !isClient,
     title: 'Client',
     children: [
-      {id: 'windowTransparent', type: '', default: false, disabled: true},
-      {id: 'windowBordered', type: '', default: true, disabled: true},
+      {
+        id: 'windowTransparent', type: '', default: false, disabled: true,
+        manualUpdate(value) {
+        }
+      },
+      {
+        id: 'windowBordered', type: '', default: true, disabled: true,
+        manualUpdate(value) {
+        }
+      },
     ]
   },
   {
@@ -107,6 +167,9 @@ export const settingsList = [
               value: option
             }
           })
+        },
+        resultFormatter(value) {
+          return Number(value)
         },
         default: LoopModeType.LOOP_SEQUENCE
       },
