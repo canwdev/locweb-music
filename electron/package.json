@@ -1,6 +1,6 @@
 {
   "name": "locweb-music",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": "canwdev",
   "license": "GPL-3.0",
   "main": "src/main.js",
@@ -13,7 +13,7 @@
   },
   "devDependencies": {
     "cross-env": "^7.0.2",
-    "electron": "16.0.6",
+    "electron": "17.0.1",
     "electron-builder": "^22.8.0",
     "vue-devtools": "^5.1.4"
   },
