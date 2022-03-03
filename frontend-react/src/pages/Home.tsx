@@ -19,7 +19,7 @@ import InfoIcon from '@mui/icons-material/Info';
 import PersonIcon from '@mui/icons-material/Person';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
-import {DrawerTabList} from "./enum";
+import {DrawerTabList} from "../enum";
 
 const extraMenuList = [
   {label: '系统设置', icon: SettingsApplicationsIcon},
@@ -97,90 +97,89 @@ export default function MenuAppBar() {
           </Menu>
 
         </Toolbar>
-
-        <Drawer
-          anchor='left'
-          open={drawerOpen}
-          onClose={closeDrawer()}
-        >
-          <Box
-            sx={{width: 250}}
-            role="presentation"
-          >
-            <Box sx={{
-              height: 150,
-              backgroundColor: 'gray',
-              backgroundImage: `url('https://cn.bing.com/th?id=OHR.MoonlightRainier_ZH-CN6263832605_1920x1080.jpg')`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              color: 'white',
-              display: 'flex',
-              alignItems: 'flex-end',
-              position: 'relative'
-            }}>
-              <IconButton
-                size="large"
-                color="inherit"
-                aria-label="close"
-                sx={{
-                  position: 'absolute',
-                  top: 0,
-                  right: 0,
-                }}
-                onClick={closeDrawer()}
-              >
-                <CloseIcon/>
-              </IconButton>
-              <Button
-                sx={{
-                  padding: '15px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'flex-start',
-                  width: '100%'
-                }}
-              >
-                <Avatar>
-                  <PersonIcon/>
-                </Avatar>
-                <Box
-                  sx={{
-                    ml: '10px',
-                    color: 'white',
-                    fontSize: '16px'
-                  }}
-                >请先登录</Box>
-              </Button>
-            </Box>
-            <Divider/>
-            <List
-              onClick={closeDrawer()}
-              onKeyDown={closeDrawer()}
-            >
-              {DrawerTabList.map((item, index) => (
-                <ListItem button key={item.id}>
-                  <ListItemIcon>
-                    <item.icon/>
-                  </ListItemIcon>
-                  <ListItemText primary={item.label}/>
-                </ListItem>
-              ))}
-            </List>
-            <Divider/>
-            <List>
-              {extraMenuList.map((item, index) => (
-                <ListItem button key={index}>
-                  <ListItemIcon>
-                    <item.icon/>
-                  </ListItemIcon>
-                  <ListItemText primary={item.label}/>
-                </ListItem>
-              ))}
-            </List>
-          </Box>
-        </Drawer>
-
       </AppBar>
+
+      <Drawer
+        anchor='left'
+        open={drawerOpen}
+        onClose={closeDrawer()}
+      >
+        <Box
+          sx={{width: 250}}
+          role="presentation"
+        >
+          <Box sx={{
+            height: 150,
+            backgroundColor: 'gray',
+            backgroundImage: `url('https://cn.bing.com/th?id=OHR.MoonlightRainier_ZH-CN6263832605_1920x1080.jpg')`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            color: 'white',
+            display: 'flex',
+            alignItems: 'flex-end',
+            position: 'relative'
+          }}>
+            <IconButton
+              size="large"
+              color="inherit"
+              aria-label="close"
+              sx={{
+                position: 'absolute',
+                top: 0,
+                right: 0,
+              }}
+              onClick={closeDrawer()}
+            >
+              <CloseIcon/>
+            </IconButton>
+            <Button
+              sx={{
+                padding: '15px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'flex-start',
+                width: '100%'
+              }}
+            >
+              <Avatar>
+                <PersonIcon/>
+              </Avatar>
+              <Box
+                sx={{
+                  ml: '10px',
+                  color: 'white',
+                  fontSize: '16px'
+                }}
+              >请先登录</Box>
+            </Button>
+          </Box>
+          <Divider/>
+          <List
+            onClick={closeDrawer()}
+            onKeyDown={closeDrawer()}
+          >
+            {DrawerTabList.map((item, index) => (
+              <ListItem button key={item.id}>
+                <ListItemIcon>
+                  <item.icon/>
+                </ListItemIcon>
+                <ListItemText primary={item.label}/>
+              </ListItem>
+            ))}
+          </List>
+          <Divider/>
+          <List>
+            {extraMenuList.map((item, index) => (
+              <ListItem button key={index}>
+                <ListItemIcon>
+                  <item.icon/>
+                </ListItemIcon>
+                <ListItemText primary={item.label}/>
+              </ListItem>
+            ))}
+          </List>
+        </Box>
+      </Drawer>
     </Box>
   );
 }
