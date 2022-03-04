@@ -16,7 +16,7 @@ import SettingsApplicationsIcon from '@mui/icons-material/SettingsApplications'
 import DarkModeIcon from '@mui/icons-material/DarkMode'
 import InfoIcon from '@mui/icons-material/Info'
 import PersonIcon from '@mui/icons-material/Person'
-
+import {toast} from 'react-toastify'
 import {DrawerTabList} from '@/enum'
 import {useNavigate} from 'react-router-dom'
 
@@ -56,6 +56,15 @@ const GlobalDrawer: FC<Props> = (props) => {
         navigate('/about')
         return
       default:
+        toast.error('🦄 这个功能尚未实现!', {
+          position: 'top-center',
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: false,
+          progress: undefined,
+        })
         setDrawerOpen(false)
         break
     }

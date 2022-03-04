@@ -1,66 +1,82 @@
-import {Box, Container, Typography} from '@mui/material'
+import {
+  Avatar,
+  Box,
+  Container,
+  Divider,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  Paper,
+  Typography,
+} from '@mui/material'
 import CommonAppBar from '../components/navigation/CommonAppBar'
 import * as React from 'react'
+import {useEffect, useState} from 'react'
+import {getServerInfo} from '@/api/service'
+import InfoIcon from '@mui/icons-material/Info'
+
+const paperStyle = {
+  my: '20px',
+}
 
 const About = () => {
+  const [text, setText] = useState('Loading...')
+  const [list, setList] = useState<Array<any>>([])
+
+  useEffect(() => {
+    getServerInfo().then((res: any) => {
+      console.log(res)
+      const {changelog, package: pkg} = res
+      setText(changelog)
+      const li = []
+      for (const key in pkg) {
+        li.push({
+          key: key.toUpperCase(),
+          value: pkg[key],
+        })
+      }
+      setList(li)
+    })
+  }, [])
+
   return (
     <Box sx={{flexGrow: 1}}>
       <CommonAppBar title="关于软件" navigatePath="/" />
 
-      <Container maxWidth="sm">
-        <Box>
-          {[1, 2].map((i) => (
-            <Box>
-              <Typography variant="h1" component="div" gutterBottom>
-                h1. Heading
-              </Typography>
-              <Typography variant="h2" gutterBottom component="div">
-                h2. Heading
-              </Typography>
-              <Typography variant="h3" gutterBottom component="div">
-                h3. Heading
-              </Typography>
-              <Typography variant="h4" gutterBottom component="div">
-                h4. Heading
-              </Typography>
-              <Typography variant="h5" gutterBottom component="div">
-                h5. Heading
-              </Typography>
-              <Typography variant="h6" gutterBottom component="div">
-                h6. Heading
-              </Typography>
-              <Typography variant="subtitle1" gutterBottom component="div">
-                subtitle1. Lorem ipsum dolor sit amet, consectetur adipisicing
-                elit. Quos blanditiis tenetur
-              </Typography>
-              <Typography variant="subtitle2" gutterBottom component="div">
-                subtitle2. Lorem ipsum dolor sit amet, consectetur adipisicing
-                elit. Quos blanditiis tenetur
-              </Typography>
-              <Typography variant="body1" gutterBottom>
-                body1. Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                Quos blanditiis tenetur unde suscipit, quam beatae rerum
-                inventore consectetur, neque doloribus, cupiditate numquam
-                dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
-              </Typography>
-              <Typography variant="body2" gutterBottom>
-                body2. Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                Quos blanditiis tenetur unde suscipit, quam beatae rerum
-                inventore consectetur, neque doloribus, cupiditate numquam
-                dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
-              </Typography>
-              <Typography variant="button" display="block" gutterBottom>
-                button text
-              </Typography>
-              <Typography variant="caption" display="block" gutterBottom>
-                caption text
-              </Typography>
-              <Typography variant="overline" display="block" gutterBottom>
-                overline text
-              </Typography>
-            </Box>
-          ))}
-        </Box>
+      <Container
+        sx={{
+          py: '10px',
+        }}
+        maxWidth="sm">
+        <Paper elevation={3} sx={paperStyle}>
+          <List>
+            {list.map((item, index) => {
+              return (
+                <React.Fragment key={item.key}>
+                  <ListItem>
+                    <ListItemAvatar>
+                      <Avatar>
+                        <InfoIcon />
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText primary={item.key} secondary={item.value} />
+                  </ListItem>
+                  {index + 1 !== list.length && <Divider />}
+                </React.Fragment>
+              )
+            })}
+          </List>
+        </Paper>
+        <Paper
+          elevation={3}
+          sx={{
+            ...paperStyle,
+            padding: '16px',
+            whiteSpace: 'pre-wrap',
+          }}>
+          {text}
+        </Paper>
       </Container>
     </Box>
   )
