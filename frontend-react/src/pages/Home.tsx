@@ -1,35 +1,16 @@
 import * as React from 'react';
-import {useState} from "react";
-import {
-  AppBar,
-  Box,
-  Toolbar,
-  Typography,
-  Button, Divider, Drawer, List, ListItem, ListItemIcon, ListItemText,
-  Menu,
-  MenuItem
-} from '@mui/material';
+import {Outlet} from "react-router-dom";
+import {AppBar, Box, Menu, MenuItem, Toolbar, Typography} from '@mui/material';
 import IconButton from '@mui/material/IconButton';
-import Avatar from '@mui/material/Avatar';
 import MenuIcon from '@mui/icons-material/Menu';
-import CloseIcon from '@mui/icons-material/Close';
-import SettingsApplicationsIcon from '@mui/icons-material/SettingsApplications';
-import DarkModeIcon from '@mui/icons-material/DarkMode';
-import InfoIcon from '@mui/icons-material/Info';
-import PersonIcon from '@mui/icons-material/Person';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import {useState} from "react";
+import GlobalDrawer from "@/components/navigation/GlobalDrawer";
 
-import {DrawerTabList} from "../enum";
-
-const extraMenuList = [
-  {label: '系统设置', icon: SettingsApplicationsIcon},
-  {label: '主题切换', icon: DarkModeIcon},
-  {label: '关于软件', icon: InfoIcon},
-]
 
 export default function MenuAppBar() {
-  const [drawerOpen, setDrawerOpen] = useState(false)
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false)
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -37,19 +18,6 @@ export default function MenuAppBar() {
 
   const handleClose = () => {
     setAnchorEl(null);
-  };
-
-
-  const closeDrawer = () => (event: React.KeyboardEvent | React.MouseEvent) => {
-    if (
-      event.type === 'keydown' &&
-      ((event as React.KeyboardEvent).key === 'Tab' ||
-        (event as React.KeyboardEvent).key === 'Shift')
-    ) {
-      return;
-    }
-
-    setDrawerOpen(false);
   };
 
   return (
@@ -75,7 +43,7 @@ export default function MenuAppBar() {
             onClick={handleMenu}
             color="inherit"
           >
-            <MoreVertIcon />
+            <MoreVertIcon/>
           </IconButton>
           <Menu
             id="menu-appbar"
@@ -99,87 +67,12 @@ export default function MenuAppBar() {
         </Toolbar>
       </AppBar>
 
-      <Drawer
-        anchor='left'
-        open={drawerOpen}
-        onClose={closeDrawer()}
-      >
-        <Box
-          sx={{width: 250}}
-          role="presentation"
-        >
-          <Box sx={{
-            height: 150,
-            backgroundColor: 'gray',
-            backgroundImage: `url('https://cn.bing.com/th?id=OHR.MoonlightRainier_ZH-CN6263832605_1920x1080.jpg')`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            color: 'white',
-            display: 'flex',
-            alignItems: 'flex-end',
-            position: 'relative'
-          }}>
-            <IconButton
-              size="large"
-              color="inherit"
-              aria-label="close"
-              sx={{
-                position: 'absolute',
-                top: 0,
-                right: 0,
-              }}
-              onClick={closeDrawer()}
-            >
-              <CloseIcon/>
-            </IconButton>
-            <Button
-              sx={{
-                padding: '15px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'flex-start',
-                width: '100%'
-              }}
-            >
-              <Avatar>
-                <PersonIcon/>
-              </Avatar>
-              <Box
-                sx={{
-                  ml: '10px',
-                  color: 'white',
-                  fontSize: '16px'
-                }}
-              >请先登录</Box>
-            </Button>
-          </Box>
-          <Divider/>
-          <List
-            onClick={closeDrawer()}
-            onKeyDown={closeDrawer()}
-          >
-            {DrawerTabList.map((item, index) => (
-              <ListItem button key={item.id}>
-                <ListItemIcon>
-                  <item.icon/>
-                </ListItemIcon>
-                <ListItemText primary={item.label}/>
-              </ListItem>
-            ))}
-          </List>
-          <Divider/>
-          <List>
-            {extraMenuList.map((item, index) => (
-              <ListItem button key={index}>
-                <ListItemIcon>
-                  <item.icon/>
-                </ListItemIcon>
-                <ListItemText primary={item.label}/>
-              </ListItem>
-            ))}
-          </List>
-        </Box>
-      </Drawer>
+      <GlobalDrawer
+        drawerOpen={drawerOpen}
+        setDrawerOpen={setDrawerOpen}
+      />
+
+      <Outlet/>
     </Box>
   );
 }
