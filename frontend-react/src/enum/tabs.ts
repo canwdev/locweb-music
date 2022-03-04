@@ -1,11 +1,11 @@
-import StorageIcon from '@mui/icons-material/Storage';
-import QueueMusicIcon from '@mui/icons-material/QueueMusic';
-import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
+import StorageIcon from '@mui/icons-material/Storage'
+import QueueMusicIcon from '@mui/icons-material/QueueMusic'
+import CloudDownloadIcon from '@mui/icons-material/CloudDownload'
 
 export enum DrawerTabId {
   FS,
   PLAYLIST,
-  DOWNLOAD
+  DOWNLOAD,
 }
 
 export const DrawerTabList = [

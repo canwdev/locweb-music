@@ -1,18 +1,24 @@
-import React, {FC, useState} from "react";
+import React, {FC} from 'react'
 import {
   Box,
-  Button, Divider, Drawer, List, ListItem, ListItemIcon, ListItemText,
-} from '@mui/material';
-import IconButton from '@mui/material/IconButton';
-import Avatar from '@mui/material/Avatar';
-import CloseIcon from '@mui/icons-material/Close';
-import SettingsApplicationsIcon from '@mui/icons-material/SettingsApplications';
-import DarkModeIcon from '@mui/icons-material/DarkMode';
-import InfoIcon from '@mui/icons-material/Info';
-import PersonIcon from '@mui/icons-material/Person';
+  Button,
+  Divider,
+  Drawer,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+} from '@mui/material'
+import IconButton from '@mui/material/IconButton'
+import Avatar from '@mui/material/Avatar'
+import CloseIcon from '@mui/icons-material/Close'
+import SettingsApplicationsIcon from '@mui/icons-material/SettingsApplications'
+import DarkModeIcon from '@mui/icons-material/DarkMode'
+import InfoIcon from '@mui/icons-material/Info'
+import PersonIcon from '@mui/icons-material/Person'
 
-import {DrawerTabList} from "@/enum";
-import {useNavigate} from "react-router-dom";
+import {DrawerTabList} from '@/enum'
+import {useNavigate} from 'react-router-dom'
 
 const extraMenuList = [
   {label: '系统设置', icon: SettingsApplicationsIcon, key: 'settings'},
@@ -21,8 +27,8 @@ const extraMenuList = [
 ]
 
 interface Props {
-  drawerOpen: boolean,
-  setDrawerOpen: Function
+  drawerOpen: boolean
+  setDrawerOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const GlobalDrawer: FC<Props> = (props) => {
@@ -35,11 +41,11 @@ const GlobalDrawer: FC<Props> = (props) => {
       ((event as React.KeyboardEvent).key === 'Tab' ||
         (event as React.KeyboardEvent).key === 'Shift')
     ) {
-      return;
+      return
     }
 
-    setDrawerOpen(false);
-  };
+    setDrawerOpen(false)
+  }
 
   const handleExtraClick = (key: string) => {
     switch (key) {
@@ -56,26 +62,20 @@ const GlobalDrawer: FC<Props> = (props) => {
   }
 
   return (
-    <Drawer
-      anchor='left'
-      open={drawerOpen}
-      onClose={closeDrawer()}
-    >
-      <Box
-        sx={{width: 250}}
-        role="presentation"
-      >
-        <Box sx={{
-          height: 150,
-          backgroundColor: 'gray',
-          backgroundImage: `url('https://cn.bing.com/th?id=OHR.MoonlightRainier_ZH-CN6263832605_1920x1080.jpg')`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          color: 'white',
-          display: 'flex',
-          alignItems: 'flex-end',
-          position: 'relative'
-        }}>
+    <Drawer anchor="left" open={drawerOpen} onClose={closeDrawer()}>
+      <Box sx={{width: 250}} role="presentation">
+        <Box
+          sx={{
+            height: 150,
+            backgroundColor: 'gray',
+            backgroundImage: `url('https://cn.bing.com/th?id=OHR.MoonlightRainier_ZH-CN6263832605_1920x1080.jpg')`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            color: 'white',
+            display: 'flex',
+            alignItems: 'flex-end',
+            position: 'relative',
+          }}>
           <IconButton
             size="large"
             color="inherit"
@@ -85,9 +85,8 @@ const GlobalDrawer: FC<Props> = (props) => {
               top: 0,
               right: 0,
             }}
-            onClick={closeDrawer()}
-          >
-            <CloseIcon/>
+            onClick={closeDrawer()}>
+            <CloseIcon />
           </IconButton>
           <Button
             sx={{
@@ -95,49 +94,49 @@ const GlobalDrawer: FC<Props> = (props) => {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'flex-start',
-              width: '100%'
-            }}
-          >
+              width: '100%',
+            }}>
             <Avatar>
-              <PersonIcon/>
+              <PersonIcon />
             </Avatar>
             <Box
               sx={{
                 ml: '10px',
                 color: 'white',
-                fontSize: '16px'
-              }}
-            >请先登录</Box>
+                fontSize: '16px',
+              }}>
+              请先登录
+            </Box>
           </Button>
         </Box>
-        <Divider/>
-        <List
-          onClick={closeDrawer()}
-          onKeyDown={closeDrawer()}
-        >
+        <Divider />
+        <List onClick={closeDrawer()} onKeyDown={closeDrawer()}>
           {DrawerTabList.map((item, index) => (
             <ListItem button key={item.id}>
               <ListItemIcon>
-                <item.icon/>
+                <item.icon />
               </ListItemIcon>
-              <ListItemText primary={item.label}/>
+              <ListItemText primary={item.label} />
             </ListItem>
           ))}
         </List>
-        <Divider/>
+        <Divider />
         <List>
           {extraMenuList.map((item, index) => (
-            <ListItem button key={index} onClick={() => handleExtraClick(item.key)}>
+            <ListItem
+              button
+              key={index}
+              onClick={() => handleExtraClick(item.key)}>
               <ListItemIcon>
-                <item.icon/>
+                <item.icon />
               </ListItemIcon>
-              <ListItemText primary={item.label}/>
+              <ListItemText primary={item.label} />
             </ListItem>
           ))}
         </List>
       </Box>
     </Drawer>
-  );
+  )
 }
 
 export default GlobalDrawer
