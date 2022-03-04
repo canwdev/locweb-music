@@ -1,11 +1,25 @@
 import * as React from 'react'
 import {Outlet} from 'react-router-dom'
-import {AppBar, Box, Menu, MenuItem, Toolbar, Typography} from '@mui/material'
+import {
+  AppBar,
+  Avatar,
+  Box,
+  Menu,
+  MenuItem,
+  Toolbar,
+  Typography,
+} from '@mui/material'
 import IconButton from '@mui/material/IconButton'
 import MenuIcon from '@mui/icons-material/Menu'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import {useState} from 'react'
 import GlobalDrawer from '@/components/navigation/GlobalDrawer'
+import SkipPreviousIcon from '@mui/icons-material/SkipPrevious'
+import PlayArrowIcon from '@mui/icons-material/PlayArrow'
+import SkipNextIcon from '@mui/icons-material/SkipNext'
+import PlaylistPlayIcon from '@mui/icons-material/PlaylistPlay'
+import VolumeUpIcon from '@mui/icons-material/VolumeUp'
+import ShuffleIcon from '@mui/icons-material/Shuffle'
 
 export default function MenuAppBar() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
@@ -67,12 +81,46 @@ export default function MenuAppBar() {
 
       <GlobalDrawer drawerOpen={drawerOpen} setDrawerOpen={setDrawerOpen} />
 
-      <Box sx={{flexGrow: 1}}>
+      <Box sx={{flexGrow: 1, overflow: 'auto'}}>
         <Outlet />
       </Box>
 
       <AppBar position="sticky" color="primary" sx={{top: 'auto', bottom: 0}}>
-        <Toolbar />
+        <Toolbar>
+          <Box sx={{flexGrow: 0, display: 'flex', alignItems: 'center'}}>
+            <IconButton size="large" color="inherit" sx={{p: 0}}>
+              <Avatar>A</Avatar>
+            </IconButton>
+          </Box>
+
+          <Box
+            sx={{
+              flexGrow: 1,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <IconButton color="inherit" aria-label="volume">
+              <ShuffleIcon />
+            </IconButton>
+            <IconButton color="inherit" aria-label="previous">
+              <SkipPreviousIcon />
+            </IconButton>
+            <IconButton color="inherit" aria-label="play/pause">
+              <PlayArrowIcon sx={{height: 38, width: 38}} />
+            </IconButton>
+            <IconButton color="inherit" aria-label="next">
+              <SkipNextIcon />
+            </IconButton>
+            <IconButton color="inherit" aria-label="volume">
+              <VolumeUpIcon />
+            </IconButton>
+          </Box>
+
+          <IconButton size="large" color="inherit">
+            <PlaylistPlayIcon />
+          </IconButton>
+        </Toolbar>
       </AppBar>
     </Box>
   )
