@@ -18,7 +18,7 @@ import InfoIcon from '@mui/icons-material/Info'
 import PersonIcon from '@mui/icons-material/Person'
 import {toast} from 'react-toastify'
 import {DrawerTabList} from '@/enum'
-import {useNavigate} from 'react-router-dom'
+import {useNavigate, useLocation} from 'react-router-dom'
 
 const extraMenuList = [
   {label: '系统设置', icon: SettingsApplicationsIcon, key: 'settings'},
@@ -34,6 +34,7 @@ interface Props {
 const GlobalDrawer: FC<Props> = (props) => {
   const navigate = useNavigate()
   const {drawerOpen, setDrawerOpen} = props
+  const {pathname} = useLocation()
 
   const closeDrawer = () => (event: React.KeyboardEvent | React.MouseEvent) => {
     if (
@@ -121,7 +122,11 @@ const GlobalDrawer: FC<Props> = (props) => {
         <Divider />
         <List onClick={closeDrawer()} onKeyDown={closeDrawer()}>
           {DrawerTabList.map((item, index) => (
-            <ListItem button key={item.id}>
+            <ListItem
+              selected={item.url === pathname}
+              button
+              key={item.id}
+              onClick={() => navigate(item.url)}>
               <ListItemIcon>
                 <item.icon />
               </ListItemIcon>

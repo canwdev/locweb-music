@@ -26,7 +26,6 @@ const About = () => {
 
   useEffect(() => {
     getServerInfo().then((res: any) => {
-      console.log(res)
       const {changelog, package: pkg} = res
       setText(changelog)
       const li = []

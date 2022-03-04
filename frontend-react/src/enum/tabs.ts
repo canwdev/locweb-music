@@ -9,7 +9,17 @@ export enum DrawerTabId {
 }
 
 export const DrawerTabList = [
-  {id: DrawerTabId.FS, label: '文件系统', icon: StorageIcon},
-  {id: DrawerTabId.PLAYLIST, label: '播放列表', icon: QueueMusicIcon},
-  {id: DrawerTabId.DOWNLOAD, label: '音乐下载', icon: CloudDownloadIcon},
+  {id: DrawerTabId.FS, label: '文件系统', icon: StorageIcon, url: '/'},
+  {
+    id: DrawerTabId.PLAYLIST,
+    label: '播放列表',
+    icon: QueueMusicIcon,
+    url: '/playlist',
+  },
+  {
+    id: DrawerTabId.DOWNLOAD,
+    label: '音乐下载',
+    icon: CloudDownloadIcon,
+    url: '/download',
+  },
 ]

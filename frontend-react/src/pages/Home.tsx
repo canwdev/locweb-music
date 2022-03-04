@@ -20,8 +20,14 @@ export default function MenuAppBar() {
   }
 
   return (
-    <Box sx={{flexGrow: 1}}>
-      <AppBar position="static">
+    <Box
+      sx={{
+        flexGrow: 1,
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+      }}>
+      <AppBar position="sticky">
         <Toolbar>
           <IconButton
             size="large"
@@ -61,7 +67,13 @@ export default function MenuAppBar() {
 
       <GlobalDrawer drawerOpen={drawerOpen} setDrawerOpen={setDrawerOpen} />
 
-      <Outlet />
+      <Box sx={{flexGrow: 1}}>
+        <Outlet />
+      </Box>
+
+      <AppBar position="sticky" color="primary" sx={{top: 'auto', bottom: 0}}>
+        <Toolbar />
+      </AppBar>
     </Box>
   )
 }
