@@ -8,5 +8,6 @@ module.exports = {
   tailingComma: 'all',
   bracketSpacing: false,
   bracketSameLine: true,
-  arrowParens: 'always'
+  arrowParens: 'always',
+  endOfLine: "auto"
 };
