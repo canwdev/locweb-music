@@ -6,7 +6,6 @@ import {
   Link as LinkMui,
   List,
   Paper,
-  Typography,
 } from '@mui/material'
 import {Link} from 'react-router-dom'
 import React, {useEffect, useState} from 'react'

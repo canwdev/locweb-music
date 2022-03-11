@@ -23,6 +23,8 @@ import ShuffleIcon from '@mui/icons-material/Shuffle'
 
 export default function MenuAppBar() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
+  const [anchorVolumeEl, setAnchorVolumeEl] =
+    React.useState<null | HTMLElement>(null)
   const [drawerOpen, setDrawerOpen] = useState(false)
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -31,6 +33,14 @@ export default function MenuAppBar() {
 
   const handleClose = () => {
     setAnchorEl(null)
+  }
+
+  const showVolumeMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorVolumeEl(event.currentTarget)
+  }
+
+  const hideVolumeMenu = () => {
+    setAnchorVolumeEl(null)
   }
 
   return (
@@ -112,9 +122,20 @@ export default function MenuAppBar() {
             <IconButton color="inherit" aria-label="next">
               <SkipNextIcon />
             </IconButton>
-            <IconButton color="inherit" aria-label="volume">
+            <IconButton
+              color="inherit"
+              aria-label="volume"
+              onClick={showVolumeMenu}>
               <VolumeUpIcon />
             </IconButton>
+
+            <Menu
+              anchorEl={anchorVolumeEl}
+              keepMounted
+              open={Boolean(anchorVolumeEl)}
+              onClose={hideVolumeMenu}>
+              <button>Test</button>
+            </Menu>
           </Box>
 
           <IconButton size="large" color="inherit">
