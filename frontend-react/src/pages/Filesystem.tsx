@@ -19,15 +19,29 @@ import {FileItemType, FileType} from '@/enum'
 import FileItem from '@/components/filesystem/FileItem'
 import {toast} from 'react-toastify'
 import FolderOpenIcon from '@mui/icons-material/FolderOpen'
+import {useSearchParams} from 'react-router-dom'
 
 const Filesystem = () => {
   const [pathList, setPathList] = useState<Array<string>>([])
   const [fileList, setFileList] = useState<Array<FileItemType>>([])
   const [isLoading, setIsLoading] = useState(false)
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  const uniSetPathList = (newList) => {
+    setSearchParams({
+      dir: JSON.stringify(newList),
+    })
+  }
 
   useEffect(() => {
     loadDir()
   }, [pathList])
+
+  useEffect(() => {
+    console.log('searchParams updated', searchParams)
+    const list = JSON.parse(searchParams.get('dir') || '[]')
+    setPathList(list)
+  }, [searchParams])
 
   const loadDir = async () => {
     try {
@@ -47,12 +61,12 @@ const Filesystem = () => {
   }
 
   const dirBack = () => {
-    setPathList(pathList.slice(0, pathList.length - 1))
+    uniSetPathList(pathList.slice(0, pathList.length - 1))
   }
 
   const handleItemClick = (item, fileType) => {
     if (fileType === FileType.DIR) {
-      setPathList([...pathList, item.filename])
+      uniSetPathList([...pathList, item.filename])
       return
     }
     if (fileType === FileType.MUSIC) {
@@ -91,13 +105,16 @@ const Filesystem = () => {
             sx={{padding: '16px'}}
             aria-label="breadcrumb">
             {pathList.map((path, index) => {
+              const params = new URLSearchParams({
+                dir: JSON.stringify(pathList.slice(0, index + 1)),
+              }).toString()
               return (
                 <LinkMui
                   key={index}
                   component={Link}
                   underline="hover"
                   color="inherit"
-                  to="/">
+                  to={`/?${params}`}>
                   {path}
                 </LinkMui>
               )
