@@ -20,12 +20,22 @@ import SkipNextIcon from '@mui/icons-material/SkipNext'
 import PlaylistPlayIcon from '@mui/icons-material/PlaylistPlay'
 import VolumeUpIcon from '@mui/icons-material/VolumeUp'
 import ShuffleIcon from '@mui/icons-material/Shuffle'
+import Popover from '@mui/material/Popover'
+import Stack from '@mui/material/Stack'
+import Slider from '@mui/material/Slider'
+import VolumeDown from '@mui/icons-material/VolumeDown'
+import VolumeUp from '@mui/icons-material/VolumeUp'
 
 export default function MenuAppBar() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const [anchorVolumeEl, setAnchorVolumeEl] =
     React.useState<null | HTMLElement>(null)
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const [volume, setVolume] = React.useState(100)
+
+  const handleVolumeChange = (event, newValue) => {
+    setVolume(newValue)
+  }
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget)
@@ -129,13 +139,31 @@ export default function MenuAppBar() {
               <VolumeUpIcon />
             </IconButton>
 
-            <Menu
-              anchorEl={anchorVolumeEl}
-              keepMounted
+            <Popover
               open={Boolean(anchorVolumeEl)}
-              onClose={hideVolumeMenu}>
-              <button>Test</button>
-            </Menu>
+              anchorEl={anchorVolumeEl}
+              onClose={hideVolumeMenu}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'center',
+              }}
+              transformOrigin={{
+                vertical: 'bottom',
+                horizontal: 'center',
+              }}>
+              <Box sx={{padding: '15px'}}>
+                <Stack spacing={2} alignItems="center" sx={{height: 200}}>
+                  <VolumeUp />
+                  <Slider
+                    aria-label="Volume"
+                    orientation="vertical"
+                    value={volume}
+                    onChange={handleVolumeChange}
+                  />
+                  <VolumeDown />
+                </Stack>
+              </Box>
+            </Popover>
           </Box>
 
           <IconButton size="large" color="inherit">

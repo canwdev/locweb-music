@@ -19,6 +19,7 @@ import PersonIcon from '@mui/icons-material/Person'
 import {toast} from 'react-toastify'
 import {DrawerTabList} from '@/enum'
 import {useNavigate, useLocation} from 'react-router-dom'
+import bgImage from '@/assets/image/bg.jpg'
 
 const extraMenuList = [
   {label: '系统设置', icon: SettingsApplicationsIcon, key: 'settings'},
@@ -78,46 +79,56 @@ const GlobalDrawer: FC<Props> = (props) => {
           sx={{
             height: 150,
             backgroundColor: 'gray',
-            backgroundImage: `url('https://cn.bing.com/th?id=OHR.MoonlightRainier_ZH-CN6263832605_1920x1080.jpg')`,
+            backgroundImage: `url(${bgImage})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             color: 'white',
-            display: 'flex',
-            alignItems: 'flex-end',
             position: 'relative',
           }}>
-          <IconButton
-            size="large"
-            color="inherit"
-            aria-label="close"
+          <Box
             sx={{
               position: 'absolute',
               top: 0,
+              left: 0,
               right: 0,
-            }}
-            onClick={closeDrawer()}>
-            <CloseIcon />
-          </IconButton>
-          <Button
-            sx={{
-              padding: '15px',
+              bottom: 0,
               display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'flex-start',
-              width: '100%',
+              alignItems: 'flex-end',
+              background: `rgba(0,0,0,.2)`,
             }}>
-            <Avatar>
-              <PersonIcon />
-            </Avatar>
-            <Box
+            <IconButton
+              size="large"
+              color="inherit"
+              aria-label="close"
               sx={{
-                ml: '10px',
-                color: 'white',
-                fontSize: '16px',
+                position: 'absolute',
+                top: 0,
+                right: 0,
+              }}
+              onClick={closeDrawer()}>
+              <CloseIcon />
+            </IconButton>
+            <Button
+              sx={{
+                padding: '15px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'flex-start',
+                width: '100%',
               }}>
-              请先登录
-            </Box>
-          </Button>
+              <Avatar>
+                <PersonIcon />
+              </Avatar>
+              <Box
+                sx={{
+                  ml: '10px',
+                  color: 'white',
+                  fontSize: '16px',
+                }}>
+                请先登录
+              </Box>
+            </Button>
+          </Box>
         </Box>
         <Divider />
         <List onClick={closeDrawer()} onKeyDown={closeDrawer()}>

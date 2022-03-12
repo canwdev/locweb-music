@@ -19,6 +19,9 @@ import FileItem from '@/components/filesystem/FileItem'
 import {toast} from 'react-toastify'
 import FolderOpenIcon from '@mui/icons-material/FolderOpen'
 import {useSearchParams} from 'react-router-dom'
+import {useDidUpdateEffect} from '@/utils/hooks'
+import LinearProgress from '@mui/material/LinearProgress'
+import Fade from '@mui/material/Fade'
 
 const Filesystem = () => {
   const [pathList, setPathList] = useState<Array<string>>([])
@@ -32,7 +35,8 @@ const Filesystem = () => {
     })
   }
 
-  useEffect(() => {
+  useDidUpdateEffect(() => {
+    console.log('pathList', pathList)
     loadDir()
   }, [pathList])
 
@@ -98,7 +102,19 @@ const Filesystem = () => {
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
+            position: 'relative',
           }}>
+          <Fade
+            in={isLoading}
+            style={{
+              transitionDelay: isLoading ? '800ms' : '0ms',
+            }}
+            unmountOnExit>
+            <LinearProgress
+              sx={{position: 'absolute', left: 0, right: 0, bottom: 0}}
+            />
+          </Fade>
+
           <Breadcrumbs
             separator={<NavigateNextIcon fontSize="small" />}
             sx={{padding: '16px'}}
@@ -138,7 +154,6 @@ const Filesystem = () => {
           </Box>
         </Box>
         <Divider />
-
         <List sx={{width: '100%', bgcolor: 'background.paper'}} component="nav">
           {fileList.map((item) => {
             return (
