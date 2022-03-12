@@ -1,4 +1,5 @@
 import {HOST_URL} from '@/enum/service'
+import {makeAutoObservable} from 'mobx'
 
 export enum LoopModeType {
   NONE = 1, // Play stops after last track
@@ -47,6 +48,7 @@ export class MusicItem {
     this.isChecked = props.isChecked || false
     this.src = props.src
     this.lyric = props.lyric || ''
+    makeAutoObservable(this)
   }
 
   get artist() {
@@ -113,6 +115,6 @@ export class MusicItem {
     }
 
     this.isDetailLoaded = true
-    console.log('setMetadata', this)
+    // console.log('setMetadata', this)
   }
 }

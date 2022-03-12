@@ -24,10 +24,6 @@ const HomeBottomBar: FC = (props) => {
     React.useState<null | HTMLElement>(null)
   const [volume, setVolume] = React.useState(100)
 
-  useEffect(() => {
-    console.warn('mStore.currentSong', mStore.currentSong)
-  }, [currentSong])
-
   const handleVolumeChange = (event, newValue) => {
     setVolume(newValue)
   }
