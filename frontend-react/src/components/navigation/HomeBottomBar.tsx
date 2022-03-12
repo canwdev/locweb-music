@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {FC} from 'react'
+import {FC, useEffect, useState} from 'react'
 import {AppBar, Avatar, Box, Paper, Toolbar} from '@mui/material'
 import IconButton from '@mui/material/IconButton'
 import ShuffleIcon from '@mui/icons-material/Shuffle'
@@ -14,11 +14,19 @@ import Slider from '@mui/material/Slider'
 import VolumeDown from '@mui/icons-material/VolumeDown'
 import PlaylistPlayIcon from '@mui/icons-material/PlaylistPlay'
 import bgImage from '@/assets/image/bg.jpg'
+import {observer} from 'mobx-react-lite'
+import {musicStore} from '@/store'
 
 const HomeBottomBar: FC = (props) => {
+  const [mStore] = useState(musicStore)
+  const {currentSong} = mStore
   const [anchorVolumeEl, setAnchorVolumeEl] =
     React.useState<null | HTMLElement>(null)
   const [volume, setVolume] = React.useState(100)
+
+  useEffect(() => {
+    console.warn('mStore.currentSong', mStore.currentSong)
+  }, [currentSong])
 
   const handleVolumeChange = (event, newValue) => {
     setVolume(newValue)
@@ -52,7 +60,13 @@ const HomeBottomBar: FC = (props) => {
       <Toolbar sx={{position: 'relative'}}>
         <Box sx={{flexGrow: 0, display: 'flex', alignItems: 'center'}}>
           <IconButton size="large" color="inherit" sx={{p: 0}}>
-            <Avatar src={bgImage} variant="square"></Avatar>
+            {currentSong ? (
+              <Avatar src={currentSong.cover} variant="square">
+                A
+              </Avatar>
+            ) : (
+              <Avatar variant="square" />
+            )}
           </IconButton>
         </Box>
 
@@ -120,4 +134,4 @@ const HomeBottomBar: FC = (props) => {
   )
 }
 
-export default HomeBottomBar
+export default observer(HomeBottomBar)

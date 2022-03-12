@@ -10,17 +10,16 @@ import RoutesComponent from './Routes'
 import {HashRouter as Router} from 'react-router-dom'
 import {Slide, ToastContainer} from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.min.css'
-import {RecoilRoot} from 'recoil'
+import PlayerCore from '@/components/player/PlayerCore'
 
 ReactDOM.render(
   <React.StrictMode>
     <CssBaseline />
-    <RecoilRoot>
-      <Router>
-        <RoutesComponent />
-      </Router>
-      <ToastContainer theme="colored" transition={Slide} />
-    </RecoilRoot>
+    <Router>
+      <RoutesComponent />
+    </Router>
+    <PlayerCore />
+    <ToastContainer theme="colored" transition={Slide} />
   </React.StrictMode>,
   document.getElementById('root')
 )

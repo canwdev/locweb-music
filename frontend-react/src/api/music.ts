@@ -16,7 +16,7 @@ export function getFileList(params) {
   })
 }
 
-export function getDetail(params) {
+export function getMusicDetail(params) {
   const {path, filename, updatePlayStat, updateStatOnly} = params
   return service.get('/music/detail', {
     params: {

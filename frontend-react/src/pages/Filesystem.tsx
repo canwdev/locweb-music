@@ -14,7 +14,7 @@ import RefreshIcon from '@mui/icons-material/Refresh'
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
 import NavigateNextIcon from '@mui/icons-material/NavigateNext'
 import {getFileList} from '@/api/music'
-import {FileItemType, FileType} from '@/enum'
+import {FileItemType, FileType, MusicItem} from '@/enum'
 import FileItem from '@/components/filesystem/FileItem'
 import {toast} from 'react-toastify'
 import FolderOpenIcon from '@mui/icons-material/FolderOpen'
@@ -22,8 +22,11 @@ import {useSearchParams} from 'react-router-dom'
 import {useDidUpdateEffect} from '@/utils/hooks'
 import LinearProgress from '@mui/material/LinearProgress'
 import Fade from '@mui/material/Fade'
+import {observer} from 'mobx-react-lite'
+import {musicStore} from '@/store'
 
 const Filesystem = () => {
+  const [mStore] = useState(musicStore)
   const [pathList, setPathList] = useState<Array<string>>([])
   const [fileList, setFileList] = useState<Array<FileItemType>>([])
   const [isLoading, setIsLoading] = useState(false)
@@ -36,12 +39,12 @@ const Filesystem = () => {
   }
 
   useDidUpdateEffect(() => {
-    console.log('pathList', pathList)
+    // console.log('pathList', pathList)
     loadDir()
   }, [pathList])
 
   useEffect(() => {
-    console.log('searchParams updated', searchParams)
+    // console.log('searchParams updated', searchParams)
     const list = JSON.parse(searchParams.get('dir') || '[]')
     setPathList(list)
   }, [searchParams])
@@ -73,6 +76,7 @@ const Filesystem = () => {
       return
     }
     if (fileType === FileType.MUSIC) {
+      mStore.setCurrentSong(new MusicItem(item))
       return
     }
     if (fileType === FileType.OTHER) {
@@ -177,4 +181,4 @@ const Filesystem = () => {
   )
 }
 
-export default Filesystem
+export default observer(Filesystem)
