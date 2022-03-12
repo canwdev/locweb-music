@@ -25,6 +25,18 @@ class MusicStore {
     }
     this.currentSong = val
   }
+
+  setPaused(val) {
+    this.paused = val
+  }
+
+  setDuration(val) {
+    this.duration = val
+  }
+
+  setCurrentTime(val) {
+    this.currentTime = val
+  }
 }
 
 export const musicStore = new MusicStore()

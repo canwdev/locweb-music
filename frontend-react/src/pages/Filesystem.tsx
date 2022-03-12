@@ -52,10 +52,10 @@ const Filesystem = () => {
   const loadDir = async () => {
     try {
       setIsLoading(true)
-      const {list} = (await getFileList({
-        path: pathList.join('/'),
+      const {list}: any = await getFileList({
+        path: pathList.join('/') + '/',
         getPlayStat: true,
-      })) as any
+      })
 
       setFileList(list)
     } catch (e) {

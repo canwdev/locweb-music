@@ -19,7 +19,7 @@ import PersonIcon from '@mui/icons-material/Person'
 import {toast} from 'react-toastify'
 import {DrawerTabList} from '@/enum'
 import {useNavigate, useLocation} from 'react-router-dom'
-import bgImage from '@/assets/image/bg.jpg'
+import bgImage from '@/assets/images/bg.jpg'
 
 const extraMenuList = [
   {label: '系统设置', icon: SettingsApplicationsIcon, key: 'settings'},

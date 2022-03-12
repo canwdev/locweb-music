@@ -13,9 +13,13 @@ import VolumeUp from '@mui/icons-material/VolumeUp'
 import Slider from '@mui/material/Slider'
 import VolumeDown from '@mui/icons-material/VolumeDown'
 import PlaylistPlayIcon from '@mui/icons-material/PlaylistPlay'
-import bgImage from '@/assets/image/bg.jpg'
 import {observer} from 'mobx-react-lite'
 import {musicStore} from '@/store'
+import {formatTimeHMS} from '@/utils'
+import PauseIcon from '@mui/icons-material/Pause'
+import {musicBus, MusicBusEvents} from '@/enum'
+
+const playIconSx = {height: 38, width: 38}
 
 const HomeBottomBar: FC = (props) => {
   const [mStore] = useState(musicStore)
@@ -35,6 +39,19 @@ const HomeBottomBar: FC = (props) => {
   const hideVolumeMenu = () => {
     setAnchorVolumeEl(null)
   }
+
+  const handleSliderChange = (e) => {
+    musicBus.emit(MusicBusEvents.SET_CURRENT_TIME, e.target.value)
+  }
+
+  const togglePlay = () => {
+    if (mStore.paused) {
+      musicBus.emit(MusicBusEvents.PLAY)
+    } else {
+      musicBus.emit(MusicBusEvents.PAUSE)
+    }
+  }
+
   return (
     <AppBar position="sticky" color="primary" sx={{top: 'auto', bottom: 0}}>
       <Paper
@@ -48,9 +65,16 @@ const HomeBottomBar: FC = (props) => {
           direction="row"
           alignItems="center"
           sx={{width: '100%'}}>
-          <Box>{mStore.currentTime}</Box>
-          <Slider size="small" defaultValue={0} valueLabelDisplay="auto" />
-          <Box>{mStore.duration}</Box>
+          <Box>{formatTimeHMS(mStore.currentTime)}</Box>
+          <Slider
+            size="small"
+            max={mStore.duration}
+            value={mStore.currentTime}
+            valueLabelDisplay="auto"
+            valueLabelFormat={formatTimeHMS}
+            onChange={handleSliderChange}
+          />
+          <Box>{formatTimeHMS(mStore.duration)}</Box>
         </Stack>
       </Paper>
       <Toolbar sx={{position: 'relative'}}>
@@ -80,8 +104,15 @@ const HomeBottomBar: FC = (props) => {
           <IconButton color="inherit" aria-label="previous">
             <SkipPreviousIcon />
           </IconButton>
-          <IconButton color="inherit" aria-label="play/pause">
-            <PlayArrowIcon sx={{height: 38, width: 38}} />
+          <IconButton
+            color="inherit"
+            aria-label="play/pause"
+            onClick={togglePlay}>
+            {mStore.paused ? (
+              <PlayArrowIcon sx={playIconSx} />
+            ) : (
+              <PauseIcon sx={playIconSx} />
+            )}
           </IconButton>
           <IconButton color="inherit" aria-label="next">
             <SkipNextIcon />

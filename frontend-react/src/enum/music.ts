@@ -1,4 +1,5 @@
 import {HOST_URL} from '@/enum/service'
+import mitt from 'mitt'
 import {makeAutoObservable} from 'mobx'
 
 export enum LoopModeType {
@@ -117,4 +118,13 @@ export class MusicItem {
     this.isDetailLoaded = true
     // console.log('setMetadata', this)
   }
+}
+
+export const musicBus = mitt()
+export const MusicBusEvents = {
+  PLAY: 'PLAY',
+  PAUSE: 'PAUSE',
+  CHANGE_VOLUME: 'CHANGE_VOLUME',
+  SET_CURRENT_TIME: 'SET_CURRENT_TIME',
+  SET_SPEED: 'SET_SPEED',
 }
