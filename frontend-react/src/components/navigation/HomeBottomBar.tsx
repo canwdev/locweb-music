@@ -48,9 +48,9 @@ const HomeBottomBar: FC = (props) => {
           direction="row"
           alignItems="center"
           sx={{width: '100%'}}>
-          <Box>0:00</Box>
+          <Box>{mStore.currentTime}</Box>
           <Slider size="small" defaultValue={0} valueLabelDisplay="auto" />
-          <Box>0:00</Box>
+          <Box>{mStore.duration}</Box>
         </Stack>
       </Paper>
       <Toolbar sx={{position: 'relative'}}>
