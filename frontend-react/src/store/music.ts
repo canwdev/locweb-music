@@ -6,6 +6,9 @@ interface MusicStore {
   paused: boolean
   duration: number
   currentTime: number
+  isPlayNext: boolean
+  playingList: Array<MusicItem>
+  playingIndex: number | null
 }
 
 class MusicStore {
@@ -14,6 +17,9 @@ class MusicStore {
     this.paused = true
     this.duration = 0
     this.currentTime = 0
+    this.isPlayNext = false
+    this.playingList = []
+    this.playingIndex = null
     makeAutoObservable(this)
   }
 
@@ -36,6 +42,18 @@ class MusicStore {
 
   setCurrentTime(val) {
     this.currentTime = val
+  }
+
+  setIsPlayNext(val) {
+    this.isPlayNext = val
+  }
+
+  setPlayingList(val) {
+    this.playingList = val
+  }
+
+  setPlayingIndex(val) {
+    this.playingIndex = val
   }
 }
 

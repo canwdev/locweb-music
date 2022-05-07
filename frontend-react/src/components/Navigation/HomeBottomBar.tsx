@@ -17,6 +17,7 @@ import {observer} from 'mobx-react-lite'
 import {musicStore} from '@/store'
 import {formatTimeHMS} from '@/utils'
 import PauseIcon from '@mui/icons-material/Pause'
+import PlayingListDrawer from '@/components/PlayingList/PlayingListDrawer'
 import {musicBus, MusicBusEvents} from '@/enum'
 
 const playIconSx = {height: 38, width: 38}
@@ -27,6 +28,7 @@ const HomeBottomBar: FC = (props) => {
   const [anchorVolumeEl, setAnchorVolumeEl] =
     React.useState<null | HTMLElement>(null)
   const [volume, setVolume] = React.useState(100)
+  const [showPlayingList, setShowPlayingList] = useState(false)
 
   const handleVolumeChange = (event, newValue) => {
     setVolume(newValue)
@@ -153,10 +155,18 @@ const HomeBottomBar: FC = (props) => {
           </Popover>
         </Stack>
 
-        <IconButton size="large" color="inherit">
+        <IconButton
+          size="large"
+          color="inherit"
+          onClick={() => setShowPlayingList(true)}>
           <PlaylistPlayIcon />
         </IconButton>
       </Toolbar>
+
+      <PlayingListDrawer
+        drawerOpen={showPlayingList}
+        setDrawerOpen={setShowPlayingList}
+      />
     </AppBar>
   )
 }

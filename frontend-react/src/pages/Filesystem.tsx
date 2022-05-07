@@ -14,8 +14,8 @@ import RefreshIcon from '@mui/icons-material/Refresh'
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
 import NavigateNextIcon from '@mui/icons-material/NavigateNext'
 import {getFileList} from '@/api/music'
-import {FileItemType, FileType, MusicItem} from '@/enum'
-import FileItem from '@/components/filesystem/FileItem'
+import {FileItemType, FileType, isSupportedMusicFormat, MusicItem} from '@/enum'
+import FileItem from '@/components/Filesystem/FileItem'
 import {toast} from 'react-toastify'
 import FolderOpenIcon from '@mui/icons-material/FolderOpen'
 import {useSearchParams} from 'react-router-dom'
@@ -76,6 +76,13 @@ const Filesystem = () => {
       return
     }
     if (fileType === FileType.MUSIC) {
+      const playableList = fileList
+        .filter((file) => isSupportedMusicFormat(file.filename))
+        .map((file) => new MusicItem(file))
+      const playingIndex = playableList.findIndex((item) => item.id === item.id)
+      mStore.setPlayingList(playableList)
+      mStore.setPlayingIndex(playingIndex)
+      mStore.setIsPlayNext(true)
       mStore.setCurrentSong(new MusicItem(item))
       return
     }
@@ -100,7 +107,7 @@ const Filesystem = () => {
         py: '10px',
       }}
       maxWidth="lg">
-      <Paper elevation={3}>
+      <Paper elevation={1}>
         <Box
           sx={{
             display: 'flex',

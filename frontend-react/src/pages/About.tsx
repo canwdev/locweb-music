@@ -10,7 +10,7 @@ import {
   Paper,
   Typography,
 } from '@mui/material'
-import CommonAppBar from '../components/navigation/CommonAppBar'
+import CommonAppBar from '../components/Navigation/CommonAppBar'
 import * as React from 'react'
 import {useEffect, useState} from 'react'
 import {getServerInfo} from '@/api/service'

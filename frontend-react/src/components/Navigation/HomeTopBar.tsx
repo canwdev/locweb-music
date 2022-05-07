@@ -54,8 +54,7 @@ const HomeTopBar: FC<Props> = (props) => {
           }}
           open={Boolean(anchorEl)}
           onClose={handleClose}>
-          <MenuItem onClick={handleClose}>雕花工艺</MenuItem>
-          <MenuItem onClick={handleClose}>精雕细琢</MenuItem>
+          <MenuItem onClick={handleClose}>Close</MenuItem>
         </Menu>
       </Toolbar>
     </AppBar>

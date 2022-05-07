@@ -2,9 +2,9 @@ import * as React from 'react'
 import {useState} from 'react'
 import {Outlet} from 'react-router-dom'
 import {Box} from '@mui/material'
-import GlobalDrawer from '@/components/navigation/GlobalDrawer'
-import HomeBottomBar from '@/components/navigation/HomeBottomBar'
-import HomeTopBar from '@/components/navigation/HomeTopBar'
+import GlobalDrawer from '@/components/Navigation/GlobalDrawer'
+import HomeBottomBar from '@/components/Navigation/HomeBottomBar'
+import HomeTopBar from '@/components/Navigation/HomeTopBar'
 
 export default function MenuAppBar() {
   const [drawerOpen, setDrawerOpen] = useState(false)

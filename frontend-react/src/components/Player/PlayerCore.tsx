@@ -42,6 +42,14 @@ const PlayerCore = () => {
       mStore.setPaused(true)
     })
 
+    audio.addEventListener('loadeddata', (evt) => {
+      // console.log('loadeddata')
+      if (mStore.isPlayNext) {
+        play()
+        mStore.setIsPlayNext(false)
+      }
+    })
+
     audio.addEventListener('canplay', (evt) => {
       mStore.setDuration(evt.target.duration)
     })
@@ -61,6 +69,12 @@ const PlayerCore = () => {
     musicBus.on(MusicBusEvents.PLAY, play)
     musicBus.on(MusicBusEvents.PAUSE, pause)
     musicBus.on(MusicBusEvents.SET_CURRENT_TIME, setCurrentTime)
+
+    return () => {
+      musicBus.off(MusicBusEvents.PLAY, play)
+      musicBus.off(MusicBusEvents.PAUSE, pause)
+      musicBus.off(MusicBusEvents.SET_CURRENT_TIME, setCurrentTime)
+    }
   }, [])
 
   useEffect(() => {
@@ -146,7 +160,14 @@ const PlayerCore = () => {
   }
 
   return (
-    <Box sx={{position: 'fixed', bottom: '10%', right: '10%', zIndex: 100000}}>
+    <Box
+      sx={{
+        position: 'fixed',
+        bottom: '15%',
+        left: '10%',
+        zIndex: 100,
+        opacity: 0.5,
+      }}>
       <audio ref={audioEl} controls />
     </Box>
   )

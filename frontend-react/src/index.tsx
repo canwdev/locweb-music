@@ -10,7 +10,7 @@ import RoutesComponent from './Routes'
 import {HashRouter as Router} from 'react-router-dom'
 import {Slide, ToastContainer} from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.min.css'
-import PlayerCore from '@/components/player/PlayerCore'
+import PlayerCore from '@/components/Player/PlayerCore'
 
 ReactDOM.render(
   <React.StrictMode>

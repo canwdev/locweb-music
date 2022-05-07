@@ -22,9 +22,9 @@ import {useNavigate, useLocation} from 'react-router-dom'
 import bgImage from '@/assets/images/bg.jpg'
 
 const extraMenuList = [
-  {label: '系统设置', icon: SettingsApplicationsIcon, key: 'settings'},
-  {label: '主题切换', icon: DarkModeIcon, key: 'theme'},
-  {label: '关于软件', icon: InfoIcon, key: 'about'},
+  // {label: '系统设置', icon: SettingsApplicationsIcon, key: 'settings'},
+  // {label: '主题切换', icon: DarkModeIcon, key: 'theme'},
+  // {label: '关于软件', icon: InfoIcon, key: 'about'},
 ]
 
 interface Props {
@@ -111,7 +111,8 @@ const GlobalDrawer: FC<Props> = (props) => {
             <Button
               sx={{
                 padding: '15px',
-                display: 'flex',
+                // display: 'flex',
+                display: 'none',
                 alignItems: 'center',
                 justifyContent: 'flex-start',
                 width: '100%',
