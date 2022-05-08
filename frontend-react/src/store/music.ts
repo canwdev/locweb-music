@@ -2,18 +2,16 @@ import {makeAutoObservable} from 'mobx'
 import {MusicItem} from '@/enum'
 
 interface MusicStore {
-  currentSong: MusicItem | null
   paused: boolean
   duration: number
   currentTime: number
   isPlayNext: boolean
   playingList: Array<MusicItem>
-  playingIndex: number | null
+  playingIndex: number
 }
 
 class MusicStore {
   constructor() {
-    this.currentSong = null
     this.paused = true
     this.duration = 0
     this.currentTime = 0
@@ -23,13 +21,11 @@ class MusicStore {
     makeAutoObservable(this)
   }
 
-  setCurrentSong(val) {
-    if (!val) {
-      this.paused = true
-      this.duration = 0
-      this.currentTime = 0
+  get currentSong() {
+    if (this.playingIndex < 0 || !this.playingList.length) {
+      return null
     }
-    this.currentSong = val
+    return this.playingList[this.playingIndex] || null
   }
 
   setPaused(val) {
@@ -53,6 +49,11 @@ class MusicStore {
   }
 
   setPlayingIndex(val) {
+    if (val < 0) {
+      this.paused = true
+      this.duration = 0
+      this.currentTime = 0
+    }
     this.playingIndex = val
   }
 }

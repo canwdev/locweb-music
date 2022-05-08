@@ -124,6 +124,8 @@ export const musicBus = mitt()
 export const MusicBusEvents = {
   PLAY: 'PLAY',
   PAUSE: 'PAUSE',
+  GO_PREVIOUS: 'GO_PREVIOUS',
+  GO_NEXT: 'GO_NEXT',
   CHANGE_VOLUME: 'CHANGE_VOLUME',
   SET_CURRENT_TIME: 'SET_CURRENT_TIME',
   SET_SPEED: 'SET_SPEED',

@@ -44,7 +44,10 @@ const FileItem: FC<PropsType> = (props) => {
       <ListItemAvatar>
         <Avatar>{IconComponent}</Avatar>
       </ListItemAvatar>
-      <ListItemText primary={item.filename} />
+      <ListItemText
+        primary={item.filename}
+        primaryTypographyProps={{noWrap: true}}
+      />
     </ListItemButton>
   )
 }

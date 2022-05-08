@@ -19,6 +19,7 @@ import {formatTimeHMS} from '@/utils'
 import PauseIcon from '@mui/icons-material/Pause'
 import PlayingListDrawer from '@/components/PlayingList/PlayingListDrawer'
 import {musicBus, MusicBusEvents} from '@/enum'
+import MusicNoteIcon from '@mui/icons-material/MusicNote'
 
 const playIconSx = {height: 38, width: 38}
 
@@ -54,6 +55,18 @@ const HomeBottomBar: FC = (props) => {
     }
   }
 
+  const goPrevious = () => {
+    musicBus.emit(MusicBusEvents.GO_PREVIOUS)
+  }
+
+  const goNext = () => {
+    musicBus.emit(MusicBusEvents.GO_NEXT)
+  }
+
+  const logData = () => {
+    console.log('[logData]', mStore)
+  }
+
   return (
     <AppBar position="sticky" color="primary" sx={{top: 'auto', bottom: 0}}>
       <Paper
@@ -81,13 +94,19 @@ const HomeBottomBar: FC = (props) => {
       </Paper>
       <Toolbar sx={{position: 'relative'}}>
         <Box sx={{flexGrow: 0, display: 'flex', alignItems: 'center'}}>
-          <IconButton size="large" color="inherit" sx={{p: 0}}>
+          <IconButton
+            onClick={logData}
+            size="large"
+            color="inherit"
+            sx={{p: 0}}>
             {currentSong ? (
-              <Avatar src={currentSong.cover} variant="square">
-                A
+              <Avatar src={currentSong.cover}>
+                <MusicNoteIcon />
               </Avatar>
             ) : (
-              <Avatar variant="square" />
+              <Avatar>
+                <MusicNoteIcon />
+              </Avatar>
             )}
           </IconButton>
         </Box>
@@ -103,7 +122,10 @@ const HomeBottomBar: FC = (props) => {
           <IconButton color="inherit" aria-label="volume">
             <ShuffleIcon />
           </IconButton>
-          <IconButton color="inherit" aria-label="previous">
+          <IconButton
+            onClick={goPrevious}
+            color="inherit"
+            aria-label="previous">
             <SkipPreviousIcon />
           </IconButton>
           <IconButton
@@ -116,7 +138,7 @@ const HomeBottomBar: FC = (props) => {
               <PauseIcon sx={playIconSx} />
             )}
           </IconButton>
-          <IconButton color="inherit" aria-label="next">
+          <IconButton onClick={goNext} color="inherit" aria-label="next">
             <SkipNextIcon />
           </IconButton>
           <IconButton

@@ -68,11 +68,15 @@ const PlayerCore = () => {
 
     musicBus.on(MusicBusEvents.PLAY, play)
     musicBus.on(MusicBusEvents.PAUSE, pause)
+    musicBus.on(MusicBusEvents.GO_PREVIOUS, jumpPrevious)
+    musicBus.on(MusicBusEvents.GO_NEXT, jumpNext)
     musicBus.on(MusicBusEvents.SET_CURRENT_TIME, setCurrentTime)
 
     return () => {
       musicBus.off(MusicBusEvents.PLAY, play)
       musicBus.off(MusicBusEvents.PAUSE, pause)
+      musicBus.off(MusicBusEvents.GO_PREVIOUS, jumpPrevious)
+      musicBus.off(MusicBusEvents.GO_NEXT, jumpNext)
       musicBus.off(MusicBusEvents.SET_CURRENT_TIME, setCurrentTime)
     }
   }, [])
@@ -154,6 +158,26 @@ const PlayerCore = () => {
   }
   const pause = () => {
     audioEl.current.pause()
+  }
+  const jumpPrevious = () => {
+    mStore.setIsPlayNext(true)
+    let index = mStore.playingIndex
+    if (index <= 0) {
+      index = mStore.playingList.length - 1
+    } else {
+      index -= 1
+    }
+    mStore.setPlayingIndex(index)
+  }
+  const jumpNext = () => {
+    mStore.setIsPlayNext(true)
+    let index = mStore.playingIndex
+    if (index >= mStore.playingList.length - 1) {
+      index = 0
+    } else {
+      index += 1
+    }
+    mStore.setPlayingIndex(index)
   }
   const setCurrentTime = (val) => {
     audioEl.current.currentTime = val

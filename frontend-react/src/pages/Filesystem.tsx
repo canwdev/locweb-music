@@ -79,11 +79,10 @@ const Filesystem = () => {
       const playableList = fileList
         .filter((file) => isSupportedMusicFormat(file.filename))
         .map((file) => new MusicItem(file))
-      const playingIndex = playableList.findIndex((item) => item.id === item.id)
+      const playingIndex = playableList.findIndex((i) => i.id === item.id)
       mStore.setPlayingList(playableList)
       mStore.setPlayingIndex(playingIndex)
       mStore.setIsPlayNext(true)
-      mStore.setCurrentSong(new MusicItem(item))
       return
     }
     if (fileType === FileType.OTHER) {
