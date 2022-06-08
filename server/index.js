@@ -9,9 +9,11 @@ const {
   PORT,
   MUSIC_LIBRARY_PATH,
   MUSIC_LYRICS_PATH,
+  httpsOptions,
 } = require('./config')
 const {IMAGE_PATH} = require('./config')
 const {normalizePort} = require('./utils')
+const Fs = require('fs-extra')
 const isProduction = process.env.NODE_ENV === 'production'
 
 // HTTP request logger middleware
@@ -53,9 +55,22 @@ app.use(fallback('index.html', {root: frontendRoot}))
 
 // Start server
 const port = normalizePort(process.env.PORT || PORT)
-const server = app.listen(port, () => {
-  console.log(`Locweb Music Server running on http://localhost:${port}`)
-})
+let server
+if (httpsOptions) {
+  const https = require('https')
+  server = https
+    .createServer({
+      key: Fs.readFileSync(httpsOptions.keyPath),
+      cert: Fs.readFileSync(httpsOptions.certPath),
+    }, app)
+    .listen(port, () => {
+      console.log(`Locweb Music Server running on https://localhost:${port}`)
+    })
+} else {
+  app.listen(port, () => {
+    console.log(`Locweb Music Server running on http://localhost:${port}`)
+  })
+}
 
 process.on('SIGTERM', () => {
   console.log('SIGTERM signal received.')

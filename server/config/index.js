@@ -16,7 +16,7 @@ let config = {
   authUsers: {'admin': 'admin'},
   jwtToken: 'token_secret_j3478n68o23ui',
   jwtTokenExpire: '49d',
-  showHiddenFiles: false
+  showHiddenFiles: false,
 }
 
 const configPath = process.env.SERVER_CONFIG_PATH || Path.join(__dirname, 'config.json')
