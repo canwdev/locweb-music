@@ -1,42 +1,42 @@
 import {getClientHostUrl} from '@/utils/client'
-import {LS_KEY_API_HOST} from '@/enum/service'
 
 // server api url
 export const HOST_URL_DEFAULT = getClientHostUrl()
-export const HOST_URL = localStorage.getItem(LS_KEY_API_HOST) || HOST_URL_DEFAULT
+export const API_PROXY_BASE = import.meta.env.VITE_PROXY_BASE || ''
+export const HOST_URL = API_PROXY_BASE + HOST_URL_DEFAULT
 
-export const LoopModeType = {
-  NONE: 1, // Play stops after last track
-  LOOP_SEQUENCE: 2, // Sequence play
-  LOOP_REVERSE: 3, // Reverse play
-  LOOP_SINGLE: 4, // Single cycle
-  SHUFFLE: 5, // Shuffle next
+export enum LoopModeType {
+  NONE = 1, // Play stops after last track
+  LOOP_SEQUENCE = 2, // Sequence play
+  LOOP_REVERSE = 3, // Reverse play
+  LOOP_SINGLE = 4, // Single cycle
+  SHUFFLE = 5, // Shuffle next
 }
 
-export const LoopModeTypeArray = Object.values(LoopModeType)
+export const LoopModeTypeValues = Object.values(LoopModeType).filter((item) => {
+  return !isNaN(Number(item))
+})
 
-export function getLoopModeMap() {
-  return {
-    [LoopModeType.NONE]: {
-      icon: 'arrow_forward',
-      label: this.$t('msg.play-in-order'),
-    },
-    [LoopModeType.SHUFFLE]: {
-      icon: 'shuffle',
-      label: this.$t('shuffle'),
-    },
-    [LoopModeType.LOOP_SEQUENCE]: {
-      icon: 'repeat',
-      label: this.$t('msg.sequential-loop'),
-    },
-    [LoopModeType.LOOP_REVERSE]: {
-      icon: 'repeat',
-      className: 'reverse-x',
-      label: this.$t('msg.reverse-loop'),
-    },
-    [LoopModeType.LOOP_SINGLE]: {
-      icon: 'repeat_one',
-      label: this.$t('msg.single-cycle'),
-    },
-  }
+export const loopModeMap = {
+  [LoopModeType.NONE]: {
+    icon: 'arrow_forward',
+    i18nKey: 'msg.play-in-order',
+  },
+  [LoopModeType.SHUFFLE]: {
+    icon: 'shuffle',
+    i18nKey: 'shuffle',
+  },
+  [LoopModeType.LOOP_SEQUENCE]: {
+    icon: 'repeat',
+    i18nKey: 'msg.sequential-loop',
+  },
+  [LoopModeType.LOOP_REVERSE]: {
+    icon: 'repeat',
+    className: 'reverse-x',
+    i18nKey: 'msg.reverse-loop',
+  },
+  [LoopModeType.LOOP_SINGLE]: {
+    icon: 'repeat_one',
+    i18nKey: 'msg.single-cycle',
+  },
 }

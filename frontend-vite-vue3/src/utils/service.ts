@@ -1,5 +1,5 @@
 import axios, {AxiosResponse} from 'axios'
-import {getBackendUserToken} from '@/utils/cookies'
+// import {getBackendUserToken} from '@/utils/cookies'
 
 function Service(config: any) {
   const {
@@ -24,13 +24,13 @@ function Service(config: any) {
   service.interceptors.request.use(
     (config) => {
       // window.$loadingBar.start()
-      if (isAuth) {
-        const Authorization = getBackendUserToken()
-        if (Authorization) {
-          // @ts-ignore
-          config.headers.Authorization = 'bearer ' + Authorization
-        }
-      }
+      // if (isAuth) {
+      //   const Authorization = getBackendUserToken()
+      //   if (Authorization) {
+      //     // @ts-ignore
+      //     config.headers.Authorization = 'bearer ' + Authorization
+      //   }
+      // }
 
       return config
     },

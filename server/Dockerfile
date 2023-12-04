@@ -1,6 +1,6 @@
 FROM node:12.18.2-alpine3.11
 
-RUN echo '开始构建 Locweb Music'
+RUN echo 'Start Building Local Web Music...'
 RUN node -v
 
 RUN pwd

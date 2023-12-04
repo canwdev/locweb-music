@@ -1,6 +1,6 @@
 const automate = require('../automate')
-const projectDir = `/usr/server/www/automate/projects/locweb-music/`
-const productionDir = `/usr/server/dockers/locweb-music/`
+const projectDir = `/usr/server/www/automate/projects/local-web-music/`
+const productionDir = `/usr/server/dockers/local-web-music/`
 
 const sshConfig = {
   host: '127.0.0.1',

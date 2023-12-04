@@ -1,9 +1,9 @@
-type CraftStore = {
+type IStore = {
   isAppDarkMode: boolean
 }
 
 export const useMainStore = defineStore('main', {
-  state: (): CraftStore => {
+  state: (): IStore => {
     return {
       isAppDarkMode: true,
     }

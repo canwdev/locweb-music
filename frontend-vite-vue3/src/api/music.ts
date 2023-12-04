@@ -6,7 +6,7 @@ const service = Service({
   baseURL: HOST_URL + '/api',
 })
 
-export function getList(params) {
+export function getList(params: any = {}) {
   const {path, getPlayStat} = params
   return service.get('/music/list', {
     params: {
@@ -16,7 +16,7 @@ export function getList(params) {
   })
 }
 
-export function getDetail(params) {
+export function getDetail(params: any = {}) {
   const {path, filename, updatePlayStat, updateStatOnly} = params
   return service.get('/music/detail', {
     params: {
@@ -28,7 +28,7 @@ export function getDetail(params) {
   })
 }
 
-export function fileAction(params) {
+export function fileAction(params: any = {}) {
   const {path, filename, action, actionValue} = params
   return service.post('/music/action', {
     path,
@@ -38,7 +38,7 @@ export function fileAction(params) {
   })
 }
 
-export function saveLyric(params) {
+export function saveLyric(params: any = {}) {
   const {filename, lyric} = params
 
   return service.post('/music/save-lyric', {
@@ -47,7 +47,7 @@ export function saveLyric(params) {
   })
 }
 
-export function getDownloadUrl(params) {
+export function getDownloadUrl(params: any = {}) {
   return HOST_URL + '/api/music/download?' + qs.stringify(params)
 }
 
