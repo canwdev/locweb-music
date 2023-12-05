@@ -19,6 +19,7 @@ const KEY_DOWN = 'down'
 export default defineComponent({
   name: 'MusicControl',
   components: {TkSeekbar, CoverMini},
+  emits: ['onCoverClick', 'onTitleClick'],
   setup() {
     const {t: $t} = useI18n()
     const musicStore = useMusicStore()
@@ -34,10 +35,10 @@ export default defineComponent({
       globalEventBus.emit(GlobalEvents.ACTION_TOGGLE_PLAY)
     }
     const previous = () => {
-      globalEventBus.emit(GlobalEvents.ACTION_PREV)
+      musicStore.playPrev()
     }
     const next = () => {
-      globalEventBus.emit(GlobalEvents.ACTION_NEXT)
+      musicStore.playNext()
     }
     const volumeUpFn = (e) => {
       e.preventDefault()
@@ -153,8 +154,8 @@ export default defineComponent({
       <span class="time text-overflow">{{ formatTimeHMS(musicStore.duration) }}</span>
     </div>
     <div class="actionbar">
-      <CoverMini :src="musicItem.cover" icon-name="audiotrack" />
-      <button class="btn-song-info btn-no-style">
+      <CoverMini :src="musicItem.cover" icon-name="audiotrack" @click="$emit('onCoverClick')" />
+      <button class="btn-song-info btn-no-style" @click="$emit('onTitleClick')">
         <span class="title text-overflow">{{ musicItem.titleDisplay }}</span>
         <span v-show="musicItem.artist" class="artist text-overflow">{{ musicItem.artist }}</span>
         <span v-show="musicItem.album" class="album text-overflow">{{ musicItem.album }}</span>
@@ -261,15 +262,17 @@ export default defineComponent({
 
     .btn-cover {
       border-radius: 0;
+      flex-shrink: 0;
     }
 
     .btn-song-info {
-      width: 45%;
       height: 100%;
       border-right: 1px solid #ccc;
       text-align: left;
       padding-left: 5px;
       line-height: 1.1;
+      flex: 1;
+      overflow-x: auto;
 
       .title {
         font-size: 14px;
@@ -292,7 +295,6 @@ export default defineComponent({
     .buttons-scroll {
       overflow: auto;
       height: 100%;
-      flex: 1;
       flex-wrap: nowrap;
       display: flex;
       align-items: center;

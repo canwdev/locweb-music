@@ -1,4 +1,13 @@
 import moment from 'moment/moment'
+
+export const guid = () => {
+  function S4() {
+    return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1)
+  }
+
+  return S4() + S4() + '-' + S4() + '-' + S4() + '-' + S4() + '-' + S4() + S4() + S4()
+}
+
 export const copyToClipboard = (text: string) => {
   const input = document.createElement('textarea')
   input.value = text
@@ -7,6 +16,7 @@ export const copyToClipboard = (text: string) => {
   document.execCommand('Copy')
   document.body.removeChild(input)
 }
+
 export const isCharacterKeyPress = (evt) => {
   if (typeof evt.which == 'undefined') {
     // This is IE, which only fires keypress events for printable keys
@@ -62,4 +72,10 @@ export const bytesToSize = (bytes, autoNo = '0B') => {
   const i = Math.floor(Math.log(bytes) / Math.log(k))
   return Number(bytes / Math.pow(k, i)).toFixed(2) + ' ' + sizes[i]
   //toPrecision(3) 后面保留一位小数，如1.0GB
+}
+
+export function getRandomInt(min, max) {
+  min = Math.ceil(min)
+  max = Math.floor(max)
+  return Math.floor(Math.random() * (max - min + 1)) + min
 }

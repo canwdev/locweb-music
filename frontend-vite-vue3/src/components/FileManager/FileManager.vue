@@ -9,7 +9,7 @@ import {MusicItem} from '@/enum/music'
 export default defineComponent({
   name: 'FileManager',
   setup() {
-    const files = ref([])
+    const files = ref<BackendFileItem[]>([])
     const basePath = ref('/')
     const isLoading = ref(false)
     const musicStore = useMusicStore()
@@ -68,24 +68,18 @@ export default defineComponent({
       // handleRefresh()
     }
 
-    const handleOpenFile = (item: BackendFileItem, index: number) => {
-      if (isSupportedMusicFormat(item.filename)) {
-        musicStore.clearShuffle()
-        // todo: play list
-        musicStore.musicItem = new MusicItem(item)
-        return
-      }
-      window.$message.error('格式不支持')
+    const handleOpenFile = (item: BackendFileItem) => {
+      musicStore.playFromFiles(item, files.value)
     }
 
-    const handleFileAction = (type: string, item: BackendFileItem, index?: number) => {
+    const handleFileAction = (type: string, item: BackendFileItem, index: number) => {
       if (type === 'open') {
         if (item.isDirectory) {
           basePath.value += item.filename + '/'
           handleRefresh()
           return
         } else {
-          handleOpenFile(item, index)
+          handleOpenFile(item)
         }
         return
       }
@@ -161,7 +155,7 @@ export default defineComponent({
         </div>
         <div
           v-for="(item, index) in files"
-          :key="item.filename"
+          :key="item.id"
           class="file-list-item file-list-row"
           @dblclick="handleFileAction('open', item, index)"
         >
@@ -177,11 +171,11 @@ export default defineComponent({
           <div class="list-col c-size">{{ bytesToSize(item.size) }}</div>
           <div class="list-col c-time">{{ formatDate(item.birthtime) }}</div>
           <div class="list-col c-actions">
-            <button @click.stop="handleFileAction('open', item)">
+            <button @click.stop="handleFileAction('open', item, index)">
               {{ item.isDirectory ? 'Open' : 'Read' }}
             </button>
-            <button @click.stop="handleFileAction('rename', item)">Rename</button>
-            <button @click.stop="handleFileAction('delete', item)">Delete</button>
+            <button @click.stop="handleFileAction('rename', item, index)">Rename</button>
+            <button @click.stop="handleFileAction('delete', item, index)">Delete</button>
           </div>
         </div>
 

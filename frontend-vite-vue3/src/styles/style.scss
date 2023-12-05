@@ -107,3 +107,27 @@ html, body, #app {
   transition: opacity 0.3s, transform 0.3s;
 }
 
+* {
+
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+    overflow: overlay;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+    background-color: rgba(192, 192, 192, 0.63);
+
+    &:hover {
+      background-color: #bebebe;
+    }
+  }
+
+  &::-webkit-scrollbar-track {
+    border-radius: 4px;
+    background: transparent;
+  }
+}

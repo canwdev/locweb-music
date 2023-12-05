@@ -1,24 +1,24 @@
 import {BackendFileItem} from '@/enum/file'
 import {API_PROXY_BASE} from '@/enum/index'
 import {getDetail} from '@/api/music'
+import {guid} from '@/utils'
 
 export interface MusicItem {
-  fileInfo: BackendFileItem
+  guid: string
+  fileInfo: BackendFileItem | any
   title: string
   artists: string[]
   album: string
   cover: string
   lyric: string
   // getters:
-  src: string
-  titleDisplay: string
-  artisDisplay: string
   allMetadata: any
 }
 
 export class MusicItem {
-  constructor(data: BackendFileItem) {
-    this.fileInfo = data
+  constructor(data?: BackendFileItem) {
+    this.guid = guid()
+    this.fileInfo = data || {}
   }
 
   // 真实文件地址

@@ -11,7 +11,7 @@ export default defineComponent({
   props: {
     show: {
       type: Boolean,
-      default: true,
+      default: false,
     },
   },
   setup() {
@@ -19,18 +19,7 @@ export default defineComponent({
     const audioRef = ref()
     const musicStore = useMusicStore()
     const settingsStore = useSettingsStore()
-    const audioSrc = ref<string | null>(null)
-
-    watch(
-      () => musicStore.musicItem,
-      async (item: MusicItem) => {
-        if (!item) {
-          audioSrc.value = null
-        }
-        await item.fetchDetail()
-        audioSrc.value = item.src
-      }
-    )
+    const audioSrc = ref<string | undefined>()
 
     const play = () => {
       audioRef.value.play()
@@ -39,16 +28,16 @@ export default defineComponent({
       audioRef.value.pause()
     }
     const previous = () => {
-      globalEventBus.emit(GlobalEvents.ACTION_PREV)
+      musicStore.playPrev()
     }
     const next = () => {
-      globalEventBus.emit(GlobalEvents.ACTION_NEXT)
+      musicStore.playNext()
     }
-    const togglePlay = ({isPlay = false, isPause = false} = {}) => {
+    const togglePlay = () => {
       if (!audioRef.value || !audioRef.value.src) {
         return
       }
-      if ((audioRef.value.paused || isPlay) && !isPause) {
+      if (audioRef.value.paused) {
         play()
       } else {
         pause()
@@ -73,7 +62,7 @@ export default defineComponent({
       })
 
       audio.addEventListener('ended', () => {
-        globalEventBus.emit(GlobalEvents.ACTION_PLAY_ENDED)
+        musicStore.handlePlayEnded()
       })
 
       audio.addEventListener('canplay', (evt) => {
@@ -103,29 +92,41 @@ export default defineComponent({
       }
       try {
         audioRef.value.playbackRate = val
-        musicStore.playbackRate = val
-      } catch (e) {
-        window.$message.error({
-          message: e.message,
-        })
+      } catch (e: any) {
+        window.$message.error(e.message)
       }
     }
 
     watch(() => settingsStore.audioVolume, changeVolume)
+    watch(() => musicStore.playbackRate, changeSpeed)
+
+    watch(
+      () => musicStore.musicItem,
+      async (item: MusicItem) => {
+        if (!item) {
+          audioSrc.value = undefined
+        }
+        await item.fetchDetail()
+        audioSrc.value = item.src
+      }
+    )
 
     onMounted(() => {
       globalEventBus.on(GlobalEvents.ACTION_TOGGLE_PLAY, togglePlay)
+      globalEventBus.on(GlobalEvents.ACTION_PLAY, play)
+      globalEventBus.on(GlobalEvents.ACTION_PAUSE, pause)
       globalEventBus.on(GlobalEvents.ACTION_CHANGE_CURRENT_TIME, changeCurrentTime)
-      globalEventBus.on(GlobalEvents.ACTION_CHANGE_VOLUME, changeVolume)
-      globalEventBus.on(GlobalEvents.ACTION_CHANGE_SPEED, changeSpeed)
+
       registerAudioEvents(audioRef.value)
+      changeVolume(settingsStore.audioVolume)
+      changeSpeed(musicStore.playbackRate)
     })
 
     onBeforeUnmount(() => {
       globalEventBus.off(GlobalEvents.ACTION_TOGGLE_PLAY, togglePlay)
+      globalEventBus.off(GlobalEvents.ACTION_PLAY, play)
+      globalEventBus.off(GlobalEvents.ACTION_PAUSE, pause)
       globalEventBus.off(GlobalEvents.ACTION_CHANGE_CURRENT_TIME, changeCurrentTime)
-      globalEventBus.off(GlobalEvents.ACTION_CHANGE_VOLUME, changeVolume)
-      globalEventBus.off(GlobalEvents.ACTION_CHANGE_SPEED, changeSpeed)
     })
 
     return {

@@ -50,7 +50,6 @@ export const useSettingsStore = defineStore('settingsStore', {
       // console.log(value)
 
       this.audioVolume = value
-      globalEventBus.emit(GlobalEvents.ACTION_CHANGE_VOLUME, value)
     },
     volumeUp(step = 5) {
       const volume = this.audioVolume + step

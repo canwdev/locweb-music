@@ -137,17 +137,21 @@ export default {
       background: rebeccapurple;
       z-index: 10;
       border: none;
-      box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.2);
-      cursor: grab;
-      &:active {
-        cursor: grabbing;
-        opacity: 0.8;
-      }
+      //box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
     }
 
     &::-webkit-slider-thumb {
       @include mixin-thumb;
       margin: 0;
+      opacity: 0;
+      transition: all 0.3s;
+    }
+
+    &:hover {
+      &::-webkit-slider-thumb {
+        opacity: 1;
+      }
     }
 
     &::-moz-range-thumb {

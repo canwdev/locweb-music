@@ -42,7 +42,7 @@ export default defineComponent({
         globalEventBus.emit(GlobalEvents.ACTION_CHANGE_CURRENT_TIME, (musicStore.currentTime -= 5))
       },
       handlePlaybackRateChange(val) {
-        globalEventBus.emit(GlobalEvents.ACTION_CHANGE_SPEED, val || musicStore.playbackRate)
+        musicStore.playbackRate = Number(val)
       },
     }
   },
@@ -54,12 +54,11 @@ export default defineComponent({
     <AutoRatioBox class="cover-wrap-box">
       <div class="cover-wrap">
         <CoverDisplay
-          style="opacity: 0.04"
           class="big-cover"
           :src="musicItem.cover"
           :is-rotating="false"
           :is-rounded="false"
-          :is-show-icon="!isShowDetail"
+          :is-show-icon="false"
           @click="isShowDetail = true"
         />
         <transition name="fade">
@@ -97,24 +96,24 @@ export default defineComponent({
                 </button>
               </div>
 
-              <div
-                v-if="lyricObj && lyricObj.lines"
-                class="lrc-main"
-                :class="{unlocked: !isLyricLock}"
-              >
-                <div class="lrc-scroll-wrap">
-                  <p
-                    v-for="(line, index) in lyricObj.lines"
-                    :key="index"
-                    :class="{active: lyricCurrentLine === index}"
-                    :data-index="index"
-                  >
-                    {{ line.txt }}
-                  </p>
-                </div>
-              </div>
-              <div v-else class="lrc-main no-lyric" @click="isShowDetail = false">
-                {{ $t('msg.no-lyric') }}
+              <!--              <div-->
+              <!--                v-if="lyricObj && lyricObj.lines"-->
+              <!--                class="lrc-main"-->
+              <!--                :class="{unlocked: !isLyricLock}"-->
+              <!--              >-->
+              <!--                <div class="lrc-scroll-wrap">-->
+              <!--                  <p-->
+              <!--                    v-for="(line, index) in lyricObj.lines"-->
+              <!--                    :key="index"-->
+              <!--                    :class="{active: lyricCurrentLine === index}"-->
+              <!--                    :data-index="index"-->
+              <!--                  >-->
+              <!--                    {{ line.txt }}-->
+              <!--                  </p>-->
+              <!--                </div>-->
+              <!--              </div>-->
+              <div class="lrc-main no-lyric" @click="isShowDetail = false">
+                {{ $t('msg.no-lyric') }} TBD
               </div>
             </div>
             <textarea
@@ -180,10 +179,11 @@ export default defineComponent({
         <n-slider
           style="width: 200px"
           v-model:value="musicStore.playbackRate"
-          @update:value="handlePlaybackRateChange()"
+          @update:value="handlePlaybackRateChange(musicStore.playbackRate)"
           step="marks"
           :max="2"
-          :marks="{0.5: '0.5', 1: '1', [1.2]: '1.2', 2: '2'}"
+          :min="0.2"
+          :marks="{[0.2]: '0.2', [0.5]: '0.5', 1: '1', [1.2]: '1.2', [1.5]: '1.5', 2: '2'}"
         />
       </n-space>
     </n-modal>

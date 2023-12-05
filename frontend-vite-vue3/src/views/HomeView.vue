@@ -2,34 +2,35 @@
 import {defineComponent} from 'vue'
 import ViewPortWindow from '@/components/CommonUI/ViewPortWindow/index.vue'
 import FileManager from '@/components/FileManager/FileManager.vue'
-import PlayerCore from '@/components/MusicPlayer/PlayerCore.vue'
-import MusicDetail from '@/components/MusicPlayer/MusicDetail.vue'
-import MusicControl from '@/components/MusicPlayer/MusicControl.vue'
+import DesktopWallpaper from '@/components/Desktop/DesktopWallpaper.vue'
+import TaskBar from '@/components/Desktop/TaskBar/index.vue'
+import MusicPlayer from '@/components/MusicPlayer/index.vue'
 
 export default defineComponent({
   name: 'HomeView',
-  components: {MusicControl, MusicDetail, PlayerCore, FileManager, ViewPortWindow},
+  components: {
+    MusicPlayer,
+    TaskBar,
+    DesktopWallpaper,
+    FileManager,
+    ViewPortWindow,
+  },
 })
 </script>
 
 <template>
   <div class="home-view">
-    <ViewPortWindow visible wid="fm">
+    <DesktopWallpaper />
+    <ViewPortWindow visible wid="fm" style="min-height: 300px; min-width: 800px">
       <template #titleBarLeft>File Manager</template>
       <FileManager />
     </ViewPortWindow>
-    <ViewPortWindow visible wid="player">
+    <ViewPortWindow visible wid="player" style="min-height: 600px; min-width: 500px">
       <template #titleBarLeft>Music Player</template>
-      <div class="music-player-wrap">
-        <div class="music-above">
-          <MusicDetail />
-          <PlayerCore />
-        </div>
-        <div class="music-below">
-          <MusicControl />
-        </div>
-      </div>
+      <MusicPlayer />
     </ViewPortWindow>
+
+    <TaskBar />
   </div>
 </template>
 
@@ -37,17 +38,6 @@ export default defineComponent({
 .home-view {
   width: 100%;
   height: 100%;
-
-  .music-player-wrap {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    .music-above {
-      flex: 1;
-    }
-    .music-below {
-      height: 75px;
-    }
-  }
+  position: relative;
 }
 </style>

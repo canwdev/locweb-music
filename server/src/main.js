@@ -25,7 +25,7 @@ if (!isProduction) {
 
 app.use(express.static(Path.join(__dirname, 'public')))
 // Vue dist directory
-const frontendRoot = Path.join(__dirname, 'frontend-dist')
+const frontendRoot = Path.join(__dirname, '../frontend-dist')
 app.use('/', express.static(frontendRoot))
 // Cover images
 app.use('/images', express.static(IMAGE_PATH))

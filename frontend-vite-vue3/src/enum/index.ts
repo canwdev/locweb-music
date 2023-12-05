@@ -13,9 +13,13 @@ export enum LoopModeType {
   SHUFFLE = 5, // Shuffle next
 }
 
-export const LoopModeTypeValues = Object.values(LoopModeType).filter((item) => {
-  return !isNaN(Number(item))
-})
+export const LoopModeTypeValues = [
+  LoopModeType.NONE,
+  LoopModeType.LOOP_SEQUENCE,
+  LoopModeType.LOOP_REVERSE,
+  LoopModeType.LOOP_SINGLE,
+  LoopModeType.SHUFFLE,
+]
 
 export const loopModeMap = {
   [LoopModeType.NONE]: {
