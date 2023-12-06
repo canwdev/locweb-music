@@ -24,7 +24,8 @@ export default defineComponent({
         _dark: isAppDarkMode,
       },
     ]"
-    class="page-root _line-grid theme-default"
+    :theme="isAppDarkMode ? darkTheme : null"
+    class="page-root _line-grid theme-minimalism"
   >
     <n-loading-bar-provider>
       <n-notification-provider>

@@ -16,9 +16,9 @@ export default defineComponent({
 <template>
   <div class="shortcut-item">
     <div v-if="item.icon" class="shortcut-icon">
-      <img :src="item.icon" :alt="item.name" />
+      <img :src="item.icon" :alt="item.title" />
     </div>
-    <div class="shortcut-title">{{ item.name }}</div>
+    <div class="shortcut-title">{{ item.title }}</div>
   </div>
 </template>
 
@@ -30,7 +30,7 @@ export default defineComponent({
   padding: 4px;
 
   &:hover {
-    background-color: #3a6ea5;
+    background-color: $color_theme;
     color: white;
   }
 

@@ -1,19 +1,29 @@
 <script lang="ts">
 import {defineComponent} from 'vue'
-import ViewPortWindow from '@/components/CommonUI/ViewPortWindow/index.vue'
-import FileManager from '@/components/Apps/FileManager/FileManager.vue'
 import TaskBar from '@/components/OS/TaskBar/index.vue'
-import MusicPlayer from '@/components/Apps/MusicPlayer/index.vue'
 import DesktopWindowManager from '@/components/OS/DesktopWindowManager/index.vue'
+import {StartMenuAppList} from '@/enum/os'
+import {useSystemStore} from '@/store/system'
 
 export default defineComponent({
   name: 'HomeView',
   components: {
     DesktopWindowManager,
-    MusicPlayer,
     TaskBar,
-    FileManager,
-    ViewPortWindow,
+  },
+  setup() {
+    const systemStore = useSystemStore()
+    onMounted(() => {
+      StartMenuAppList.forEach((item) => {
+        if (item.autostart) {
+          systemStore.createTask(item)
+        }
+      })
+    })
+
+    onBeforeUnmount(() => {
+      systemStore.shutdown()
+    })
   },
 })
 </script>

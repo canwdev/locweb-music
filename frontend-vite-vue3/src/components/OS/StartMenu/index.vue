@@ -4,10 +4,12 @@ import StartMenuItem from '@/components/OS/StartMenu/StartMenuItem.vue'
 import {ShortcutItem, StartMenuAppList, SystemAppList} from '@/enum/os'
 import {useSystemStore} from '@/store/system'
 import {useModelWrapper} from '@/hooks/use-model-wrapper'
+import clickOutSide from '@/utils/directives/clickoutside'
 
 export default defineComponent({
   name: 'StartMenu',
   components: {StartMenuItem},
+  directives: {clickOutSide},
   props: {
     visible: {
       type: Boolean,
@@ -20,10 +22,8 @@ export default defineComponent({
 
     const handleItemClick = (item: ShortcutItem) => {
       mVisible.value = false
-      // TODO: run real components
-      if (item.name === 'Run...') {
-        systemStore.createTask()
-      }
+
+      systemStore.createTask(item)
     }
 
     return {
@@ -33,7 +33,16 @@ export default defineComponent({
       SystemAppList,
       handleItemClick,
       handlePowerMenu() {
-        location.reload()
+        mVisible.value = false
+        systemStore.shutdown()
+        window.close()
+
+        // location.reload()
+      },
+      handleClickOutside() {
+        if (mVisible.value) {
+          mVisible.value = false
+        }
       },
     }
   },
@@ -41,7 +50,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <div v-show="mVisible" class="start-menu">
+  <div v-click-out-side="handleClickOutside" v-if="mVisible" class="start-menu">
     <div class="start-menu-row">
       <div class="start-menu-left">
         <div class="program-list themed-field">
@@ -71,7 +80,7 @@ export default defineComponent({
         <input disabled placeholder="Search apps" class="input-search themed-field" />
       </div>
       <div class="start-menu-right">
-        <button class="btn-no-style" @click="handlePowerMenu">Restart</button>
+        <button class="btn-no-style" @click="handlePowerMenu">Shutdown</button>
       </div>
     </div>
   </div>

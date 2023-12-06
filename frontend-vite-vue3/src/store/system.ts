@@ -1,4 +1,4 @@
-import {TaskItem} from '@/enum/os'
+import {ShortcutItem, TaskItem} from '@/enum/os'
 
 interface IStore {
   tasks: TaskItem[]
@@ -13,11 +13,16 @@ export const useSystemStore = defineStore('system', {
     }
   },
   actions: {
-    createTask() {
-      const newTask = new TaskItem({
-        title: 'New Task',
-        icon: '',
-      })
+    createTask(shortcut: ShortcutItem) {
+      if (shortcut.singleInstance) {
+        // 查找实例是否已经存在，防止重复启动
+        const task = this.tasks.find((i) => i.component === shortcut.component)
+        if (task) {
+          this.setTaskActive(task)
+          return
+        }
+      }
+      const newTask = new TaskItem(shortcut)
       this.tasks = [...this.tasks, newTask]
       this.activeId = newTask.guid
     },
@@ -41,10 +46,14 @@ export const useSystemStore = defineStore('system', {
         this.setTaskActive(_tasks[lastIdx])
       }
     },
+    shutdown() {
+      this.tasks.forEach((task) => this.closeTask(task.guid))
+    },
     setTaskActive(task: TaskItem) {
       this.activeId = task.guid
       if (task.windowRef) {
         task.windowRef.setActive()
+        task.minimized = false
       }
     },
   },

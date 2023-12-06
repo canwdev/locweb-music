@@ -15,6 +15,16 @@ export default defineComponent({
       isShowStart,
       taskList,
       systemStore,
+      handleItemClick(item) {
+        const minimized = item.minimized
+        systemStore.setTaskActive(item)
+
+        setTimeout(() => {
+          if (!minimized) {
+            item.minimized = true
+          }
+        })
+      },
     }
   },
 })
@@ -36,10 +46,10 @@ export default defineComponent({
           v-for="item in systemStore.tasks"
           :key="item.guid"
           :class="{active: item.guid === systemStore.activeId}"
-          @click="systemStore.setTaskActive(item)"
+          @click="handleItemClick(item)"
         >
+          <img v-if="item.icon" :src="item.icon" :alt="item.title" class="task-icon" />
           <span class="text-overflow">
-            <img v-if="item.icon" :src="item.icon" :alt="item.title" class="task-icon" />
             {{ item.title }}
           </span>
           <!--          <span class="btn-close" @click="systemStore.closeTask(item.guid)">✕</span>-->
@@ -106,10 +116,10 @@ export default defineComponent({
         justify-content: space-between;
         align-items: center;
         position: relative;
-        background-color: rgba(255, 255, 255, 0.32);
         max-width: 200px;
         overflow: hidden;
         transition: all 0.3s;
+        gap: 4px;
 
         &:hover {
           background-color: white;
@@ -121,30 +131,27 @@ export default defineComponent({
           bottom: 0;
           left: 0;
           right: 0;
-          height: 2px;
+          height: 0;
           background-color: $color_theme;
-          visibility: hidden;
           opacity: 0;
           transition: all 0.1s;
         }
 
         &.active {
+          background-color: rgba(255, 255, 255, 0.5);
           &::after {
-            visibility: visible;
             opacity: 1;
+            height: 3px;
           }
         }
 
         .task-icon {
-          position: absolute;
           width: 16px;
           height: 16px;
-          left: 4px;
           pointer-events: none;
         }
 
         .btn-close {
-          margin-left: 10px;
           display: inline-block;
 
           &:hover {
@@ -156,8 +163,8 @@ export default defineComponent({
 
     .task-tray {
       .tray-list {
-        height: 75%;
-        padding: 0 5px;
+        height: 100%;
+        padding: 0 4px;
       }
     }
   }

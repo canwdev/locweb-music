@@ -69,7 +69,9 @@ export default defineComponent({
     }
 
     const handleOpenFile = (item: BackendFileItem) => {
-      musicStore.playFromFiles(item, files.value)
+      if (isSupportedMusicFormat(item.filename)) {
+        musicStore.playFromFiles(item, files.value)
+      }
     }
 
     const handleFileAction = (type: string, item: BackendFileItem, index: number) => {

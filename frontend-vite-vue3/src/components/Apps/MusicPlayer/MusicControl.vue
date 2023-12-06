@@ -238,7 +238,6 @@ export default defineComponent({
     border-bottom: 1px solid $color_border;
     position: relative;
     z-index: $bottomZIndex;
-    background: white;
 
     .time {
       font-size: 12px;
@@ -254,7 +253,6 @@ export default defineComponent({
     user-select: none;
     position: relative;
     z-index: $bottomZIndex;
-    background: white;
 
     button {
       border-radius: 0;

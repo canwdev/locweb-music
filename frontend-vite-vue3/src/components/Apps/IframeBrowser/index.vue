@@ -130,6 +130,8 @@ export default defineComponent({
 
   .iframe-browser-inner-iframe {
     flex: 1;
+    margin: 2px;
+    border-radius: 8px;
   }
 }
 </style>

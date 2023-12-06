@@ -7,7 +7,9 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="desktop-wallpaper"></div>
+  <div class="desktop-wallpaper">
+    <slot></slot>
+  </div>
 </template>
 
 <style lang="scss" scoped>

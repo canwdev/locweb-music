@@ -118,7 +118,6 @@ export default defineComponent({
 
     const initDialogStyle = () => {
       const lsState = getInitWinOptions()
-      console.log(lsState)
       if (lsState) {
         winOptions.top = lsState.top
         winOptions.left = lsState.left
@@ -182,7 +181,7 @@ export default defineComponent({
       ref="dialogRef"
     >
       <div class="vp-window-content">
-        <div ref="titleBarRef" class="page-craft-title-bar">
+        <div ref="titleBarRef" class="page-craft-title-bar" @dblclick="$emit('onTitleBarDbclick')">
           <div class="page-craft-title-bar-text text-overflow">
             <slot name="titleBarLeft"></slot>
           </div>
@@ -247,16 +246,17 @@ export default defineComponent({
       user-select: none;
 
       .window-icon {
+        width: 16px;
+        height: 16px;
         pointer-events: none;
       }
 
       .page-craft-title-bar-text {
         display: flex;
         align-items: center;
-        height: 14px;
-        .window-icon {
-          margin-right: 5px;
-        }
+        height: 16px;
+        gap: 4px;
+        line-height: 1;
       }
     }
     .vp-window-body {
