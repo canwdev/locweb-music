@@ -4,11 +4,12 @@ import {useMusicStore} from '@/store/music'
 import {formatTimeHMS} from '@/utils'
 import CoverMini from '@/components/Apps/MusicPlayer/CoverMini.vue'
 import TkSeekbar from '@/components/CommonUI/TkSeekBar.vue'
-import {getLoopModeMap, loopModeMap, LoopModeType, LoopModeTypeValues} from '@/enum'
+import {loopModeMap, LoopModeTypeValues} from '@/enum/settings'
 import {useSettingsStore} from '@/store/settings'
 import Mousetrap from 'mousetrap'
 import globalEventBus, {GlobalEvents} from '@/utils/bus'
 import {useI18n} from 'vue-i18n'
+import {LoopModeType} from '@/enum/settings'
 
 const KEY_SPACE = 'space'
 const KEY_PREVIOUS = ['left', 'pageup', 'k', 'l']

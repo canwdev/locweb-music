@@ -39,7 +39,11 @@ export default defineComponent({
 
         // location.reload()
       },
-      handleClickOutside() {
+      handleClickOutside(e) {
+        // 防止重复点击弹出
+        if (e.target.classList.contains('start-button')) {
+          return
+        }
         if (mVisible.value) {
           mVisible.value = false
         }

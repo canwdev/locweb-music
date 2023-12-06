@@ -1,10 +1,12 @@
-import {LdThemeType, useSettingsStore} from '@/store/settings'
+import {useSettingsStore} from '@/store/settings'
+import {CustomThemeType, LdThemeType} from '@/enum/settings'
+
 import {useMainStore} from '@/store/main'
 
 const getSystemIsDarkMode = () =>
   window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
 
-export const useHandleThemeChange = () => {
+export const useGlobalTheme = () => {
   const mainStore = useMainStore()
   const settingsStore = useSettingsStore()
 
@@ -19,15 +21,6 @@ export const useHandleThemeChange = () => {
     settingsStore.ldTheme = val
   }
 
-  return {
-    handleThemeChange,
-  }
-}
-
-export const useGlobalTheme = () => {
-  const mainStore = useMainStore()
-  const {handleThemeChange} = useHandleThemeChange()
-  const settingsStore = useSettingsStore()
   handleThemeChange(settingsStore.ldTheme)
 
   const handleSystemThemeChange = (event: any) => {
@@ -35,6 +28,8 @@ export const useGlobalTheme = () => {
       mainStore.isAppDarkMode = Boolean(event.matches)
     }
   }
+
+  watch(() => settingsStore.ldTheme, handleThemeChange)
 
   onMounted(() => {
     window
@@ -50,7 +45,21 @@ export const useGlobalTheme = () => {
 
   const isAppDarkMode = computed(() => mainStore.isAppDarkMode)
 
+  const isRect = computed(() => {
+    return (
+      !settingsStore.enableRoundedTheme ||
+      settingsStore.customTheme === CustomThemeType.MINIMALISM ||
+      settingsStore.customTheme === CustomThemeType.WIN8 ||
+      settingsStore.customTheme === CustomThemeType.CLASSIC
+    )
+  })
+  const isAero = computed(() => {
+    return settingsStore.enableAeroTheme && settingsStore.customTheme === CustomThemeType.DEFAULT
+  })
+
   return {
+    isRect,
+    isAero,
     isAppDarkMode,
   }
 }

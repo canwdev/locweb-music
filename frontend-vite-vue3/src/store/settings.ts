@@ -1,31 +1,12 @@
-import {LoopModeType} from '@/enum'
-import globalEventBus, {GlobalEvents} from '@/utils/bus'
-
-export enum LdThemeType {
-  SYSTEM = 0,
-  LIGHT = 1,
-  DARK = 2,
-}
-
-export const ldThemeOptions = [
-  {
-    label: 'Follow System',
-    value: LdThemeType.SYSTEM,
-  },
-  {
-    label: 'Light Theme',
-    value: LdThemeType.LIGHT,
-  },
-  {
-    label: 'Dark Theme',
-    value: LdThemeType.DARK,
-  },
-]
+import {CustomThemeType, LdThemeType, LoopModeType} from '@/enum/settings'
 
 interface IStore {
   ldTheme: LdThemeType
   loopMode: LoopModeType
   audioVolume: number
+  customTheme: CustomThemeType
+  enableRoundedTheme: boolean
+  enableAeroTheme: boolean
 }
 
 export const useSettingsStore = defineStore('settingsStore', {
@@ -34,6 +15,9 @@ export const useSettingsStore = defineStore('settingsStore', {
       ldTheme: LdThemeType.SYSTEM,
       loopMode: LoopModeType.LOOP_SEQUENCE,
       audioVolume: 100,
+      customTheme: CustomThemeType.DEFAULT,
+      enableRoundedTheme: true,
+      enableAeroTheme: false,
     }
   },
   actions: {

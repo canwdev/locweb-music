@@ -2,8 +2,8 @@ import {MusicItem} from '@/enum/music'
 import {BackendFileItem, isSupportedMusicFormat} from '@/enum/file'
 import globalEventBus, {GlobalEvents} from '@/utils/bus'
 import {getRandomInt} from '@/utils'
-import {LoopModeType} from '@/enum'
 import {useSettingsStore} from '@/store/settings'
+import {LoopModeType} from '@/enum/settings'
 
 type IStore = {
   musicItem: MusicItem | null

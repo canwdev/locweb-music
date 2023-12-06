@@ -2,16 +2,45 @@
 import {darkTheme, GlobalThemeOverrides} from 'naive-ui'
 import {useGlobalTheme} from '@/hooks/use-global-theme'
 import AppSub from '@/AppSub.vue'
+import {useSettingsStore} from '@/store/settings'
+import {CustomThemeType} from '@/enum/settings'
 export default defineComponent({
   components: {
     AppSub,
   },
   setup() {
-    const {isAppDarkMode} = useGlobalTheme()
+    const {isAppDarkMode, isRect, isAero} = useGlobalTheme()
+    const settingsStore = useSettingsStore()
+
+    // GlobalThemeOverrides
+    const themeOverrides = computed<GlobalThemeOverrides>(() => {
+      let primaryColor
+
+      if (settingsStore.customTheme === CustomThemeType.WIN8) {
+        primaryColor = '#F0C869'
+      } else {
+        primaryColor = '#3A6EA5'
+      }
+
+      return {
+        common: {
+          borderRadiusSmall: isRect.value ? 0 : '2px',
+          borderRadius: isRect.value ? 0 : '4px',
+          primaryColor,
+          primaryColorHover: primaryColor,
+          primaryColorPressed: primaryColor,
+          primaryColorSuppl: primaryColor,
+        },
+      } as GlobalThemeOverrides
+    })
 
     return {
+      settingsStore,
       isAppDarkMode,
       darkTheme,
+      themeOverrides,
+      isRect,
+      isAero,
     }
   },
 })
@@ -22,10 +51,15 @@ export default defineComponent({
     :class="[
       {
         _dark: isAppDarkMode,
+        _aero: isAero,
+        _rect: isRect,
+        _rounded: !isRect,
       },
+      settingsStore.customTheme,
     ]"
     :theme="isAppDarkMode ? darkTheme : null"
-    class="page-root _line-grid theme-minimalism"
+    :theme-overrides="themeOverrides"
+    class="page-root _line-grid"
   >
     <n-loading-bar-provider>
       <n-notification-provider>
