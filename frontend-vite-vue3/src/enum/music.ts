@@ -27,10 +27,15 @@ export class MusicItem {
   }
 
   get titleDisplay() {
-    return this.title || this.filename || ''
+    return this.title || this.fileInfo?.filename || ''
   }
 
-  get artisDisplay() {
+  get artistsAlbumDisplay() {
+    const {artist, album} = this
+    return [artist, album].join(' - ')
+  }
+
+  get artist() {
     return (this.artists || []).join(', ')
   }
 

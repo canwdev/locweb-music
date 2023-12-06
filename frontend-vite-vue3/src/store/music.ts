@@ -8,16 +8,14 @@ import {useSettingsStore} from '@/store/settings'
 type IStore = {
   musicItem: MusicItem | null
   playingList: MusicItem[]
-  playlistBackup: MusicItem[]
   playingIndex: number
-  playingIndexBackup: number
   paused: boolean
-  isRandom: boolean
   currentTime: number
   duration: number
   playbackRate: number
   stopCountdown: any // setTimeout timer
   isPlayEnded: boolean
+  isLoadedAutoplay: boolean // 是否在加载结束后自动播放
 }
 
 export const useMusicStore = defineStore('music', {
@@ -25,34 +23,22 @@ export const useMusicStore = defineStore('music', {
     return {
       musicItem: new MusicItem(),
       playingList: [], // current playing list
-      playlistBackup: [], // backup original list from random mode
       playingIndex: 0, // playing music index in playingList
-      playingIndexBackup: 0, // backup original index from random mode
       paused: true, // is current playing paused
-      isRandom: false, // is random choose next song to play
       currentTime: 0,
       duration: 0,
       playbackRate: 1,
       stopCountdown: null,
       isPlayEnded: false,
+      isLoadedAutoplay: true,
     }
   },
   actions: {
-    /**
-     * 清除随机播放队列
-     */
-    clearShuffle() {
-      this.playlistBackup = []
-      this.playingIndex = this.playingIndexBackup = 0
-      this.isRandom = false
-    },
     /**
      * 从文件列表播放音乐
      */
     playFromFiles(item: BackendFileItem, fileList: BackendFileItem[] = []) {
       if (isSupportedMusicFormat(item.filename)) {
-        this.clearShuffle()
-
         // format data
         let list = fileList
           .filter((i) => {
@@ -69,10 +55,7 @@ export const useMusicStore = defineStore('music', {
         this.playingIndex = idx
         this.musicItem = playItem
 
-        setTimeout(() => {
-          // todo: 网络慢时不能正常播放
-          globalEventBus.emit(GlobalEvents.ACTION_PLAY)
-        }, 0)
+        this.isLoadedAutoplay = true
         return
       }
       window.$message.error('格式不支持')
@@ -140,13 +123,10 @@ export const useMusicStore = defineStore('music', {
       this.playingIndex = index
       console.log('[playByIndex]', index, this.musicItem)
       setTimeout(() => {
-        // todo: 网络慢时不能正常播放
         if (this.isPlayEnded) {
           globalEventBus.emit(GlobalEvents.ACTION_PLAY)
           this.isPlayEnded = false
         } else if (this.paused) {
-          globalEventBus.emit(GlobalEvents.ACTION_PAUSE)
-        } else {
           globalEventBus.emit(GlobalEvents.ACTION_PLAY)
         }
       }, 100)

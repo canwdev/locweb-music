@@ -1,5 +1,5 @@
 <script>
-import CoverDisplay from '@/components/MusicPlayer/CoverDisplay.vue'
+import CoverDisplay from '@/components/Apps/MusicPlayer/CoverDisplay.vue'
 
 export default {
   name: 'CoverMini',
@@ -31,9 +31,6 @@ export default {
 .btn-cover {
   width: 50px;
   height: 50px;
-  background: white;
-  color: black;
-  font-size: 28px;
   border-radius: 0;
   overflow: hidden;
   .cover-display {

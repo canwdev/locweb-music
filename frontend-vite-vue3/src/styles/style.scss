@@ -82,6 +82,12 @@ html, body, #app {
   font-weight: 900;
 }
 
+.text-overflow {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* Vue transitions */
 .fade-enter-active,
 .fade-leave-active {
@@ -94,18 +100,19 @@ html, body, #app {
 }
 
 
-.fade-scale-enter-active,
-.fade-scale-leave-active {
+.mc-fade-scale-enter-active,
+.mc-fade-scale-leave-active {
   transform: scale(1);
   transition: opacity 0.3s, transform 0.3s;
 }
 
-.fade-scale-enter-from,
-.fade-scale-leave-to {
+.mc-fade-scale-enter-from,
+.mc-fade-scale-leave-to {
   opacity: 0;
   transform: scale(0.92);
   transition: opacity 0.3s, transform 0.3s;
 }
+
 
 * {
 

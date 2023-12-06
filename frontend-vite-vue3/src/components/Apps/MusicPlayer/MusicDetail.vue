@@ -1,7 +1,7 @@
 <script lang="ts">
 import {defineComponent} from 'vue'
 import {useMusicStore} from '@/store/music'
-import CoverDisplay from '@/components/MusicPlayer/CoverDisplay.vue'
+import CoverDisplay from '@/components/Apps/MusicPlayer/CoverDisplay.vue'
 import globalEventBus, {GlobalEvents} from '@/utils/bus'
 
 const DetailTabEnum = {
@@ -241,7 +241,7 @@ export default defineComponent({
 
     button {
       &.active {
-        color: pink;
+        color: $color_theme;
       }
     }
 
@@ -255,13 +255,11 @@ export default defineComponent({
     max-width: 300px;
   }
 
-  $border_color: rgba(91, 85, 85, 0.3);
-
   .cover-wrap {
     position: relative;
     width: 100%;
     height: 100%;
-    box-shadow: 0 0 0 1px $border_color;
+    box-shadow: 0 0 0 1px $color_border;
     overflow: hidden;
 
     .big-cover {
@@ -299,13 +297,13 @@ export default defineComponent({
         flex: 1;
         padding: 10px 0;
         font-weight: bold;
-        border-bottom: 1px solid $border_color;
+        border-bottom: 1px solid $color_border;
         border-radius: 0;
 
         &.active {
-          color: #00ccff;
+          color: $color_theme;
           border-width: 2px;
-          border-bottom-color: #00ccff;
+          border-bottom-color: $color_theme;
         }
       }
     }

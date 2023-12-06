@@ -2,7 +2,7 @@
 import {defineComponent} from 'vue'
 import {useMusicStore} from '@/store/music'
 import {formatTimeHMS} from '@/utils'
-import CoverMini from '@/components/MusicPlayer/CoverMini.vue'
+import CoverMini from '@/components/Apps/MusicPlayer/CoverMini.vue'
 import TkSeekbar from '@/components/CommonUI/TkSeekBar.vue'
 import {getLoopModeMap, loopModeMap, LoopModeType, LoopModeTypeValues} from '@/enum'
 import {useSettingsStore} from '@/store/settings'
@@ -234,8 +234,8 @@ export default defineComponent({
     height: 25px;
     width: 100%;
     box-sizing: border-box;
-    border-top: 1px solid #ccc;
-    border-bottom: 1px solid #ccc;
+    border-top: 1px solid $color_border;
+    border-bottom: 1px solid $color_border;
     position: relative;
     z-index: $bottomZIndex;
     background: white;
@@ -267,7 +267,7 @@ export default defineComponent({
 
     .btn-song-info {
       height: 100%;
-      border-right: 1px solid #ccc;
+      border-right: 1px solid $color_border;
       text-align: left;
       padding-left: 5px;
       line-height: 1.1;
@@ -276,14 +276,14 @@ export default defineComponent({
 
       .title {
         font-size: 14px;
-        font-weight: bold;
+        font-weight: 500;
         margin-bottom: 2px;
       }
 
       .artist,
       .album {
-        opacity: 0.8;
         font-size: 10px;
+        font-weight: 400;
       }
 
       & > span {
@@ -315,11 +315,11 @@ export default defineComponent({
         }
 
         &.active {
-          color: rebeccapurple;
+          color: $color_theme;
         }
 
         & + button {
-          border-left: 1px solid #ccc;
+          border-left: 1px solid $color_border;
         }
       }
     }

@@ -2,7 +2,7 @@
 import {defineComponent} from 'vue'
 import moment from 'moment'
 
-const timeFormat = 'HH:mm:ss YYYY/MM/DD ddd'
+const timeFormat = 'HH:mm:ss<br>ddd YYYY/MM/DD'
 
 export default defineComponent({
   name: 'TrayClock',
@@ -27,12 +27,14 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="tray-datetime">{{ time }}</div>
+  <div class="tray-datetime" v-html="time"></div>
 </template>
 
 <style lang="scss" scoped>
 .tray-datetime {
-  font-size: 12px;
   padding: 2px 5px;
+  text-align: right;
+  font-size: 10px;
+  line-height: 1.5;
 }
 </style>

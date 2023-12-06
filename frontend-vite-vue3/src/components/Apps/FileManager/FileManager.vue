@@ -296,7 +296,7 @@ export default defineComponent({
       }
 
       & + .file-list-item {
-        border-top: 1px solid #ccc;
+        border-top: 1px solid $color_border;
       }
     }
   }

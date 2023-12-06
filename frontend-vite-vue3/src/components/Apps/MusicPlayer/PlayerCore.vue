@@ -55,10 +55,12 @@ export default defineComponent({
 
       audio.addEventListener('play', () => {
         musicStore.paused = false
+        musicStore.isLoadedAutoplay = true
       })
 
       audio.addEventListener('pause', () => {
         musicStore.paused = true
+        musicStore.isLoadedAutoplay = false
       })
 
       audio.addEventListener('ended', () => {
@@ -68,6 +70,9 @@ export default defineComponent({
       audio.addEventListener('canplay', (evt) => {
         // console.log('canplay', audio)
         musicStore.duration = evt.target.duration
+        if (musicStore.isLoadedAutoplay) {
+          play()
+        }
       })
 
       audio.addEventListener('timeupdate', (evt) => {

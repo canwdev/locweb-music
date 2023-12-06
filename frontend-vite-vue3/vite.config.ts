@@ -24,6 +24,13 @@ export default defineConfig({
       },
     },
   },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        additionalData: `@import "@/styles/_variables.scss";`,
+      },
+    },
+  },
   plugins: [
     // VitePWA({
     //   registerType: 'autoUpdate',
