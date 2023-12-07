@@ -16,14 +16,7 @@ export default defineComponent({
       taskList,
       systemStore,
       handleItemClick(item) {
-        const minimized = item.minimized
-        systemStore.setTaskActive(item)
-
-        setTimeout(() => {
-          if (!minimized) {
-            item.minimized = true
-          }
-        })
+        const result = systemStore.setTaskActive(item, true)
       },
     }
   },

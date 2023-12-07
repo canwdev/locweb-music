@@ -47,14 +47,14 @@ export const StartMenuAppList = [
       height: '600px',
     },
     component: defineAsyncComponent(() => import('@/components/Apps/FileManager/index.vue')),
-    autostart: false,
+    autostart: true,
   },
   {
     icon: IconMusic,
     title: 'Music Player',
     winId: 'player',
     component: defineAsyncComponent(() => import('@/components/Apps/MusicPlayer/index.vue')),
-    autostart: false,
+    autostart: true,
     singleInstance: true,
   },
   {

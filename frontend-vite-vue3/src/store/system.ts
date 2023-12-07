@@ -13,6 +13,10 @@ export const useSystemStore = defineStore('system', {
     }
   },
   actions: {
+    /**
+     * 从快捷方式创建任务
+     * @param shortcut
+     */
     createTask(shortcut: ShortcutItem) {
       if (shortcut.singleInstance) {
         // 查找实例是否已经存在，防止重复启动
@@ -26,6 +30,10 @@ export const useSystemStore = defineStore('system', {
       this.tasks = [...this.tasks, newTask]
       this.activeId = newTask.guid
     },
+    /**
+     * 关闭任务
+     * @param guid
+     */
     closeTask(guid) {
       const _tasks = [...this.tasks]
       const idx = _tasks.findIndex((i) => i.guid === guid)
@@ -46,10 +54,30 @@ export const useSystemStore = defineStore('system', {
         this.setTaskActive(_tasks[lastIdx])
       }
     },
+    /**
+     * 关闭所有程序
+     */
     shutdown() {
       this.tasks.forEach((task) => this.closeTask(task.guid))
     },
-    setTaskActive(task: TaskItem) {
+    /**
+     * 激活任务
+     * @param task
+     * @param isTaskbar 是否来自任务栏
+     */
+    setTaskActive(task: TaskItem, isTaskbar = false) {
+      if (isTaskbar) {
+        // 控制任务自动显示或隐藏
+        if (this.activeId === task.guid) {
+          task.minimized = !task.minimized
+          return
+        }
+      }
+
+      // 防止重复操作
+      if (this.activeId === task.guid) {
+        return
+      }
       this.activeId = task.guid
       if (task.windowRef) {
         task.windowRef.setActive()

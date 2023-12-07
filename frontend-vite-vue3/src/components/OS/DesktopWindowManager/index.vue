@@ -63,6 +63,7 @@ export default defineComponent({
           :allow-move="!isMaximum"
           :transition-name="null"
           :key="task.guid"
+          :maximum-style="{width: 'auto', height: 'calc(100% - 34px)'}"
           @onTitleBarDbclick="isMaximum = !isMaximum"
         >
           <template #titleBarLeft>

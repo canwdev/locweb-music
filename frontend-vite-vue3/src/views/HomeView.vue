@@ -30,15 +30,6 @@ export default defineComponent({
 
 <template>
   <DesktopWindowManager>
-    <!--    <ViewPortWindow visible wid="fm" style="min-height: 300px; min-width: 800px">-->
-    <!--      <template #titleBarLeft>File Manager</template>-->
-    <!--      <FileManager />-->
-    <!--    </ViewPortWindow>-->
-    <!--    <ViewPortWindow visible wid="player" style="min-height: 600px; min-width: 500px">-->
-    <!--      <template #titleBarLeft>Music Player</template>-->
-    <!--      <MusicPlayer />-->
-    <!--    </ViewPortWindow>-->
-
     <TaskBar />
   </DesktopWindowManager>
 </template>

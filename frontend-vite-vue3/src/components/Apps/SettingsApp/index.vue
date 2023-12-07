@@ -2,6 +2,7 @@
 import {defineComponent} from 'vue'
 import {
   customThemeOptions,
+  CustomThemeType,
   ldThemeOptions,
   loopModeMap,
   StOptionItem,
@@ -18,63 +19,65 @@ export default defineComponent({
     const {t: $t} = useI18n()
     const settingsStore = useSettingsStore()
 
-    const imageOptions = ref<StOptionItem[]>([
-      {
-        label: '个性化',
-        key: 'personalization',
-        children: [
-          {
-            label: '色彩模式',
-            key: 'ldTheme',
-            store: settingsStore,
-            type: StOptionType.MULTIPLE_SWITCH,
-            selectOptions: ldThemeOptions,
-          },
-          {
-            label: '主题',
-            key: 'customTheme',
-            store: settingsStore,
-            type: StOptionType.SELECT,
-            selectOptions: customThemeOptions,
-          },
-          {
-            label: 'enableRoundedTheme',
-            key: 'enableRoundedTheme',
-            store: settingsStore,
-            type: StOptionType.SWITCH,
-          },
-          {
-            label: 'enableAeroTheme',
-            key: 'enableAeroTheme',
-            store: settingsStore,
-            type: StOptionType.SWITCH,
-          },
-        ],
-      },
-      {
-        label: '系统设置',
-        key: 'system',
-        children: [
-          {
-            label: '音量',
-            key: 'audioVolume',
-            store: settingsStore,
-            type: StOptionType.SLIDER,
-            selectOptions: ldThemeOptions,
-          },
-          {
-            label: '播放模式',
-            key: 'loopMode',
-            store: settingsStore,
-            type: StOptionType.SELECT,
-            selectOptions: Object.values(loopModeMap).map((i) => ({
-              label: $t(i.i18nKey),
-              value: i.value,
-            })),
-          },
-        ],
-      },
-    ])
+    const imageOptions = computed((): StOptionItem[] => {
+      return [
+        {
+          label: '个性化',
+          key: 'personalization',
+          children: [
+            {
+              label: '色彩模式',
+              key: 'ldTheme',
+              store: settingsStore,
+              type: StOptionType.MULTIPLE_SWITCH,
+              selectOptions: ldThemeOptions,
+            },
+            {
+              label: '主题',
+              key: 'customTheme',
+              store: settingsStore,
+              type: StOptionType.SELECT,
+              selectOptions: customThemeOptions,
+            },
+            settingsStore.customTheme === CustomThemeType.DEFAULT && {
+              label: 'enableRoundedTheme',
+              key: 'enableRoundedTheme',
+              store: settingsStore,
+              type: StOptionType.SWITCH,
+            },
+            settingsStore.customTheme === CustomThemeType.DEFAULT && {
+              label: 'Aero 效果',
+              key: 'enableAeroTheme',
+              store: settingsStore,
+              type: StOptionType.SWITCH,
+            },
+          ].filter(Boolean),
+        },
+        {
+          label: '系统设置',
+          key: 'system',
+          children: [
+            {
+              label: '音量',
+              key: 'audioVolume',
+              store: settingsStore,
+              type: StOptionType.SLIDER,
+              selectOptions: ldThemeOptions,
+            },
+            {
+              label: '播放模式',
+              key: 'loopMode',
+              store: settingsStore,
+              type: StOptionType.SELECT,
+              selectOptions: Object.values(loopModeMap).map((i) => ({
+                label: $t(i.i18nKey),
+                value: i.value,
+              })),
+            },
+          ],
+        },
+      ]
+    })
 
     return {
       imageOptions,
