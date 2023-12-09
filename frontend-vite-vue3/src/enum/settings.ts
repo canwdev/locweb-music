@@ -1,31 +1,3 @@
-// 选项Item
-export interface StOptionItem {
-  label: string // 选项标题
-  key: string // 选项对应后端配置键值
-  store?: any // 定义store属性（如settingsStore），传入此值后无需传入value，将根据key动态读写store属性
-  value?: boolean | string | number // 选项实际值
-  type?: StOptionType
-  selectOptions?: any[] // 当type为 SELECT | MULTIPLE_SWITCH 时，选项的下拉数据
-  disabled?: boolean // 是否已禁用
-  children?: StOptionItem[]
-  icon?: string // 图标
-  subtitle?: string // 小标题
-  cls?: string // 自定义类名
-}
-
-// 选项的类型
-export enum StOptionType {
-  SWITCH = 'switch',
-  MULTIPLE_SWITCH = 'multiple_switch',
-  SLIDER = 'slider',
-  SELECT = 'select',
-}
-
-export type SwitchOption = {
-  label: string
-  value: string
-}
-
 export enum LdThemeType {
   SYSTEM = 0,
   LIGHT = 1,

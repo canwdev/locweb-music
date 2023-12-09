@@ -1,7 +1,7 @@
 <script lang="ts">
 import {defineComponent, PropType} from 'vue'
-import {StOptionItem, StOptionType} from '@/enum/settings'
-import OptionItem from '@/components/Apps/SettingsApp/OptionUI/OptionItem.vue'
+import OptionItem from './OptionItem.vue'
+import {StOptionItem, StOptionType} from './enum'
 
 export default defineComponent({
   name: 'OptionUI',
@@ -48,8 +48,3 @@ export default defineComponent({
     />
   </div>
 </template>
-
-<style lang="scss" scoped>
-.option-ui {
-}
-</style>

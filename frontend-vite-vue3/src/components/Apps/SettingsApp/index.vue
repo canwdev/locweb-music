@@ -1,16 +1,10 @@
 <script lang="ts">
 import {defineComponent} from 'vue'
-import {
-  customThemeOptions,
-  CustomThemeType,
-  ldThemeOptions,
-  loopModeMap,
-  StOptionItem,
-  StOptionType,
-} from '@/enum/settings'
-import OptionUI from '@/components/Apps/SettingsApp/OptionUI/index.vue'
+import {customThemeOptions, CustomThemeType, ldThemeOptions, loopModeMap} from '@/enum/settings'
+import OptionUI from '@/components/CommonUI/OptionUI/index.vue'
 import {useSettingsStore} from '@/store/settings'
 import {useI18n} from 'vue-i18n'
+import {StOptionItem, StOptionType} from '@/components/CommonUI/OptionUI/enum'
 
 export default defineComponent({
   name: 'SettingsApp',
@@ -19,7 +13,7 @@ export default defineComponent({
     const {t: $t} = useI18n()
     const settingsStore = useSettingsStore()
 
-    const imageOptions = computed((): StOptionItem[] => {
+    const optionList = computed((): StOptionItem[] => {
       return [
         {
           label: '个性化',
@@ -80,8 +74,7 @@ export default defineComponent({
     })
 
     return {
-      imageOptions,
-      settingsStore,
+      optionList,
     }
   },
 })
@@ -89,7 +82,7 @@ export default defineComponent({
 
 <template>
   <div class="settings-app">
-    <OptionUI :option-list="imageOptions" />
+    <OptionUI :option-list="optionList" />
   </div>
 </template>
 

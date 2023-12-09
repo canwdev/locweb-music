@@ -1,8 +1,8 @@
 <script lang="ts">
 import {defineComponent, PropType} from 'vue'
-import {StOptionItem, StOptionType} from '@/enum/settings'
 import ItemAction from './ItemAction.vue'
 import {ChevronDown20Regular, Dismiss20Regular} from '@vicons/fluent'
+import {StOptionItem, StOptionType} from './enum'
 
 export default defineComponent({
   name: 'OptionItem',
@@ -74,9 +74,11 @@ export default defineComponent({
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .c-panel-item {
-  border-bottom: 1px solid $color_border;
+  & + .c-panel-item {
+    border-top: 1px solid $color_border;
+  }
 
   .panel-header {
     min-height: 40px;
@@ -134,10 +136,14 @@ export default defineComponent({
           }
         }
 
+        .item-title-wrap {
+          line-height: 1.3;
+        }
+
         .item-subtitle {
-          font-size: 14px;
+          font-size: 12px;
           font-weight: 400;
-          color: rgba(255, 255, 255, 0.6);
+          opacity: 0.6;
         }
       }
     }

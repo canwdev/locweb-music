@@ -1,7 +1,8 @@
 <script lang="ts">
 import {defineComponent, PropType} from 'vue'
 import {useModelWrapper} from '@/hooks/use-model-wrapper'
-import {SwitchOption} from '@/enum/settings'
+
+import {SwitchOption} from '@/components/CommonUI/OptionUI/enum'
 
 export default defineComponent({
   name: 'RectSwitch',
