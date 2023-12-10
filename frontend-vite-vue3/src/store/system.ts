@@ -66,6 +66,7 @@ export const useSystemStore = defineStore('system', {
      * @param isTaskbar 是否来自任务栏
      */
     setTaskActive(task: TaskItem, isTaskbar = false) {
+      // console.log('[setTaskActive]', task, isTaskbar)
       if (isTaskbar) {
         // 控制任务自动显示或隐藏
         if (this.activeId === task.guid) {

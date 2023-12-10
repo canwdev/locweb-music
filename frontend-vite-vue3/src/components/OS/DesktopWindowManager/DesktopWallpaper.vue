@@ -1,13 +1,27 @@
 <script lang="ts">
 import {defineComponent} from 'vue'
+import {useSettingsStore} from '@/store/settings'
 
 export default defineComponent({
   name: 'DesktopWallpaper',
+  setup() {
+    const settingsStore = useSettingsStore()
+
+    return {
+      bgStyle: computed(() => {
+        const s: any = {}
+        if (settingsStore.desktopWallpaper) {
+          s.backgroundImage = `url(${settingsStore.desktopWallpaper})`
+        }
+        return s
+      }),
+    }
+  },
 })
 </script>
 
 <template>
-  <div class="desktop-wallpaper">
+  <div class="desktop-wallpaper" :style="bgStyle">
     <slot></slot>
   </div>
 </template>
@@ -15,7 +29,9 @@ export default defineComponent({
 <style lang="scss" scoped>
 .desktop-wallpaper {
   background-color: #3a6ea5;
-  background-image: url('https://api.dujin.org/bing/1920.php');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
   width: 100%;
   height: 100%;
   position: absolute;

@@ -6,6 +6,22 @@ import {useSettingsStore} from '@/store/settings'
 import {useI18n} from 'vue-i18n'
 import {StOptionItem, StOptionType} from '@/components/CommonUI/OptionUI/enum'
 
+const getWallpaperText = () => {
+  const list = [
+    {label: '必应壁纸', url: 'https://api.dujin.org/bing/1920.php'},
+    {label: '二次元', url: 'https://api.dujin.org/pic/'},
+    {label: '吉卜力', url: 'https://api.dujin.org/pic/ghibli'},
+    {label: '风景', url: 'https://api.dujin.org/pic/fengjing'},
+  ]
+  let tpl = `<b><a href="https://www.dujin.org/12142.html" target="_blank">随机壁纸API</a></b>`
+
+  list.forEach((item) => {
+    tpl += `<br>${item.label}: <a href="${item.url}" target="_blank">${item.url}</a>`
+  })
+
+  return tpl
+}
+
 export default defineComponent({
   name: 'SettingsApp',
   components: {OptionUI},
@@ -19,6 +35,13 @@ export default defineComponent({
           label: '个性化',
           key: 'personalization',
           children: [
+            {
+              label: '桌面壁纸',
+              key: 'desktopWallpaper',
+              store: settingsStore,
+              type: StOptionType.INPUT,
+              tips: getWallpaperText(),
+            },
             {
               label: '色彩模式',
               key: 'ldTheme',

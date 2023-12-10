@@ -11,6 +11,7 @@ interface IStore {
   isWindowed: boolean
   // 是否显示任务栏时钟
   isShowClock: boolean
+  desktopWallpaper: string
 }
 
 export const useSettingsStore = defineStore('settingsStore', {
@@ -24,6 +25,7 @@ export const useSettingsStore = defineStore('settingsStore', {
       enableAeroTheme: false,
       isWindowed: true,
       isShowClock: true,
+      desktopWallpaper: 'https://api.dujin.org/bing/1920.php',
     }
   },
   actions: {

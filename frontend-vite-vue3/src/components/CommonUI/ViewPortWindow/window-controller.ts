@@ -203,8 +203,6 @@ export class WindowController {
       dragTargetEl.addEventListener(eventName, this.updateZIndex)
     })
 
-    this.updateZIndex()
-
     this.handleResizeStart = this.handleResizeStart.bind(this)
     this.handleResizeMove = this.handleResizeMove.bind(this)
     this.handleResizeStop = this.handleResizeStop.bind(this)
@@ -217,6 +215,10 @@ export class WindowController {
         })
       })
     }
+
+    setTimeout(() => {
+      this.updateZIndex()
+    })
 
     this.debugLog('initialized', this)
   }
@@ -461,7 +463,7 @@ export class WindowController {
       }
     }
     if (!this.allowMove && !this.maximized) {
-      console.log('return')
+      this.debugLog('[updateZIndex] return')
       return
     }
     const {dragTargetEl} = this.options
