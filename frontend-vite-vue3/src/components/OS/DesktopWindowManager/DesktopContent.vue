@@ -1,7 +1,8 @@
 <script lang="ts">
 import {defineComponent} from 'vue'
-import {ShortcutItem, StartMenuAppList} from '@/enum/os'
+import {ShortcutItem} from '@/enum/os'
 import {useSystemStore} from '@/store/system'
+import {StartMenuAppList} from '@/enum/app'
 
 export default defineComponent({
   name: 'DesktopContent',
@@ -21,17 +22,17 @@ export default defineComponent({
 
 <template>
   <div class="desktop-content">
-    <div
+    <button
       v-for="(item, index) in StartMenuAppList"
       :key="index"
       @dblclick="handleItemClick(item)"
-      class="desktop-icon-wrap"
+      class="desktop-icon-wrap btn-no-style"
     >
-      <div class="desktop-icon">
+      <span class="desktop-icon">
         <img class="desktop-icon-image" :src="item.icon" :alt="item.title" />
-        <div class="desktop-icon-name">{{ item.title }}</div>
-      </div>
-    </div>
+        <span class="desktop-icon-name">{{ item.title }}</span>
+      </span>
+    </button>
   </div>
 </template>
 
@@ -54,6 +55,9 @@ export default defineComponent({
       align-items: center;
       flex-direction: column;
       cursor: default;
+      &:active {
+        outline: 1px dashed white;
+      }
       &:hover {
         background-color: rgba(224, 224, 224, 0.3);
       }
@@ -62,6 +66,7 @@ export default defineComponent({
         flex-shrink: 0;
         width: 48px;
         height: 48px;
+        pointer-events: none;
       }
 
       .desktop-icon-name {
@@ -70,6 +75,7 @@ export default defineComponent({
         padding-top: 2px;
         padding-bottom: 2px;
         line-height: 1.4;
+        text-shadow: 1px 1px 2px #000;
       }
     }
   }

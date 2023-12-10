@@ -2,8 +2,8 @@
 import {defineComponent} from 'vue'
 import TaskBar from '@/components/OS/TaskBar/index.vue'
 import DesktopWindowManager from '@/components/OS/DesktopWindowManager/index.vue'
-import {StartMenuAppList} from '@/enum/os'
 import {useSystemStore} from '@/store/system'
+import {StartMenuAppList} from '@/enum/app'
 
 export default defineComponent({
   name: 'HomeView',

@@ -5,6 +5,7 @@ import ViewPortWindow from '@/components/CommonUI/ViewPortWindow/index.vue'
 import {useSystemStore} from '@/store/system'
 import {ArrowMaximize20Regular, ArrowMinimize20Regular, Subtract20Filled} from '@vicons/fluent'
 import DesktopContent from '@/components/OS/DesktopWindowManager/DesktopContent.vue'
+import {useSettingsStore} from '@/store/settings'
 
 export default defineComponent({
   name: 'DesktopWindowManager',
@@ -18,6 +19,7 @@ export default defineComponent({
   },
   setup() {
     const systemStore = useSystemStore()
+    const settingsStore = useSettingsStore()
     const vpWindowRefs = ref()
     const isMaximum = ref(false)
 
@@ -37,8 +39,15 @@ export default defineComponent({
 
     return {
       systemStore,
+      settingsStore,
       vpWindowRefs,
       isMaximum,
+      mIsMaximum: computed(() => {
+        if (!settingsStore.isWindowed) {
+          return true
+        }
+        return isMaximum.value
+      }),
     }
   },
 })
@@ -59,8 +68,8 @@ export default defineComponent({
           :visible="!task.minimized"
           :wid="task.winId"
           :init-win-options="task.winOptions"
-          :maximum="isMaximum"
-          :allow-move="!isMaximum"
+          :maximum="mIsMaximum"
+          :allow-move="!mIsMaximum"
           :transition-name="null"
           :key="task.guid"
           :maximum-style="{width: 'auto', height: 'calc(100% - 34px)'}"
@@ -76,7 +85,7 @@ export default defineComponent({
                 <Subtract20Filled />
               </n-icon>
             </button>
-            <button @click="isMaximum = !isMaximum">
+            <button @click="isMaximum = !isMaximum" v-if="settingsStore.isWindowed">
               <n-icon size="20">
                 <ArrowMinimize20Regular v-if="isMaximum" />
                 <ArrowMaximize20Regular v-else />

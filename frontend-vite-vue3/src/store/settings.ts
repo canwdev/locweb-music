@@ -7,6 +7,10 @@ interface IStore {
   customTheme: CustomThemeType
   enableRoundedTheme: boolean
   enableAeroTheme: boolean
+  // 是否开启窗口模式
+  isWindowed: boolean
+  // 是否显示任务栏时钟
+  isShowClock: boolean
 }
 
 export const useSettingsStore = defineStore('settingsStore', {
@@ -18,6 +22,8 @@ export const useSettingsStore = defineStore('settingsStore', {
       customTheme: CustomThemeType.DEFAULT,
       enableRoundedTheme: true,
       enableAeroTheme: false,
+      isWindowed: true,
+      isShowClock: true,
     }
   },
   actions: {

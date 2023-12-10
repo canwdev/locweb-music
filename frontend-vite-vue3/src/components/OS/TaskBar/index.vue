@@ -3,18 +3,21 @@ import {defineComponent} from 'vue'
 import TrayClock from '@/components/OS/TaskBar/TrayClock.vue'
 import StartMenu from '@/components/OS/StartMenu/index.vue'
 import {useSystemStore} from '@/store/system'
+import {useSettingsStore} from '@/store/settings'
 
 export default defineComponent({
   name: 'TaskBar',
   components: {StartMenu, TrayClock},
   setup() {
     const systemStore = useSystemStore()
+    const settingsStore = useSettingsStore()
     const isShowStart = ref(false)
     const taskList = ref([])
     return {
       isShowStart,
       taskList,
       systemStore,
+      settingsStore,
       handleItemClick(item) {
         const result = systemStore.setTaskActive(item, true)
       },
@@ -50,7 +53,7 @@ export default defineComponent({
       </div>
       <div class="task-tray _fc">
         <div class="tray-list themed-field _fc">
-          <TrayClock />
+          <TrayClock v-if="settingsStore.isShowClock" />
         </div>
       </div>
     </div>

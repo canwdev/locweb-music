@@ -1,10 +1,11 @@
 <script lang="ts">
 import {defineComponent} from 'vue'
 import StartMenuItem from '@/components/OS/StartMenu/StartMenuItem.vue'
-import {ShortcutItem, StartMenuAppList, SystemAppList} from '@/enum/os'
+import {ShortcutItem} from '@/enum/os'
 import {useSystemStore} from '@/store/system'
 import {useModelWrapper} from '@/hooks/use-model-wrapper'
 import clickOutSide from '@/utils/directives/clickoutside'
+import {StartMenuAppList, SystemAppList} from '@/enum/app'
 
 export default defineComponent({
   name: 'StartMenu',
@@ -105,14 +106,13 @@ export default defineComponent({
     align-items: flex-start;
     justify-content: space-between;
     padding: 8px;
-
+    gap: 8px;
     .start-menu-left {
       flex: 1;
     }
 
     .start-menu-right {
       width: 150px;
-      margin-left: 10px;
       button {
         padding: 4px 10px;
         font-size: 14px;
@@ -122,7 +122,6 @@ export default defineComponent({
 
   .program-list {
     border: 1px solid;
-    padding: 2px;
     background-color: #fff;
     min-height: 300px;
   }

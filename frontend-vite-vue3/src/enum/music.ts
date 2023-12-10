@@ -44,7 +44,9 @@ export class MusicItem {
       path: this.fileInfo.path,
       filename: this.fileInfo.filename,
     })
-    this.cover = API_PROXY_BASE + detail.cover
+    if (detail.cover) {
+      this.cover = API_PROXY_BASE + detail.cover
+    }
     this.lyric = detail.lyric || ''
 
     const {metadata} = detail

@@ -52,6 +52,12 @@ export default defineComponent({
           key: 'system',
           children: [
             {
+              label: '多窗口模式',
+              key: 'isWindowed',
+              store: settingsStore,
+              type: StOptionType.SWITCH,
+            },
+            {
               label: '音量',
               key: 'audioVolume',
               store: settingsStore,
@@ -67,6 +73,12 @@ export default defineComponent({
                 label: $t(i.i18nKey),
                 value: i.value,
               })),
+            },
+            {
+              label: '显示任务栏时钟',
+              key: 'isShowClock',
+              store: settingsStore,
+              type: StOptionType.SWITCH,
             },
           ],
         },

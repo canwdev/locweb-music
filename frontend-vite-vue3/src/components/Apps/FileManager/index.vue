@@ -143,7 +143,7 @@ export default defineComponent({
       </div>
     </div>
     <div class="explorer-content _scrollbar_mini">
-      <n-space align="center" justify="center" v-show="isLoading">
+      <n-space align="center" justify="center" v-if="isLoading">
         <n-spin />
       </n-space>
       <div v-show="!isLoading" class="file-list">
