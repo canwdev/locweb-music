@@ -10,7 +10,8 @@ interface IStore {
   // 是否开启窗口模式
   isWindowed: boolean
   // 是否显示任务栏时钟
-  isShowClock: boolean
+  taskbarShowClock: boolean
+  taskbarIconOnly: boolean
   desktopWallpaper: string
 }
 
@@ -24,7 +25,8 @@ export const useSettingsStore = defineStore('settingsStore', {
       enableRoundedTheme: true,
       enableAeroTheme: false,
       isWindowed: true,
-      isShowClock: true,
+      taskbarShowClock: true,
+      taskbarIconOnly: false,
       desktopWallpaper: 'https://api.dujin.org/bing/1920.php',
     }
   },

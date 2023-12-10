@@ -5,11 +5,16 @@ import {Component} from 'vue'
 export interface ShortcutItem {
   title: string
   icon: string
-  component: any // 动态引入组件
-  winId: string | null // 窗口id，设置用于保存窗口的位置和大小
-  winOptions: WinOptions | null // 窗口初始化大小和位置
-  autostart: boolean // 是否自动启动
-  singleInstance: boolean // 是否为单实例
+  // 动态引入组件
+  component: any
+  // 窗口id，设置用于保存窗口的位置和大小
+  winId: string | null
+  // 窗口初始化大小和位置
+  winOptions: WinOptions | null
+  // 是否自动启动
+  autostart: boolean
+  // 是否为单实例
+  singleInstance: boolean
 }
 
 export interface TaskItem {
@@ -17,10 +22,16 @@ export interface TaskItem {
   title: string
   icon: string
   winId: string | null
-  winOptions: WinOptions | null // 窗口初始化大小和位置
-  windowRef: any // ViewPortWindow $ref
-  component: Component | null // defineAsyncComponent(() => import(''))
-  minimized: boolean // 是否最小化
+  // 窗口初始化大小和位置
+  winOptions: WinOptions | null
+  // ViewPortWindow $ref
+  windowRef: any
+  // defineAsyncComponent(() => import(''))
+  component: Component | null
+  // 是否最小化
+  minimized: boolean
+  // 是否最大化
+  maximized: boolean
 }
 
 export class TaskItem {
@@ -32,5 +43,6 @@ export class TaskItem {
     this.winOptions = options.winOptions
     this.component = shallowRef(options.component)
     this.minimized = options.minimized || false
+    this.maximized = options.maximized || false
   }
 }

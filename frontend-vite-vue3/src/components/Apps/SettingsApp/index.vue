@@ -81,6 +81,18 @@ export default defineComponent({
               type: StOptionType.SWITCH,
             },
             {
+              label: '任务栏显示时钟',
+              key: 'taskbarShowClock',
+              store: settingsStore,
+              type: StOptionType.SWITCH,
+            },
+            {
+              label: '任务栏只显示图标',
+              key: 'taskbarIconOnly',
+              store: settingsStore,
+              type: StOptionType.SWITCH,
+            },
+            {
               label: '音量',
               key: 'audioVolume',
               store: settingsStore,
@@ -96,12 +108,6 @@ export default defineComponent({
                 label: $t(i.i18nKey),
                 value: i.value,
               })),
-            },
-            {
-              label: '显示任务栏时钟',
-              key: 'isShowClock',
-              store: settingsStore,
-              type: StOptionType.SWITCH,
             },
           ],
         },
@@ -123,6 +129,9 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .settings-app {
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
   height: 100%;
   overflow-y: auto;
 }

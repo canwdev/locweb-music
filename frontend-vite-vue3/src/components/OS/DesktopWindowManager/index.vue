@@ -6,6 +6,7 @@ import {useSystemStore} from '@/store/system'
 import {ArrowMaximize20Regular, ArrowMinimize20Regular, Subtract20Filled} from '@vicons/fluent'
 import DesktopContent from '@/components/OS/DesktopWindowManager/DesktopContent.vue'
 import {useSettingsStore} from '@/store/settings'
+import {TaskItem} from '@/enum/os'
 
 export default defineComponent({
   name: 'DesktopWindowManager',
@@ -21,7 +22,6 @@ export default defineComponent({
     const systemStore = useSystemStore()
     const settingsStore = useSettingsStore()
     const vpWindowRefs = ref()
-    const isMaximum = ref(false)
 
     watch(
       () => systemStore.tasks,
@@ -41,13 +41,12 @@ export default defineComponent({
       systemStore,
       settingsStore,
       vpWindowRefs,
-      isMaximum,
-      mIsMaximum: computed(() => {
+      getIsMaximum(task: TaskItem) {
         if (!settingsStore.isWindowed) {
           return true
         }
-        return isMaximum.value
-      }),
+        return task.maximized
+      },
     }
   },
 })
@@ -60,42 +59,37 @@ export default defineComponent({
     </DesktopWallpaper>
 
     <template v-for="task in systemStore.tasks" :key="task.guid">
-      <transition-group name="fade-scale">
-        <ViewPortWindow
-          ref="vpWindowRefs"
-          @onActive="systemStore.setTaskActive(task)"
-          @onClose="systemStore.closeTask(task.guid)"
-          :visible="!task.minimized"
-          :wid="task.winId"
-          :init-win-options="task.winOptions"
-          :maximum="mIsMaximum"
-          :allow-move="!mIsMaximum"
-          :transition-name="null"
-          :key="task.guid"
-          :maximum-style="{width: 'auto', height: 'calc(100% - 34px)'}"
-          @onTitleBarDbclick="isMaximum = !isMaximum"
-        >
-          <template #titleBarLeft>
-            <img class="window-icon" :src="task.icon" :alt="task.title" />
-            <span>{{ task.title }}</span>
-          </template>
-          <template #titleBarRightControls>
-            <button @click="task.minimized = true">
-              <n-icon size="20">
-                <Subtract20Filled />
-              </n-icon>
-            </button>
-            <button @click="isMaximum = !isMaximum" v-if="settingsStore.isWindowed">
-              <n-icon size="20">
-                <ArrowMinimize20Regular v-if="isMaximum" />
-                <ArrowMaximize20Regular v-else />
-              </n-icon>
-            </button>
-          </template>
+      <ViewPortWindow
+        ref="vpWindowRefs"
+        @onActive="systemStore.setTaskActive(task)"
+        @onClose="systemStore.closeTask(task.guid)"
+        :visible="!task.minimized"
+        :wid="task.winId"
+        :init-win-options="task.winOptions"
+        :maximum="getIsMaximum(task)"
+        :allow-move="!getIsMaximum(task)"
+        @onTitleBarDbclick="task.maximized = !task.maximized"
+      >
+        <template #titleBarLeft>
+          <img class="window-icon" :src="task.icon" :alt="task.title" />
+          <span>{{ task.title }}</span>
+        </template>
+        <template #titleBarRightControls>
+          <button @click="task.minimized = true">
+            <n-icon size="20">
+              <Subtract20Filled />
+            </n-icon>
+          </button>
+          <button @click="task.maximized = !task.maximized" v-if="settingsStore.isWindowed">
+            <n-icon size="20">
+              <ArrowMinimize20Regular v-if="task.maximized" />
+              <ArrowMaximize20Regular v-else />
+            </n-icon>
+          </button>
+        </template>
 
-          <component v-if="task.component" :is="task.component"></component>
-        </ViewPortWindow>
-      </transition-group>
+        <component v-if="task.component" :is="task.component"></component>
+      </ViewPortWindow>
     </template>
 
     <slot></slot>

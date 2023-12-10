@@ -47,7 +47,7 @@ export default defineComponent({
           @click="handleItemClick(item)"
         >
           <img v-if="item.icon" :src="item.icon" :alt="item.title" class="task-icon" />
-          <span class="text-overflow">
+          <span v-if="!settingsStore.taskbarIconOnly" class="text-overflow">
             {{ item.title }}
           </span>
           <!--          <span class="btn-close" @click="systemStore.closeTask(item.guid)">✕</span>-->
@@ -55,20 +55,28 @@ export default defineComponent({
       </div>
       <div class="task-tray _fc">
         <div class="tray-list _fc">
-          <TrayClock v-if="settingsStore.isShowClock" />
+          <TrayClock v-if="settingsStore.taskbarShowClock" />
         </div>
       </div>
     </div>
   </div>
 </template>
 
+<style lang="scss">
+.vp-window {
+  &._maximized {
+    bottom: $taskbar_height !important;
+    height: calc(100% - $taskbar_height) !important;
+  }
+}
+</style>
 <style lang="scss" scoped>
 .canos-task-bar {
   position: fixed;
   bottom: 0px;
   left: 0;
   right: 0;
-  height: 34px;
+  height: $taskbar_height;
   font-size: 14px;
   user-select: none;
   z-index: 100;
