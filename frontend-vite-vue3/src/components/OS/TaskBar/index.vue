@@ -31,14 +31,16 @@ export default defineComponent({
     <transition name="fade">
       <StartMenu v-model:visible="isShowStart" />
     </transition>
-    <div class="task-bar-container">
+    <div class="task-bar-container vp-panel">
       <div class="task-start-menu _fc">
-        <button class="start-button btn-no-style" @click="isShowStart = !isShowStart">Start</button>
+        <button class="vp-button start-button btn-no-style" @click="isShowStart = !isShowStart">
+          Start
+        </button>
         <!--        <button class="start-button btn-no-style" @click="systemStore.createTask()">+</button>-->
       </div>
       <div class="task-list _fc">
         <button
-          class="btn-no-style task-item"
+          class="btn-no-style task-item vp-button"
           v-for="item in systemStore.tasks"
           :key="item.guid"
           :class="{active: item.guid === systemStore.activeId}"
@@ -52,7 +54,7 @@ export default defineComponent({
         </button>
       </div>
       <div class="task-tray _fc">
-        <div class="tray-list themed-field _fc">
+        <div class="tray-list _fc">
           <TrayClock v-if="settingsStore.isShowClock" />
         </div>
       </div>
@@ -75,9 +77,11 @@ export default defineComponent({
     height: 100%;
     width: 100%;
     display: flex;
-    background-color: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(10px);
-    box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    border-radius: 0;
+    //background-color: rgba(255, 255, 255, 0.8);
+    //backdrop-filter: blur(10px);
+    //box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
 
     ._fc {
       height: 100%;

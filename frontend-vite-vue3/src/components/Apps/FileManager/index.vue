@@ -121,24 +121,26 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="explorer-wrap">
+  <div class="explorer-wrap vp-panel">
     <div class="explorer-header">
       <div class="nav-address">
         <div class="nav-wrap">
-          <button class="btn-action" @click="handleCreateFile">+ File</button>
-          <button class="btn-action" @click="handleCreateFolder">+ Folder</button>
+          <button disabled class="btn-action vp-button" @click="handleCreateFile">+ File</button>
+          <button disabled class="btn-action vp-button" @click="handleCreateFolder">
+            + Folder
+          </button>
           <!--          <button class="btn-action">Back</button>-->
           <!--          <button class="btn-action">Forward</button>-->
-          <button class="btn-action" @click="goUp">Up</button>
+          <button class="btn-action vp-button" @click="goUp">Up</button>
         </div>
         <div class="input-wrap">
           <input
             placeholder="Path"
             v-model="basePath"
-            class="input-addr"
+            class="input-addr vp-input"
             @keyup.enter="handleRefresh"
           />
-          <button class="btn-refresh btn-action" @click="handleRefresh">Refresh</button>
+          <button class="btn-refresh vp-button btn-action" @click="handleRefresh">Refresh</button>
         </div>
       </div>
     </div>
@@ -147,7 +149,7 @@ export default defineComponent({
         <n-spin />
       </n-space>
       <div v-show="!isLoading" class="file-list">
-        <div class="file-list-header file-list-row">
+        <div class="file-list-header file-list-row vp-panel">
           <div class="list-col c-icon">icon</div>
           <div class="list-col c-filename">filename</div>
           <!--          <div class="list-col c-type">type</div>-->
@@ -173,11 +175,23 @@ export default defineComponent({
           <div class="list-col c-size">{{ bytesToSize(item.size) }}</div>
           <div class="list-col c-time">{{ formatDate(item.birthtime) }}</div>
           <div class="list-col c-actions">
-            <button @click.stop="handleFileAction('open', item, index)">
+            <button class="vp-button" @click.stop="handleFileAction('open', item, index)">
               {{ item.isDirectory ? 'Open' : 'Read' }}
             </button>
-            <button @click.stop="handleFileAction('rename', item, index)">Rename</button>
-            <button @click.stop="handleFileAction('delete', item, index)">Delete</button>
+            <button
+              disabled
+              class="vp-button"
+              @click.stop="handleFileAction('rename', item, index)"
+            >
+              Rename
+            </button>
+            <button
+              disabled
+              class="vp-button"
+              @click.stop="handleFileAction('delete', item, index)"
+            >
+              Delete
+            </button>
           </div>
         </div>
 

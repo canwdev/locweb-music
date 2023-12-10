@@ -21,16 +21,26 @@ export default defineComponent({
     const mVisible = useModelWrapper(props, emit, 'visible')
     const systemStore = useSystemStore()
 
+    const filterText = ref('')
+
     const handleItemClick = (item: ShortcutItem) => {
       mVisible.value = false
 
       systemStore.createTask(item)
     }
 
+    const appListFiltered = computed(() => {
+      return StartMenuAppList.filter((item) => {
+        const reg = new RegExp(filterText.value, 'ig')
+        return reg.test(item.title)
+      })
+    })
+
     return {
       mVisible,
       systemStore,
-      StartMenuAppList,
+      filterText,
+      appListFiltered,
       SystemAppList,
       handleItemClick,
       handlePowerMenu() {
@@ -55,14 +65,14 @@ export default defineComponent({
 </script>
 
 <template>
-  <div v-click-out-side="handleClickOutside" v-if="mVisible" class="start-menu">
+  <div v-click-out-side="handleClickOutside" v-if="mVisible" class="start-menu vp-panel">
     <div class="start-menu-row">
       <div class="start-menu-left">
-        <div class="program-list themed-field">
+        <div class="program-list">
           <div class="shortcut-list">
             <StartMenuItem
               :item="item"
-              v-for="(item, index) in StartMenuAppList"
+              v-for="(item, index) in appListFiltered"
               :key="index"
               @click="handleItemClick(item)"
             />
@@ -82,10 +92,10 @@ export default defineComponent({
     </div>
     <div class="start-menu-row start-menu-bottom">
       <div class="start-menu-left">
-        <input disabled placeholder="Search apps" class="input-search themed-field" />
+        <input v-model="filterText" placeholder="Search apps" class="input-search vp-input" />
       </div>
       <div class="start-menu-right">
-        <button class="btn-no-style" @click="handlePowerMenu">Shutdown</button>
+        <button class="btn-no-style vp-button" @click="handlePowerMenu">Shutdown</button>
       </div>
     </div>
   </div>
@@ -94,9 +104,9 @@ export default defineComponent({
 <style lang="scss" scoped>
 .start-menu {
   width: 400px;
-  background-color: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+  //background-color: rgba(255, 255, 255, 0.8);
+  //backdrop-filter: blur(10px);
+  //box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
   position: absolute;
   bottom: 100%;
   user-select: none;
@@ -122,7 +132,8 @@ export default defineComponent({
 
   .program-list {
     border: 1px solid;
-    background-color: #fff;
+    background-color: rgba(255, 255, 255, 0.7);
+    color: black;
     min-height: 300px;
   }
 
