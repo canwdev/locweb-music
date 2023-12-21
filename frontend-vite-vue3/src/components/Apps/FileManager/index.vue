@@ -1,18 +1,29 @@
 <script lang="ts">
 import {defineComponent} from 'vue'
-import {bytesToSize, formatDate} from '@/utils'
 import {getList} from '@/api/music'
-import {BackendFileItem, isSupportedMusicFormat} from '@/enum/file'
-import {useMusicStore} from '@/store/music'
-import {MusicItem} from '@/enum/music'
+import {BackendFileItem} from '@/enum/file'
+import {useFileOpener} from '@/components/OS/os-hooks'
+import FileListItem from '@/components/Apps/FileManager/FileListItem.vue'
+import {
+  ArrowUp20Regular,
+  ArrowSync20Filled,
+  DocumentAdd20Regular,
+  FolderAdd20Regular,
+} from '@vicons/fluent'
 
 export default defineComponent({
   name: 'FileManager',
+  components: {
+    FileListItem,
+    ArrowUp20Regular,
+    ArrowSync20Filled,
+    DocumentAdd20Regular,
+    FolderAdd20Regular,
+  },
   setup() {
     const files = ref<BackendFileItem[]>([])
     const basePath = ref('/')
     const isLoading = ref(false)
-    const musicStore = useMusicStore()
 
     const handleRefresh = async () => {
       try {
@@ -68,11 +79,7 @@ export default defineComponent({
       // handleRefresh()
     }
 
-    const handleOpenFile = (item: BackendFileItem) => {
-      if (isSupportedMusicFormat(item.filename)) {
-        musicStore.playFromFiles(item, files.value)
-      }
-    }
+    const {openFile} = useFileOpener()
 
     const handleFileAction = (type: string, item: BackendFileItem, index: number) => {
       if (type === 'open') {
@@ -81,7 +88,7 @@ export default defineComponent({
           handleRefresh()
           return
         } else {
-          handleOpenFile(item)
+          openFile(item, files.value)
         }
         return
       }
@@ -112,26 +119,44 @@ export default defineComponent({
       handleCreateFile,
       handleCreateFolder,
       handleFileAction,
-      formatDate,
       isLoading,
-      bytesToSize,
     }
   },
 })
 </script>
 
 <template>
-  <div class="explorer-wrap vp-panel">
+  <div class="explorer-wrap">
     <div class="explorer-header">
       <div class="nav-address">
         <div class="nav-wrap">
-          <button disabled class="btn-action vp-button" @click="handleCreateFile">+ File</button>
-          <button disabled class="btn-action vp-button" @click="handleCreateFolder">
-            + Folder
+          <button
+            disabled
+            class="btn-action vp-button"
+            @click="handleCreateFile"
+            title="Create Document"
+          >
+            <n-icon size="16">
+              <DocumentAdd20Regular />
+            </n-icon>
+          </button>
+          <button
+            disabled
+            class="btn-action vp-button"
+            @click="handleCreateFolder"
+            title="Create Folder"
+          >
+            <n-icon size="16">
+              <FolderAdd20Regular />
+            </n-icon>
           </button>
           <!--          <button class="btn-action">Back</button>-->
           <!--          <button class="btn-action">Forward</button>-->
-          <button class="btn-action vp-button" @click="goUp">Up</button>
+          <button class="btn-action vp-button" @click="goUp" title="Up">
+            <n-icon size="16">
+              <ArrowUp20Regular />
+            </n-icon>
+          </button>
         </div>
         <div class="input-wrap">
           <input
@@ -140,7 +165,9 @@ export default defineComponent({
             class="input-addr vp-input"
             @keyup.enter="handleRefresh"
           />
-          <button class="btn-refresh vp-button btn-action" @click="handleRefresh">Refresh</button>
+          <button class="vp-button btn-action" @click="handleRefresh">
+            <n-icon size="16"><ArrowSync20Filled /> </n-icon>
+          </button>
         </div>
       </div>
     </div>
@@ -149,51 +176,20 @@ export default defineComponent({
         <n-spin />
       </n-space>
       <div v-show="!isLoading" class="file-list">
-        <div class="file-list-header file-list-row vp-panel">
-          <div class="list-col c-icon">icon</div>
+        <div class="file-list-header file-list-row">
           <div class="list-col c-filename">filename</div>
           <!--          <div class="list-col c-type">type</div>-->
           <div class="list-col c-size">size</div>
-          <div class="list-col c-time">birthtime</div>
+          <div class="list-col c-time">Create Time</div>
           <div class="list-col c-actions">actions</div>
         </div>
-        <div
+        <FileListItem
+          :item="item"
           v-for="(item, index) in files"
           :key="item.id"
-          class="file-list-item file-list-row"
+          @openFile="handleFileAction('open', item, index)"
           @dblclick="handleFileAction('open', item, index)"
-        >
-          <div class="list-col c-icon">
-            <abbr :title="JSON.stringify(item, null, 2)">
-              {{ item.isDirectory ? '[目录]' : '[文件]' }}
-            </abbr>
-          </div>
-          <div class="list-col c-filename">
-            {{ item.filename }}
-          </div>
-          <!--          <div class="list-col c-type">type</div>-->
-          <div class="list-col c-size">{{ bytesToSize(item.size) }}</div>
-          <div class="list-col c-time">{{ formatDate(item.birthtime) }}</div>
-          <div class="list-col c-actions">
-            <button class="vp-button" @click.stop="handleFileAction('open', item, index)">
-              {{ item.isDirectory ? 'Open' : 'Read' }}
-            </button>
-            <button
-              disabled
-              class="vp-button"
-              @click.stop="handleFileAction('rename', item, index)"
-            >
-              Rename
-            </button>
-            <button
-              disabled
-              class="vp-button"
-              @click.stop="handleFileAction('delete', item, index)"
-            >
-              Delete
-            </button>
-          </div>
-        </div>
+        />
 
         <div v-if="!files.length" style="text-align: center; padding: 50px">
           This folder is empty
@@ -203,12 +199,12 @@ export default defineComponent({
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .explorer-wrap {
   //box-shadow: 0 1px 10px rgba(0, 0, 0, 0.27), inset 0 0 0.5px #fff;
   //border: 1px solid rgba(0, 0, 0, 0.4);
   max-width: 1000px;
-  min-width: 100px;
+  min-width: 300px;
   margin: 0 auto;
   height: 100%;
   display: flex;
@@ -220,22 +216,22 @@ export default defineComponent({
       align-items: center;
       justify-content: space-between;
       padding: 5px 0;
+      gap: 10px;
 
       .nav-wrap {
-        margin-right: 10px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
       }
 
       .input-wrap {
         display: flex;
         align-items: center;
         flex: 1;
+        gap: 4px;
 
         .input-addr {
           flex: 1;
-        }
-
-        .btn-refresh {
-          margin-left: 10px;
         }
       }
     }
@@ -247,21 +243,23 @@ export default defineComponent({
   }
 
   .btn-action {
-    padding: 2px 10px;
-
-    & + .btn-action {
-      margin-left: 5px;
+    display: inline-flex;
+    cursor: pointer;
+    &:disabled {
+      cursor: not-allowed;
     }
   }
 
   .file-list {
     .file-list-header {
-      font-weight: bold;
+      font-weight: 500;
       text-transform: capitalize;
-      border-bottom: 1px solid #7c7c7c;
+      border: 1px solid $color_border;
+      border-left: 0;
+      border-right: 0;
       position: sticky;
       top: 0;
-      background-color: rgba(206, 206, 206);
+      background-color: rgba(206, 206, 206, 0.27);
       color: black;
       padding: 0 !important;
     }
@@ -281,6 +279,10 @@ export default defineComponent({
 
         &.c-filename {
           flex: 1;
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          min-width: 200px;
         }
 
         &.c-type {
@@ -292,27 +294,16 @@ export default defineComponent({
         }
 
         &.c-time {
-          width: 150px;
+          width: 140px;
         }
 
         &.c-actions {
-          text-align: right;
-          width: 220px;
           padding-right: 10px;
-          button + button {
-            margin-left: 5px;
-          }
+          display: flex;
+          justify-content: flex-end;
+          gap: 4px;
+          width: 100px;
         }
-      }
-    }
-
-    .file-list-item {
-      &:hover {
-        background-color: rgba(131, 131, 131, 0.226);
-      }
-
-      & + .file-list-item {
-        border-top: 1px solid $color_border;
       }
     }
   }

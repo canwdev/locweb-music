@@ -1,121 +1,30 @@
 <script lang="ts">
 import {defineComponent} from 'vue'
-import {customThemeOptions, CustomThemeType, ldThemeOptions, loopModeMap} from '@/enum/settings'
+import {SettingsTabType} from '@/enum/settings'
 import OptionUI from '@/components/CommonUI/OptionUI/index.vue'
-import {useSettingsStore} from '@/store/settings'
 import {useI18n} from 'vue-i18n'
-import {StOptionItem, StOptionType} from '@/components/CommonUI/OptionUI/enum'
-
-const getWallpaperText = () => {
-  const list = [
-    {label: '必应壁纸', url: 'https://api.dujin.org/bing/1920.php'},
-    {label: '二次元', url: 'https://api.dujin.org/pic/'},
-    {label: '吉卜力', url: 'https://api.dujin.org/pic/ghibli'},
-    {label: '风景', url: 'https://api.dujin.org/pic/fengjing'},
-  ]
-  let tpl = `<b><a href="https://www.dujin.org/12142.html" target="_blank">随机壁纸API</a></b>`
-
-  list.forEach((item) => {
-    tpl += `<br>${item.label}: <a href="${item.url}" target="_blank">${item.url}</a>`
-  })
-
-  return tpl
-}
+import SettingsPersonalization from '@/components/Apps/SettingsApp/SettingsPersonalization.vue'
+import SettingsSystem from '@/components/Apps/SettingsApp/SettingsSystem.vue'
+import SettingsPrograms from '@/components/Apps/SettingsApp/SettingsPrograms.vue'
 
 export default defineComponent({
   name: 'SettingsApp',
-  components: {OptionUI},
+  components: {SettingsPrograms, SettingsSystem, SettingsPersonalization, OptionUI},
   setup(props, {emit}) {
     const {t: $t} = useI18n()
-    const settingsStore = useSettingsStore()
 
-    const optionList = computed((): StOptionItem[] => {
-      return [
-        {
-          label: '个性化',
-          key: 'personalization',
-          children: [
-            {
-              label: '桌面壁纸',
-              key: 'desktopWallpaper',
-              store: settingsStore,
-              type: StOptionType.INPUT,
-              tips: getWallpaperText(),
-            },
-            {
-              label: '色彩模式',
-              key: 'ldTheme',
-              store: settingsStore,
-              type: StOptionType.MULTIPLE_SWITCH,
-              selectOptions: ldThemeOptions,
-            },
-            {
-              label: '主题',
-              key: 'customTheme',
-              store: settingsStore,
-              type: StOptionType.SELECT,
-              selectOptions: customThemeOptions,
-            },
-            settingsStore.customTheme === CustomThemeType.DEFAULT && {
-              label: 'enableRoundedTheme',
-              key: 'enableRoundedTheme',
-              store: settingsStore,
-              type: StOptionType.SWITCH,
-            },
-            settingsStore.customTheme === CustomThemeType.DEFAULT && {
-              label: 'Aero 效果',
-              key: 'enableAeroTheme',
-              store: settingsStore,
-              type: StOptionType.SWITCH,
-            },
-          ].filter(Boolean),
-        },
-        {
-          label: '系统设置',
-          key: 'system',
-          children: [
-            {
-              label: '多窗口模式',
-              key: 'isWindowed',
-              store: settingsStore,
-              type: StOptionType.SWITCH,
-            },
-            {
-              label: '任务栏显示时钟',
-              key: 'taskbarShowClock',
-              store: settingsStore,
-              type: StOptionType.SWITCH,
-            },
-            {
-              label: '任务栏只显示图标',
-              key: 'taskbarIconOnly',
-              store: settingsStore,
-              type: StOptionType.SWITCH,
-            },
-            {
-              label: '音量',
-              key: 'audioVolume',
-              store: settingsStore,
-              type: StOptionType.SLIDER,
-              selectOptions: ldThemeOptions,
-            },
-            {
-              label: '播放模式',
-              key: 'loopMode',
-              store: settingsStore,
-              type: StOptionType.SELECT,
-              selectOptions: Object.values(loopModeMap).map((i) => ({
-                label: $t(i.i18nKey),
-                value: i.value,
-              })),
-            },
-          ],
-        },
-      ]
-    })
+    const settingsTabs = ref([
+      {label: '个性化', value: SettingsTabType.PERSONALIZATION},
+      {label: '应用程序', value: SettingsTabType.PROGRAMS},
+      {label: '系统', value: SettingsTabType.SYSTEM},
+    ])
+
+    const curTab = ref(SettingsTabType.PERSONALIZATION)
 
     return {
-      optionList,
+      SettingsTabType,
+      settingsTabs,
+      curTab,
     }
   },
 })
@@ -123,16 +32,46 @@ export default defineComponent({
 
 <template>
   <div class="settings-app">
-    <OptionUI :option-list="optionList" />
+    <n-layout has-sider style="height: 100%">
+      <n-layout-sider
+        collapse-mode="width"
+        :collapsed-width="0"
+        :width="200"
+        style="height: 100%"
+        show-trigger="arrow-circle"
+        bordered
+      >
+        <n-list hoverable clickable>
+          <n-list-item
+            class="left-list-item"
+            v-for="item in settingsTabs"
+            :key="item.value"
+            @click="curTab = item.value"
+            :class="{active: curTab === item.value}"
+          >
+            {{ item.label }}
+          </n-list-item>
+        </n-list>
+      </n-layout-sider>
+      <n-layout-content>
+        <SettingsPersonalization v-if="curTab === SettingsTabType.PERSONALIZATION" />
+        <SettingsPrograms v-else-if="curTab === SettingsTabType.PROGRAMS" />
+        <SettingsSystem v-else-if="curTab === SettingsTabType.SYSTEM" />
+      </n-layout-content>
+    </n-layout>
   </div>
 </template>
 
 <style lang="scss" scoped>
 .settings-app {
-  max-width: 500px;
-  margin-left: auto;
-  margin-right: auto;
   height: 100%;
   overflow-y: auto;
+
+  .left-list-item {
+    &.active {
+      background-color: $primary_opacity;
+      border-radius: 0;
+    }
+  }
 }
 </style>

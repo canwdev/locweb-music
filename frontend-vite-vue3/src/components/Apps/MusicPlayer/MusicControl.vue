@@ -314,7 +314,7 @@ export default defineComponent({
         }
 
         &.active {
-          color: $color_theme;
+          color: $primary;
         }
 
         & + button {

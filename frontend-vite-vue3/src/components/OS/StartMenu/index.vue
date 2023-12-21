@@ -5,7 +5,7 @@ import {ShortcutItem} from '@/enum/os'
 import {useSystemStore} from '@/store/system'
 import {useModelWrapper} from '@/hooks/use-model-wrapper'
 import clickOutSide from '@/utils/directives/clickoutside'
-import {StartMenuAppList, SystemAppList} from '@/enum/app'
+import {AllAppList, SystemAppList} from '@/enum/app'
 
 export default defineComponent({
   name: 'StartMenu',
@@ -30,7 +30,7 @@ export default defineComponent({
     }
 
     const appListFiltered = computed(() => {
-      return StartMenuAppList.filter((item) => {
+      return AllAppList.filter((item) => {
         const reg = new RegExp(filterText.value, 'ig')
         return reg.test(item.title)
       })
@@ -110,6 +110,9 @@ export default defineComponent({
   position: absolute;
   bottom: 100%;
   user-select: none;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
 
   .start-menu-row {
     display: flex;

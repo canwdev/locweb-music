@@ -64,8 +64,8 @@ export default defineComponent({
         @onActive="systemStore.setTaskActive(task)"
         @onClose="systemStore.closeTask(task.guid)"
         :visible="!task.minimized"
-        :wid="task.winId"
-        :init-win-options="task.winOptions"
+        :wid="task.winId || null"
+        :init-win-options="task.winOptions || null"
         :maximum="getIsMaximum(task)"
         :allow-move="!getIsMaximum(task)"
         @onTitleBarDbclick="task.maximized = !task.maximized"
@@ -106,5 +106,9 @@ export default defineComponent({
   z-index: 0;
   overflow: hidden;
   user-select: none;
+  .vp-window {
+    min-width: 350px;
+    min-height: 200px;
+  }
 }
 </style>

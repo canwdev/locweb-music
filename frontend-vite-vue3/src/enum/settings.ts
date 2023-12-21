@@ -89,3 +89,9 @@ export const loopModeMap = {
     i18nKey: 'msg.single-cycle',
   },
 }
+
+export enum SettingsTabType {
+  PERSONALIZATION,
+  PROGRAMS,
+  SYSTEM,
+}

@@ -59,7 +59,7 @@ export default defineComponent({
     cursor: pointer;
 
     &.active {
-      background-color: $color_theme;
+      background-color: $primary;
       color: white;
     }
   }

@@ -30,8 +30,7 @@ export default defineComponent({
   padding: 4px;
 
   &:hover {
-    background-color: $color_theme;
-    color: white;
+    background-color: $primary_opacity;
   }
 
   .shortcut-icon {

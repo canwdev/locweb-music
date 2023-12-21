@@ -241,7 +241,7 @@ export default defineComponent({
 
     button {
       &.active {
-        color: $color_theme;
+        color: $primary;
       }
     }
 
@@ -301,9 +301,9 @@ export default defineComponent({
         border-radius: 0;
 
         &.active {
-          color: $color_theme;
+          color: $primary;
           border-width: 2px;
-          border-bottom-color: $color_theme;
+          border-bottom-color: $primary;
         }
       }
     }

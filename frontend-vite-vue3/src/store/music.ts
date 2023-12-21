@@ -101,7 +101,6 @@ export const useMusicStore = defineStore('music', {
     handlePlayEnded() {
       const settingsStore = useSettingsStore()
       this.isPlayEnded = true
-      console.log('[handlePlayEnded]', this.loopMode)
       if (settingsStore.loopMode === LoopModeType.LOOP_SINGLE) {
         // single loop
         globalEventBus.emit(GlobalEvents.ACTION_PLAY)

@@ -3,21 +3,23 @@ import {WinOptions} from '@/components/CommonUI/ViewPortWindow/window-controller
 import {Component} from 'vue'
 
 export interface ShortcutItem {
+  appid: string
   title: string
   icon: string
   // 动态引入组件
   component: any
   // 窗口id，设置用于保存窗口的位置和大小
-  winId: string | null
+  winId?: string | null
   // 窗口初始化大小和位置
-  winOptions: WinOptions | null
+  winOptions?: WinOptions | null
   // 是否自动启动
-  autostart: boolean
+  autostart?: boolean
   // 是否为单实例
-  singleInstance: boolean
+  singleInstance?: boolean
 }
 
 export interface TaskItem {
+  appid: string
   guid: string
   title: string
   icon: string
@@ -36,6 +38,7 @@ export interface TaskItem {
 
 export class TaskItem {
   constructor(options: any = {}) {
+    this.appid = options.appid
     this.guid = guid()
     this.title = options.title
     this.icon = options.icon

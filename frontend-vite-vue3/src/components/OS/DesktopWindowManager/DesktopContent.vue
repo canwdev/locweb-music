@@ -2,7 +2,7 @@
 import {defineComponent} from 'vue'
 import {ShortcutItem} from '@/enum/os'
 import {useSystemStore} from '@/store/system'
-import {StartMenuAppList} from '@/enum/app'
+import {AllAppList} from '@/enum/app'
 
 export default defineComponent({
   name: 'DesktopContent',
@@ -14,7 +14,7 @@ export default defineComponent({
     }
     return {
       handleItemClick,
-      StartMenuAppList,
+      StartMenuAppList: AllAppList,
     }
   },
 })

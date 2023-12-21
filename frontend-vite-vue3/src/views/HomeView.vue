@@ -3,7 +3,7 @@ import {defineComponent} from 'vue'
 import TaskBar from '@/components/OS/TaskBar/index.vue'
 import DesktopWindowManager from '@/components/OS/DesktopWindowManager/index.vue'
 import {useSystemStore} from '@/store/system'
-import {StartMenuAppList} from '@/enum/app'
+import {AllAppList} from '@/enum/app'
 
 export default defineComponent({
   name: 'HomeView',
@@ -14,7 +14,7 @@ export default defineComponent({
   setup() {
     const systemStore = useSystemStore()
     onMounted(() => {
-      StartMenuAppList.forEach((item) => {
+      AllAppList.forEach((item) => {
         if (item.autostart) {
           systemStore.createTask(item)
         }

@@ -106,7 +106,7 @@ export default {
     transform: translateY(-50%);
     height: $bar_height;
     width: 0;
-    background: $color_theme;
+    background: $primary;
     user-select: none;
     pointer-events: none;
     z-index: 1;
@@ -134,7 +134,7 @@ export default {
       width: 12px;
       height: 12px;
       border-radius: 50%;
-      background: $color_theme;
+      background: $primary;
       z-index: 10;
       border: none;
       //box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.2);
