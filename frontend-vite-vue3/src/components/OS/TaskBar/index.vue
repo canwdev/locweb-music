@@ -33,8 +33,9 @@ export default defineComponent({
     </transition>
     <div class="task-bar-container vp-panel">
       <div class="task-start-menu _fc">
-        <button class="start-button btn-no-style" @click="isShowStart = !isShowStart">Start</button>
-        <!--        <button class="start-button btn-no-style" @click="systemStore.createTask()">+</button>-->
+        <button class="start-button btn-no-style vp-button" @click="isShowStart = !isShowStart">
+          Start
+        </button>
       </div>
       <div class="task-list _fc">
         <button
@@ -100,6 +101,7 @@ export default defineComponent({
       display: flex;
       gap: 2px;
       .start-button {
+        border-radius: 0;
         height: 100%;
         padding: 2px 10px;
         background-color: $primary;

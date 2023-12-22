@@ -77,7 +77,8 @@ export default defineComponent({
       v-else-if="item.type === StOptionType.COLOR_PICKER"
       v-model:value="dynamicValue"
       size="small"
-      :swatches="['#258292', '#3A6EA5', '#F0C869', '#E81123']"
+      :swatches="['#258292', '#3A6EA5', '#F0C869', '#E81123', '#FFFFFF', '#000000']"
+      :show-alpha="false"
     />
     <VueRender v-if="item.actionRender" :render-fn="item.actionRender" />
   </n-space>

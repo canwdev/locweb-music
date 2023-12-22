@@ -67,6 +67,20 @@ export const useGlobalTheme = () => {
     }
   )
 
+  watch(
+    () => settingsStore.disableAnimation,
+    (val) => {
+      if (val) {
+        document.documentElement.classList.add('disable-animation')
+      } else {
+        document.documentElement.classList.remove('disable-animation')
+      }
+    },
+    {
+      immediate: true,
+    }
+  )
+
   onBeforeUnmount(() => {
     window
       .matchMedia('(prefers-color-scheme: dark)')

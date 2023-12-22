@@ -17,6 +17,8 @@ interface IStore {
   themeColor: string
   // 桌面背景色
   desktopBgColor: string
+  // 禁用动画效果
+  disableAnimation: boolean
   // 是否开启窗口模式
   isWindowed: boolean
   // 是否显示任务栏时钟
@@ -40,6 +42,7 @@ export const useSettingsStore = defineStore('settingsStore', {
       enableAeroTheme: false,
       themeColor: '#258292',
       desktopBgColor: '#258292',
+      disableAnimation: false,
       isWindowed: true,
       taskbarShowClock: true,
       taskbarIconOnly: false,

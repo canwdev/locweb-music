@@ -201,11 +201,7 @@ export default defineComponent({
 
 <style lang="scss">
 .explorer-wrap {
-  //box-shadow: 0 1px 10px rgba(0, 0, 0, 0.27), inset 0 0 0.5px #fff;
-  //border: 1px solid rgba(0, 0, 0, 0.4);
-  max-width: 1000px;
   min-width: 300px;
-  margin: 0 auto;
   height: 100%;
   display: flex;
   flex-direction: column;
