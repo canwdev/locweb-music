@@ -47,7 +47,7 @@ export default defineComponent({
       default: 'mc-fade-scale',
     },
   },
-  emits: ['update:visible', 'resize', 'onActive', 'onClose'],
+  emits: ['update:visible', 'resize', 'onActive', 'onClose', 'onTitleBarDbclick'],
   setup(props, {emit}) {
     const {allowMove, maximum} = toRefs(props)
     const storageKey = LS_KEY_VP_WINDOW_OPTION + '_' + props.wid
@@ -182,7 +182,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <transition :name="transitionName">
+  :<transition :name="transitionName">
     <div
       v-show="mVisible"
       class="vp-window"
@@ -211,8 +211,8 @@ export default defineComponent({
           <slot></slot>
         </div>
       </div>
-    </div>
-  </transition>
+    </div> </transition
+  >=""
 </template>
 
 <style lang="scss">
