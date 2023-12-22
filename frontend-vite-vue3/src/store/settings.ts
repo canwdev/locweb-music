@@ -11,6 +11,8 @@ interface IStore {
   enableAeroTheme: boolean
   // 主题色
   themeColor: string
+  // 桌面壁纸url
+  desktopWallpaper: string
   // 桌面背景色
   desktopBgColor: string
   // 禁用动画效果
@@ -21,8 +23,6 @@ interface IStore {
   taskbarShowClock: boolean
   // 任务栏只显示图标
   taskbarIconOnly: boolean
-  // 桌面壁纸url
-  desktopWallpaper: string
   // 应用自启动appid列表
   appAutoStartIds: string[]
   // 循环模式

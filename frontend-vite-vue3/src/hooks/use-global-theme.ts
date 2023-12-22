@@ -48,13 +48,17 @@ export const useGlobalTheme = () => {
     const themeColor = settingsStore.themeColor
     // console.log({themeColor})
     if (themeColor) {
-      const res = hexToRgb(themeColor)
-      if (!res) {
-        return
+      try {
+        const res = hexToRgb(themeColor)
+        if (!res) {
+          return
+        }
+        const {r, g, b} = res
+        const root = document.documentElement
+        root.style.setProperty('--primary-rgb', `${r}, ${g}, ${b}`)
+      } catch (e) {
+        console.error(e)
       }
-      const {r, g, b} = res
-      const root = document.documentElement
-      root.style.setProperty('--primary-rgb', `${r}, ${g}, ${b}`)
     }
   }
 
@@ -93,7 +97,7 @@ export const useGlobalTheme = () => {
 
   // NaiveUI GlobalThemeOverrides
   const themeOverrides = computed<GlobalThemeOverrides>(() => {
-    const primaryColor = settingsStore.themeColor
+    const primaryColor = settingsStore.themeColor || '#258292'
 
     return {
       common: {

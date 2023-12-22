@@ -47,18 +47,19 @@ export default defineComponent({
               store: settingsStore,
               type: StOptionType.COLOR_PICKER,
             },
-            !settingsStore.desktopWallpaper && {
-              label: '桌面背景色',
-              key: 'desktopBgColor',
-              store: settingsStore,
-              type: StOptionType.COLOR_PICKER,
-            },
             {
               label: '桌面壁纸',
               key: 'desktopWallpaper',
               store: settingsStore,
               type: StOptionType.INPUT,
               tips: getWallpaperText(),
+              placeholder: 'optional',
+            },
+            !settingsStore.desktopWallpaper && {
+              label: '桌面背景色',
+              key: 'desktopBgColor',
+              store: settingsStore,
+              type: StOptionType.COLOR_PICKER,
             },
             {
               label: '明暗模式',

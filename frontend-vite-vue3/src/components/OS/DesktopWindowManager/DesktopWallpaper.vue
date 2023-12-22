@@ -7,17 +7,19 @@ export default defineComponent({
   setup() {
     const settingsStore = useSettingsStore()
 
+    const bgStyle = computed(() => {
+      const s: any = {}
+      if (settingsStore.desktopWallpaper) {
+        s.backgroundImage = `url(${settingsStore.desktopWallpaper})`
+      }
+      if (settingsStore.desktopBgColor) {
+        s.backgroundColor = settingsStore.desktopBgColor
+      }
+      return s
+    })
+
     return {
-      bgStyle: computed(() => {
-        const s: any = {}
-        if (settingsStore.desktopWallpaper) {
-          s.backgroundImage = `url(${settingsStore.desktopWallpaper})`
-        }
-        if (settingsStore.desktopBgColor) {
-          s.backgroundColor = settingsStore.desktopBgColor
-        }
-        return s
-      }),
+      bgStyle,
     }
   },
 })
