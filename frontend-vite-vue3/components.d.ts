@@ -29,6 +29,7 @@ declare module '@vue/runtime-core' {
     MusicPlayer: typeof import('./src/components/Apps/MusicPlayer/index.vue')['default']
     MusicPlaylist: typeof import('./src/components/Apps/MusicPlayer/MusicPlaylist/index.vue')['default']
     NButton: typeof import('naive-ui')['NButton']
+    NColorPicker: typeof import('naive-ui')['NColorPicker']
     NConfigProvider: typeof import('naive-ui')['NConfigProvider']
     NDialogProvider: typeof import('naive-ui')['NDialogProvider']
     NDropdown: typeof import('naive-ui')['NDropdown']

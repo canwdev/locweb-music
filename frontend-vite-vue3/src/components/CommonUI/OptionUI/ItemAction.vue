@@ -39,7 +39,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <n-space size="small" align="center">
+  <n-space class="option-item-action" size="small" align="center">
     <n-switch v-if="item.type === StOptionType.SWITCH" v-model:value="dynamicValue" />
 
     <RectSwitch
@@ -63,30 +63,41 @@ export default defineComponent({
     />
 
     <n-input
-      class="option-input"
+      class="option-select"
       v-else-if="item.type === StOptionType.INPUT"
       v-model:value="dynamicValue"
       size="small"
       type="text"
+      clearable
+      :placeholder="item.placeholder || ''"
+    />
+
+    <n-color-picker
+      class="option-select"
+      v-else-if="item.type === StOptionType.COLOR_PICKER"
+      v-model:value="dynamicValue"
+      size="small"
+      :swatches="['#258292', '#3A6EA5', '#F0C869', '#E81123']"
     />
     <VueRender v-if="item.actionRender" :render-fn="item.actionRender" />
   </n-space>
 </template>
 
 <style lang="scss">
-.option-slider-wrap {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  .option-slider {
+.option-item-action {
+  .option-slider-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    .option-slider {
+      width: 180px;
+    }
+    .number-input-wrap {
+      width: 74px;
+    }
+  }
+  .option-select {
     width: 180px;
   }
-  .number-input-wrap {
-    width: 74px;
-  }
-}
-.option-select {
-  width: 180px;
-  height: 24px;
 }
 </style>

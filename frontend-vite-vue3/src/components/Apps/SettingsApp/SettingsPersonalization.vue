@@ -42,6 +42,18 @@ export default defineComponent({
           key: 'personalization',
           children: [
             {
+              label: '主题色',
+              key: 'themeColor',
+              store: settingsStore,
+              type: StOptionType.COLOR_PICKER,
+            },
+            !settingsStore.desktopWallpaper && {
+              label: '桌面背景色',
+              key: 'desktopBgColor',
+              store: settingsStore,
+              type: StOptionType.COLOR_PICKER,
+            },
+            {
               label: '桌面壁纸',
               key: 'desktopWallpaper',
               store: settingsStore,
@@ -49,21 +61,21 @@ export default defineComponent({
               tips: getWallpaperText(),
             },
             {
-              label: '色彩模式',
+              label: '明暗模式',
               key: 'ldTheme',
               store: settingsStore,
               type: StOptionType.MULTIPLE_SWITCH,
               selectOptions: ldThemeOptions,
             },
             {
-              label: '主题',
+              label: '系统主题',
               key: 'customTheme',
               store: settingsStore,
               type: StOptionType.SELECT,
               selectOptions: customThemeOptions,
             },
             settingsStore.customTheme === CustomThemeType.DEFAULT && {
-              label: 'enableRoundedTheme',
+              label: '圆角样式',
               key: 'enableRoundedTheme',
               store: settingsStore,
               type: StOptionType.SWITCH,

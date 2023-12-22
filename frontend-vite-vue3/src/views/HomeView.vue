@@ -4,6 +4,7 @@ import TaskBar from '@/components/OS/TaskBar/index.vue'
 import DesktopWindowManager from '@/components/OS/DesktopWindowManager/index.vue'
 import {useSystemStore} from '@/store/system'
 import {AllAppList} from '@/enum/app'
+import {useSettingsStore} from '@/store/settings'
 
 export default defineComponent({
   name: 'HomeView',
@@ -12,11 +13,17 @@ export default defineComponent({
     TaskBar,
   },
   setup() {
+    const settingsStore = useSettingsStore()
     const systemStore = useSystemStore()
     onMounted(() => {
+      // 自动启动应用
+      const idsMap = {}
       AllAppList.forEach((item) => {
-        if (item.autostart) {
-          systemStore.createTask(item)
+        idsMap[item.appid] = item
+      })
+      settingsStore.appAutoStartIds.forEach((id: string) => {
+        if (idsMap[id]) {
+          systemStore.createTask(idsMap[id])
         }
       })
     })

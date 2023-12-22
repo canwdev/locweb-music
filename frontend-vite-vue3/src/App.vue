@@ -16,11 +16,7 @@ export default defineComponent({
     const themeOverrides = computed<GlobalThemeOverrides>(() => {
       let primaryColor
 
-      if (settingsStore.customTheme === CustomThemeType.WIN8) {
-        primaryColor = '#F0C869'
-      } else {
-        primaryColor = '#3A6EA5'
-      }
+      primaryColor = settingsStore.themeColor
 
       return {
         common: {

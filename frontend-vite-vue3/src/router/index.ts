@@ -9,13 +9,21 @@ let routes = [
     name: 'HomeView',
     component: HomeView,
     meta: {
-      title: `Local Web Music v${pkg.version}`,
+      title: ``,
     },
   },
 ]
 const router = createRouter({history, routes})
 
+export const formatSiteTitle = (t?: string) => {
+  const title = `Local Web Music v${pkg.version}`
+  if (!t) {
+    return title
+  }
+  return `${t} - ${title}`
+}
+
 router.afterEach((to, _, failure) => {
-  document.title = (to?.meta?.title as string) || document.title
+  document.title = formatSiteTitle(to?.meta?.title as string)
 })
 export default router

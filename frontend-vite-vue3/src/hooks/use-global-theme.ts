@@ -2,6 +2,7 @@ import {useSettingsStore} from '@/store/settings'
 import {CustomThemeType, LdThemeType} from '@/enum/settings'
 
 import {useMainStore} from '@/store/main'
+import {hexToRgb} from '@/utils/color'
 
 const getSystemIsDarkMode = () =>
   window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -31,18 +32,6 @@ export const useGlobalTheme = () => {
 
   watch(() => settingsStore.ldTheme, handleThemeChange)
 
-  onMounted(() => {
-    window
-      .matchMedia('(prefers-color-scheme: dark)')
-      .addEventListener('change', handleSystemThemeChange)
-  })
-
-  onBeforeUnmount(() => {
-    window
-      .matchMedia('(prefers-color-scheme: dark)')
-      .removeEventListener('change', handleSystemThemeChange)
-  })
-
   const isAppDarkMode = computed(() => mainStore.isAppDarkMode)
 
   const isRect = computed(() => {
@@ -55,6 +44,39 @@ export const useGlobalTheme = () => {
   })
   const isAero = computed(() => {
     return settingsStore.enableAeroTheme && settingsStore.customTheme === CustomThemeType.DEFAULT
+  })
+
+  const updateThemeColor = () => {
+    const themeColor = settingsStore.themeColor
+    // console.log({themeColor})
+    if (themeColor) {
+      const res = hexToRgb(themeColor)
+      if (!res) {
+        return
+      }
+      const {r, g, b} = res
+      const root = document.documentElement
+      root.style.setProperty('--primary-rgb', `${r}, ${g}, ${b}`)
+    }
+  }
+
+  watch(
+    () => settingsStore.themeColor,
+    () => {
+      updateThemeColor()
+    }
+  )
+
+  onBeforeUnmount(() => {
+    window
+      .matchMedia('(prefers-color-scheme: dark)')
+      .removeEventListener('change', handleSystemThemeChange)
+  })
+  onMounted(() => {
+    window
+      .matchMedia('(prefers-color-scheme: dark)')
+      .addEventListener('change', handleSystemThemeChange)
+    updateThemeColor()
   })
 
   return {

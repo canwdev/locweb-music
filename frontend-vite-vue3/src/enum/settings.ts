@@ -6,7 +6,7 @@ export enum LdThemeType {
 
 export const ldThemeOptions = [
   {
-    label: 'System',
+    label: 'Auto',
     value: LdThemeType.SYSTEM,
   },
   {

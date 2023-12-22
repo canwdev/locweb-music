@@ -17,7 +17,6 @@ export const SystemAppSettings: ShortcutItem = {
   },
   component: defineAsyncComponent(() => import('@/components/Apps/SettingsApp/index.vue')),
   singleInstance: true,
-  autostart: false,
 }
 
 export const SystemAppExplorer: ShortcutItem = {
@@ -32,7 +31,6 @@ export const SystemAppExplorer: ShortcutItem = {
     height: '600px',
   },
   component: defineAsyncComponent(() => import('@/components/Apps/FileManager/index.vue')),
-  autostart: true,
 }
 
 export const SystemAppMusicPlayer: ShortcutItem = {
@@ -41,7 +39,6 @@ export const SystemAppMusicPlayer: ShortcutItem = {
   icon: IconMusic,
   winId: 'music_player',
   component: defineAsyncComponent(() => import('@/components/Apps/MusicPlayer/index.vue')),
-  autostart: false,
   singleInstance: true,
 }
 

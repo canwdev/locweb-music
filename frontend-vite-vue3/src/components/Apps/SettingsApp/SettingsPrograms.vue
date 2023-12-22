@@ -3,15 +3,9 @@ import {defineComponent} from 'vue'
 import {useI18n} from 'vue-i18n'
 import {useSettingsStore} from '@/store/settings'
 import OptionUI from '@/components/CommonUI/OptionUI/index.vue'
-import {
-  customThemeOptions,
-  CustomThemeType,
-  ldThemeOptions,
-  loopModeMap,
-  SettingsTabType,
-} from '@/enum/settings'
-import {StOptionItem, StOptionType} from '@/components/CommonUI/OptionUI/enum'
+import {StOptionItem} from '@/components/CommonUI/OptionUI/enum'
 import {AllAppList} from '@/enum/app'
+import {NSpace, NSwitch} from 'naive-ui'
 
 export default defineComponent({
   name: 'SettingsPrograms',
@@ -21,6 +15,10 @@ export default defineComponent({
     const settingsStore = useSettingsStore()
 
     const optionList = computed((): StOptionItem[] => {
+      const aIdsMap = {}
+      settingsStore.appAutoStartIds.forEach((id) => {
+        aIdsMap[id] = true
+      })
       return [
         {
           label: '应用管理',
@@ -30,6 +28,21 @@ export default defineComponent({
               icon: item.icon,
               label: item.title,
               key: item.appid,
+              actionRender: h(NSpace, {size: 'small', align: 'center'}, () => [
+                h('div', {}, '开机自启'),
+                h(NSwitch, {
+                  value: aIdsMap[item.appid],
+                  onClick: () => {
+                    // 切换开机自动启动
+                    if (aIdsMap[item.appid]) {
+                      delete aIdsMap[item.appid]
+                    } else {
+                      aIdsMap[item.appid] = true
+                    }
+                    settingsStore.appAutoStartIds = Object.keys(aIdsMap)
+                  },
+                }),
+              ]),
             }
           }),
         },

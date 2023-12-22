@@ -5,7 +5,7 @@ const service = Service({
   baseURL: HOST_URL + '/api',
 })
 
-export function getInfo() {
+export function getServerInfo() {
   return service.get('/')
 }
 

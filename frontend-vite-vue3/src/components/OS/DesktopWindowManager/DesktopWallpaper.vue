@@ -13,6 +13,9 @@ export default defineComponent({
         if (settingsStore.desktopWallpaper) {
           s.backgroundImage = `url(${settingsStore.desktopWallpaper})`
         }
+        if (settingsStore.desktopBgColor) {
+          s.backgroundColor = settingsStore.desktopBgColor
+        }
         return s
       }),
     }
@@ -29,7 +32,6 @@ export default defineComponent({
 <style lang="scss" scoped>
 .desktop-wallpaper {
   //background-color: #3a6ea5;
-  background-color: $primary;
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;

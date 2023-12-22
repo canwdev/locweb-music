@@ -12,8 +12,6 @@ export interface ShortcutItem {
   winId?: string | null
   // 窗口初始化大小和位置
   winOptions?: WinOptions | null
-  // 是否自动启动
-  autostart?: boolean
   // 是否为单实例
   singleInstance?: boolean
 }

@@ -11,6 +11,8 @@ import {
   SettingsTabType,
 } from '@/enum/settings'
 import {StOptionItem, StOptionType} from '@/components/CommonUI/OptionUI/enum'
+import {getServerInfo} from '@/api/service'
+import pkg from '../../../../package.json'
 
 export default defineComponent({
   name: 'SettingsSystem',
@@ -18,9 +20,47 @@ export default defineComponent({
   setup(props, {emit}) {
     const {t: $t} = useI18n()
     const settingsStore = useSettingsStore()
+    const serverInfo = ref<any>({})
+
+    onMounted(async () => {
+      const res = await getServerInfo()
+      serverInfo.value = res.package || {}
+    })
 
     const optionList = computed((): StOptionItem[] => {
       return [
+        {
+          label: '系统信息',
+          key: 'os_info',
+          children: [
+            {
+              key: 'frontend_version',
+              label: '前端版本',
+              subtitle: pkg.name,
+              actionRender: h('div', pkg.version),
+            },
+            {
+              key: 'backend_version',
+              label: '后端服务器版本',
+              subtitle: serverInfo.value.name,
+              actionRender: h('div', serverInfo.value.version),
+            },
+            {
+              key: 'github',
+              label: '仓库地址',
+              subtitle: `作者: ${serverInfo.value.author}`,
+              actionRender: h(
+                'a',
+                {
+                  href: serverInfo.value.repository,
+                  target: '_blank',
+                  rel: 'nofollow noopener',
+                },
+                'Github'
+              ),
+            },
+          ],
+        },
         {
           label: '媒体设置',
           key: 'media_settings',

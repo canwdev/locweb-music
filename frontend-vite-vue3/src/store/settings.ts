@@ -1,18 +1,32 @@
 import {CustomThemeType, LdThemeType, LoopModeType} from '@/enum/settings'
 
 interface IStore {
+  // 明暗主题
   ldTheme: LdThemeType
+  // 循环模式
   loopMode: LoopModeType
+  // 音量
   audioVolume: number
+  // 自定义主题类型
   customTheme: CustomThemeType
+  // 圆角主题
   enableRoundedTheme: boolean
+  // 开启半透明模糊UI
   enableAeroTheme: boolean
+  // 主题色
+  themeColor: string
+  // 桌面背景色
+  desktopBgColor: string
   // 是否开启窗口模式
   isWindowed: boolean
   // 是否显示任务栏时钟
   taskbarShowClock: boolean
+  // 任务栏只显示图标
   taskbarIconOnly: boolean
+  // 桌面壁纸url
   desktopWallpaper: string
+  // 应用自启动appid列表
+  appAutoStartIds: string[]
 }
 
 export const useSettingsStore = defineStore('settingsStore', {
@@ -24,10 +38,13 @@ export const useSettingsStore = defineStore('settingsStore', {
       customTheme: CustomThemeType.DEFAULT,
       enableRoundedTheme: true,
       enableAeroTheme: false,
+      themeColor: '#258292',
+      desktopBgColor: '#258292',
       isWindowed: true,
       taskbarShowClock: true,
       taskbarIconOnly: false,
-      desktopWallpaper: 'https://api.dujin.org/bing/1920.php',
+      desktopWallpaper: '',
+      appAutoStartIds: [],
     }
   },
   actions: {
