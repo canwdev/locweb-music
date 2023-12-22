@@ -2,10 +2,8 @@ import {useSettingsStore} from '@/store/settings'
 import {CustomThemeType, LdThemeType} from '@/enum/settings'
 
 import {useMainStore} from '@/store/main'
-import {hexToRgb} from '@/utils/color'
-
-const getSystemIsDarkMode = () =>
-  window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+import {getSystemIsDarkMode, hexToRgb} from '@/utils/color'
+import {GlobalThemeOverrides} from 'naive-ui'
 
 export const useGlobalTheme = () => {
   const mainStore = useMainStore()
@@ -93,9 +91,26 @@ export const useGlobalTheme = () => {
     updateThemeColor()
   })
 
+  // NaiveUI GlobalThemeOverrides
+  const themeOverrides = computed<GlobalThemeOverrides>(() => {
+    const primaryColor = settingsStore.themeColor
+
+    return {
+      common: {
+        borderRadiusSmall: isRect.value ? 0 : '2px',
+        borderRadius: isRect.value ? 0 : '4px',
+        primaryColor,
+        primaryColorHover: primaryColor,
+        primaryColorPressed: primaryColor,
+        primaryColorSuppl: primaryColor,
+      },
+    } as GlobalThemeOverrides
+  })
+
   return {
     isRect,
     isAero,
     isAppDarkMode,
+    themeOverrides,
   }
 }

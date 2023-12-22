@@ -3,10 +3,6 @@ import {CustomThemeType, LdThemeType, LoopModeType} from '@/enum/settings'
 interface IStore {
   // 明暗主题
   ldTheme: LdThemeType
-  // 循环模式
-  loopMode: LoopModeType
-  // 音量
-  audioVolume: number
   // 自定义主题类型
   customTheme: CustomThemeType
   // 圆角主题
@@ -29,14 +25,16 @@ interface IStore {
   desktopWallpaper: string
   // 应用自启动appid列表
   appAutoStartIds: string[]
+  // 循环模式
+  loopMode: LoopModeType
+  // 音量
+  audioVolume: number
 }
 
 export const useSettingsStore = defineStore('settingsStore', {
   state: (): IStore => {
     return {
       ldTheme: LdThemeType.SYSTEM,
-      loopMode: LoopModeType.LOOP_SEQUENCE,
-      audioVolume: 100,
       customTheme: CustomThemeType.DEFAULT,
       enableRoundedTheme: true,
       enableAeroTheme: false,
@@ -48,6 +46,8 @@ export const useSettingsStore = defineStore('settingsStore', {
       taskbarIconOnly: false,
       desktopWallpaper: '',
       appAutoStartIds: [],
+      loopMode: LoopModeType.LOOP_SEQUENCE,
+      audioVolume: 100,
     }
   },
   actions: {

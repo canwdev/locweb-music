@@ -9,26 +9,8 @@ export default defineComponent({
     AppSub,
   },
   setup() {
-    const {isAppDarkMode, isRect, isAero} = useGlobalTheme()
+    const {isAppDarkMode, isRect, isAero, themeOverrides} = useGlobalTheme()
     const settingsStore = useSettingsStore()
-
-    // GlobalThemeOverrides
-    const themeOverrides = computed<GlobalThemeOverrides>(() => {
-      let primaryColor
-
-      primaryColor = settingsStore.themeColor
-
-      return {
-        common: {
-          borderRadiusSmall: isRect.value ? 0 : '2px',
-          borderRadius: isRect.value ? 0 : '4px',
-          primaryColor,
-          primaryColorHover: primaryColor,
-          primaryColorPressed: primaryColor,
-          primaryColorSuppl: primaryColor,
-        },
-      } as GlobalThemeOverrides
-    })
 
     return {
       settingsStore,

@@ -86,17 +86,13 @@ export default defineComponent({
 
 <style lang="scss">
 .c-panel-item {
-  & + .c-panel-item {
-    border-top: 1px solid $color_border;
-  }
-
   .panel-header {
     min-height: 40px;
     padding: 4px 16px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background-color: rgba(204, 204, 204, 0.2);
+    background-color: $primary_opacity; //rgba(204, 204, 204, 0.2);
 
     .p-left,
     .p-right {

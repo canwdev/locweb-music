@@ -4,6 +4,27 @@ import RectSwitch from './Tools/RectSwitch.vue'
 import {StOptionItem, StOptionType} from './enum'
 import VueRender from './Tools/VueRender.vue'
 
+const swatches = [
+  '#258292',
+  '#3A6EA5',
+  '#F0C869',
+  '#E81123',
+  '#e91e63',
+  '#FFFFFF',
+  '#000000',
+  '#007aff',
+  '#a2845e',
+  '#8e8e93',
+  '#28cd41',
+  '#5856d6',
+  '#ff9500',
+  '#ff2d55',
+  '#af52de',
+  '#ff3b30',
+  '#5ac8fa',
+  '#ffcc00',
+]
+
 export default defineComponent({
   name: 'ItemAction',
   components: {VueRender, RectSwitch},
@@ -33,6 +54,7 @@ export default defineComponent({
     return {
       StOptionType,
       dynamicValue,
+      swatches,
     }
   },
 })
@@ -77,7 +99,7 @@ export default defineComponent({
       v-else-if="item.type === StOptionType.COLOR_PICKER"
       v-model:value="dynamicValue"
       size="small"
-      :swatches="['#258292', '#3A6EA5', '#F0C869', '#E81123', '#FFFFFF', '#000000']"
+      :swatches="swatches"
       :show-alpha="false"
     />
     <VueRender v-if="item.actionRender" :render-fn="item.actionRender" />
