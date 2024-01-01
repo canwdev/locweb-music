@@ -2,6 +2,7 @@ import IconComputer from '@/assets/icons/shell32.dll(16).png'
 import IconMusic from '@/assets/icons/shell32.dll(237).png'
 import IconBrowser from '@/assets/icons/iexplore.exe(7).png'
 import IconSettings from '@/assets/icons/shell32.dll(16826).png'
+import IconPiano from '@/assets/icons/icon-piano.png'
 import {ShortcutItem} from '@/enum/os'
 
 export const SystemAppSettings: ShortcutItem = {
@@ -56,10 +57,25 @@ export const SystemAppWebBrowser: ShortcutItem = {
   component: defineAsyncComponent(() => import('@/components/Apps/IframeBrowser/index.vue')),
 }
 
+export const AppPianoJs: ShortcutItem = {
+  appid: 'com.pianojs',
+  title: 'Garageband Piano Js',
+  icon: IconPiano,
+  winId: 'piano',
+  winOptions: {
+    top: '150px',
+    left: '150px',
+    width: '620px',
+    height: '380px',
+  },
+  component: defineAsyncComponent(() => import('@/components/Apps/PianoJs/index.vue')),
+}
+
 export const SystemAppList: ShortcutItem[] = [SystemAppSettings]
 export const AllAppList: ShortcutItem[] = [
   SystemAppExplorer,
   SystemAppMusicPlayer,
   SystemAppWebBrowser,
+  AppPianoJs,
   ...SystemAppList,
 ]

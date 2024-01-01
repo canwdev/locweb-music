@@ -52,6 +52,8 @@ declare module '@vue/runtime-core' {
     NSwitch: typeof import('naive-ui')['NSwitch']
     OptionItem: typeof import('./src/components/CommonUI/OptionUI/OptionItem.vue')['default']
     OptionUI: typeof import('./src/components/CommonUI/OptionUI/index.vue')['default']
+    PianoJs: typeof import('./src/components/Apps/PianoJs/index.vue')['default']
+    PianoKey: typeof import('./src/components/Apps/PianoJs/PianoKey.vue')['default']
     PlayerCore: typeof import('./src/components/Apps/MusicPlayer/PlayerCore.vue')['default']
     PlaylistItem: typeof import('./src/components/Apps/MusicPlayer/MusicPlaylist/PlaylistItem.vue')['default']
     RectSwitch: typeof import('./src/components/CommonUI/OptionUI/Tools/RectSwitch.vue')['default']

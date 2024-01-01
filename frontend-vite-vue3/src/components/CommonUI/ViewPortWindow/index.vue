@@ -182,7 +182,7 @@ export default defineComponent({
 </script>
 
 <template>
-  :<transition :name="transitionName">
+  <transition :name="transitionName">
     <div
       v-show="mVisible"
       class="vp-window"
@@ -211,8 +211,8 @@ export default defineComponent({
           <slot></slot>
         </div>
       </div>
-    </div> </transition
-  >=""
+    </div>
+  </transition>
 </template>
 
 <style lang="scss">
